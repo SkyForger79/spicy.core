@@ -19,10 +19,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.management.color import color_style
 #from social_auth.signals import pre_update
 from spicy.core.service.models import ProviderModel
-from spicy.apps.history import defaults as hs_defaults
-from spicy.apps.history.abs import AbstractHistoryConsumer
 from spicy.core.siteskin import defaults as sk_defaults
-from spicy.apps.trash.models import TrashModel, NonTrashManager
+
 from uuid import uuid4
 
 
@@ -30,7 +28,7 @@ from uuid import uuid4
 style = color_style()
 
 
-class ProfileManager(UserManager, NonTrashManager):
+class ProfileManager(UserManager):
     def activate_user(self, activation_key):
         if defaults.SHA1_RE.search(activation_key):
             try:
@@ -103,7 +101,7 @@ class ProfileManager(UserManager, NonTrashManager):
         return count
 
 
-class ProfileBase(User, TrashModel, AbstractHistoryConsumer):
+class ProfileBase(User):
     user_ptr = models.OneToOneField(User, parent_link=True)    
     
     IS_ACTIVATED = 'Already activated'
@@ -120,8 +118,6 @@ class ProfileBase(User, TrashModel, AbstractHistoryConsumer):
         _('Second name'), max_length=255, blank=True)
     
     phone = models.CharField(_('Phone'), max_length=100, blank=True)
-
-    birthday = models.DateField(_('Birthday'), blank=True, null=True)
     
     timezone = models.CharField(
         max_length=50, default=settings.TIME_ZONE, blank=True)
@@ -129,9 +125,6 @@ class ProfileBase(User, TrashModel, AbstractHistoryConsumer):
     sites = models.ManyToManyField(Site, blank=True)
 
     objects = ProfileManager()
-
-    def get_history_template(self, action_type):
-        return 'profile' if action_type == hs_defaults.ACTION_CREATE else 'default'
 
     class Meta:
         abstract = True

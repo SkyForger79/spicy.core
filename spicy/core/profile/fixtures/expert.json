@@ -1,0 +1,387 @@
+[
+    {
+        "pk": 1, 
+        "model": "auth.group", 
+        "fields": {
+            "name": "\u041f\u0430\u0440\u0442\u043d\u0435\u0440", 
+            "permissions": []
+        }
+    }, 
+    {
+        "pk": 7, 
+        "model": "auth.group", 
+        "fields": {
+            "name": "\u0410\u0434\u043c\u0438\u043d\u0438\u0441\u0442\u0440\u0430\u0442\u043e\u0440", 
+            "permissions": [
+                [
+                    "add_group", 
+                    "auth", 
+                    "group"
+                ], 
+                [
+                    "change_group", 
+                    "auth", 
+                    "group"
+                ], 
+                [
+                    "delete_group", 
+                    "auth", 
+                    "group"
+                ], 
+                [
+                    "add_permission", 
+                    "auth", 
+                    "permission"
+                ], 
+                [
+                    "change_permission", 
+                    "auth", 
+                    "permission"
+                ], 
+                [
+                    "delete_permission", 
+                    "auth", 
+                    "permission"
+                ], 
+                [
+                    "add_user", 
+                    "auth", 
+                    "user"
+                ], 
+                [
+                    "change_user", 
+                    "auth", 
+                    "user"
+                ], 
+                [
+                    "delete_user", 
+                    "auth", 
+                    "user"
+                ], 
+                [
+                    "add_profile", 
+                    "extprofile", 
+                    "profile"
+                ], 
+                [
+                    "change_profile", 
+                    "extprofile", 
+                    "profile"
+                ], 
+                [
+                    "delete_profile", 
+                    "extprofile", 
+                    "profile"
+                ], 
+                [
+                    "add_staffalias", 
+                    "extprofile", 
+                    "staffalias"
+                ], 
+                [
+                    "change_staffalias", 
+                    "extprofile", 
+                    "staffalias"
+                ], 
+                [
+                    "delete_staffalias", 
+                    "extprofile", 
+                    "staffalias"
+                ]
+            ]
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "auth.group", 
+        "fields": {
+            "name": "\u0410\u0432\u0442\u043e\u0440", 
+            "permissions": [
+                [
+                    "add_document", 
+                    "presscenter", 
+                    "document"
+                ], 
+                [
+                    "author", 
+                    "presscenter", 
+                    "document"
+                ], 
+                [
+                    "change_document", 
+                    "presscenter", 
+                    "document"
+                ], 
+                [
+                    "delete_document", 
+                    "presscenter", 
+                    "document"
+                ]
+            ]
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "auth.group", 
+        "fields": {
+            "name": "\u0420\u0435\u0434\u0430\u043a\u0442\u043e\u0440", 
+            "permissions": [
+                [
+                    "add_document", 
+                    "presscenter", 
+                    "document"
+                ], 
+                [
+                    "change_document", 
+                    "presscenter", 
+                    "document"
+                ], 
+                [
+                    "delete_document", 
+                    "presscenter", 
+                    "document"
+                ], 
+                [
+                    "editor", 
+                    "presscenter", 
+                    "document"
+                ]
+            ]
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "auth.group", 
+        "fields": {
+            "name": "\u0411\u0438\u043b\u0434-\u0440\u0435\u0434\u0430\u043a\u0442\u043e\u0440", 
+            "permissions": [
+                [
+                    "builder", 
+                    "presscenter", 
+                    "document"
+                ], 
+                [
+                    "editor", 
+                    "presscenter", 
+                    "document"
+                ]
+            ]
+        }
+    }, 
+    {
+        "pk": 5, 
+        "model": "auth.group", 
+        "fields": {
+            "name": "\u0412\u044b\u043f\u0443\u0441\u043a\u0430\u044e\u0449\u0438\u0439 \u0440\u0435\u0434\u0430\u043a\u0442\u043e\u0440", 
+            "permissions": [
+                [
+                    "add_doclistprovidermodel", 
+                    "presscenter", 
+                    "doclistprovidermodel"
+                ], 
+                [
+                    "change_doclistprovidermodel", 
+                    "presscenter", 
+                    "doclistprovidermodel"
+                ], 
+                [
+                    "delete_doclistprovidermodel", 
+                    "presscenter", 
+                    "doclistprovidermodel"
+                ], 
+                [
+                    "add_document", 
+                    "presscenter", 
+                    "document"
+                ], 
+                [
+                    "author", 
+                    "presscenter", 
+                    "document"
+                ], 
+                [
+                    "builder", 
+                    "presscenter", 
+                    "document"
+                ], 
+                [
+                    "change_document", 
+                    "presscenter", 
+                    "document"
+                ], 
+                [
+                    "delete_document", 
+                    "presscenter", 
+                    "document"
+                ], 
+                [
+                    "editor", 
+                    "presscenter", 
+                    "document"
+                ], 
+                [
+                    "moderator", 
+                    "presscenter", 
+                    "document"
+                ], 
+                [
+                    "publisher", 
+                    "presscenter", 
+                    "document"
+                ], 
+                [
+                    "add_documentprovidermodel", 
+                    "presscenter", 
+                    "documentprovidermodel"
+                ], 
+                [
+                    "change_documentprovidermodel", 
+                    "presscenter", 
+                    "documentprovidermodel"
+                ], 
+                [
+                    "delete_documentprovidermodel", 
+                    "presscenter", 
+                    "documentprovidermodel"
+                ], 
+                [
+                    "add_hyperlink", 
+                    "presscenter", 
+                    "hyperlink"
+                ], 
+                [
+                    "change_hyperlink", 
+                    "presscenter", 
+                    "hyperlink"
+                ], 
+                [
+                    "delete_hyperlink", 
+                    "presscenter", 
+                    "hyperlink"
+                ], 
+                [
+                    "add_issue", 
+                    "presscenter", 
+                    "issue"
+                ], 
+                [
+                    "change_issue", 
+                    "presscenter", 
+                    "issue"
+                ], 
+                [
+                    "delete_issue", 
+                    "presscenter", 
+                    "issue"
+                ], 
+                [
+                    "add_magazine", 
+                    "presscenter", 
+                    "magazine"
+                ], 
+                [
+                    "change_magazine", 
+                    "presscenter", 
+                    "magazine"
+                ], 
+                [
+                    "delete_magazine", 
+                    "presscenter", 
+                    "magazine"
+                ], 
+                [
+                    "add_magazineprovidermodel", 
+                    "presscenter", 
+                    "magazineprovidermodel"
+                ], 
+                [
+                    "change_magazineprovidermodel", 
+                    "presscenter", 
+                    "magazineprovidermodel"
+                ], 
+                [
+                    "delete_magazineprovidermodel", 
+                    "presscenter", 
+                    "magazineprovidermodel"
+                ], 
+                [
+                    "add_relateddocument", 
+                    "presscenter", 
+                    "relateddocument"
+                ], 
+                [
+                    "change_relateddocument", 
+                    "presscenter", 
+                    "relateddocument"
+                ], 
+                [
+                    "delete_relateddocument", 
+                    "presscenter", 
+                    "relateddocument"
+                ], 
+                [
+                    "add_relateddocumentprovider", 
+                    "presscenter", 
+                    "relateddocumentprovider"
+                ], 
+                [
+                    "change_relateddocumentprovider", 
+                    "presscenter", 
+                    "relateddocumentprovider"
+                ], 
+                [
+                    "delete_relateddocumentprovider", 
+                    "presscenter", 
+                    "relateddocumentprovider"
+                ], 
+                [
+                    "add_rubric", 
+                    "presscenter", 
+                    "rubric"
+                ], 
+                [
+                    "change_rubric", 
+                    "presscenter", 
+                    "rubric"
+                ], 
+                [
+                    "delete_rubric", 
+                    "presscenter", 
+                    "rubric"
+                ]
+            ]
+        }
+    }, 
+    {
+        "pk": 6, 
+        "model": "auth.group", 
+        "fields": {
+            "name": "\u041c\u043e\u0434\u0435\u0440\u0430\u0442\u043e\u0440", 
+            "permissions": [
+                [
+                    "change_document", 
+                    "presscenter", 
+                    "document"
+                ], 
+                [
+                    "moderator", 
+                    "presscenter", 
+                    "document"
+                ], 
+                [
+                    "change_hyperlink", 
+                    "presscenter", 
+                    "hyperlink"
+                ]
+            ]
+        }
+    },
+    {
+        "pk": 7, 
+        "model": "auth.group", 
+        "fields": {
+            "name": "Пользователи сайта", 
+            "permissions": []
+        }
+    }
+]

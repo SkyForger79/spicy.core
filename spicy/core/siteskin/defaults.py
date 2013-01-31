@@ -1,10 +1,11 @@
 from django.conf import settings
 
-OBJECTS_PER_PAGE = getattr(settings, 'OBJECTS_PER_PAGE', 50)
+USE_CUSTOM_ADMIN = getattr(settings, 'USE_CUSTOM_ADMIN', True)
 
 SITESKIN = getattr(settings, 'SITESKIN', 'example.com')
 SITESKIN_ADMIN = getattr(settings, 'SITESKIN_ADMIN', 'spicy-admin')
 
+OBJECTS_PER_PAGE = getattr(settings, 'OBJECTS_PER_PAGE', 50)
 ADMIN_OBJECTS_PER_PAGE = getattr(settings, 'ADMIN_OBJECTS_PER_PAGE', 50)
 
 PAGES_FROM_START = getattr(settings, 'PAGES_FROM_START', 2)

@@ -1,6 +1,7 @@
 from django.conf.urls.defaults import patterns, url, include
 #from django_authopenid import views as oid
 
+from spicy.core.siteskin import defaults
 
 public_urls = patterns(
     'spicy.core.profile.views',    
@@ -101,8 +102,8 @@ admin_urls = patterns(
     )
 
 
-urlpatterns = patterns(
-    '',
-    url(r'^admin/profile/', include(admin_urls, namespace='admin')),
-    url(r'^', include(public_urls, namespace='public'))
-    )
+urlpatterns = patterns('',)
+if defaults.USE_CUSTOM_ADMIN:
+    urlpatterns += patterns(url(r'^admin/profile/', include(admin_urls, namespace='admin')),)
+
+urlpatterns += patterns(url(r'^', include(public_urls, namespace='public')),)

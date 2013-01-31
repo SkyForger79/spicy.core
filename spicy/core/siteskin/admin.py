@@ -10,13 +10,13 @@ from django.shortcuts import get_object_or_404
 
 from spicy.core.service import api
 
-from extprofile.decorators import is_staff
+from spicy.core.profile.decorators import is_staff
 
-from siteskin.common import NavigationFilter
-from siteskin.decorators import render_to, ajax_request
-from siteskin.forms import ContentBlockForm, CreateContentBlockForm
-from siteskin import defaults as sk_defaults
-from siteskin.models import ContentBlock
+from .common import NavigationFilter
+from .decorators import render_to, ajax_request
+from .forms import ContentBlockForm, CreateContentBlockForm
+from . import defaults as sk_defaults
+from .models import ContentBlock
 
 
 @is_staff(required_perms='siteskin.add_contentblock')

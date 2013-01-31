@@ -7,7 +7,6 @@ from django.utils.translation import ugettext_lazy as _
 
 from spicy.utils import make_slug
 
-#from spicy.core.profile.models import Profile
 
 SHA1_RE = getattr(settings, 'SHA1_RE', re.compile('^[a-f0-9]{40}$'))
 

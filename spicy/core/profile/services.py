@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 import datetime
 import re
-from . import defaults, models, utils
-from .decorators import is_staff
-from .forms import SignupForm, LoginForm
 from django.conf import settings
 from django.core.cache import cache
 from django.core.urlresolvers import reverse
@@ -17,8 +14,13 @@ from django.shortcuts import get_object_or_404
 from spicy.core.service import api
 from spicy.core.siteskin.decorators import ajax_request, render_to, multi_view
 
+from . import defaults, models, utils
+from .decorators import is_staff
+from .forms import SignupForm, LoginForm
+
 Profile = utils.get_concrete_profile()
 
+CUSTOM_USER_SIGNUP_FORM = getattr(settings, 'CUSTOM_USER_SIGNUP_FORM', SignupForm)
 
 class ExtProfileProvider(api.Provider):
     model = 'spicy.core.profile.models.ExtProfileProviderModel'
@@ -250,7 +252,7 @@ class ExtProfileService(api.Interface):
         is_blacklisted = real_ip and models.BlacklistedIP.objects.filter(
             ip=real_ip).exists()
         if request.method == "POST":
-            form = SignupForm(request.POST)
+            form = CUSTOM_USER_SIGNUP_FORM(request.POST)
             redirect = reverse('profile:public:email-notify')
 
             if not is_blacklisted and form.is_valid():

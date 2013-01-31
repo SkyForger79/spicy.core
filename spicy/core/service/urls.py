@@ -16,6 +16,6 @@ public_urls += api.register.urls(is_public=True)
 
 urlpatterns = patterns('',)
 if defaults.USE_CUSTOM_ADMIN:
-    urlpatterns += patterns(url(r'^admin/', include(admin_urls, namespace='admin')),)
+    urlpatterns += patterns('', url(r'^admin/', include(admin_urls, namespace='admin')),)
 
-urlpatterns += patterns(url(r'^', include(public_urls, namespace='public')),)
+urlpatterns += patterns('', url(r'^', include(public_urls, namespace='public')),)

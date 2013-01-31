@@ -34,8 +34,8 @@ admin_urls = patterns(
 
 urlpatterns = patterns('',)
 if defaults.USE_CUSTOM_ADMIN:
-    urlpatterns += patterns(url(r'^admin/siteskin/', include(admin_urls, namespace='admin')),)
+    urlpatterns += patterns('', url(r'^admin/siteskin/', include(admin_urls, namespace='admin')),)
 
-urlpatterns += patterns(
+urlpatterns += patterns('', 
     url(r'^', include(public_urls, namespace='public')),
     )

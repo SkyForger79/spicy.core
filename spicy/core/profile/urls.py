@@ -104,6 +104,6 @@ admin_urls = patterns(
 
 urlpatterns = patterns('',)
 if defaults.USE_CUSTOM_ADMIN:
-    urlpatterns += patterns(url(r'^admin/profile/', include(admin_urls, namespace='admin')),)
+    urlpatterns += patterns('', url(r'^admin/profile/', include(admin_urls, namespace='admin')),)
 
-urlpatterns += patterns(url(r'^', include(public_urls, namespace='public')),)
+urlpatterns += patterns('', url(r'^', include(public_urls, namespace='public')),)

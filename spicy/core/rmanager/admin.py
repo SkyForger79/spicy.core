@@ -2,8 +2,8 @@ from django.conf import settings
 
 from spicy.core.service import api
 
-from siteskin.decorators import render_to
-from extprofile.decorators import is_staff
+from spicy.core.siteskin.decorators import render_to
+from spicy.core.profile.decorators import is_staff
 
 import re
 from datetime import datetime, timedelta

@@ -14,9 +14,10 @@ from spicy.core.profile.decorators import is_staff
 
 from .common import NavigationFilter
 from .decorators import render_to, ajax_request
-from .forms import ContentBlockForm, CreateContentBlockForm
 from . import defaults as sk_defaults
-from .models import ContentBlock
+
+#from .forms import ContentBlockForm, CreateContentBlockForm
+#from .models import ContentBlock
 
 
 @is_staff(required_perms='siteskin.add_contentblock')
@@ -109,7 +110,7 @@ def edit_by_slug(request, slug):
 
 
 #XXX refactoring
-from xtag.models import Tag
+#from xtag.models import Tag
 @is_staff(required_perms='siteskin')
 @render_to('siteskin/admin/list.html')
 def block_list(request, year=None, month=None, day=None):

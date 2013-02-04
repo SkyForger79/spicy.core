@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 import re
 import datetime as dt
-from .utils import get_concrete_profile
+
 from copy import copy
 from captcha.conf.settings import get_challenge, CAPTCHA_FLITE_PATH
 from captcha.models import CaptchaStore
 from captcha.fields import CaptchaField, CaptchaTextInput, ImproperlyConfigured
 
+from django.conf import settings
 from django import forms
 from django.contrib.auth.forms import AdminPasswordChangeForm
 from django.contrib.auth.forms import AuthenticationForm
@@ -19,6 +20,8 @@ from django.utils.translation import ugettext_lazy as _
 
 
 from spicy.core.siteskin.widgets import LabledRegexField, LabledEmailField
+
+from .utils import get_concrete_profile
 
 NAME_RE = re.compile(
     u'^[\\.\\-_a-zA-Z0-9абвгдеёжзийклмнопрстуфхцчшщъыьэюя'
@@ -331,8 +334,8 @@ class SignupForm(forms.Form, ValidateEmailMixin):
             #    profile.screenname, vocabulary='persons', user=profile)
             #tag.save()
 
-            if 'spicy.apps.mediacenter' in settings.INSTALLED_APPS:
-                from spicy.apps.mediacenter.models import Library
+            if 'mediacenter' in settings.INSTALLED_APPS:
+                from mediacenter.models import Library
                 # add medialibrary for the profile userpics
                 library = Library.objects.create(
                     title="Userpics for %s" % profile.screenname,

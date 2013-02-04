@@ -75,7 +75,7 @@ class ProfileManager(UserManager):
                 username)[:USERNAME_MAX_LENGTH]
 
             try:
-                Profile.all_objects.get(username=final_username)
+                Profile.objects.get(username=final_username)
             except Profile.DoesNotExist:
                 break
             else:

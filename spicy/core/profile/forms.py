@@ -116,7 +116,7 @@ class PublicProfileForm(forms.ModelForm):
     def clean_username(self):
         username = self.cleaned_data.get('username', '').strip()
         try:
-            Profile.all_objects.exclude(pk=self.instance.id).get(
+            Profile.objects.exclude(pk=self.instance.id).get(
                 username=username)
         except Profile.DoesNotExist:
             return username
@@ -263,7 +263,7 @@ class SetEmailForm(forms.Form):
         email = self.cleaned_data['email']
         if email:
             try:
-                if Profile.all_objects.filter(email__iexact=email).count():
+                if Profile.objects.filter(email__iexact=email).count():
                     raise forms.ValidationError(_(u'This address is already used'))
             except Profile.DoesNotExist:
                 return email
@@ -411,7 +411,7 @@ class CreateProfileForm(forms.ModelForm, ValidateEmailMixin):
 
     def clean_username(self):
         username = self.cleaned_data.get('username', '').strip()
-        if Profile.all_objects.filter(username=username).exists():
+        if Profile.objects.filter(username=username).exists():
             raise forms.ValidationError(_("Username must be unique."))
         else:
             return username
@@ -508,14 +508,14 @@ class SocialProfileUpdateForm(forms.ModelForm):
 
     def clean_username(self):
         username = self.cleaned_data['username']
-        if Profile.all_objects.filter(username=username).exclude(
+        if Profile.objects.filter(username=username).exclude(
             pk=self.instance.pk).exists():
             raise forms.ValidationError(_('Username must be unique'))
         return username
 
     def clean_email(self):
         email = self.cleaned_data['email']
-        if Profile.all_objects.filter(email=email).exclude(
+        if Profile.objects.filter(email=email).exclude(
             pk=self.instance.pk).exists():
             raise forms.ValidationError(
                 _(u'This address already belongs to other user'))

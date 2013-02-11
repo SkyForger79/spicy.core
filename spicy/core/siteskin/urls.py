@@ -3,9 +3,13 @@ from django.conf.urls.defaults import patterns, url, include
 from . import defaults
 
 public_urls = patterns(
+    '',
+    url(r'^$', defaults.SITESKIN_INDEX_VIEW, {'template': 'index.html'}, name='index'),
+)
+
+public_urls += patterns(
     'spicy.core.siteskin.views',
 
-    url(r'^$', 'render', {'template': 'index.html'}, name='index'),
     url(r'^robots.txt$', 'render',
 		{'template': 'robots.txt', 'mimetype': 'text/plain'},
 		name='robots.txt'),

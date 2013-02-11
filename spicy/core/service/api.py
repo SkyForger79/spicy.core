@@ -1,44 +1,30 @@
 import os
 import sys
-import traceback
 from itertools import chain
 
 from django.conf import settings
 from django.conf.urls.defaults import patterns, url
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ImproperlyConfigured
-from django.core.management.color import color_style
 from django.db import transaction
 from django.db.utils import DatabaseError
 from django.utils.translation import ugettext_lazy as _
+from django.core.exceptions import ImproperlyConfigured
+from django.core.management.color import color_style
+
+style = color_style()
 
 from spicy.core.service.forms import ServiceForm, BillingProviderForm
 from spicy.core.service.utils import MethodDecoratorAdaptor
 
 from spicy.core.siteskin.decorators import render_to, ViewInterface
-from spicy.utils import cached_property
+from spicy.utils import cached_property, load_module
 
-style = color_style()
+
 
 GENERIC_CONSUMER = 'GENERIC_CONSUMER'
 TEXT_INCLUDE_TEMPLATE = "[inc pk='%s' service='%s']"
 
 
-from django.utils.importlib import import_module
-def load_module(path, config='SERVICE'):
-    module, attr = path.rsplit('.', 1)
-    try:
-        mod = import_module(module)
-        return getattr(mod, attr)
-    except ImportError, e:
-        sys.stderr.write(traceback.format_exc())
-        raise ImproperlyConfigured(
-            'Error importing module %s: "%s"' % (module, e))
-    except ValueError, e:
-        sys.stderr.write(traceback.format_exc())
-        raise ImproperlyConfigured(
-            'Error importing module. Is %s a correctly defined list or tuple?'
-            % config)
 
 
 class WrongServiceAPI(Exception):

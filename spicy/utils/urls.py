@@ -4,7 +4,7 @@ from django.conf.urls.defaults import include, patterns, url
 
 def add_optional_urls(urlpatterns, apps):
     for app in apps:        
-        full_app_name = 'spicy.apps.%s' % app
+        full_app_name = '%s' % app
         if full_app_name in settings.INSTALLED_APPS:
             urlpatterns += patterns(
                 '',

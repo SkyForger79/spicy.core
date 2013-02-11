@@ -11,7 +11,9 @@ from django.core.exceptions import PermissionDenied
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.shortcuts import get_object_or_404
+
 from spicy.core.service import api
+from spicy.utils import load_module
 from spicy.core.siteskin.decorators import ajax_request, render_to, multi_view
 
 from . import defaults, models, utils
@@ -20,7 +22,7 @@ from .forms import SignupForm, LoginForm
 
 Profile = utils.get_concrete_profile()
 
-CUSTOM_USER_SIGNUP_FORM = getattr(settings, 'CUSTOM_USER_SIGNUP_FORM', SignupForm)
+CUSTOM_USER_SIGNUP_FORM = getattr(settings, 'CUSTOM_USER_SIGNUP_FORM', 'spicy.core.profile.forms.SignupForm')
 
 class ExtProfileProvider(api.Provider):
     model = 'spicy.core.profile.models.ExtProfileProviderModel'
@@ -252,7 +254,7 @@ class ExtProfileService(api.Interface):
         is_blacklisted = real_ip and models.BlacklistedIP.objects.filter(
             ip=real_ip).exists()
         if request.method == "POST":
-            form = CUSTOM_USER_SIGNUP_FORM(request.POST)
+            form = load_module(CUSTOM_USER_SIGNUP_FORM)(request.POST)
             redirect = reverse('profile:public:email-notify')
 
             if not is_blacklisted and form.is_valid():

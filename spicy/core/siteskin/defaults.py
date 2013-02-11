@@ -34,3 +34,5 @@ MAX_MESSAGE_STRING_LENGTH = 1000
 
 ENABLE_INSERT_BLOCK = getattr(settings, 'ENABLE_INSERT_BLOCK', True)
 INSERT_BLOCK_DEFAULT_SIZE = getattr(settings, 'INSERT_BLOCK_DEFAULT_SIZE', 500)
+
+SITESKIN_INDEX_VIEW = getattr(settings, 'SITESKIN_INDEX_VIEW', 'spicy.core.siteskin.views.render')

@@ -140,19 +140,19 @@ class ProfileBase(User):
     def screenname(self):
         # Social auth sets a string value to self.fullname, here's a
         # workaround for this shit.
-        if callable(self.fullname):
-            return self.fullname()
-        else:
+        if hasattr(self, 'fullname'):
             return self.fullname
+        return self.get_fullname()
 
-    def fullname(self):
-        name =  getattr(self, 'full_name', self.get_full_name())
-        if not unicode(name).strip():
+    def get_fullname(self):        
+        name = self.first_name + ' ' + self.last_name
+        if not name.strip():
             name = self.username
         name = escape(name)
         return name
 
-    __unicode__ = fullname
+    def __unicode__(self):
+        return self.screenname
        
     def activate(self):
         self.is_active = True
@@ -286,6 +286,7 @@ class ProfileBase(User):
         for comment in user_comments:
             comment.delete()
         super(Profile, self).delete(*args, **kwargs)
+
 
     @models.permalink
     def get_absolute_url(self):

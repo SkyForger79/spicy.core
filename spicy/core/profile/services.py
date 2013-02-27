@@ -175,6 +175,10 @@ class ExtProfileService(api.Interface):
             request.session.get(
                 REDIRECT_FIELD_NAME,
                 request.session.get('newuser-next', '')))
+        try:
+            del request.session[REDIRECT_FIELD_NAME]
+        except KeyError:
+            pass
 
         if request.user.is_authenticated():
             return dict(

@@ -306,8 +306,7 @@ def signin(request):
         redirect_to = request.REQUEST.get(
             REDIRECT_FIELD_NAME, request.session.get(REDIRECT_FIELD_NAME))
         return HttpResponseRedirect(
-            redirect_to or
-            reverse("profile:public:index", args=[request.user.username]))
+            redirect_to or defaults.DEFAULT_PROFILE_URL(request.user))
 
     result = api.register['profile'].login(request)
     if result['status'] == 'ok':
@@ -324,8 +323,7 @@ def signup(request):
         redirect_to = request.REQUEST.get(
             REDIRECT_FIELD_NAME, request.session.get(REDIRECT_FIELD_NAME))
         return HttpResponseRedirect(
-            redirect_to or
-            reverse("profile:public:index", args=[request.user.username]))
+            redirect_to or defaults.DEFAULT_PROFILE_URL(request.user))
 
     result = api.register['profile'].register(request)
     if result['status'] == 'ok':
@@ -341,10 +339,10 @@ def login_widget(request):
     if request.user.is_authenticated():
         redirect_to = request.REQUEST.get(
             REDIRECT_FIELD_NAME, request.session.get(REDIRECT_FIELD_NAME))
+
         return {
             'redirect_now': True,
-            'redirect': redirect_to or reverse(
-                "profile:public:index", args=[request.user.username])}
+            'redirect': redirect_to or defaults.DEFAULT_PROFILE_URL(request.user)}
 
     result = api.register['profile'].login(request)
     if result['status'] == 'ok':
@@ -359,8 +357,7 @@ def registration_widget(request):
             REDIRECT_FIELD_NAME, request.session.get(REDIRECT_FIELD_NAME))
         return {
             'redirect_now': True,
-            'redirect': redirect_to or reverse(
-                "profile:public:index", args=[request.user.username])}
+            'redirect': redirect_to or defaults.DEFAULT_PROFILE_URL(request.user)}
 
     result = api.register['profile'].register(request)
     if result['status'] == 'ok':

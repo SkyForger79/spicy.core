@@ -100,3 +100,5 @@ MAX_INVITES = getattr(settings, 'MAX_INVITES', 10)
 
 TAG_EDIT_MIN_SCORE = getattr(settings, 'TAG_EDIT_MIN_SCORE', 10)
 
+DEFAULT_PROFILE_URL = getattr(
+    settings, 'DEFAULT_PROFILE_URL', lambda u: u.get_absolute_url())

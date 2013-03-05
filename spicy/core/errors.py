@@ -5,5 +5,9 @@ class EmptyModelError(BaseException):
         self.app = app
         self.model = model
 
-    def __str__(self):
-        return unicode(_('<div class="spicy-error">Has no objects for rendering request: <b>%s.%s</b>. <a href="/admin/">Switch to the admin interface for content management</a></div>'%(self.app, self.model)))
+    def __unicode__(self):
+        return unicode(
+            _('<div class="spicy-error">Has no objects for rendering '
+              'request: <b>%s</b>. <a href="/admin/">Switch to the '
+              'admin interface for content management</a></div>' %
+              '.'.join(self.app, self.model)))

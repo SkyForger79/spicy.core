@@ -317,6 +317,9 @@ class SignupForm(forms.Form, ValidateEmailMixin):
                 send_email=True,
                 next_url=next_url,
                 realhost=realhost)
+            # TODO add additional form fields while creating user with real form data post
+            # first_name and last_name for example, phone, address may be...
+            
             profile.sites.add(*Site.objects.all())
 
             profile.accept_agreement = self.cleaned_data['accept_agreement']

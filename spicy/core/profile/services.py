@@ -271,7 +271,7 @@ class ExtProfileService(api.Interface):
                 request.session['profile_email'] = new_profile.email
 
         else:
-            form = SignupForm()
+            form = load_module(CUSTOM_USER_SIGNUP_FORM)()
             request.session.set_test_cookie()
 
             # Display the login form and handle the login action.

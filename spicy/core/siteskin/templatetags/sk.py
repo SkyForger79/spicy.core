@@ -21,7 +21,7 @@ register = Library()
 def choose_render_method(request, url, get_forwarding=False):
     if not url:
         return '<!-- NO URL GIVEN -->'
-    
+
     if defaults.USE_RENDER_FROM_RESPONSE_LIKE_SSI:
         return get_render_from_response(request, url, get_forwarding=get_forwarding)
 
@@ -435,3 +435,8 @@ def insert_block(parser, token):
 @register.filter
 def is_even(value):
     return value % 2 == 0
+
+
+@register.filter
+def head(value):
+    return value.split('.', 1)[0].split('-', 1)[0].split('_', 1)[0]

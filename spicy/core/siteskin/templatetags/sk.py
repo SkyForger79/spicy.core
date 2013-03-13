@@ -439,4 +439,4 @@ def is_even(value):
 
 @register.filter
 def head(value):
-    return value.split('.', 1)[0].split('-', 1)[0].split('_', 1)[0]
+    return value and value.split('.', 1)[0].split('-', 1)[0].split('_', 1)[0]

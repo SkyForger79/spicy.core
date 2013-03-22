@@ -75,8 +75,8 @@ class ProfileManager(UserManager):
                 username)[:USERNAME_MAX_LENGTH]
 
             try:
-                Profile.objects.get(username=final_username)
-            except Profile.DoesNotExist:
+                User.objects.get(username=final_username)
+            except User.DoesNotExist:
                 break
             else:
                 # User with same username already exists, generate a unique
@@ -129,7 +129,7 @@ class ProfileBase(User):
     class Meta:
         abstract = True
         ordering = ['-id']
-        db_table = 'auth_profile'
+        #db_table = 'auth_profile'
         permissions = (
             ('view_profile', 'Can view user profiles'),
             ('moderate_profile', 'Can moderate profiles'),
@@ -293,8 +293,8 @@ class ProfileBase(User):
         return 'profile:public:index', (self.username,), {}
 
 
-class Profile(ProfileBase):
-    pass
+#class Profile(ProfileBase):
+#    pass
 
 
     # Signals for permission cache invalidation.
@@ -321,7 +321,7 @@ class AnonymousUser(BasicAnonymousUser):
 
 class StaffAlias(models.Model):
     fullname = models.CharField(max_length=255)
-    profile = models.ForeignKey(Profile, unique=True)
+    profile = models.ForeignKey(User, unique=True)
 
     class Meta:
         db_table = 'auth_profile_alias'
@@ -336,9 +336,9 @@ class BlacklistedIP(models.Model):
     ip = models.IPAddressField(_('IP address'))
     date_banned = models.DateTimeField(_('Date banned'), auto_now_add=True)
     set_by = models.ForeignKey(
-        Profile, related_name='in_blacklisted_ips', verbose_name=_('Set by'))
+        User, related_name='in_blacklisted_ips', verbose_name=_('Set by'))
     set_for = models.ForeignKey(
-        Profile, null=True, related_name='created_blacklisted_ips',
+        User, null=True, related_name='created_blacklisted_ips',
         verbose_name=_('Set for'))
 
     class Meta:

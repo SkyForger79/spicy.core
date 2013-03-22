@@ -58,7 +58,7 @@ def server_error(request, template_name='%s/500.html' % defaults.SITESKIN):
         sys.stderr.write(style.ERROR('handler505: %s %s %s %s\n'%(dt.now(), request.GET, request.POST, request.get_full_path())))
 
     t = loader.get_template(template_name) # You need to create a 500.html template.
-    return http.HttpResponseServerError(t.render(Context({})))
+    return http.HttpResponseServerError(t.render(RequestContext(request)))
 
 
 """

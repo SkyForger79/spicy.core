@@ -16,23 +16,17 @@ CACHE_TIMEOUT = getattr(settings, 'CACHE_TIMEOUT', 1*60)
 
 DEBUG_ERROR_PAGES = getattr(settings, 'DEBUG_ERROR_PAGES', False)
 
-ENABLE_BANNER_BLOCKS = getattr(settings, 'ENABLE_BANNER_BLOCKS', True)
-ENABLE_COUNTERS = getattr(settings, 'ENABLE_COUNTERS', True)
-
-ENABLE_FINCAKE = getattr(settings, 'ENABLE_FINCAKE', True)
-ENABLE_SJ_ADV = getattr(settings, 'ENABLE_SJ_ADV', True)
-ENABLE_SMI2_ADV = getattr(settings, 'ENABLE_SMI2_ADV', True)
-
-USE_RENDER_FROM_RESPONSE_LIKE_SSI = getattr(settings, 'USE_RENDER_FROM_RESPONSE_LIKE_SSI', True)
+DEFAULT_TEMPLATE = getattr(settings, 'DEFAULT_TEMPLATE', '/')
 
 SITEMAP_URL = getattr(settings, 'SITEMAP_URL', '/')
-
 SITEMAP_GZIP_COMPRESSION = 6 # Must be in 1-9 interval, 1 is fastest.
 
-FINCAKE_TIMEOUT = getattr(settings, 'FINCAKE_TIMEOUT', 2)
 MAX_MESSAGE_STRING_LENGTH = 1000
 
 ENABLE_INSERT_BLOCK = getattr(settings, 'ENABLE_INSERT_BLOCK', True)
 INSERT_BLOCK_DEFAULT_SIZE = getattr(settings, 'INSERT_BLOCK_DEFAULT_SIZE', 500)
 
 SITESKIN_INDEX_VIEW = getattr(settings, 'SITESKIN_INDEX_VIEW', 'spicy.core.siteskin.views.render')
+
+# == move contetn block
+USE_RENDER_FROM_RESPONSE_LIKE_SSI = getattr(settings, 'USE_RENDER_FROM_RESPONSE_LIKE_SSI', True)

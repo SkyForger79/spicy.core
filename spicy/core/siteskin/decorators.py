@@ -18,9 +18,10 @@ class JsonResponse(HttpResponse):
     response with ``application/json`` mimetype.
     """
     def __init__(self, data):
-        print(data)
         super(JsonResponse, self).__init__(
             content=simplejson.dumps(data, cls=DjangoJSONEncoder), mimetype='application/json')
+        if not 'Content-Length' in self:
+            self['Content-Length'] = len(self.content)
 
 
 # TODO make tests for this "view interface" implementation

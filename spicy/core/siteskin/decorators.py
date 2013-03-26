@@ -1,5 +1,6 @@
 from django.core.cache import cache
 from django.core.management.color import color_style
+from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -17,8 +18,9 @@ class JsonResponse(HttpResponse):
     response with ``application/json`` mimetype.
     """
     def __init__(self, data):
+        print(data)
         super(JsonResponse, self).__init__(
-            content=simplejson.dumps(data), mimetype='application/json')
+            content=simplejson.dumps(data, cls=DjangoJSONEncoder), mimetype='application/json')
 
 
 # TODO make tests for this "view interface" implementation

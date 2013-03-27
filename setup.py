@@ -1,14 +1,19 @@
-# -*- coding: utf-8 -*-
-"""Setup file for easy installation"""
+#!/usr/bin/env python
+"""
+Setup file for easy Spicy installation
+"""
+
+from __future__ import unicode_literals
+
 from os.path import join, dirname
 from setuptools import setup, find_packages
+
 
 version = __import__('spicy').__version__
 
 LONG_DESCRIPTION = """
-Django extension toolkit
+Spicy toolkit main package
 """
-
 
 def long_description():
     """Return long description from README.rst if it's present
@@ -18,43 +23,42 @@ def long_description():
     except IOError:
         return LONG_DESCRIPTION
 
+setup(
+    name='spicy',
+    version=version,
+    author='Burtsev Alexander',
+    author_email='eburus@gmail.com',
+    description='Spicy',
+    license='BSD',
+    keywords='django, cms',
+    url='',
 
-setup(name='spicy',
-      version=version,
-      author='Burtsev Alexander',
-      author_email='eburus@gmail.com',
-      description='Spicy',
-      license='BSD',
-      keywords='django, cms',
-      url='',
-      scripts = ('bin/spicy.py',),      
-      #download_url='',
+    packages=find_packages(),
+    # package_dir={'': 'src/spicy'},
+    include_package_data=True,
+    zip_safe=False,
 
-      packages=find_packages(),
-      include_package_data=True,
-      zip_safe=False,
+    long_description=long_description(),
 
-      #tests_require=[
-      #  'django>=1.3,<1.5',
-      #  ],
-      #test_suite='runtests.runtests',
-      
-      long_description=long_description(),
-      install_requires=['django==1.4.3',
-                        'django-nose',
-                        'rudolf',
-                        'pytils',
-                        'fabric',
-                        'pytz',
-                        'raven',
-                        ],
+    install_requires=[
+        'setuptools',
+        'django==1.4.3',
+        'pytils',
+        'fabric',
+        'pytz',
+        'raven',
+        'python-memcached',
+    ],
 
-      classifiers=['Framework :: Django',
-                   'Development Status :: 4 - Beta',
-                   'Topic :: Internet',
-                   'License :: OSI Approved :: BSD License',
-                   'Intended Audience :: Developers',
-                   'Environment :: Web Environment',
-                   'Programming Language :: Python :: 2.5',
-                   'Programming Language :: Python :: 2.6',
-                   'Programming Language :: Python :: 2.7'])
+    classifiers=[
+        'Framework :: Django',
+        'Development Status :: 4 - Beta',
+        'Topic :: Internet',
+        'License :: OSI Approved :: BSD License',
+        'Intended Audience :: Developers',
+        'Environment :: Web Environment',
+        'Programming Language :: Python :: 2.5',
+        'Programming Language :: Python :: 2.6',
+        'Programming Language :: Python :: 2.7',
+    ]
+)

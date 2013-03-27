@@ -50,6 +50,12 @@ setup(
         'python-memcached',
     ],
 
+    entry_points = {
+        'console_scripts': [
+            'spicy = spicy:main',
+        ],
+    },
+
     classifiers=[
         'Framework :: Django',
         'Development Status :: 4 - Beta',

@@ -102,7 +102,7 @@ EMAIL_PORT = 25
 # RMANAGER
 
 REPOSITORY_TYPE = 'hg'
-APP_SOURCE_PATH = 'src/'
+APP_SOURCE_PATH = 'apps/'
 ADDITIONAL_PYTHON_PATH = 'dev_apps/'
 
 ###################

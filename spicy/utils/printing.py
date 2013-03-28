@@ -32,7 +32,7 @@ def prefix_message(message, prefix='~> '):
     Returns:
         str. Prefixed message
     """
-    return '{msg}{pfx}'.format(msg=message, pfx=prefix)
+    return '{pfx}{msg}'.format(pfx=prefix, msg=message)
 
 
 # So, we need just a little copy-paste but still have readable
@@ -44,19 +44,19 @@ def print_error(message):
     Args:
         message (str): Message to print
     """
-    print(prefix_message(paint_text(message, red)))
+    print(paint_text(prefix_message(message), red))
 
 
 def print_warning(message):
-    print(prefix_message(paint_text(message, red)))
+    print(paint_text(prefix_message(message), yellow))
 
 
 def print_info(message):
-    print(prefix_message(paint_text(message, red)))
+    print(paint_text(prefix_message(message), cyan))
 
 
 def print_success(message):
-    print(prefix_message(paint_text(message, red)))
+    print(paint_text(prefix_message(message), green))
 
 
 def print_text(message):

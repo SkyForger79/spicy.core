@@ -2,10 +2,10 @@ import os, sys
 from config.local import ADDITIONAL_PYTHON_PATH
 
 PROJECT_ROOT = os.path.abspath('.')
-sys.path.append(os.path.abspath('./src'))
+sys.path.append(os.path.abspath('./apps'))
 sys.path.insert(0, os.path.join(PROJECT_ROOT, ADDITIONAL_PYTHON_PATH))
 
-os.environ['DJANGO_SETTINGS_MODULE'] = 'src.settings'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'apps.settings'
 
 from django.conf import settings
 from spicy.core.service import api

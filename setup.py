@@ -52,7 +52,7 @@ setup(
 
     entry_points = {
         'console_scripts': [
-            'spicy = spicy:main',
+            'spicy = spicy:handle_command_line',
         ],
     },
 

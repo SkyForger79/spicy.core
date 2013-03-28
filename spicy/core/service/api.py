@@ -1,7 +1,6 @@
 import os
 import sys
 from itertools import chain
-
 from django.conf import settings
 from django.conf.urls.defaults import patterns, url
 from django.contrib.contenttypes.models import ContentType
@@ -10,34 +9,29 @@ from django.db.utils import DatabaseError
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ImproperlyConfigured
 from django.core.management.color import color_style
-
-style = color_style()
-
 from spicy.core.service.forms import ServiceForm, BillingProviderForm
 from spicy.core.service.utils import MethodDecoratorAdaptor
-
 from spicy.core.siteskin.decorators import render_to, ViewInterface
 from spicy.utils import cached_property, load_module
 
 
+style = color_style()
 
 GENERIC_CONSUMER = 'GENERIC_CONSUMER'
 TEXT_INCLUDE_TEMPLATE = "[inc pk='%s' service='%s']"
 
 
-
-
 class WrongServiceAPI(Exception):
-    """Your service must inherit ServiceInterface.
-    """
+    "Your service must inherit ServiceInterface."
+
 
 class ServiceDoesNotExist(Exception):
-    """Your service must inherit ServiceInterface.
-    """
+    "Your service must inherit ServiceInterface."
+
 
 class ProviderSchemaError(Exception):
-    """Schema is wrong or not defined.
-    """
+    "Schema is wrong or not defined."
+
 
 class ProviderMetaUrlError(Exception):
     pass
@@ -63,6 +57,7 @@ class MetaUrl:
     def __repr__(self):
         return '<%s :: url[%s]>' % (self.name, self.pattern)
 
+
 # TODO make tests for this meta implementation.
 class ProviderMeta(type):
     def __new__(mcs, name, bases, attrs):
@@ -77,21 +72,21 @@ class ProviderMeta(type):
                 if name == '__call__':
                     url_name = ''
                 url_pattern_base = r'^%(service_name)s' + url_name
-                url = MetaUrl(
+                meta_url = MetaUrl(
                     url_pattern_base +
                     '/(?P<consumer_type>[\w]+)/(?P<consumer_id>[\d]+)/$', inst,
                     name, is_public=render_interface.is_public)
                 if inst.url_pattern is not None:
-                    url = MetaUrl(
-                        url_pattern_base+inst.url_pattern, inst, name,
+                    meta_url = MetaUrl(
+                        url_pattern_base + inst.url_pattern, inst, name,
                         is_public=render_interface.is_public)
 
-                if urls.count(url):
+                if urls.count(meta_url):
                     raise ProviderMetaUrlError(
                         "You defined the same url pattern for the different "
-                        "provider's views. %s, %s" %(url, urls))
+                        "provider's views. %s, %s" % (meta_url, urls))
                 else:
-                    urls.append(url)
+                    urls.append(meta_url)
 
         return super(ProviderMeta, mcs).__new__(mcs, name, bases, attrs)
 
@@ -136,14 +131,14 @@ class Provider(object):
             else:
                 name = service.name + '-' + name
 
-            if isinstance(method, MethodDecoratorAdaptor):                
+            if isinstance(method, MethodDecoratorAdaptor):
                 method.func.set_instance(self)
             else:
                 method.set_instance(self)
-            self.urls.append(
-                (url(pattern % {'service_name':service.name}, method,
-                     name=name),
-                 is_public))
+            self.urls.append((
+                    url(pattern % {'service_name': service.name}, method,
+                        name=name),
+                    is_public))
 
     def load_module(self, path):
         # XXX
@@ -154,24 +149,24 @@ class Provider(object):
         return (
             instance if instance is not None else
             self.create_instance(consumer, **kwargs))
-            
+
     def create_instance(self, consumer, **kwargs):
         ctype = ContentType.objects.get_for_model(consumer)
         return self.model.objects.create(
-            service=self.service.instance, consumer_id=consumer.id, 
+            service=self.service.instance, consumer_id=consumer.id,
             consumer_type=ctype, **kwargs)
 
     def get_instance(self, consumer, **kwargs):
-        is_quiet = kwargs.pop('_quiet', False)        
+        is_quiet = kwargs.pop('_quiet', False)
         try:
-            if not isinstance(consumer, basestring):                                
+            if not isinstance(consumer, basestring):
                 ctype = ContentType.objects.get_for_model(consumer)
                 return self.model.objects.get(
                     consumer_type=ctype, consumer_id=consumer.id, **kwargs)
-                
+
             elif consumer == GENERIC_CONSUMER:
-                return self.model.objects.get(**kwargs)        
-            
+                return self.model.objects.get(**kwargs)
+
         except self.model.MultipleObjectsReturned:
             # XXX, required for xtag service debugging.
             # dublications delete then, open consumer(document) for editing.
@@ -181,7 +176,7 @@ class Provider(object):
                     self.model.objects.filter(
                         consumer_type__model=ctype, consumer_id=consumer.id,
                         **kwargs))
-        
+
         except self.model.DoesNotExist:
             if not is_quiet:
                 print '@Error: instance not found:', consumer, kwargs
@@ -198,7 +193,7 @@ class Provider(object):
                 kwargs['consumer_type'] = ctype
                 kwargs['consumer_id'] = consumer.id
 
-        return self.model.objects.filter(**kwargs)        
+        return self.model.objects.filter(**kwargs)
 
     def inline_formset(self, request, consumer, prefix='provider'):
         raise NotImplemented()
@@ -208,7 +203,6 @@ class Provider(object):
         return {'form': (self.create_form or self.form)(prefix='provider')}
 
     def create_inline_form(self, request, consumer, prefix='provider'):
-        message = ''
         post_data = request.POST.copy()
 
         if request.method == 'POST':
@@ -222,18 +216,13 @@ class Provider(object):
             if self.create_form is not None:
                 return self.create_form(post_data, prefix=prefix)
             return self.form(post_data, prefix=prefix)
-            
 
     def edit_inline_form(self, request, consumer, prefix='provider'):
         if request.method == 'POST':
             instance = self.get_instance(consumer)
-            return self.form(post_data, prefix=prefix, instance=instance)
-
-    
+            return self.form(request.POST, prefix=prefix, instance=instance)
 #         # XXX
 #         if request.method == 'POST':
- 
-
 #             form = self.form(request.POST, instance=provider.instance)
 #             if form.is_valid():
 #                 form.save()
@@ -242,7 +231,7 @@ class Provider(object):
 #         return provider
 
     # TODO Use decorator render_to and ajax_request for tests.
-    #@is_staff
+    #@is_staffx
     @render_to('service/admin/service_preview.html', url_pattern='/$')
     def __call__(self, request):
         return {'provider': self}
@@ -266,7 +255,7 @@ class Interface(object):
     @label:
     @model: 'app.models.Model'
     @form:
-    @provider_schema: 
+    @provider_schema:
         Multi provider (example):
             provider_schema = dict(
                 consumer_content_type_name=ProviderClassOne,
@@ -274,24 +263,18 @@ class Interface(object):
                 GENERIC_CONSUMER=ProviderClass
             )
     def get(...)
-
-        
     """
     stype = None
-
     name = 'service'
     label = _('Service title')
-
     provider_schema = Provider
-
     model = 'spicy.core.service.models.Service'
     form = ServiceForm
-
     create_template = None
     template = create_template
-
     is_default = True
-    
+    has_rss = False
+
     @transaction.commit_on_success
     def __init__(self):
         self.__providers = None
@@ -301,7 +284,7 @@ class Interface(object):
             raise ProviderSchemaError(
                 'Provider schema is not defined correctly.')
         self.model = load_module(self.model)
-        
+
         self.instance, created = self.model.objects.get_or_create(
             name=self.name)
 
@@ -310,11 +293,10 @@ class Interface(object):
 
         # TODO is service form required?
         self.form = self.form(instance=self.instance)
-                
         self.__providers = dict(
             [(ctype, prv(self))
              for ctype, prv in self.provider_schema.iteritems()])
-        
+
     def __getitem__(self, ctype):
         """Get provider instance for the content_type.
         """
@@ -322,14 +304,13 @@ class Interface(object):
             return self.__providers[ctype]
         elif GENERIC_CONSUMER in self.__providers:
             return self.__providers[GENERIC_CONSUMER]
-        
+
         raise ProviderSchemaError(
             'Provider is not defined for the ContentType "%s"'
             ' service "%s", schema "%s"'
             % (ctype, self.label, self.provider_schema))
 
-
-    def get_provider(self, consumer): 
+    def get_provider(self, consumer):
         """
         Get provider instance for the consumer.
 
@@ -344,7 +325,7 @@ class Interface(object):
             return self[consumer]
         elif GENERIC_CONSUMER in self.__providers:
             return self[GENERIC_CONSUMER]
-        
+
         raise ProviderSchemaError(
             'Provider is not defined for the ContentType "%s"'
             ' service "%s", schema "%s"'
@@ -356,7 +337,7 @@ class Interface(object):
             for prv in self.__providers.itervalues()]
 
     @property
-    def content_templates(self):        
+    def content_templates(self):
         templates = [
             (tmpl, tmpl) for tmpl in os.listdir(
                 settings.TEMPLATE_DIRS[0] + self.PROVIDER_TEMPLATES_DIR)]
@@ -366,12 +347,12 @@ class Interface(object):
     # TODO default documentation view for the service
     # register it like a request controller
     # service:admin:service_name
-    # or use for public 
+    # or use for public
     def __call__(self, request):
         raise NotImplementedError()
 
     def remove(self, consumer):
-        raise NotImplemented    
+        raise NotImplemented
 
     def enable_site(self, site):
         self.instance.site.add(site)
@@ -381,7 +362,7 @@ class Interface(object):
 
     def get_sites(self):
         return self.instance.site.all()
-        
+
     def is_free(self):
         return self.instance.is_free()
 
@@ -398,10 +379,11 @@ class ServiceList(object):
         return set(filter(lambda srv: srv.is_free(), self.services))
 
     def prepaid(self):
-        return self.services^self.free()
+        return self.services ^ self.free()
 
     def with_statistic(self):
-        return set(filter(lambda srv: hasattr(srv, 'statistic_types'), self.services))
+        return set(
+            [srv for srv in self.services if hasattr(srv, 'statistic_types')])
 
     def __iter__(self):
         return iter(self.services)
@@ -419,11 +401,11 @@ class Register(dict):
     def add(self, path_to_srv_interface):
         interface = load_module(path_to_srv_interface)
         if not issubclass(interface, Interface):
-            raise WrongServiceAPI, \
-                'You must inherit services.Interface at first.'
+            raise WrongServiceAPI(
+                'You must inherit services.Interface at first.')
 
         # NOT working
-        if self.has_key(interface.name):
+        if interface.name in self:
             return
 
         try:
@@ -435,10 +417,9 @@ class Register(dict):
                     'Can not create service interface "%s"\n' %
                     interface.name))
             transaction.rollback()
-        
+
     def urls(self, is_public=False):
         # What follows below is not LISP :-P
-        
         return patterns(
             '',
             *chain(*(chain(*(srv.urls(is_public=is_public)
@@ -450,7 +431,7 @@ class Register(dict):
             self.get_list()
 
         except KeyError:
-            raise ServiceDoesNotExist, service_name
+            raise ServiceDoesNotExist(service_name)
 
     def get_list(self, consumer=None, stype=None):
         if consumer is not None:
@@ -473,7 +454,7 @@ class Register(dict):
         try:
             return dict.__getitem__(self, name)
         except KeyError:
-            raise ServiceDoesNotExist, name
+            raise ServiceDoesNotExist(name)
 
 
 register = Register()

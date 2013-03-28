@@ -1,10 +1,7 @@
+from . import models
 from django import forms
 from django.contrib.sites.models import Site
 from django.utils.translation import ugettext_lazy as _
-
-from spicy.core.service.models import Service, BillingProviderModel,  ProviderModel
-from spicy.core.service.models import ContentProviderModel
-
 
 
 class ServiceForm(forms.ModelForm):
@@ -14,12 +11,12 @@ class ServiceForm(forms.ModelForm):
         queryset=Site.objects.all())
 
     class Meta:
-        model = Service
+        model = models.Service
         exclude = ('name', 'date_joined', 'is_default', 'description')
 
 
 class ProviderCreateForm(forms.ModelForm):
-    # TODO: refactoring 
+    # TODO: refactoring
     # def save(self, *args, **kwargs):
 #         provider = self._meta.model.objects.create(
 #             service=self.cleaned_data['service'],
@@ -28,13 +25,13 @@ class ProviderCreateForm(forms.ModelForm):
 #         return provider
 
     class Meta:
-        model = ProviderModel
-        fields = ('service', 'consumer_id', 'consumer_type',)
+        model = models.ProviderModel
+        fields = ('service', 'consumer_id', 'consumer_type')
 
 
 class ProviderForm(forms.ModelForm):
     class Meta:
-        model = ProviderModel
+        model = models.ProviderModel
 
 
 class ContentProviderForm(forms.ModelForm):
@@ -50,12 +47,12 @@ class ContentProviderForm(forms.ModelForm):
             api.register[self.instance.service.name].content_templates
 
     class Meta:
-        model = ContentProviderModel
+        model = models.ContentProviderModel
 
 
 class BillingProviderForm(forms.ModelForm):
     class Meta:
-        model = BillingProviderModel
+        model = models.BillingProviderModel
         exclude = ('date_joined',)
         widgets = {
             #'service': forms.widgets.HiddenInput(),

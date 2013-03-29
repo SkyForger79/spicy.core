@@ -97,7 +97,7 @@ class Provider(object):
     """
     __metaclass__ = ProviderMeta
     service = None
-    model = 'service.models.ProviderTestCaseModel'
+    model = 'service.models.ProviderTestCaseModel' # TODO refactoring using get_custom_model_class
 
     create_form_mod = None
     form_mod = None

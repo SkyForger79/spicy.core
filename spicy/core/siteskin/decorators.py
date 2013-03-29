@@ -6,7 +6,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils import simplejson
 
-from spicy.core.siteskin import defaults
+from . import defaults
 from spicy.utils import make_cache_key
 
 style = color_style()

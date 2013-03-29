@@ -121,7 +121,6 @@ class Provider(object):
 
     def __init__(self, service):
         self.service = service
-        self.model = load_module(self.model)
 
         self.urls = []
         for meta_url in self._meta_urls:

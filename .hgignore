@@ -1,6 +1,7 @@
 # use glob syntax.
 syntax: glob
 
+docs/_build
 .idea
 dist*
 build*

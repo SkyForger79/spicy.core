@@ -1,9 +1,4 @@
 # coding: utf-8
-"""
-Stuff for simplify styled console printing
-"""
-from __future__ import unicode_literals
-# Reusing fabric colors submodule. Why not?
 from fabric.colors import *
 
 

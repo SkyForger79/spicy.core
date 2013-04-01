@@ -1,31 +1,26 @@
-#!/usr/bin/env python
+# coding: utf-8
 """
 Setup file for easy Spicy installation
 """
-
-from __future__ import unicode_literals
-
-from os.path import join, dirname
 from setuptools import setup, find_packages
 
-
-version = __import__('spicy').__version__
 
 LONG_DESCRIPTION = """
 Spicy toolkit main package
 """
 
+
 def long_description():
     """Return long description from README.rst if it's present
     because it doesn't get installed."""
     try:
-        return open(join(dirname(__file__), 'README.rst')).read()
+        return open('README.rst').read()
     except IOError:
         return LONG_DESCRIPTION
 
 setup(
     name='spicy',
-    version=version,
+    version='1.1',
     author='Burtsev Alexander',
     author_email='eburus@gmail.com',
     description='Spicy',
@@ -33,24 +28,23 @@ setup(
     keywords='django, cms',
     url='',
 
-    packages=find_packages(),
-    # package_dir={'': 'src/spicy'},
+    packages=find_packages('src'),
+    package_dir={'': 'src'},
     include_package_data=True,
-    zip_safe=False,
+    zip_safe=True,
 
     long_description=long_description(),
 
     install_requires=[
-        'setuptools',
         'django==1.4.3',
-        'pytils',
-        'fabric',
+        'fabric==1.6',
+        'raven==3.2.1',
+        'python-memcached==1.48',
+        'pytils==0.2.3',
         'pytz',
-        'raven',
-        'python-memcached',
     ],
 
-    entry_points = {
+    entry_points={
         'console_scripts': [
             'spicy = spicy:handle_command_line',
         ],
@@ -58,7 +52,7 @@ setup(
 
     classifiers=[
         'Framework :: Django',
-        'Development Status :: 4 - Beta',
+        'Development Status :: 1.1',
         'Topic :: Internet',
         'License :: OSI Approved :: BSD License',
         'Intended Audience :: Developers',

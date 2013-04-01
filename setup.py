@@ -29,7 +29,16 @@ setup(
     url='',
 
     packages=find_packages('src'),
-    package_dir={'': 'src'},
+    package_dir={
+        '': 'src',
+        'spicy.core': 'src/spicy/core',
+        'spicy.core.service': 'src/spicy/core/service',
+        'spicy.core.profile': 'src/spicy/core/profile',
+        'spicy.core.admin': 'src/spicy/core/admin',
+        'spicy.core.siteskin': 'src/spicy/core/siteskin',
+        'spicy.core.rmanager': 'src/spicy/core/rmanager',
+        'spicy.utils': 'src/spicy/utils',
+    },
     include_package_data=True,
     zip_safe=True,
 

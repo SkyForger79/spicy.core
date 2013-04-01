@@ -38,10 +38,10 @@ class ProfileManager(UserManager):
                 return profile
             except self.model.DoesNotExist:
                 pass
-    
+
     @transaction.commit_on_success
     def create_inactive_user(self, email, password=None, is_staff=False,
-                             first_name='', last_name='', username='', 
+                             first_name='', last_name='', username='',
                              send_email=True, next_url=None, realhost=None):
         now = dt.datetime.now()
         if username == '':
@@ -61,12 +61,12 @@ class ProfileManager(UserManager):
 
     def get_available_username(self, username):
         from social_auth.backends.pipeline import USERNAME_MAX_LENGTH
-        
+
         uuid_length = getattr(settings, 'SOCIAL_AUTH_UUID_LENGTH', 4)
         username_fixer = getattr(
             settings, 'SOCIAL_AUTH_USERNAME_FIXER',
             lambda u: u)
-        
+
         short_username = username[:USERNAME_MAX_LENGTH - uuid_length]
         final_username = None
 
@@ -83,7 +83,7 @@ class ProfileManager(UserManager):
                 # username for current user using username as base but adding
                 # a unique hash at the end. Original username is cut to avoid
                 # the field max_length.
-                username = short_username + uuid4().get_hex()[:uuid_length]        
+                username = short_username + uuid4().get_hex()[:uuid_length]
         return final_username
 
     def delete_expired_users(self):
@@ -91,7 +91,7 @@ class ProfileManager(UserManager):
         # # XXX: antisvin 2011-02-24: This would delete shop orders from
         # express registration. Fix foreign keys to Profile or use trash app
         # before deleting expirted users.
-    
+
         count = 0
         for profile in self.all():
             if profile.activation_key_expired():
@@ -101,24 +101,24 @@ class ProfileManager(UserManager):
         return count
 
 
-class ProfileBase(User):
-    user_ptr = models.OneToOneField(User, parent_link=True)    
-    
+class AbstractProfile(User):
+    user_ptr = models.OneToOneField(User, parent_link=True)
+
     IS_ACTIVATED = 'Already activated'
     activation_key = models.CharField(_('activation key'), max_length=40)
 
     is_banned = models.BooleanField(_('user is banned'), blank=True, default=False)
 
     accept_agreement = models.BooleanField(_('Accept user agreement'), blank=True, default=True)
-    subscribe_me = models.BooleanField(_('Subscribe me for news update'), blank=True, default=True)    
-    
+    subscribe_me = models.BooleanField(_('Subscribe me for news update'), blank=True, default=True)
+
     hide_email = models.BooleanField(_('Hide my email'), default=True)
-        
+
     second_name = models.CharField(
         _('Second name'), max_length=255, blank=True)
-    
+
     phone = models.CharField(_('Phone'), max_length=100, blank=True)
-    
+
     timezone = models.CharField(
         max_length=50, default=settings.TIME_ZONE, blank=True)
 
@@ -134,7 +134,7 @@ class ProfileBase(User):
             ('view_profile', 'Can view user profiles'),
             ('moderate_profile', 'Can moderate profiles'),
         )
-        
+
 
     @property
     def screenname(self):
@@ -144,7 +144,7 @@ class ProfileBase(User):
             return self.fullname
         return self.get_fullname()
 
-    def get_fullname(self):        
+    def get_fullname(self):
         name = self.first_name + ' ' + self.last_name
         if not name.strip():
             name = self.username
@@ -153,7 +153,7 @@ class ProfileBase(User):
 
     def __unicode__(self):
         return self.screenname
-       
+
     def activate(self):
         self.is_active = True
         self.activation_key = self.IS_ACTIVATED
@@ -188,11 +188,11 @@ class ProfileBase(User):
         email = email or self.email
 
         #print '@@SOCIAL@@', [(soc.provider, soc.uid) for soc in self.social_auth.all()]
-        
+
         if not email:
             # No email - do nothing.
             return
-        
+
         try:
             send_mail(subject, message, None, [email])
             return True
@@ -220,7 +220,7 @@ class ProfileBase(User):
 
         site = Site.objects.get_current()
         context = {
-            'expiration_days': defaults.ACCOUNT_ACTIVATION_DAYS, 
+            'expiration_days': defaults.ACCOUNT_ACTIVATION_DAYS,
             'password': password, 'user_id': self.id, 'user':self, 'site': site,
             'key': self.activation_key, 'email': self.email, 'next_url': next_url,
             'realhost': realhost,}
@@ -255,7 +255,7 @@ class ProfileBase(User):
         subject = ' '.join(
             render_to_string(sk_defaults.SITESKIN + '/mail/set_email_subject.txt', context).splitlines())
         message = render_to_string(sk_defaults.SITESKIN + '/mail/set_email.txt', context)
-        self.email_user(subject, message, email=email)                    
+        self.email_user(subject, message, email=email)
 
     def email_message_notify(self, msg):
         if not self.email:
@@ -265,7 +265,7 @@ class ProfileBase(User):
         site = Site.objects.get_current()
         subject = unicode(_('You received a new message from %s'%msg.sender.screenname))
 
-        message = render_to_string(sk_defaults.SITESKIN + '/mail/message_notify_email.txt', 
+        message = render_to_string(sk_defaults.SITESKIN + '/mail/message_notify_email.txt',
             dict(msg=msg, user=self, site=site))
         self.email_user(subject, message)
 
@@ -277,7 +277,7 @@ class ProfileBase(User):
         site = Site.objects.get_current()
         subject = unicode(_('Restore password for you account on the %s'%site.domain.capitalize()))
 
-        message = render_to_string(sk_defaults.SITESKIN + '/mail/forgotten_passwd_email.txt', 
+        message = render_to_string(sk_defaults.SITESKIN + '/mail/forgotten_passwd_email.txt',
             dict(password=password, user=self, site=site))
         self.email_user(subject, message)
 
@@ -293,8 +293,7 @@ class ProfileBase(User):
         return 'profile:public:index', (self.username,), {}
 
 
-#class Profile(ProfileBase):
-#    pass
+
 
 
     # Signals for permission cache invalidation.
@@ -344,3 +343,10 @@ class BlacklistedIP(models.Model):
     class Meta:
         db_table = 'auth_black_ip'
         ordering = 'date_banned',
+
+
+class TestProfile(AbstractProfile):
+
+    class Meta:
+        abstract = False
+        db_table = 'test_profile'

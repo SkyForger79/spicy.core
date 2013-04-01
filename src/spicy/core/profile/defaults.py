@@ -10,7 +10,7 @@ from spicy.utils import make_slug
 
 SHA1_RE = getattr(settings, 'SHA1_RE', re.compile('^[a-f0-9]{40}$'))
 
-CUSTOM_USER_MODEL = getattr(settings, 'CUSTOM_USER_MODEL', 'profile.Profile')
+CUSTOM_USER_MODEL = getattr(settings, 'CUSTOM_USER_MODEL', 'profile.TestProfile')
 
 ACCOUNT_ACTIVATION_DAYS = getattr(settings, 'ACCOUNT_ACTIVATION_DAYS', 2)
 

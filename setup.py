@@ -45,8 +45,9 @@ setup(
     long_description=long_description(),
 
     install_requires=[
-        'django==1.4.3',
+        'Django==1.4.3',
         'fabric==1.6',
+        'Sphinx==1.2b1',
         'raven==3.2.1',
         'python-memcached==1.48',
         'pytils==0.2.3',

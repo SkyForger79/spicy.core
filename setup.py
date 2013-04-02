@@ -46,7 +46,7 @@ setup(
 
     install_requires=[
         'Django==1.4.3',
-        'fabric==1.6',
+        'Fabric==1.6',
         'Sphinx==1.2b1',
         'raven==3.2.1',
         'python-memcached==1.48',

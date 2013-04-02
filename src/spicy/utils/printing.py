@@ -2,20 +2,6 @@
 from fabric.colors import *
 
 
-def autodoc_test_paint_text(message, color):
-    """Paints message with color
-
-    Args:
-        message (str): Message to paint
-        color (function): Any color function from fabric.colors
-    Returns:
-        str. Message, wrapped into color escape symbols (it's
-            still JUST a text symbols string, as like if it
-            was message="some text")
-    """
-    return color(message)
-
-
 def paint_text(message, color):
     """
     Paints message with color

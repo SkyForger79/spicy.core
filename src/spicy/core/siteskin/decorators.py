@@ -1,12 +1,10 @@
-from django.core.cache import cache
 from django.core.management.color import color_style
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils import simplejson
-
-from . import defaults
+from spicy.core.siteskin import cache, defaults
 from spicy.utils import make_cache_key
 
 style = color_style()
@@ -14,12 +12,13 @@ style = color_style()
 
 class JsonResponse(HttpResponse):
     """
-    HttpResponse descendant, which return 
-    response with ``application/json`` mimetype.
+    HttpResponse descendant, which return response with ``application/json``
+    mimetype.
     """
     def __init__(self, data):
         super(JsonResponse, self).__init__(
-            content=simplejson.dumps(data, cls=DjangoJSONEncoder), mimetype='application/json')
+            content=simplejson.dumps(data, cls=DjangoJSONEncoder),
+            mimetype='application/json')
         if not 'Content-Length' in self:
             self['Content-Length'] = len(self.content)
 
@@ -30,16 +29,17 @@ class ViewInterface(object):
     url_pattern = None
     instance = None
 
-    def __init__(self, func, url_pattern=None, instance=None, template=None, 
-                 is_public=False, use_cache=False, cache_timeout=None,
-				 use_siteskin=False, use_admin=False, use_geos=False):
+    def __init__(self, func, url_pattern=None, instance=None, template=None,
+                 is_public=False, use_cache=False,
+                 cache_timeout=cache.default_timeout,
+                 use_siteskin=False, use_admin=False, use_geos=False):
         self.func = func
         self.url_pattern = url_pattern
         self.template = template
-        self.instance = instance # provider_instance
+        self.instance = instance  # provider_instance
         self.is_public = is_public
-        self.use_cache = use_cache
         self.cache_timeout = cache_timeout
+        self.use_cache = use_cache
         self.use_siteskin = use_siteskin
         self.use_admin = use_admin
         self.use_geos = use_geos
@@ -56,7 +56,7 @@ class ViewInterface(object):
 
     def set_instance(self, instance):
         self.instance = instance
-        
+
 
 class ViewRendererToResponse(ViewInterface):
     def __call__(self, request, *args, **kwargs):
@@ -72,19 +72,19 @@ class ViewRendererToResponse(ViewInterface):
 
         if not isinstance(output, dict):
             if self.use_cache and isinstance(output, HttpResponse):
-                cache.set(make_cache_key(request), output.content, 
-                          self.cache_timeout or defaults.CACHE_TIMEOUT)
+                cache.set(
+                    make_cache_key(request), output.content,
+                    self.cache_timeout)
 
             return output
-        
+
         response = render_to_response(
-            self.template, output, 
+            self.template, output,
             context_instance=RequestContext(request))
 
         if self.use_cache:
-            cache.set(make_cache_key(request), response.content, 
-                      self.cache_timeout or defaults.CACHE_TIMEOUT)
-            
+            cache.set(
+                make_cache_key(request), response.content, self.cache_timeout)
         response['Expires'] = 'now'
         response['Pragma'] = 'no-cache'
         response['Cache-Control'] = 'max-age=0'
@@ -100,15 +100,15 @@ class ViewMultiResponse(ViewInterface):
 
         output = super(
             ViewMultiResponse, self).__call__(request, *args, **kwargs)
-        
 
         if not isinstance(output, dict):
             if self.use_cache and isinstance(output, HttpResponse):
-                cache.set(make_cache_key(request), output.content, 
-                      self.cache_timeout or defaults.CACHE_TIMEOUT)
+                cache.set(
+                    make_cache_key(request), output.content,
+                    self.cache_timeout)
             return output
 
-        template = output.get('template', None)            
+        template = output.get('template', None)
         if template is None:
             raise ValueError
 
@@ -119,12 +119,12 @@ class ViewMultiResponse(ViewInterface):
             template = defaults.SITESKIN_ADMIN + '/' + template
 
         response = render_to_response(
-            template, output, 
+            template, output,
             context_instance=RequestContext(request))
 
         if self.use_cache:
-            cache.set(make_cache_key(request), response.content, 
-                      self.cache_timeout or defaults.CACHE_TIMEOUT)
+            cache.set(
+                make_cache_key(request), response.content, self.cache_timeout)
 
         response['Expires'] = 'now'
         response['Pragma'] = 'no-cache'
@@ -144,20 +144,22 @@ class JsonRenderer(ViewInterface):
 
         if self.use_cache:
             cached_data = output
-            if not isinstance(output, (dict, list)) and isinstance(output, HttpResponse):
+            if not isinstance(output, (dict, list)) and isinstance(
+                output, HttpResponse):
                 cached_data = output.content
-            cache.set(make_cache_key(request), cached_data, 
-                      self.cache_timeout or defaults.CACHE_TIMEOUT)
-        
+            cache.set(
+                make_cache_key(request), cached_data, self.cache_timeout)
+
         if isinstance(output, (dict, list)):
             return JsonResponse(output)
         return output
+
 
 def render_to(template, use_siteskin=False, use_admin=False, *args, **kwargs):
     """
     Parameters:
       - template: template name to use
-      - use_siteskin: 
+      - use_siteskin:
     """
     template = template
     if use_siteskin:
@@ -165,7 +167,6 @@ def render_to(template, use_siteskin=False, use_admin=False, *args, **kwargs):
 
     elif use_admin:
         template = defaults.SITESKIN_ADMIN + '/' + template
-
 
     def wrapper(func):
         return ViewRendererToResponse(func, template=template, *args, **kwargs)
@@ -175,9 +176,11 @@ def render_to(template, use_siteskin=False, use_admin=False, *args, **kwargs):
 def ajax_request(obj, *args, **kwargs):
     if callable(obj):
         return JsonRenderer(obj, *args, **kwargs)
+
     def wrapper(func):
         return JsonRenderer(func, url_pattern=obj, *args, **kwargs)
     return wrapper
+
 
 def multi_view(*args, **kwargs):
     def wrapper(func):

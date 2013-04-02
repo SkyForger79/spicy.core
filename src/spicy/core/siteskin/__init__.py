@@ -1,6 +1,5 @@
-#from service.api import register
+from . import defaults
+from django.core.cache import get_cache
 
-#from siteskin.services import SiteskinService, HTMLContentService
 
-#register.add(SiteskinService)
-#register.add(HTMLContentService)
+cache = get_cache(defaults.SITESKIN_CACHE_BACKEND)

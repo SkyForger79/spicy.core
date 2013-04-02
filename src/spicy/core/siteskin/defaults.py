@@ -22,3 +22,5 @@ SITEMAP_GZIP_COMPRESSION = 6  # Must be in 1-9 interval, 1 is fastest.
 
 SITESKIN_INDEX_VIEW = getattr(
     settings, 'SITESKIN_INDEX_VIEW', 'spicy.core.siteskin.views.render')
+SITESKIN_CACHE_BACKEND = getattr(
+    settings, 'SITESKIN_CACHE_BACKEND', 'default')

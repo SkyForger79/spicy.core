@@ -20,9 +20,7 @@ from django.core.management.color import color_style
 #from social_auth.signals import pre_update
 from spicy.core.service.models import ProviderModel
 from spicy.core.siteskin import defaults as sk_defaults
-
 from uuid import uuid4
-
 
 
 style = color_style()
@@ -106,11 +104,12 @@ class AbstractProfile(User):
 
     IS_ACTIVATED = 'Already activated'
     activation_key = models.CharField(_('activation key'), max_length=40)
-
-    is_banned = models.BooleanField(_('user is banned'), blank=True, default=False)
-
-    accept_agreement = models.BooleanField(_('Accept user agreement'), blank=True, default=True)
-    subscribe_me = models.BooleanField(_('Subscribe me for news update'), blank=True, default=True)
+    is_banned = models.BooleanField(
+        _('user is banned'), blank=True, default=False)
+    accept_agreement = models.BooleanField(
+        _('Accept user agreement'), blank=True, default=True)
+    subscribe_me = models.BooleanField(
+        _('Subscribe me for news update'), blank=True, default=True)
 
     hide_email = models.BooleanField(_('Hide my email'), default=True)
 
@@ -134,7 +133,6 @@ class AbstractProfile(User):
             ('view_profile', 'Can view user profiles'),
             ('moderate_profile', 'Can moderate profiles'),
         )
-
 
     @property
     def screenname(self):
@@ -162,7 +160,7 @@ class AbstractProfile(User):
     def check_activation(self):
         if (dt.datetime.now() - self.date_joined) < dt.timedelta(days=1):
             return True
-        return self.is_active # and (self.activation_key == self.IS_ACTIVATED)
+        return self.is_active  # and (self.activation_key == self.IS_ACTIVATED)
 
     def generate_activation_key(
         self, send_email=True, password=None, realhost=None, next_url=None):
@@ -187,8 +185,6 @@ class AbstractProfile(User):
     def email_user(self, subject, message, email=None):
         email = email or self.email
 
-        #print '@@SOCIAL@@', [(soc.provider, soc.uid) for soc in self.social_auth.all()]
-
         if not email:
             # No email - do nothing.
             return
@@ -206,11 +202,11 @@ class AbstractProfile(User):
             else:
                 sys.stderr.write(
                     style.ERROR(
-                        'Can not send mail, error: %s\n'% e))
+                        'Can not send mail, error: %s\n' % e))
         except smtplib.SMTPException, e:
             sys.stderr.write(
                 style.ERROR(
-                    'Can not send mail, SMTP error: %s\n'% e))
+                    'Can not send mail, SMTP error: %s\n' % e))
 
 
     def email_activation_key(self, password, realhost=None, next_url=None):
@@ -345,8 +341,11 @@ class BlacklistedIP(models.Model):
         ordering = 'date_banned',
 
 
+# This shit doesn't belong here
+"""
 class TestProfile(AbstractProfile):
 
     class Meta:
         abstract = False
         db_table = 'test_profile'
+"""

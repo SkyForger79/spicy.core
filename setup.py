@@ -50,10 +50,22 @@ setup(
         'Sphinx==1.2b1',
         'raven==3.2.1',
         'python-memcached==1.48',
+
+        # ?? siteskin deps.
         'pytils==0.2.3',
         'pytz',
-    ],
+        
+        # profile deps.
+        'django-captcha==r54.dev', # 0.1.7
+        # Requested django-captcha==r54.dev (from spicy==1.1), but installing version 0.1.7
 
+        # service deps.
+        #
+        
+    ],
+    dependency_links=[
+        'svn+http://django-simple-captcha.googlecode.com/svn/trunk@54#egg=django-captcha-r54.dev'
+    ],       
     entry_points={
         'console_scripts': [
             'spicy = spicy.script:handle_command_line',

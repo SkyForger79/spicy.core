@@ -56,15 +56,14 @@ setup(
         'pytz',
         
         # profile deps.
-        'django-captcha==r54.dev', # 0.1.7
-        # Requested django-captcha==r54.dev (from spicy==1.1), but installing version 0.1.7
+        'django-captcha==0.1.7-r54.dev',
 
         # service deps.
         #
         
     ],
     dependency_links=[
-        'svn+http://django-simple-captcha.googlecode.com/svn/trunk@54#egg=django-captcha-r54.dev'
+        'svn+http://django-simple-captcha.googlecode.com/svn/trunk@54#egg=django-captcha-0.1.7-r54.dev'
     ],       
     entry_points={
         'console_scripts': [

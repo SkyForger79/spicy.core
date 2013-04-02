@@ -1,12 +1,12 @@
 # coding: utf-8
 """
-Setup file for easy Spicy installation
+spicy core package
 """
 from setuptools import setup, find_packages
 
 
-LONG_DESCRIPTION = """
-Spicy toolkit main package
+long_description = """
+spicy core package
 """
 
 
@@ -16,7 +16,7 @@ def long_description():
     try:
         return open('README.rst').read()
     except IOError:
-        return LONG_DESCRIPTION
+        return long_description
 
 setup(
     name='spicy',
@@ -54,17 +54,17 @@ setup(
         # ?? siteskin deps.
         'pytils==0.2.3',
         'pytz',
-        
+
         # profile deps.
         'django-captcha==0.1.7-r54.dev',
 
         # service deps.
         #
-        
+
     ],
     dependency_links=[
         'svn+http://django-simple-captcha.googlecode.com/svn/trunk@54#egg=django-captcha-0.1.7-r54.dev'
-    ],       
+    ],
     entry_points={
         'console_scripts': [
             'spicy = spicy.script:handle_command_line',

@@ -43,14 +43,14 @@ setup(
         'pytz',
 
         # profile deps.
-        # 'django-captcha==0.1.7-r54.dev',
+        'django-captcha==0.1.7',
 
         # service deps.
         #
 
     ],
     dependency_links=[
-        'svn+http://django-simple-captcha.googlecode.com/svn/trunk@54#egg=django-captcha-0.1.7-r54.dev'
+        'svn+http://django-simple-captcha.googlecode.com/svn/trunk@54#egg=django-captcha-0.1.7'
     ],
     entry_points={
         'console_scripts': [

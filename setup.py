@@ -26,24 +26,15 @@ setup(
     description='spicy',
     license='BSD',
     keywords='django, cms',
-    url='',
+    url='', # TODO: define an url
 
     packages=find_packages('src'),
     package_dir={
         '': 'src',
-        'spicy.core': 'src/spicy/core',
-        'spicy.core.service': 'src/spicy/core/service',
-        'spicy.core.profile': 'src/spicy/core/profile',
-        'spicy.core.admin': 'src/spicy/core/admin',
-        'spicy.core.siteskin': 'src/spicy/core/siteskin',
-        'spicy.core.rmanager': 'src/spicy/core/rmanager',
-        'spicy.utils': 'src/spicy/utils',
     },
     include_package_data=True,
-    zip_safe=True,
-
+    zip_safe=False,
     long_description=long_description(),
-
     install_requires=[
         'Django==1.4.3',
         'Fabric==1.6',
@@ -56,7 +47,7 @@ setup(
         'pytz',
 
         # profile deps.
-        'django-captcha==0.1.7-r54.dev',
+        # 'django-captcha==0.1.7-r54.dev',
 
         # service deps.
         #
@@ -70,7 +61,6 @@ setup(
             'spicy = spicy.script:handle_command_line',
         ],
     },
-
     classifiers=[
         'Framework :: Django',
         'Development Status :: 1.1',

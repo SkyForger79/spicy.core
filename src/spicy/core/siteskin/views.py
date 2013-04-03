@@ -83,12 +83,3 @@ def render(request, template, **kwargs):
         template,
         {'page_slug': kwargs.pop('page_slug', page.title if page else None)},
         context_instance=RequestContext(request), **kwargs)
-
-
-class BlockElement:
-    """
-    For rubrics from dynamic content blocks
-    """
-    def __init__(self, block, prev):
-        self.instance = block
-        self.prev = prev

@@ -41,11 +41,11 @@ setup(
         # ?? siteskin deps.
         'pytils==0.2.3',
         'pytz',
-        'html5lib',
+        'html5lib==0.95',
 
         # profile deps.
         'django-captcha==0.1.7',
-        'django-social-auth==0.7.13.dev',
+        'django-social-auth==0.6.1',
 
         # service deps.
         #

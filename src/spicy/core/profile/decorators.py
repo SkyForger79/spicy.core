@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import user_passes_test
 from spicy.core.service.utils import auto_adapt_to_methods
@@ -43,7 +44,7 @@ def is_staff(function=None, required_perms=(),
 
     actual_decorator = auto_adapt_to_methods(user_passes_test(
         lambda u: is_staff_and_has_perms(u),
-            login_url='/admin/login/',
+            login_url=settings.LOGIN_URL,
         redirect_field_name=redirect_field_name))
     if function:
         return actual_decorator(function)

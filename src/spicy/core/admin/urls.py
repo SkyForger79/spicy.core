@@ -3,8 +3,7 @@ from django.conf.urls.defaults import patterns, url, include
 
 admin_urls = patterns(
     'spicy.core.admin.views',
-#    url(r'^$', 'index', name='index'),
-    url(r'^login/$', 'login', name='login'),
+    url(r'^$', 'index', name='index'),
 )
 
 urlpatterns = patterns('',)

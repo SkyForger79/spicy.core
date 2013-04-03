@@ -20,6 +20,7 @@ from spicy.utils import NavigationFilter, make_slug
 Profile = get_concrete_profile()
 
 
+
 @is_staff
 def main(request):
     for app in defaults.APP_ORDER:

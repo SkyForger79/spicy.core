@@ -5,7 +5,7 @@ import re
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
-from spicy.utils import make_slug
+from spicy.utils.html import make_slug
 
 
 SHA1_RE = getattr(settings, 'SHA1_RE', re.compile('^[a-f0-9]{40}$'))
@@ -17,50 +17,23 @@ ACCOUNT_ACTIVATION_DAYS = getattr(settings, 'ACCOUNT_ACTIVATION_DAYS', 2)
 CHECK_USER_AGREEMENT = getattr(settings, 'CHECK_USER_AGREEMENT', False)
 REGISTRATION_ENABLED = getattr(settings, 'REGISTRATION_ENABLED', True)
 
-EDUCATIONAL_CHOICE = (
-        ('doctor', 'доктор наук'),
-        ('phd', 'кандидат наук'),
-        ('high', 'высшее'),
-        ('high_not_end', 'неоконченное высшее'),
-        ('middle_spec', 'среднее специальное'),
-        ('middle', 'среднее'),
-)
-
-SOCIAL_STATUS_CHOICE = (
-        ('student', 'студент/учащийся'),
-        ('businessman', 'бизнесмен/предприниматель'),
-        ('gov_employee', 'госслужащий/чиновник'),
-        ('comp_leader', 'руководитель компании'),
-        ('department_leader', 'рукодитель отдела/подразделения'),
-        ('specialist', 'служащий/специалист'),
-)
-
-# App order for default page. If app and namespace name don't match, item
-# should be a pair of (namespace , app).
-APP_ORDER = (
-    'presscenter', 'mediacenter', 'xtag', ('profile', 'profile'), 'shop',
-    'service', 'siteskin')
-
-SESSION_COPY_ON_LOGIN = 'partner_id', 'order_id'
-
-USER_PICS_LIBRARY_ID = getattr(settings, 'USER_PICS_LIBRARY_ID', 319528)
-
-
 # django.contrib.auth required settings
-# LOGIN_URL = '/signin/'
-# LOGIN_REDIRECT_URL = '/'
-# AUTHENTICATION_BACKENDS = (
-#     'extprofile.auth_backends.CustomUserModelBackend',
-# )
 
+settings.LOGIN_URL = '/signin/'
+settings.LOGIN_REDIRECT_URL = '/'
+settings.LOGOUT_URL = '/signout/'
 
+# social-auth patch
 settings.SOCIAL_AUTH_USERNAME_FIXER = make_slug
 
 REASSOCIATION_TIMEOUT = getattr(settings, 'REASSOCIATION_TIMEOUT', 300)
 # How many seconds will we let user to start reassociation with existing
 # profile after authorization in a social network.
 
+
 PASSWORD_HASH_KEY = '_PASSWORD_HASH'
+
+
 
 BRUTEFORCE_CHECK = getattr(settings, 'BRUTEFORCE_CHECK', False)
 

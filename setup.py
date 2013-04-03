@@ -41,16 +41,19 @@ setup(
         # ?? siteskin deps.
         'pytils==0.2.3',
         'pytz',
+        'html5lib',
 
         # profile deps.
         'django-captcha==0.1.7',
+        'django-social-auth==0.7.13.dev',
 
         # service deps.
         #
 
     ],
     dependency_links=[
-        'svn+http://django-simple-captcha.googlecode.com/svn/trunk@54#egg=django-captcha-0.1.7'
+        'svn+http://django-simple-captcha.googlecode.com/svn/trunk@54#egg=django-captcha-0.1.7',
+        'git+https://github.com/krvss/django-social-auth.git#egg=django-social-auth-0.7.13.dev',
     ],
     entry_points={
         'console_scripts': [

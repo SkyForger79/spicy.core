@@ -1,13 +1,9 @@
-# coding: utf-8
-"""
-spicy core package
-"""
+"""spicy core package"""
+from importlib import import_module
 from setuptools import setup, find_packages
 
-
-long_description = """
-spicy core package
-"""
+version = import_module('src').__version__
+long_description = """spicy core package"""
 
 
 def long_description():
@@ -20,7 +16,7 @@ def long_description():
 
 setup(
     name='spicy',
-    version='1.1',
+    version=version,
     author='Burtsev Alexander',
     author_email='eburus@gmail.com',
     description='spicy',

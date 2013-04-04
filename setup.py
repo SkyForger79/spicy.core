@@ -32,7 +32,7 @@ setup(
     zip_safe=False,
     long_description=long_description(),
     install_requires=[
-        'Django==1.4.5',
+        'Django==1.4.3',
         'Fabric==1.6',
         'Sphinx==1.2b1',
         'raven==3.2.1',

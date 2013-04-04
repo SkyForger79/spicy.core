@@ -62,23 +62,23 @@ class MetaUrl:
 class ProviderMeta(type):
     def __new__(mcs, name, bases, attrs):
         urls = attrs.setdefault('_meta_urls', list())
-        for name, inst in attrs.iteritems():
+        for attr, inst in attrs.iteritems():
             render_interface = inst
             if isinstance(inst, MethodDecoratorAdaptor):
                 render_interface = inst.func
 
             if isinstance(render_interface, ViewInterface):
-                url_name = '-' + name
-                if name == '__call__':
+                url_name = '-' + attr
+                if attr == '__call__':
                     url_name = ''
                 url_pattern_base = r'^%(service_name)s' + url_name
                 meta_url = MetaUrl(
                     url_pattern_base +
                     '/(?P<consumer_type>[\w]+)/(?P<consumer_id>[\d]+)/$', inst,
-                    name, is_public=render_interface.is_public)
+                    attr, is_public=render_interface.is_public)
                 if inst.url_pattern is not None:
                     meta_url = MetaUrl(
-                        url_pattern_base + inst.url_pattern, inst, name,
+                        url_pattern_base + inst.url_pattern, inst, attr,
                         is_public=render_interface.is_public)
 
                 if urls.count(meta_url):
@@ -97,7 +97,8 @@ class Provider(object):
     """
     __metaclass__ = ProviderMeta
     service = None
-    model = 'service.models.ProviderTestCaseModel' # TODO refactoring using get_custom_model_class
+    model = 'service.models.ProviderTestCaseModel'
+    # TODO refactoring using get_custom_model_class
 
     create_form_mod = None
     form_mod = None
@@ -151,7 +152,7 @@ class Provider(object):
 
     def create_instance(self, consumer, **kwargs):
         ctype = ContentType.objects.get_for_model(consumer)
-        return self.model.objects.create(
+        return load_module(self.model).objects.create(
             service=self.service.instance, consumer_id=consumer.id,
             consumer_type=ctype, **kwargs)
 
@@ -160,28 +161,28 @@ class Provider(object):
         try:
             if not isinstance(consumer, basestring):
                 ctype = ContentType.objects.get_for_model(consumer)
-                return self.model.objects.get(
+                return self.load_module(self.model).objects.get(
                     consumer_type=ctype, consumer_id=consumer.id, **kwargs)
 
             elif consumer == GENERIC_CONSUMER:
-                return self.model.objects.get(**kwargs)
+                return load_module(self.model).objects.get(**kwargs)
 
-        except self.model.MultipleObjectsReturned:
+        except load_module(self.model).MultipleObjectsReturned:
             # XXX, required for xtag service debugging.
             # dublications delete then, open consumer(document) for editing.
             if not is_quiet:
                 ctype = ContentType.objects.get_for_model(consumer)
                 print '@Error: dublicates@:', consumer, kwargs, (
-                    self.model.objects.filter(
+                    load_module(self.model).objects.filter(
                         consumer_type__model=ctype, consumer_id=consumer.id,
                         **kwargs))
 
-        except self.model.DoesNotExist:
+        except self.load_module(self.model).DoesNotExist:
             if not is_quiet:
                 print '@Error: instance not found:', consumer, kwargs
 
     def filter(self, **kwargs):
-        return self.model.objects.filter(**kwargs)
+        return load_module(self.model).objects.filter(**kwargs)
 
     def get_instances(self, consumer=None, **kwargs):
         if consumer is not None:
@@ -192,7 +193,7 @@ class Provider(object):
                 kwargs['consumer_type'] = ctype
                 kwargs['consumer_id'] = consumer.id
 
-        return self.model.objects.filter(**kwargs)
+        return self.load_module(self.model).objects.filter(**kwargs)
 
     def inline_formset(self, request, consumer, prefix='provider'):
         raise NotImplemented()

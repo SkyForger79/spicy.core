@@ -1,4 +1,4 @@
-from django.conf.urls.defaults import patterns, url, include
+from django.conf.urls import patterns, url, include
 #from django_authopenid import views as oid
 
 from spicy.core.siteskin import defaults

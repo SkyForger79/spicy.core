@@ -49,6 +49,7 @@ def is_staff(function=None, required_perms=(),
         return actual_decorator(function)
     return actual_decorator
 
+
 def login_required(function=None, redirect_field_name=REDIRECT_FIELD_NAME):
     """
     Decorator for views that checks that the user is logged in, redirecting
@@ -61,4 +62,3 @@ def login_required(function=None, redirect_field_name=REDIRECT_FIELD_NAME):
     if function:
         return actual_decorator(function)
     return actual_decorator
-

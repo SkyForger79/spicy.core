@@ -16,13 +16,8 @@ class GenericSSINode(template.Node):
 
     def render(self, context):
         url = self.url.resolve(context)
-
-        get_forwarding = self.get_forwarding
-        if self.get_forwarding:
-            get_forwarding = self.get_forwarding.resolve(context)
-
         return utils.choose_render_method(
-            context['request'], url, get_forwarding=get_forwarding)
+            context['request'], url, get_forwarding=self.get_forwarding)
 
 
 @register.tag
@@ -30,6 +25,9 @@ def generic_ssi(parser, token):
     """
     {% generic_ssi "/doc-list/contentblock/1/" %} - render content-block using
         absolute URL path to app.
+
+    {% generic_ssi "/doc-list/contentblock/1/" True %} - same, with GET
+    forwarding enabled.
     """
 
     bits = token.split_contents()

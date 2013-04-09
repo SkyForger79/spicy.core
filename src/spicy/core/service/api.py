@@ -12,7 +12,9 @@ from django.core.management.color import color_style
 from spicy.core.service.forms import ServiceForm, BillingProviderForm
 from spicy.core.service.utils import MethodDecoratorAdaptor
 from spicy.core.siteskin.decorators import render_to, ViewInterface
+
 from spicy.utils import cached_property, load_module
+from spicy.utils.models import get_custom_model_class
 
 
 style = color_style()
@@ -97,7 +99,7 @@ class Provider(object):
     """
     __metaclass__ = ProviderMeta
     service = None
-    model = 'service.models.ProviderTestCaseModel'
+    model = None #get_custom_model_class('service.ProviderTestCaseModel')
     # TODO refactoring using get_custom_model_class
 
     create_form_mod = None
@@ -142,6 +144,7 @@ class Provider(object):
 
     def load_module(self, path):
         # XXX
+        # deprecated
         return load_module(path, config='Provider __class__ configuration.')
 
     def get_or_create(self, consumer, **kwargs):
@@ -152,7 +155,7 @@ class Provider(object):
 
     def create_instance(self, consumer, **kwargs):
         ctype = ContentType.objects.get_for_model(consumer)
-        return load_module(self.model).objects.create(
+        return self.model.objects.create(
             service=self.service.instance, consumer_id=consumer.id,
             consumer_type=ctype, **kwargs)
 
@@ -161,28 +164,28 @@ class Provider(object):
         try:
             if not isinstance(consumer, basestring):
                 ctype = ContentType.objects.get_for_model(consumer)
-                return self.load_module(self.model).objects.get(
+                return self.model.objects.get(
                     consumer_type=ctype, consumer_id=consumer.id, **kwargs)
 
             elif consumer == GENERIC_CONSUMER:
-                return load_module(self.model).objects.get(**kwargs)
+                return self.model.objects.get(**kwargs)
 
-        except load_module(self.model).MultipleObjectsReturned:
+        except self.model.MultipleObjectsReturned:
             # XXX, required for xtag service debugging.
             # dublications delete then, open consumer(document) for editing.
             if not is_quiet:
                 ctype = ContentType.objects.get_for_model(consumer)
                 print '@Error: dublicates@:', consumer, kwargs, (
-                    load_module(self.model).objects.filter(
+                    self.model.objects.filter(
                         consumer_type__model=ctype, consumer_id=consumer.id,
                         **kwargs))
 
-        except self.load_module(self.model).DoesNotExist:
+        except self.model.DoesNotExist:
             if not is_quiet:
                 print '@Error: instance not found:', consumer, kwargs
 
     def filter(self, **kwargs):
-        return load_module(self.model).objects.filter(**kwargs)
+        return self.model.objects.filter(**kwargs)
 
     def get_instances(self, consumer=None, **kwargs):
         if consumer is not None:
@@ -193,7 +196,7 @@ class Provider(object):
                 kwargs['consumer_type'] = ctype
                 kwargs['consumer_id'] = consumer.id
 
-        return self.load_module(self.model).objects.filter(**kwargs)
+        return self.model.objects.filter(**kwargs)
 
     def inline_formset(self, request, consumer, prefix='provider'):
         raise NotImplemented()
@@ -268,7 +271,9 @@ class Interface(object):
     name = 'service'
     label = _('Service title')
     provider_schema = Provider
-    model = 'spicy.core.service.models.Service'
+
+    model = 'spicy.core.service.models.Service' #get_custom_model_class('service.Service')
+
     form = ServiceForm
     create_template = None
     template = create_template
@@ -279,11 +284,11 @@ class Interface(object):
     def __init__(self):
         self.__providers = None
         self.instance = None
+        self.model = load_module(self.model)
 
         if not isinstance(self.provider_schema, dict):
             raise ProviderSchemaError(
                 'Provider schema is not defined correctly.')
-        self.model = load_module(self.model)
 
         self.instance, created = self.model.objects.get_or_create(
             name=self.name)

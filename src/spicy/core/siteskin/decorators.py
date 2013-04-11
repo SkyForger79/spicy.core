@@ -1,4 +1,5 @@
-from django.core.management.color import color_style
+# -*- coding: utf-8 -*- 
+from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
@@ -6,9 +7,67 @@ from django.template import RequestContext
 from django.utils import simplejson
 from spicy.core.siteskin import cache, defaults
 from spicy.utils import make_cache_key
+from spicy.utils.printing import print_error
 
-style = color_style()
+JSON_API_STATUS_CODE_SUCCESS = 'success'
+JSON_API_STATUS_CODE_ERROR = 'error'
 
+class APIResponse(object):
+    """Класс представляет объек ответа API функций.
+    
+    :param version: версия API 
+    :type version: str
+    :param code: код результата, может быть либо ``success``, либо ``error``. По умолчанию: ``JSON_API_STATUS_CODE_SUCCESS``
+    :type code: str
+    :param messages: список сообщений, описывающие результат. По умолчанию: None
+    :type messages: list
+    :param data: словарь с данными, представляющими результат работы API функции. По умолчанию: None
+    :type data: dict
+    """
+    
+    version = getattr(settings, 'FRONTEND_API_VERSION', '0.1-default')
+    code = JSON_API_STATUS_CODE_SUCCESS
+    messages = None
+    data = None
+    
+    def __init__(self, code='success', messages=None, data=None):
+        """Инициализирует объект :class:`APIResponse`
+
+        :param code: код результата, может быть либо ``success``, либо ``error``
+        :type code: str
+        :param messages: список сообщений, описывающие результат
+        :type message: list
+        :param data: словарь с данными, представляющими результат работы API функции
+        :type data: dict
+        """
+        self.code = code
+        self.messages = messages
+        self.data = data
+        
+
+    def response(self):
+        """Возвращает словарь с данными для преобразования в JSON и ответа клиентскому приложению.
+
+        :return:
+        :rtype: dict
+        """
+        return dict(
+            version=self.version,
+            status=dict(
+                code=self.code,
+                messages=self.messages
+            ),
+            data=self.data
+        )
+
+
+class APIResponseFail(APIResponse):
+    def __init__(self, messages=None, data=None):
+        super(APIResponseFail, self).__init__(
+            code=JSON_API_STATUS_CODE_ERROR,
+            messages=messages,
+            data=data
+        )
 
 class JsonResponse(HttpResponse):
     """
@@ -134,6 +193,11 @@ class ViewMultiResponse(ViewInterface):
 
 class JsonRenderer(ViewInterface):
     def __call__(self, request, *args, **kwargs):
+        if not request.is_ajax():
+            return JsonResponse(
+                APIResponseFail(messages=[_('AJAX request required!'),])
+                )
+
         if self.use_cache:
             cached_data = cache.get(make_cache_key(request))
             if cached_data:
@@ -152,6 +216,8 @@ class JsonRenderer(ViewInterface):
 
         if isinstance(output, (dict, list)):
             return JsonResponse(output)
+        elif isinstance(output, APIResponse):
+            return JsonResponse(output.response())
         return output
 
 

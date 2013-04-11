@@ -1,6 +1,6 @@
 # coding: utf-8
+import sys
 from fabric import colors
-
 
 def paint_text(text, color_name):
     """
@@ -47,19 +47,19 @@ def print_error(message):
     Args:
         message (str): Message to print
     """
-    print(paint_text(prefix_message(message), 'red'))
+    sys.stderr.write(paint_text(prefix_message(message), 'red') + '\n')
 
 
 def print_warning(message):
-    print(paint_text(prefix_message(message), 'yellow'))
+    sys.stdout.write(paint_text(prefix_message(message), 'yellow') + '\n')
 
 
 def print_info(message):
-    print(paint_text(prefix_message(message), 'cyan'))
+    sys.stdout.write(paint_text(prefix_message(message), 'cyan') + '\n')
 
 
 def print_success(message):
-    print(paint_text(prefix_message(message), 'green'))
+    sys.stdout.write(paint_text(prefix_message(message), 'green') + '\n')
 
 
 def print_text(message):
@@ -70,4 +70,4 @@ def print_text(message):
     Args:
         message (str): Message to print
     """
-    print(prefix_message(message))
+    sys.stdout.write(prefix_message(message) + '\n')

@@ -14,6 +14,9 @@ from django.utils.encoding import smart_str
 from django.utils.translation import ugettext_lazy as _
 from math import ceil
 
+MESSAGES = {'success': _('Changes were successfully saved.'),
+            'error': _('Please, correct the errors below.')}
+
 
 def make_cache_key(request=None, path=None):
     path = '%s:%s' % (

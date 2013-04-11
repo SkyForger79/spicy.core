@@ -44,16 +44,16 @@ setup(
         'html5lib==0.95',
 
         # profile deps.
-        'django-captcha==0.1.7',
-        'django-social-auth==0.6.1',
+        #'django-captcha',
+        #'django-social-auth==0.6.1',
 
         # service deps.
         #
 
     ],
     dependency_links=[
-        'svn+http://django-simple-captcha.googlecode.com/svn/trunk@54#egg=django-captcha-0.1.7',
-        'git+https://github.com/krvss/django-social-auth.git#egg=django-social-auth-0.7.13.dev',
+        #'svn+http://django-simple-captcha.googlecode.com/svn/trunk@54#egg=django-captcha',
+        #'git+https://github.com/krvss/django-social-auth.git#egg=django-social-auth-0.7.13.dev',
     ],
     entry_points={
         'console_scripts': [

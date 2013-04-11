@@ -5,12 +5,16 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils import simplejson
+from django.utils.translation import ugettext as _
+
 from spicy.core.siteskin import cache, defaults
 from spicy.utils import make_cache_key
 from spicy.utils.printing import print_error
 
+
 JSON_API_STATUS_CODE_SUCCESS = 'success'
 JSON_API_STATUS_CODE_ERROR = 'error'
+
 
 class APIResponse(object):
     """Класс представляет объек ответа API функций.
@@ -62,6 +66,7 @@ class APIResponse(object):
 
 
 class APIResponseFail(APIResponse):
+
     def __init__(self, messages=None, data=None):
         super(APIResponseFail, self).__init__(
             code=JSON_API_STATUS_CODE_ERROR,
@@ -195,8 +200,8 @@ class JsonRenderer(ViewInterface):
     def __call__(self, request, *args, **kwargs):
         if not request.is_ajax():
             return JsonResponse(
-                APIResponseFail(messages=[_('AJAX request required!'),])
-                )
+                APIResponseFail(messages=[_('AJAX request required!'),]).response()
+            )
 
         if self.use_cache:
             cached_data = cache.get(make_cache_key(request))

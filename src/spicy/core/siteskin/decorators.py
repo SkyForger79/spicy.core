@@ -11,10 +11,7 @@ from spicy.core.siteskin import cache, defaults
 from spicy.utils import make_cache_key
 from spicy.utils.printing import print_error
 
-
-JSON_API_STATUS_CODE_SUCCESS = 'success'
-JSON_API_STATUS_CODE_ERROR = 'error'
-
+from . import defaults
 
 class APIResponse(object):
     """Класс представляет объек ответа API функций.
@@ -25,54 +22,59 @@ class APIResponse(object):
     :type code: str
     :param messages: список сообщений, описывающие результат. По умолчанию: None
     :type messages: list
+    :param errors: словарь с ошибками. По умолчанию: None
+    :type errors: dict
     :param data: словарь с данными, представляющими результат работы API функции. По умолчанию: None
     :type data: dict
     """
     
-    version = getattr(settings, 'FRONTEND_API_VERSION', '0.1-default')
-    code = JSON_API_STATUS_CODE_SUCCESS
+    version = defaults.AJAX_API_VERSION
+    code = defaults.AJAX_API_STATUS_CODE_SUCCESS
     messages = None
+    errors = None
     data = None
     
-    def __init__(self, code='success', messages=None, data=None):
+    def __init__(self, code=defaults.AJAX_API_STATUS_CODE_SUCCESS, messages=None, data=None, errors=None):
         """Инициализирует объект :class:`APIResponse`
 
         :param code: код результата, может быть либо ``success``, либо ``error``
         :type code: str
         :param messages: список сообщений, описывающие результат
         :type message: list
+        :param errors: словарь с ошибками. По умолчанию: None
+        :type errors: dict
         :param data: словарь с данными, представляющими результат работы API функции
         :type data: dict
         """
         self.code = code
         self.messages = messages
         self.data = data
-        
+        self.errors = errors
 
     def response(self):
         """Возвращает словарь с данными для преобразования в JSON и ответа клиентскому приложению.
 
-        :return:
+        :return: version, code, message, data, errors
         :rtype: dict
         """
         return dict(
             version=self.version,
-            status=dict(
-                code=self.code,
-                messages=self.messages
-            ),
-            data=self.data
+            code=self.code,
+            messages=self.messages,
+            errors=self.errors,
+            data=self.data,
         )
 
 
 class APIResponseFail(APIResponse):
-
-    def __init__(self, messages=None, data=None):
+    def __init__(self, messages=None, data=None, errors=None):
         super(APIResponseFail, self).__init__(
-            code=JSON_API_STATUS_CODE_ERROR,
+            code=defaults.AJAX_API_STATUS_CODE_ERROR,
             messages=messages,
-            data=data
+            data=data,
+            errors=errors,
         )
+
 
 class JsonResponse(HttpResponse):
     """

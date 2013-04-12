@@ -24,3 +24,8 @@ SITESKIN_INDEX_VIEW = getattr(
     settings, 'SITESKIN_INDEX_VIEW', 'spicy.core.siteskin.views.render')
 SITESKIN_CACHE_BACKEND = getattr(
     settings, 'SITESKIN_CACHE_BACKEND', 'default')
+
+AJAX_API_STATUS_CODE_SUCCESS = 'success'
+AJAX_API_STATUS_CODE_ERROR = 'error'
+
+AJAX_API_VERSION = getattr(settings, 'AJAX_API_VERSION', '0.1-default')

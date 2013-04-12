@@ -10,7 +10,11 @@ class AjaxMiddleware(object):
         request.json = dict()
         if request.method == 'POST' and request.is_ajax():
             if request.body:
-                request.json = json.loads(request.body)
+                if request.META['CONTENT_TYPE'].startswith(
+                    'application/x-www-form-urlencoded'):
+                    request.json = request.POST.copy()
+                else:
+                    request.json = json.loads(request.body)
 
 
     def process_exception(self, request, exception):

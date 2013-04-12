@@ -99,7 +99,8 @@ class Provider(object):
     """
     __metaclass__ = ProviderMeta
     service = None
-    model = None #get_custom_model_class('service.ProviderTestCaseModel')
+    model = None
+    #get_custom_model_class('service.ProviderTestCaseModel')
     # TODO refactoring using get_custom_model_class
 
     create_form_mod = None
@@ -174,11 +175,15 @@ class Provider(object):
             # XXX, required for xtag service debugging.
             # dublications delete then, open consumer(document) for editing.
             if not is_quiet:
-                ctype = ContentType.objects.get_for_model(consumer)
-                print '@Error: dublicates@:', consumer, kwargs, (
-                    self.model.objects.filter(
-                        consumer_type__model=ctype, consumer_id=consumer.id,
-                        **kwargs))
+                if not isinstance(consumer, basestring):
+                    ctype = ContentType.objects.get_for_model(consumer)
+                    print '@Error: dublicates@:', consumer, kwargs, (
+                        self.model.objects.filter(
+                            consumer_type__model=ctype,
+                            consumer_id=consumer.id, **kwargs))
+                elif consumer == GENERIC_CONSUMER:
+                    print '@Error: dublicates@:', consumer, kwargs, (
+                        self.model.objects.filter(**kwargs))
 
         except self.model.DoesNotExist:
             if not is_quiet:
@@ -272,7 +277,8 @@ class Interface(object):
     label = _('Service title')
     provider_schema = Provider
 
-    model = 'spicy.core.service.models.Service' #get_custom_model_class('service.Service')
+    model = 'spicy.core.service.models.Service'
+    #get_custom_model_class('service.Service')
 
     form = ServiceForm
     create_template = None

@@ -305,8 +305,15 @@ def signin(request):
     if request.user.is_authenticated():
         redirect_to = request.REQUEST.get(
             REDIRECT_FIELD_NAME, request.session.get(REDIRECT_FIELD_NAME))
+
+        import types
+        if isinstance(defaults.DEFAULT_PROFILE_URL, types.FunctionType):
+            user_redirect_uri = defaults.DEFAULT_PROFILE_URL(request.user)
+        else:
+            user_redirect_uri = defaults.DEFAULT_PROFILE_URL
+            
         return HttpResponseRedirect(
-            redirect_to or defaults.DEFAULT_PROFILE_URL(request.user))
+            redirect_to or user_redirect_uri)
 
     result = api.register['profile'].login(request)
     if result['status'] == 'ok':

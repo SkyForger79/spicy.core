@@ -279,7 +279,7 @@ class SetEmailForm(forms.Form):
 class SignupForm(forms.Form, ValidateEmailMixin):
     captcha = CaptchaField(widget=CaptchaWithId)
 
-    email = forms.EmailField(label=_('Email'), required=True)
+    email = forms.EmailField(label=_('Email'), required=True, initial='')
 
     password = forms.CharField(label=_('Password'),
         widget=forms.PasswordInput(), min_length=6)

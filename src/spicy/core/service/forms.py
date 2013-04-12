@@ -4,29 +4,11 @@ from django.contrib.sites.models import Site
 from django.utils.translation import ugettext_lazy as _
 
 
-class ServiceForm(forms.ModelForm):
-    site = forms.ModelMultipleChoiceField(
-        label=_('Sites'), required=True,
-        widget=forms.SelectMultiple(attrs={'class': 'SelectMultiple'}),
-        queryset=Site.objects.all())
-
-    class Meta:
-        model = models.Service
-        exclude = ('name', 'date_joined', 'is_default', 'description')
-
 
 class ProviderCreateForm(forms.ModelForm):
-    # TODO: refactoring
-    # def save(self, *args, **kwargs):
-#         provider = self._meta.model.objects.create(
-#             service=self.cleaned_data['service'],
-#             consumer_id=self.cleaned_data['consumer_id'],
-#             consumer_type=self.cleaned_data['consumer_type'])
-#         return provider
-
     class Meta:
         model = models.ProviderModel
-        fields = ('service', 'consumer_id', 'consumer_type')
+        fields = ('consumer_id', 'consumer_type')
 
 
 class ProviderForm(forms.ModelForm):

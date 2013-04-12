@@ -24,8 +24,8 @@ Profile = utils.get_concrete_profile()
 
 CUSTOM_USER_SIGNUP_FORM = getattr(settings, 'CUSTOM_USER_SIGNUP_FORM', 'spicy.core.profile.forms.SignupForm')
 
-class ExtProfileProvider(api.Provider):
-    model = 'spicy.core.profile.models.ExtProfileProviderModel'
+class ProfileProvider(api.Provider):
+    model = 'spicy.core.profile.ProfileProviderModel'
 
 
     @ajax_request('/$', is_public=True, use_siteskin=True, use_cache=False)
@@ -146,7 +146,7 @@ class ExtProfileProvider(api.Provider):
 
 
 
-class ExtProfileService(api.Interface):
+class ProfileService(api.Interface):
     name = 'profile'
     stype = 'content'
     label = _('Profile provider service')
@@ -163,7 +163,7 @@ class ExtProfileService(api.Interface):
 
     PROVIDER_TEMPLATES_DIR = 'profile/providers/'
 
-    provider_schema = dict(GENERIC_CONSUMER=ExtProfileProvider)
+    schema = dict(GENERIC_CONSUMER=ProfileProvider)
 
 
     def login(self, request):

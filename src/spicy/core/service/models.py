@@ -6,43 +6,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 
-class ServiceManager(models.Manager):
-    def get_by_natural_key(self, name):
-        return self.get(name=name)
-
-
-class Service(models.Model):
-    name = models.CharField(_('Name'), max_length=255)
-    description = models.TextField(_('Description'), blank=True)
-
-    date_joined = models.DateTimeField(_('Date joined'), auto_now=True)    
-    is_default = models.BooleanField('Is enabled by default', default=True)
-
-    price = models.PositiveIntegerField(_('Price'), default=0)
-    site = models.ManyToManyField(Site)
-    is_enabled = models.BooleanField('Is enabled', default=True)
-
-    #default = generic.GenericRelation(_('Default settings'), blank=True)
-
-    objects = ServiceManager()
-
-    def is_free(self):
-        return (self.price == 0)
-    is_free.boolean = True
-
-    def __unicode__(self):
-        return self.name
-
-    def natural_key(self):
-        return (self.name,)
-
-    class Meta:
-        db_table = 'srv_register'
-
-
 class ProviderModel(models.Model):
-    service = models.ForeignKey(Service)
-
     consumer_type = models.ForeignKey(ContentType, blank=True)
     consumer_id = models.PositiveIntegerField()
     consumer = generic.GenericForeignKey(
@@ -53,7 +17,7 @@ class ProviderModel(models.Model):
     class Meta:
         ordering = ('-date_joined',)
         abstract = True
-        #db_table = '%(app_label)s_provider'
+
 
 class ContentProviderModel(ProviderModel):
     template = models.CharField(
@@ -78,15 +42,12 @@ class ContentProviderModel(ProviderModel):
         abstract = True
 
 
-class ProviderTestCaseModel(ProviderModel):
+class TestProviderModel(ProviderModel):
     class Meta:
-        db_table = 'srv_test'
-
+        db_table = 'test_srv_provider'
 
 
 class BillingProviderModel(models.Model):
-    service = models.ForeignKey(Service)
-
     billing_id = models.IntegerField(_('Billing PK'), blank=True, null=True)
     billing_type = models.ForeignKey(ContentType, blank=True, null=True)
     billing = generic.GenericForeignKey(

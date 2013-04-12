@@ -200,12 +200,12 @@ class ViewMultiResponse(ViewInterface):
 
 class JsonRenderer(ViewInterface):
     def __call__(self, request, *args, **kwargs):
-        """
-        if not request.is_ajax():
+
+        if not request.is_ajax() and not settings.DEBUG:
             return JsonResponse(
                 APIResponseFail(messages=[_('AJAX request required!'),]).response()
             )
-        """
+
 
         if self.use_cache:
             cached_data = cache.get(make_cache_key(request))

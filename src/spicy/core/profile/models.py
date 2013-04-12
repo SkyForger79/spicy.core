@@ -322,7 +322,7 @@ class StaffAlias(models.Model):
         db_table = 'auth_profile_alias'
 
 
-class ExtProfileProviderModel(ProviderModel):
+class ProfileProviderModel(ProviderModel):
     class Meta:
         db_table = 'auth_provider'
 

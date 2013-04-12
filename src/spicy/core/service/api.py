@@ -1,6 +1,6 @@
-import os
-import sys
+import os, sys, traceback
 from itertools import chain
+
 from django.conf import settings
 from django.conf.urls.defaults import patterns, url
 from django.contrib.contenttypes.models import ContentType
@@ -8,16 +8,14 @@ from django.db import transaction
 from django.db.utils import DatabaseError
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ImproperlyConfigured
-from django.core.management.color import color_style
-from spicy.core.service.forms import ServiceForm, BillingProviderForm
+
 from spicy.core.service.utils import MethodDecoratorAdaptor
 from spicy.core.siteskin.decorators import render_to, ViewInterface
 
 from spicy.utils import cached_property, load_module
 from spicy.utils.models import get_custom_model_class
+from spicy.utils.printing import print_error, print_text, print_info, print_success
 
-
-style = color_style()
 
 GENERIC_CONSUMER = 'GENERIC_CONSUMER'
 TEXT_INCLUDE_TEMPLATE = "[inc pk='%s' service='%s']"
@@ -40,6 +38,8 @@ class ProviderMetaUrlError(Exception):
 
 
 class MetaUrl:
+    """Meta URL class used to define dynamic url pattern for class based Provider or service views.
+    """
     is_public = False
 
     def __init__(self, pattern, method, name, is_public=False):
@@ -60,8 +60,22 @@ class MetaUrl:
         return '<%s :: url[%s]>' % (self.name, self.pattern)
 
 
-# TODO make tests for this meta implementation.
 class ProviderMeta(type):
+    """Meta Provider class 
+
+    class A(Provider):
+        @render_to('template.html')
+        def view(self, consumer_type, consumer_id)
+             return dict()
+
+        @ajax_request
+        def view(self, consumer_type, consumer_id)
+             return APIResponse()
+        
+
+    """
+
+    # TODO make tests for this meta implementation.
     def __new__(mcs, name, bases, attrs):
         urls = attrs.setdefault('_meta_urls', list())
         for attr, inst in attrs.iteritems():
@@ -95,13 +109,21 @@ class ProviderMeta(type):
 
 class Provider(object):
     """
-    @settings - Singleton with predefined settings.
+    Provide common views, api methods for defined web-application service.
+    Service choose provider instance using own schema.
+
+    provider = api.register['service_name'].get_provider(ConsumerDjangoModel)
+    
+    
+
+    :param model: ManyToMany model for consumer 'app.ModelName'
+    :type str:
+
+    
     """
     __metaclass__ = ProviderMeta
     service = None
     model = None
-    #get_custom_model_class('service.ProviderTestCaseModel')
-    # TODO refactoring using get_custom_model_class
 
     create_form_mod = None
     form_mod = None
@@ -109,22 +131,9 @@ class Provider(object):
     is_inline = True
     form_template = None
 
-    @cached_property
-    def form(self):
-        return self.load_module(self.form_mod)
-
-    @cached_property
-    def create_form(self):
-        if self.create_form_mod is not None:
-            return self.load_module(self.create_form_mod)
-        try:
-            return self.load_module(self.form_mod)
-        except AttributeError:
-            raise ImproperlyConfigured(
-                _("Setup form_mod attributes at first."))
-
     def __init__(self, service):
         self.service = service
+        self.model = get_custom_model_class(self.model)
 
         self.urls = []
         for meta_url in self._meta_urls:
@@ -142,11 +151,6 @@ class Provider(object):
                     url(pattern % {'service_name': service.name}, method,
                         name=name),
                     is_public))
-
-    def load_module(self, path):
-        # XXX
-        # deprecated
-        return load_module(path, config='Provider __class__ configuration.')
 
     def get_or_create(self, consumer, **kwargs):
         instance = self.get_instance(consumer, **kwargs)
@@ -201,7 +205,27 @@ class Provider(object):
                 kwargs['consumer_type'] = ctype
                 kwargs['consumer_id'] = consumer.id
 
-        return self.model.objects.filter(**kwargs)
+        return self.filter(**kwargs)
+
+    @cached_property
+    def form(self):
+        return load_module(self.form_mod)
+
+    @cached_property
+    def create_form(self):
+        """Create provider form method
+        
+        
+        :return form
+        """
+        if self.create_form_mod is not None:
+            return load_module(self.create_form_mod)
+        try:
+            return load_module(self.form_mod)
+        except AttributeError:
+            raise ImproperlyConfigured(
+                _("Setup form_mod attributes at first."))
+
 
     def inline_formset(self, request, consumer, prefix='provider'):
         raise NotImplemented()
@@ -229,14 +253,6 @@ class Provider(object):
         if request.method == 'POST':
             instance = self.get_instance(consumer)
             return self.form(request.POST, prefix=prefix, instance=instance)
-#         # XXX
-#         if request.method == 'POST':
-#             form = self.form(request.POST, instance=provider.instance)
-#             if form.is_valid():
-#                 form.save()
-#             else:
-#                 print '@@@###', form.errors
-#         return provider
 
     # TODO Use decorator render_to and ajax_request for tests.
     #@is_staffx
@@ -246,70 +262,61 @@ class Provider(object):
 
 
 class BillingProvider(Provider):
-    model = 'spicy.core.service.models.BillingProviderModel'
-    form = BillingProviderForm
-    form_template = 'services/admin/billed_service_form.html'
-
-
-# TODO
-class Schema(object):
-    pass
+    model = None #'spicy.core.service.models.BillingProviderModel'
+    
 
 
 class Interface(object):
     """
-    @stype: service type - character
-    @name:
-    @label:
-    @model: 'app.models.Model'
-    @form:
-    @provider_schema:
-        Multi provider (example):
-            provider_schema = dict(
-                consumer_content_type_name=ProviderClassOne,
-                consumer_content_type_name=ProviderClassTwo,
-                GENERIC_CONSUMER=ProviderClass
-            )
-    def get(...)
+    Service interface
+
+    service register providers for different type of cunsumer using content_type schema
+    
+    :param stype:
+    :type: str
+    :param name:
+    :type: str
+    :param label:
+    :type: str
+
+    :param template:
+    :type: str
+    :param is_default: ???
+    :type: str
+    
     """
     stype = None
     name = 'service'
-    label = _('Service title')
-    provider_schema = Provider
+    label = _('Service label')
+    schema = dict(GENERIC_CONSUMER=Provider)
 
-    model = 'spicy.core.service.models.Service'
-    #get_custom_model_class('service.Service')
-
-    form = ServiceForm
-    create_template = None
-    template = create_template
+    template = None
     is_default = True
-    has_rss = False
 
-    @transaction.commit_on_success
     def __init__(self):
         self.__providers = None
-        self.instance = None
-        self.model = load_module(self.model)
 
-        if not isinstance(self.provider_schema, dict):
+        if not isinstance(self.schema, dict):
             raise ProviderSchemaError(
                 'Provider schema is not defined correctly.')
 
-        self.instance, created = self.model.objects.get_or_create(
-            name=self.name)
-
         self.is_default = self.is_default
-        self.instance.save()
-
-        # TODO is service form required?
-        self.form = self.form(instance=self.instance)
+        
+        # initialize all providers
         self.__providers = dict(
             [(ctype, prv(self))
-             for ctype, prv in self.provider_schema.iteritems()])
+             for ctype, prv in self.schema.iteritems()])
+
+    def print_schema(self):
+        return '%s'%self.__providers
 
     def __getitem__(self, ctype):
         """Get provider instance for the content_type.
+
+        :param ctype: consumer content_type string
+        :type: str
+
+        :return : concrete provider for defined consumer
         """
         if ctype in self.__providers:
             return self.__providers[ctype]
@@ -319,14 +326,13 @@ class Interface(object):
         raise ProviderSchemaError(
             'Provider is not defined for the ContentType "%s"'
             ' service "%s", schema "%s"'
-            % (ctype, self.label, self.provider_schema))
+            % (ctype, self.label, self.schema))
 
     def get_provider(self, consumer):
         """
-        Get provider instance for the consumer.
+        Get provider instance for the defined consumer.
 
-        @return: Return tuple result defined for the consumer
-            tuple(provider_instance, consumer_content_type)
+        :return: concrete ``Provider`` instance for defined consumer
         """
         if not isinstance(consumer, basestring):
             ctype = ContentType.objects.get_for_model(consumer)
@@ -340,7 +346,7 @@ class Interface(object):
         raise ProviderSchemaError(
             'Provider is not defined for the ContentType "%s"'
             ' service "%s", schema "%s"'
-            % (consumer, self.label, self.provider_schema))
+            % (consumer, self.label, self.schema))
 
     def urls(self, is_public=False):
         return [
@@ -360,26 +366,18 @@ class Interface(object):
     # service:admin:service_name
     # or use for public
     def __call__(self, request):
+        """Default service view.
+
+        dashboard ????
+        
+
+        Use it for something...
+        """
         raise NotImplementedError()
 
-    def remove(self, consumer):
-        raise NotImplemented
-
-    def enable_site(self, site):
-        self.instance.site.add(site)
-
-    def disable_site(self, site):
-        self.instance.site.remove(site)
-
-    def get_sites(self):
-        return self.instance.site.all()
-
-    def is_free(self):
-        return self.instance.is_free()
-
-    def __unicode__(self):
-        return unicode(self.label)
-    __str__ = __unicode__
+    # TODO
+    def dashboard(self, request):
+        return NotImplementedError()
 
 
 class ServiceList(object):
@@ -410,24 +408,24 @@ class Register(dict):
         return cls._instance
 
     def add(self, path_to_srv_interface):
-        interface = load_module(path_to_srv_interface)
-        if not issubclass(interface, Interface):
+        service = load_module(path_to_srv_interface)
+
+        if not issubclass(service, Interface):
             raise WrongServiceAPI(
                 'You must inherit services.Interface at first.')
 
         # NOT working
-        if interface.name in self:
+        if service.name in self:
             return
 
-        try:
-            self[interface.name] = interface()
-        except DatabaseError:
-            sys.stderr.write(
-                style.ERROR(
-                    'Sync database before using service applications.\n'
-                    'Can not create service interface "%s"\n' %
-                    interface.name))
-            transaction.rollback()
+        try:            
+            self[service.name] = service()
+            if settings.DEBUG:
+                print_success('Initialize [%s] service %s compatible with consumer_types: %s'%(service.name, self[service.name], self[service.name].print_schema()))
+        except Exception:
+            print_error('Error while initialize service %s\n'%service.name)
+            print_text(traceback.format_exc())
+            
 
     def urls(self, is_public=False):
         # What follows below is not LISP :-P
@@ -453,13 +451,6 @@ class Register(dict):
         return ServiceList(
             self.values() if stype is None else
             [srv for srv in self.itervalues() if srv.stype == stype])
-
-    #return ServiceList(services)
-
-    @cached_property
-    def srv_instances(self):
-        from spicy.core.service.models import Service
-        return Service.objects.all()
 
     def __getitem__(self, name):
         try:

@@ -58,19 +58,17 @@ class ProfileManager(UserManager):
         return profile
 
     def get_available_username(self, username):
-        from social_auth.backends.pipeline import USERNAME_MAX_LENGTH
-
         uuid_length = getattr(settings, 'SOCIAL_AUTH_UUID_LENGTH', 4)
         username_fixer = getattr(
             settings, 'SOCIAL_AUTH_USERNAME_FIXER',
             lambda u: u)
 
-        short_username = username[:USERNAME_MAX_LENGTH - uuid_length]
+        short_username = username[:defaults.USERNAME_MAX_LENGTH - uuid_length]
         final_username = None
 
         while True:
             final_username = username_fixer(
-                username)[:USERNAME_MAX_LENGTH]
+                username)[:defaults.USERNAME_MAX_LENGTH]
 
             try:
                 User.objects.get(username=final_username)

@@ -123,7 +123,7 @@ class Provider(object):
     """
     __metaclass__ = ProviderMeta
     service = None
-    model = None
+    model = 'service.TestProviderModel'
 
     create_form_mod = None
     form_mod = None
@@ -381,6 +381,7 @@ class Interface(object):
 
 
 class ServiceList(object):
+    
     def __init__(self, services):
         self.services = set(services)
 

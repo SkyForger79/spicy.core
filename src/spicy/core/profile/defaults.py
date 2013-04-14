@@ -7,6 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from spicy.utils.html import make_slug
 
+USERNAME_MAX_LENGTH = getattr(settings, 'USERNAME_MAX_LENGTH', 100)
 
 SHA1_RE = getattr(settings, 'SHA1_RE', re.compile('^[a-f0-9]{40}$'))
 

@@ -1,9 +1,0 @@
-Add catologue with repos:
-
-spicy/__init__.py
-spicy/core/__init.py
-spicy/core/REPOSITORY_FOR_MODULE_NAME
-
-for example:
-
-ssh://bramabrama.com:6623//var/repos/spicy.core.service

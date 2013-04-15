@@ -95,6 +95,9 @@ def sscp(appname, user, host, remotepath):
         host=host,
         path=remotepath)
 
+    print_info('scp would be runned with dat line:')
+    print_info(cmd_str)
+
     cmd_list = [
         'scp',
         '{0}/docs/_build/html'.format(appname),
@@ -107,7 +110,8 @@ def sscp(appname, user, host, remotepath):
     could cause your program to block if it generates a lot of output.
     via. http://stackoverflow.com/questions/10251391/suppressing-output-in-python-subprocess-call"""
     devnull = open('/dev/null', 'w')
-    result = subprocess.call(cmd_list, stdout=devnull, stderr=devnull)
+    # result = subprocess.call(cmd_list, stdout=devnull, stderr=devnull)
+    result = subprocess.call(cmd_list)
 
     if result != 0:
         #: If `scp` return success

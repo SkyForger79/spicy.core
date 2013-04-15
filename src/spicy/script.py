@@ -15,15 +15,13 @@ from fabric.api import local
 write_err = sys.stderr.write
 write_std = sys.stdin.write
 
-VERBOSE = False
-
 outwr = sys.stdout.write
 errwr = sys.stderr.write
 
-print_ok = lambda x: outwr(green('> {0}\n'.format(x))) if VERBOSE == True else None
-print_info = lambda x: outwr(yellow('> {0}\n'.format(x))) if VERBOSE == True else None
-print_warn = lambda x: outwr(red('> {0}\n'.format(x))) if VERBOSE == True else None
-print_err = lambda x: errwr(red('> {0}\n'.format(x))) if VERBOSE == True else None
+print_ok = lambda x: outwr(green('> {0}\n'.format(x)))
+print_info = lambda x: outwr(yellow('> {0}\n'.format(x)))
+print_warn = lambda x: outwr(red('> {0}\n'.format(x)))
+print_err = lambda x: errwr(red('> {0}\n'.format(x)))
 
 # Trying to get env vars
 SPICY_REMOTE_SERVER = os.environ.get('SPICY_REMOTE_SERVER')
@@ -162,6 +160,9 @@ parser = argparse.ArgumentParser()
 # add --version arg and commands subparsers
 parser.add_argument('--version', action='version',
                     version=version.__version__, default=False)
+# parser.add_argument('--verbose', '-v', action='count',
+#                     help="ENLARGE UR VERBOSITY!")
+
 subparsers = parser.add_subparsers(title='SpicyTool commands',
                                    description="""You can run each command with
                                                key `-h` for addition options
@@ -191,8 +192,9 @@ def handle_command_line():
     for optname in env_opts:
         # check if env setuped
         if not env_opts[optname]:
-            print_warn('${} env var not set'.format(optname))
+            print(red('${} env var not set'.format(optname)))
 
     args = parser.parse_args()
     args.func(args)
+
     sys.exit(0)

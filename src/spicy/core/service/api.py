@@ -338,6 +338,8 @@ class Interface(object):
             ctype = ContentType.objects.get_for_model(consumer)
             consumer = ctype.model
 
+        # TODO check consumer == type (Djsngo/db/MODEL)
+
         if consumer in self.__providers:
             return self[consumer]
         elif GENERIC_CONSUMER in self.__providers:

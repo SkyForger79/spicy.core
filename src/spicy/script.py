@@ -83,28 +83,31 @@ def is_package(pkg_path):
     return True
 
 
-def sscp(appname, user, host, remotepath):
+def sscp(appname, user, args):
     """I don't wont to initialize Fabric environment at all.
 
     And it's So, just wrap `scp` system command. Feel da unixway
 
     """
-    cmd_str = 'scp ./{app}/docs/_build/html {user}@{host}:{path}'.format(
-        app=appname,
-        user=user,
-        host=host,
-        path=remotepath)
-
-    print_info('scp would be runned with dat line:')
-    print_info(cmd_str)
+    # cmd_str = 'scp -P {port} {app}/docs/_build/html {user}@{host}:{path}'.format(
+    #     port=args.port if args.port else 22,
+    #     app=appname,
+    #     user=user,
+    #     host=args.host,
+    #     path=args.path)
 
     cmd_list = [
         'scp',
-        '{0}/docs/_build/html'.format(appname),
-        '{0}@{1}:{2}'.format(user, host, remotepath)
+        '-r',
+        '-P {0}'.format(args.port if args.port else 22),
+        '{0}/docs/_build/html/'.format(appname),
+        '{0}@{1}:{2}/{3}'.format(user, args.host, args.path, appname)
     ]
 
-    """Suppress terminal output from `scp`
+    print_info('scp would be runned with dat line:')
+    print_info(cmd_list)
+
+    """Suppress terminal output from `scp`.
 
     Using subprocess.PIPE, if you're not reading from the pipe,
     could cause your program to block if it generates a lot of output.
@@ -156,7 +159,7 @@ def handle_build_docs(args):
             with lcd('./{}/docs'.format(app)):
                 local('make gettext; make html;', capture=False)
             # back to pwd of command was run
-            sscp(app, user, args.host, args.path)
+            sscp(app, user, args)
 
 # define main parser
 parser = argparse.ArgumentParser()
@@ -177,6 +180,7 @@ subparsers = parser.add_subparsers(title='SpicyTool commands',
 build_docs_parser = subparsers.add_parser('build-docs', help="""TODO: write help""")
 build_docs_parser.add_argument('-a', '--apps', action='store')
 build_docs_parser.add_argument('-H', '--host', action='store', required=True)
+build_docs_parser.add_argument('-P', '--port', action='store', required=False)
 build_docs_parser.add_argument('-u', '--user', action='store')
 build_docs_parser.add_argument('-p', '--path', action='store', required=True)
 build_docs_parser.set_defaults(func=handle_build_docs)

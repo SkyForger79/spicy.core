@@ -136,12 +136,10 @@ def handle_build_docs(args):
     if not args.user:
         user = os.getlogin()
         print_info('option --user ommited, so using system user ({})'.format(green(user)))
-
-    if args.apps:
-        app_list = args.apps.split(',')
     else:
-        print_info('option --apps empty, trying to build current package ({})'.format(
-            os.path.split(os.getcwd())[1]))  # just takes cwd name
+        user = args.user
+
+    app_list = args.apps.split(',')
 
     for app in app_list:
         print_info('Starting to build docs for {}'.format(green(app)))

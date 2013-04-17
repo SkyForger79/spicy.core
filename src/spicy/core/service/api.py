@@ -151,8 +151,7 @@ class Provider(object):
     def create_instance(self, consumer, **kwargs):
         ctype = ContentType.objects.get_for_model(consumer)
         return self.model.objects.create(
-            service=self.service.instance, consumer_id=consumer.id,
-            consumer_type=ctype, **kwargs)
+            consumer_id=consumer.id, consumer_type=ctype, **kwargs)
 
     def get_instance(self, consumer, **kwargs):
         is_quiet = kwargs.pop('_quiet', False)
@@ -229,7 +228,7 @@ class Provider(object):
             ctype = ContentType.objects.get_for_model(consumer)
 
             # XXX REFACTORING
-            post_data['%s-service' % prefix] = str(self.service.instance.id)
+            #post_data['%s-service' % prefix] = str(self.service.instance.id)
             post_data['%s-consumer_id' % prefix] = str(consumer.id)
             post_data['%s-consumer_type' % prefix] = str(ctype.id)
 

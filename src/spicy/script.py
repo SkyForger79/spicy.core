@@ -1,5 +1,9 @@
 # coding: utf-8
 """SpicyTools command handler implementation"""
+from __builtin__ import input
+from django.conf.locale import tr
+from exceptions import OSError
+from shutil import copyfile
 from spicy import version
 
 import os
@@ -159,6 +163,48 @@ def handle_build_docs(args):
             # back to pwd of command was run
             sscp(app, user, args)
 
+def handle_create_app(ns):
+    app_tpl_root = os.path.dirname(__file__)
+
+    try:
+        os.mkdir(ns.appname)
+    except OSError, e:
+        proceed = raw_input('Overwrite existing?')
+
+        if proceed in ['n','N']:
+            sys.exit()
+
+        if proceed not in ['y','Y']:
+            sys.exit(1)
+
+    for path, subdirs, files in os.walk(os.path.join(app_tpl_root, 'app')):
+        for name in files:
+            if os.path.join(path, name).endswith(('.py',)):
+                print_info(os.path.join(path, name))
+                template_file = open(os.path.join(path, name))
+
+                template_string = template_file.read()
+                ctx = dict(
+                    appname=ns.appname
+                )
+                result_string = template_string.format(**ctx)
+                copyfile(os.path.join(path, name), os.path.join(ns.appname, name))
+
+                fh = open(os.path.join(ns.appname, name), 'w+')
+                fh.write(result_string)
+                print(fh.read())
+    #
+    # for filename in files_to_process:
+    #     fh = open(filename)
+    #     result_str = fh.read().format(**{
+    #         'appname': ns.appname
+    #     })
+    #     print(result_str)
+    #     rendered_file = open(os.path.join(os.getcwd(), ns.appname), 'w+')
+    #     print(rendered_file)
+    #     rendered_file.write(result_str)
+    #     rendered_file.close()
+
 # define main parser
 parser = argparse.ArgumentParser()
 
@@ -183,6 +229,10 @@ build_docs_parser.add_argument('-u', '--user', action='store')
 build_docs_parser.add_argument('-p', '--path', action='store', required=True)
 build_docs_parser.set_defaults(func=handle_build_docs)
 
+# create app handler
+create_app_parser = subparsers.add_parser('create-app', help="""TODO: write help""")
+create_app_parser.add_argument('appname', action='store')
+create_app_parser.set_defaults(func=handle_create_app)
 
 def handle_command_line():
     """It is like a `__main__` function in usual scripts.
@@ -202,5 +252,6 @@ def handle_command_line():
 
     args = parser.parse_args()
     args.func(args)
+    print(args)
 
     sys.exit(0)

@@ -1,20 +1,16 @@
-import os, sys, traceback
-from itertools import chain
-
+import os
+import traceback
 from django.conf import settings
 from django.conf.urls.defaults import patterns, url
 from django.contrib.contenttypes.models import ContentType
-from django.db import transaction
-from django.db.utils import DatabaseError
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ImproperlyConfigured
-
+from itertools import chain
 from spicy.core.service.utils import MethodDecoratorAdaptor
 from spicy.core.siteskin.decorators import render_to, ViewInterface
-
 from spicy.utils import cached_property, load_module
 from spicy.utils.models import get_custom_model_class
-from spicy.utils.printing import print_error, print_text, print_info, print_success
+from spicy.utils.printing import print_error, print_text, print_success
 
 
 GENERIC_CONSUMER = 'GENERIC_CONSUMER'
@@ -38,7 +34,9 @@ class ProviderMetaUrlError(Exception):
 
 
 class MetaUrl:
-    """Meta URL class used to define dynamic url pattern for class based Provider or service views.
+    """
+    Meta URL class used to define dynamic url pattern for class based Provider
+    or service views.
     """
     is_public = False
 
@@ -61,7 +59,8 @@ class MetaUrl:
 
 
 class ProviderMeta(type):
-    """Meta Provider class 
+    """
+    Meta Provider class
 
     class A(Provider):
         @render_to('template.html')
@@ -71,8 +70,6 @@ class ProviderMeta(type):
         @ajax_request
         def view(self, consumer_type, consumer_id)
              return APIResponse()
-        
-
     """
 
     # TODO make tests for this meta implementation.
@@ -84,26 +81,23 @@ class ProviderMeta(type):
                 render_interface = inst.func
 
             if isinstance(render_interface, ViewInterface):
-                url_name = '-' + attr
-                if attr == '__call__':
-                    url_name = ''
+                url_name = '' if attr == '__call__' else ('-' + attr)
                 url_pattern_base = r'^%(service_name)s' + url_name
-                meta_url = MetaUrl(
-                    url_pattern_base +
-                    '/(?P<consumer_type>[\w]+)/(?P<consumer_id>[\d]+)/$', inst,
-                    attr, is_public=render_interface.is_public)
-                if inst.url_pattern is not None:
+                if inst.url_pattern is None:
+                    meta_url = MetaUrl(
+                        url_pattern_base +
+                        '/(?P<consumer_type>[\w]+)/(?P<consumer_id>[\d]+)/$',
+                        inst, attr, is_public=render_interface.is_public)
+                else:
                     meta_url = MetaUrl(
                         url_pattern_base + inst.url_pattern, inst, attr,
                         is_public=render_interface.is_public)
-
                 if urls.count(meta_url):
                     raise ProviderMetaUrlError(
                         "You defined the same url pattern for the different "
                         "provider's views. %s, %s" % (meta_url, urls))
                 else:
                     urls.append(meta_url)
-
         return super(ProviderMeta, mcs).__new__(mcs, name, bases, attrs)
 
 
@@ -113,13 +107,9 @@ class Provider(object):
     Service choose provider instance using own schema.
 
     provider = api.register['service_name'].get_provider(ConsumerDjangoModel)
-    
-    
 
     :param model: ManyToMany model for consumer 'app.ModelName'
     :type str:
-
-    
     """
     __metaclass__ = ProviderMeta
     service = None
@@ -214,8 +204,7 @@ class Provider(object):
     @cached_property
     def create_form(self):
         """Create provider form method
-        
-        
+
         :return form
         """
         if self.create_form_mod is not None:
@@ -225,7 +214,6 @@ class Provider(object):
         except AttributeError:
             raise ImproperlyConfigured(
                 _("Setup form_mod attributes at first."))
-
 
     def inline_formset(self, request, consumer, prefix='provider'):
         raise NotImplemented()
@@ -262,16 +250,16 @@ class Provider(object):
 
 
 class BillingProvider(Provider):
-    model = None #'spicy.core.service.models.BillingProviderModel'
-    
+    model = None  # 'service.BillingProviderModel'
 
 
 class Interface(object):
     """
     Service interface
 
-    service register providers for different type of cunsumer using content_type schema
-    
+    Service register providers for different type of consumer using
+    content_type schema.
+
     :param stype:
     :type: str
     :param name:
@@ -283,7 +271,6 @@ class Interface(object):
     :type: str
     :param is_default: ???
     :type: str
-    
     """
     stype = None
     name = 'service'
@@ -301,17 +288,18 @@ class Interface(object):
                 'Provider schema is not defined correctly.')
 
         self.is_default = self.is_default
-        
+
         # initialize all providers
         self.__providers = dict(
             [(ctype, prv(self))
              for ctype, prv in self.schema.iteritems()])
 
     def print_schema(self):
-        return '%s'%self.__providers
+        return '%s' % self.__providers
 
     def __getitem__(self, ctype):
-        """Get provider instance for the content_type.
+        """
+        Get provider instance for the content_type.
 
         :param ctype: consumer content_type string
         :type: str
@@ -338,7 +326,7 @@ class Interface(object):
             ctype = ContentType.objects.get_for_model(consumer)
             consumer = ctype.model
 
-        # TODO check consumer == type (Djsngo/db/MODEL)
+        # TODO check consumer == type (Django/db/MODEL)
 
         if consumer in self.__providers:
             return self[consumer]
@@ -371,7 +359,6 @@ class Interface(object):
         """Default service view.
 
         dashboard ????
-        
 
         Use it for something...
         """
@@ -383,7 +370,6 @@ class Interface(object):
 
 
 class ServiceList(object):
-    
     def __init__(self, services):
         self.services = set(services)
 
@@ -421,14 +407,17 @@ class Register(dict):
         if service.name in self:
             return
 
-        try:            
+        try:
             self[service.name] = service()
             if settings.DEBUG:
-                print_success('Initialize [%s] service %s compatible with consumer_types: %s'%(service.name, self[service.name], self[service.name].print_schema()))
+                print_success(
+                    'Initialize [%s] service %s compatible with '
+                    'consumer_types: %s' % (
+                        service.name, self[service.name],
+                        self[service.name].print_schema()))
         except Exception:
-            print_error('Error while initialize service %s\n'%service.name)
+            print_error('Error while initialize service %s\n' % service.name)
             print_text(traceback.format_exc())
-            
 
     def urls(self, is_public=False):
         # What follows below is not LISP :-P

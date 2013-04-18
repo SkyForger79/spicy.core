@@ -340,10 +340,9 @@ class BlacklistedIP(models.Model):
 
 
 # This shit doesn't belong here
-"""
 class TestProfile(AbstractProfile):
 
     class Meta:
         abstract = False
         db_table = 'test_profile'
-"""
+

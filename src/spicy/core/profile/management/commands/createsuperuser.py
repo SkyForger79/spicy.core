@@ -10,10 +10,11 @@ from django.core import exceptions
 from django.core.management.base import BaseCommand, CommandError
 from django.utils.translation import ugettext as _
 from optparse import make_option
-from spicy.core.profile import utils
+from spicy.core.profile import defaults, utils
+from spicy.utils.models import get_custom_model_class
 
 
-Profile = utils.get_concrete_profile()
+Profile = get_custom_model_class(defaults.CUSTOM_USER_MODEL)
 
 
 RE_VALID_USERNAME = re.compile('\w+$')

@@ -1,9 +1,8 @@
 # coding: utf-8
 """SpicyTools command handler implementation"""
-from __builtin__ import input
-from django.conf.locale import tr
-from exceptions import OSError
-from shutil import copyfile
+import string
+import errno
+import shutil
 from spicy import version
 
 import os
@@ -163,47 +162,65 @@ def handle_build_docs(args):
             # back to pwd of command was run
             sscp(app, user, args)
 
+
 def handle_create_app(ns):
-    app_tpl_root = os.path.dirname(__file__)
+    spicy_pkg_root_dir = os.path.dirname(__file__)
+    spicy_app_tpl_root = os.path.join(spicy_pkg_root_dir)
+    source_app_dir = os.path.join(spicy_pkg_root_dir, 'app')
+
+    #: provide more context vars here
+    template_ctx=dict(
+        APPNAME=ns.appname.lower(), #: would be 'appname' in templates
+        APPNAME_CLASS=ns.appname.capitalize(), #: would be 'Appname'
+        APPDESCRIPTION=ns.description
+    )
+
+    print_info('Source for new app:\n**** {}'.format(source_app_dir))
+
+    print_info('Creating app catalog')
+    dest_app_dir = os.path.join(os.getcwd(), ns.appname)
+
+    print_info('Copying source app to dest'.format(dest_app_dir))
+    print_info('{0} -> {1}'.format(cyan(source_app_dir), cyan(dest_app_dir)))
 
     try:
-        os.mkdir(ns.appname)
-    except OSError, e:
-        proceed = raw_input('Overwrite existing?')
+        shutil.copytree(source_app_dir, dest_app_dir)
+    except OSError as exc:
+        if exc.errno == errno.EEXIST and os.path.isdir(dest_app_dir):
 
-        if proceed in ['n','N']:
-            sys.exit()
+            while True:
+                proceed = raw_input('Overwrite existing app catalog ({})? y\\n: '.format(
+                    ns.appname))
+                if proceed in ['n','N']:
+                    print_info('Exiting')
+                    sys.exit()
+                if proceed not in ['y','Y']:
+                    print_warn('Press y, Y, n or N')
+                    continue
+                if proceed in ['y', 'Y']:
+                    print_warn('Overwriting')
+                    shutil.rmtree(dest_app_dir)
+                    shutil.copytree(source_app_dir, dest_app_dir)
+                    break
 
-        if proceed not in ['y','Y']:
-            sys.exit(1)
-
-    for path, subdirs, files in os.walk(os.path.join(app_tpl_root, 'app')):
+    print_info('Processing new app')
+    for path, subdirs, files in os.walk(dest_app_dir):
         for name in files:
-            if os.path.join(path, name).endswith(('.py',)):
-                print_info(os.path.join(path, name))
-                template_file = open(os.path.join(path, name))
+            file_with_path = os.path.join(path, name)
+            file_dir = os.path.dirname(file_with_path)
 
-                template_string = template_file.read()
-                ctx = dict(
-                    appname=ns.appname
-                )
-                result_string = template_string.format(**ctx)
-                copyfile(os.path.join(path, name), os.path.join(ns.appname, name))
+            if file_with_path.endswith(('.py',)):
+                """Post-copying processing (template rendering)"""
+                template_str = open(file_with_path, 'r').read()
+                if template_str:
+                    print_info('Processing now: {}'.format(green(file_with_path)))
 
-                fh = open(os.path.join(ns.appname, name), 'w+')
-                fh.write(result_string)
-                print(fh.read())
-    #
-    # for filename in files_to_process:
-    #     fh = open(filename)
-    #     result_str = fh.read().format(**{
-    #         'appname': ns.appname
-    #     })
-    #     print(result_str)
-    #     rendered_file = open(os.path.join(os.getcwd(), ns.appname), 'w+')
-    #     print(rendered_file)
-    #     rendered_file.write(result_str)
-    #     rendered_file.close()
+                template = string.Template(template_str)
+                #: using safe substituting, it's not throwing exceptions
+                result_str = template.safe_substitute(template_ctx)
+                fh = open(file_with_path, 'w+')
+                fh.write(result_str)
+                fh.close()
 
 # define main parser
 parser = argparse.ArgumentParser()
@@ -232,6 +249,7 @@ build_docs_parser.set_defaults(func=handle_build_docs)
 # create app handler
 create_app_parser = subparsers.add_parser('create-app', help="""TODO: write help""")
 create_app_parser.add_argument('appname', action='store')
+create_app_parser.add_argument('-d', '--description', action='store', default='generic description')
 create_app_parser.set_defaults(func=handle_create_app)
 
 def handle_command_line():
@@ -245,10 +263,10 @@ def handle_command_line():
 
     """
 
-    for optname in env_opts:
-        # check if env setuped
-        if not env_opts[optname]:
-            print(red('${} env var not set'.format(optname)))
+    # for optname in env_opts:
+    #     # check if env setuped
+    #     if not env_opts[optname]:
+    #         print(red('${} env var not set'.format(optname)))
 
     args = parser.parse_args()
     args.func(args)

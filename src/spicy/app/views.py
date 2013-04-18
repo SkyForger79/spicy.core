@@ -1,8 +1,5 @@
 # coding: utf-8
-"""{appname} views."""
-
-
-
+"""${APPNAME} views. Generated with spicy tool"""
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
@@ -19,4 +16,4 @@ from . import models
 
 
 def test(request):
-    
+

@@ -1,3 +1,4 @@
+# coding: utf-8
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
@@ -12,14 +13,14 @@ from spicy.core.service import api
 
 from . import models, forms
 
-class {{ APPNAME|capitalize }}Provider(api.Provider):
+class ${APPNAME_CLASS}Provider(api.Provider):
     pass
 
 
-class {{ APPNAME|capitalize }}Service(api.Interface):
-    name = '{{ APPNAME|lowercase }}'
-    label = _('{{ APP_DESCRIPTION }}')
-    schema = dict(GENERIC_CONSUMER={{ APPNAME|capitalize }}ProviderProvider)
+class ${APPNAME}Service(api.Interface):
+    name = '${APPNAME_CLASS}'
+    label = _('${APPDESCRIPTION}')
+    schema = dict(GENERIC_CONSUMER=${APPNAME_CLASS}ProviderProvider)
 
     # ======= tip 1. =======
     # default url_pattern
@@ -32,21 +33,21 @@ class {{ APPNAME|capitalize }}Service(api.Interface):
     # multi_view method allow return custom template depend of controler logic algorith.
 
     # ======= tip 4. =======
-    # Use {% url service:public:{{ APPNAME|lowercase }}-foo x y z %} in Django templates for 
+    # Use {% url service:public:${APPNAME}-foo x y z %} in Django templates for
     # dynamic url generation
 
 
-    @render_to('{{ appname }}/', use_siteskin=True) #url_pattern
+    @render_to('${APPNAME}/', use_siteskin=True) #url_pattern
     def foo(self, request):
         raise NotImplemented
 
 
-    @render_to('{{ appname }}/', use_siteskin=True, url_pattern='^') 
+    @render_to('${APPNAME}/', use_siteskin=True, url_pattern='^')
     def foo2(self, request):
         messages = []
         return dict(messages=messages)
 
-    @ajax_request(url_pattern='^') 
+    @ajax_request(url_pattern='^')
     def bar(self, request):
         errors = []
         messages = []
@@ -54,14 +55,14 @@ class {{ APPNAME|capitalize }}Service(api.Interface):
         raise APIResponse(data=dict(), errors=erros, messages=messages)
 
 
-    @multi_view(url_pattern='^', use_siteskin=True) 
+    @multi_view(url_pattern='^', use_siteskin=True)
     def bar(self, request):
         errors = []
         messages = []
-        template = {{ APPNAME|lowercase }} + '/' + DEFAULT_TEMPLATE
+        template = '${APPNAME}' + '/' + DEFAULT_TEMPLATE
 
         if requset.method == 'POST':
-            template = {{ APPNAME|lowercase }} + '/custom.html'
+            template = '${APPNAME}' + '/custom.html'
         
         raise dict(template=template, foo=1, bar=2)
 

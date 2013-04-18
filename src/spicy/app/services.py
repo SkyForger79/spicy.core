@@ -17,10 +17,10 @@ class ${APPNAME_CLASS}Provider(api.Provider):
     pass
 
 
-class ${APPNAME}Service(api.Interface):
-    name = '${APPNAME_CLASS}'
-    label = _('${APPDESCRIPTION}')
-    schema = dict(GENERIC_CONSUMER=${APPNAME_CLASS}ProviderProvider)
+class ${APPNAME_CLASS}Service(api.Interface):
+    name = '${APPNAME}'
+    label = _('${APP_DESCRIPTION}')
+    schema = dict(GENERIC_CONSUMER=${APPNAME_CLASS}Provider)
 
     # ======= tip 1. =======
     # default url_pattern
@@ -37,32 +37,32 @@ class ${APPNAME}Service(api.Interface):
     # dynamic url generation
 
 
-    @render_to('${APPNAME}/', use_siteskin=True) #url_pattern
-    def foo(self, request):
+    @render_to('${APPNAME}/foo.html', use_siteskin=True) #url_pattern
+    def foo(self, request, consumer_type, consumer_id):
         raise NotImplemented
 
 
-    @render_to('${APPNAME}/', use_siteskin=True, url_pattern='^')
+    @render_to('${APPNAME}/bar.html', use_siteskin=True, url_pattern='^')
     def foo2(self, request):
         messages = []
         return dict(messages=messages)
 
-    @ajax_request(url_pattern='^')
-    def bar(self, request):
+    @ajax_request(url_pattern='^api/(?P<arg_id>[\d]+)/$')
+    def bar(self, request, arg_id):
         errors = []
         messages = []
 
         raise APIResponse(data=dict(), errors=erros, messages=messages)
 
 
-    @multi_view(url_pattern='^', use_siteskin=True)
-    def bar(self, request):
+    @multi_view(url_pattern='^renderer/(?P<template_name>[\w]+)/$', use_siteskin=True)
+    def bar(self, request, template_name):
         errors = []
         messages = []
         template = '${APPNAME}' + '/' + DEFAULT_TEMPLATE
 
         if requset.method == 'POST':
-            template = '${APPNAME}' + '/custom.html'
+            template = '${APPNAME}' + template_name
         
         raise dict(template=template, foo=1, bar=2)
 

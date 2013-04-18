@@ -172,7 +172,7 @@ def handle_create_app(ns):
     template_ctx=dict(
         APPNAME=ns.appname.lower(), #: would be 'appname' in templates
         APPNAME_CLASS=ns.appname.capitalize(), #: would be 'Appname'
-        APPDESCRIPTION=ns.description
+        APP_DESCRIPTION=ns.description
     )
 
     print_info('Source for new app:\n**** {}'.format(source_app_dir))
@@ -270,6 +270,5 @@ def handle_command_line():
 
     args = parser.parse_args()
     args.func(args)
-    print(args)
 
     sys.exit(0)

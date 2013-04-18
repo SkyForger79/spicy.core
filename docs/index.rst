@@ -7,4 +7,6 @@ Spicy tool:
 ----------
 
 .. toctree::
+   :maxdepth: 2
+
    content/script/commands

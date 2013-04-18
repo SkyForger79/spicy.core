@@ -3,8 +3,8 @@ Spicy Core module documentation
 
 Describes parts related to `spicy` package and `spicy` shell command
 
-Docs list:
+Spicy tool:
 ----------
 
 .. toctree::
-   content/script
+   content/script/commands

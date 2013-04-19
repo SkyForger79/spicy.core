@@ -46,8 +46,8 @@ setup(
         'html5lib==0.95',
 
         # profile deps.
-        #'django-captcha',
-        #'django-social-auth==0.6.1',
+        'django-simple-captcha',
+        'django-social-auth==0.6.1',
 
         # service deps.
         #

@@ -13,3 +13,22 @@ def index(request):
 def login(request):
     return views.login(
         request, template_name='spicy-admin/admin/login.html')
+
+
+#
+# Snippets
+#
+# @is_staff
+# @render_to('snippets/add_new_item.html')
+# def add_new_item(request):
+#     print('add_new_item_url')
+#     return {'services': api.register.get_list()}
+#
+
+# # @is_staff
+# def add_new_item(request):
+#     return render_to('snippets/add_new_item.html', )
+
+@render_to('snippets/add_new_item.html', use_admin=True)
+def add_new_item(request):
+    return dict(lol='lol')

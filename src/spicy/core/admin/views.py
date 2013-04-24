@@ -28,7 +28,3 @@ def login(request):
 # # @is_staff
 # def add_new_item(request):
 #     return render_to('snippets/add_new_item.html', )
-
-@render_to('snippets/add_new_item.html', use_admin=True)
-def add_new_item(request):
-    return dict(lol='lol')

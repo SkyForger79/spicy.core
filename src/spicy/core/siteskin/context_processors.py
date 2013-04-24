@@ -20,7 +20,7 @@ def base(request):
         'SITESKIN': defaults.SITESKIN,
         'SITESKIN_ADMIN': defaults.SITESKIN_ADMIN,
         'DEBUG': settings.DEBUG,
-        }
+    }
 
 
 def boolean(request):

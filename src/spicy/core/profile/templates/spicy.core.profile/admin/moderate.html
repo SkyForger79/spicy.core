@@ -1,0 +1,39 @@
+{% extends current_admin_base %}{% load navigator sk %}
+{% block navigation_root %}{% trans "Profiles" %}{% endblock %}
+{% block navigation_place %}{{ profile.username }} / {{ profile.email }}{% endblock %}
+{% block menu %}{% include "spicy.core.profile/admin/menu.html" %}{% endblock %}
+
+{% block content %}
+<a class="passwd" id="passwd" href="{{ profile.get_absolute_url }}" target="_blank" title="{% trans "view" %}">
+  <img src="{{ MEDIA_URL }}img/admin/eye.png"/>
+</a>
+  <form id="profile-info" method="post">{% csrf_token %}
+    <div class="expert_form">
+	<ul class="expert_form-layout">          
+          {% formfield "" form "username" "li-person-info" %}
+          {% formfield "" form "email" "li-person-info" %}
+	  {% formfield "" form "first_name" "li-person-info" %}
+	  {% formfield "" form "second_name" "li-person-info" %}
+	  {% formfield "" form "last_name" "li-person-info" %}
+          {% formfield "" form "is_active" "li-person-info" %}
+	  {% formfield "" form "is_banned" "li-person-info" %}
+	  {% formfield "" form "accept_agreement" "li-person-info" %}
+	  <li class="expert_form-row">
+	    <label for="">{% trans "date joined" %}</label>
+	    <div class="expert_person-info">{{ profile.date_joined|date:"j M Y, H:i" }}</div>
+	    <div class="expert_clr"></div>
+	  </li>
+	  <li class="expert_form-row">
+	    <label for="">{% trans "last login" %}</label>
+	    <div class="expert_person-info">{{ profile.last_login|date:"j M Y, H:i" }}</div>
+	    <div class="expert_clr"></div>
+	  </li>
+	</ul>
+    </div>
+    <div class="expert_filter" >
+      <div class="expert_right-button"><input type="submit" value="{% trans "Save" %}"/></div>
+      <div class="expert_clr"> </div>
+    </div>
+  </form>	  
+{% endblock %}
+

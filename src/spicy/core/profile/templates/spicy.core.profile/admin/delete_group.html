@@ -1,0 +1,51 @@
+{% extends "admin/base.html" %}
+{% load navigator sk %}
+
+{% block extra_js %}{% endblock %}
+{% block navigation_root %}{% trans "Profiles" %}{% endblock %}
+{% block navigation_place %}{{ group }}{% endblock %}
+{% block menu %}{% include "profile/admin/menu.html" %}{% endblock %}
+
+{% block content %}
+<div class="expert_form"> 
+<form action="" method="post">{% csrf_token %}
+  {% with group.permissions.all as permissions %}
+  {% if permissions %}
+  <h3>{% trans "Group permissions" %}</h3>
+  <ul>
+    {% for permission in permissions %}
+    <li>{{ permission }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  {% endwith %}
+  
+  {% with group.user_set.all as users %}
+  {% with perms.extprofile.change_profile as change_profile %}
+  {% if users %}
+  <h3>{% trans "Group members" %}</h3>
+  <ul>
+    {% for user in users %}
+    <li>
+      {% if change_profile %}<a href="{% url profile:admin:edit user.pk %}">{{ user }}</a>
+      {% else %}{{ user }}
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  <h3>{% trans "Users will lose permissions granted by this group, but won't be deleted" %}</h3>
+  {% endif %}
+  {% endwith %}
+  {% endwith %}
+
+  <input type="checkbox" name="confirm"> {% trans "Are you sure want to delete this group?" %}
+  <div class="expert_filter">
+    <div class="expert_right-button">
+      <input type="submit" value="{% trans "Delete" %}">
+    </div> 
+    <a class="expert_buttom-link" href="{% url profile:admin:groups %}">{% trans "Return to groups list" %}</a>
+    <div class="expert_clr"> </div>
+  </div>
+</form>
+</div>
+{% endblock %}

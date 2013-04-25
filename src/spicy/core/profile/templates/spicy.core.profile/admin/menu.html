@@ -1,0 +1,47 @@
+{#{% if perms.extprofile %}#}
+{#{% load navigator %}#}
+{#<ul class="admin-menu">#}
+{#  <li class="helper">{% trans "User profiles" %}:</li>#}
+{#  {% if perms.extprofile.add_profile %}#}
+{#  {% menu request "profile:admin:create" _("Create user profile") ""%}#}
+{#  {% endif %}#}
+{#  {% if perms.extprofile.change_profile or perms.extprofile.view_profile %}#}
+{#  {% menu request "profile:admin:index" _("All profiles") %}#}
+{#  {% endif %}#}
+{#  {% if perms.auth.add_group %}#}
+{#  {% menu request "profile:admin:create-group" _("Create users group") %}#}
+{#  {% endif %}#}
+{#  {% if perms.auth.change_group %}#}
+{#  {% menu request "profile:admin:groups" _("Groups & Permissions") %}#}
+{#  {% endif %}#}
+{#  {% menu request "profile:admin:blacklisted-ips" _("Blacklisted IPs") %}#}
+{#  {% if perms.extprofile.change_profile or perms.extprofile.view_profile %}#}
+{#  <li class="helper">{% trans "Account types" %}:</li>#}
+{#  {% menu request "profile:admin:index" _("Staff") "" "" "is_staff=true" %}#}
+{#  {% menu request "profile:admin:index" _("Users") "" "" "is_staff=false" %}#}
+{#  {% endif %}#}
+{#</ul>#}
+{#{% endif %}#}
+
+{% if perms.profile %}
+    {% with perms.profile as pm %}
+    <li class="active console">
+        <a href="#">{% trans "User profiles" %}</a>
+        <ul>
+            <li><a href="{% url profile:admin:edit request.user.id %}">{% trans "Your profile" %}</a></li>
+        {% if pm.change_profile or pm.view_profile %}
+            <li><a href="{% url profile:admin:index %}">{% trans "All profiles" %}</a></li>
+        {% endif %}
+        {% if pm.add_profile %}
+            <li><a href="{% url profile:admin:create %}">{% trans "Create user profile" %}</a></li>
+        {% endif %}
+        {% if perms.auth.change_group %}
+            <li><a href="{% url profile:admin:groups %}">{% trans "Groups & Permissions" %}</a></li>
+        {% endif %}
+        {% if perms.auth.add_group %}
+            <li><a href="{% url profile:admin:create-group %}">{% trans "Create users group" %}</a></li>
+        {% endif %}
+        </ul>
+    </li>
+    {% endwith %}
+{% endif %}

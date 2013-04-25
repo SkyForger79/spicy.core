@@ -1,0 +1,37 @@
+{% if page_obj.has_other_pages %}
+
+{% if style == 'default' %}
+
+{% if page_obj.has_previous %}
+<span class="previous_pages">
+  <a href="{{ base_url }}page={{ page_obj.previous_page_number }}" rel="prev">{% trans "previous" %}</a>
+</span>
+{% endif %}
+
+{% if page_obj.has_next %}
+<span class="next_pages">
+  <a href="{{ base_url }}page={{ page_obj.next_page_number }}" rel="next">{% trans "next" %}</a>
+</span>
+{% endif %}
+
+
+<ul class="expert_page">
+  {% for number in page_list %}
+  {% if number == "." %}
+  <li>&hellip;</li>
+  {% else %}
+  {% if number == page_obj.number %}
+  <li class="expert_active"><span>{{ number }}</span></li>
+  {% else %}
+  <li>
+    <a href="{{ base_url }}page={{ number }}" title="{% blocktrans with page_obj.number as page_num %}Page {{ page_num }}{% endblocktrans %}">{{ number }}</a>
+  </li>
+  {% endif %}
+  {% endif %}
+  {% endfor %}
+</ul>
+
+{% endif %}
+
+
+{% endif %}

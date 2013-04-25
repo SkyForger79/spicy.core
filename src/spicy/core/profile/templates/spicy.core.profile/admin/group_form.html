@@ -1,0 +1,5 @@
+<li class="expert_form-row">
+  <h2>{{ group_form.name }}{{ group_form.name.errors  }}</h2>{{ group_form.id }}
+  <div class="form">{{ group_form.permissions }}{{ group_form.permissions.errors }}</div>
+  {% if perms.auth.delete_group and group_form.instance.pk %}<div class="expert_clearfix"><a class="expert_buttom-link expert_but-del" href="{% url profile:admin:delete-group group_form.instance.pk %}">{% trans "Delete" %}</a></div>{% endif %}
+</li>

@@ -1,0 +1,34 @@
+{% if perms.profile %}{% with perms.profile as pm %}
+
+    {% if pm.change_profile or pm.view_profile %}
+    <div class="span6 action-nav-button">
+      <a href="{% url profile:admin:index %}" title="{% trans "All profiles" %}">
+        <i class="icon-user"></i>
+        <span>{% trans "All profiles" %}</span>
+      </a>
+      <span class="triangle-button green"><span class="inner">{{ user.all.count }}</span></span>
+    </div>
+    {% endif %}
+
+{##}
+{##}
+{#    <li class="dark-nav">#}
+{#        <span class="glow"></span>#}
+{#        <a class="accordion-toggle collapsed" data-toggle="collapse" href="#dash-user-profiles-dropdown">#}
+{#          <i class="icon-user icon-2x"></i>#}
+{#            <span>#}
+{#              {% trans "User profiles" %}#}
+{#              <i class="icon-caret-down"></i>#}
+{#            </span>#}
+{#        </a>#}
+{##}
+{#        <ul id="dash-user-profiles-dropdown" class="collapse in">#}
+{#            {% if pm.change_profile or pm.view_profile %}#}
+{#                <li class="nav-header">#}
+{#                    <a href="{% url profile:admin:index %}">#}
+{#                        <i class="icon-group"></i> {% trans "All profiles" %}#}
+{#                    </a>#}
+{#                </li>#}
+{#            {% endif %}#}
+{#    #}
+{% endwith %}{% endif %}

@@ -1,21 +1,13 @@
-@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,700);
-
-body {
-    font-family: 'Open Sans', sans-serif;
-    padding-top: 60px;
-    padding-bottom: 40px;
+.sidebar-background,
+.primary-sidebar {
+    width: 300px;
 }
 
-.sidebar-nav {
-    padding: 9px 0;
+.sidebar-background .primary-sidebar-background {
+    width: 300px;
 }
 
-.console ul {
-    list-style: none;
-    margin-left: 8px;
-    margin-bottom: 8px;
-}
-
-.console ul li {
-    font-size: 12px;
+.nav-header {
+    margin: 0 !important;
+    padding: 0;
 }

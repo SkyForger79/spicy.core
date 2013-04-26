@@ -1,42 +1,47 @@
-{% extends current_admin_base %}{% load spicy i18n navigator %}
-{% block navigation_root %}{% trans "Profiles" %}{% endblock %}
+{% extends current_admin_base %}
+{% load spicy i18n navigator %}
+
+{% block navigation_root %}
+{% trans "Profiles" %}{% endblock %}
 {% block navigation_place %}<p id="validationTips">{% trans "Create user profile" %}</p>{% endblock %}
 {% block menu %}{% include "spicy.core.profile/admin/menu.html" %}{% endblock %}
 
 {% block extra_js %}
-<script type="text/javascript">
-  document.observe("dom:loaded", function() {
-   var field= $('usernamecontainer').select("input")[0];
-   field.observe("blur",function(){
-    url="/checkusername/";
-        new Ajax.Request(url, { 
-            method: 'post', 
-            parameters: { username: $F(field) },
-            onSuccess: function(transport) {
-                if(transport.responseText.evalJSON().result=="ok")
-                {
-                    $('usernameerrors').update();
-                }
-                else
-                {
-                    $('usernameerrors').update('Занято');
-                }
-            } });
-    });
-
-
-});
-
-</script>
+{#<script type="text/javascript">#}
+{#  $(function() {#}
+{#   var field= $('usernamecontainer').select("input")[0];#}
+{#   field.observe("blur",function(){#}
+{#    url="/checkusername/";#}
+{#        new Ajax.Request(url, {#}
+{#            method: 'post',#}
+{#            parameters: { username: $F(field) },#}
+{#            onSuccess: function(transport) {#}
+{#                if(transport.responseText.evalJSON().result=="ok")#}
+{#                {#}
+{#                    $('usernameerrors').update();#}
+{#                }#}
+{#                else#}
+{#                {#}
+{#                    $('usernameerrors').update('Занято');#}
+{#                }#}
+{#            } });#}
+{#    });#}
+{##}
+{##}
+{#});#}
+{##}
+{#</script>#}
 {{ form.media }}
 {% endblock %}
 
 {% block content %}
 
 <form method="POST">{% csrf_token %}
-  <div class="form"> 
-    <div class="attent-block">
-      <strong>{% trans "Attention" %}!</strong> {% trans "Password will be generated automaticaly if password fields are clean" %}.
+  <div class="form">
+    <div class="alert alert-block">
+      <button type="button" class="close" data-dismiss="alert">×</button>
+      <h4>{% trans "Attention" %}!</h4>
+      {% trans "Password will be generated automaticaly if password fields are clean" %}.
     </div>
     {{ form.errors }}
     <ul class="form-layout">
@@ -51,7 +56,7 @@
       </li>
 
       {% formfield "" form "email" "li" %}
-      
+
       {% formfield "" form "password1" "li" %}
       {% formfield "" form "password2" "li" %}
 
@@ -62,12 +67,12 @@
       {% formfield "" form "is_staff" "li" %}
       {% formfield "" form "groups" "li" %}
       {% formfield "" form "sites" "li" %}
-      
+
     </ul>
   </div>
   <div class="filter" >
     <div class="right-button"><input type="submit" value="{% trans "Create" %}"/></div>
     <div class="clr"> </div>
-  </div>	
-</form>	   
+  </div>
+</form>
 {% endblock %}

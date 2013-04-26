@@ -21,12 +21,7 @@ build
 *.tar.gz
 *.rar
 # picture files
-*.jpg
-*.jpeg
-*.gif
-*.JPG
-*.png
-*.bmp
+
 # video files
 *.mp4
 # audio files

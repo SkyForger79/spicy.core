@@ -1,14 +1,15 @@
 {% if perms.profile %}{% with perms.profile as pm %}
 
     {% if pm.change_profile or pm.view_profile %}
-    <div class="span6 action-nav-button">
+    <div class="span2 action-nav-button">
       <a href="{% url profile:admin:index %}" title="{% trans "All profiles" %}">
         <i class="icon-user"></i>
         <span>{% trans "All profiles" %}</span>
       </a>
-      <span class="triangle-button green"><span class="inner">{{ user.all.count }}</span></span>
-    </div>
+      <span class="triangle-button green"><span class="inner"></span></span>
+    </ul>
     {% endif %}
+
 
 {##}
 {##}

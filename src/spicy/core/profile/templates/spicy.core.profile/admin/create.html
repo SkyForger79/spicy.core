@@ -38,46 +38,59 @@
 <div class="main-content">
     <div class="container-fluid">
         <div class="row-fluid">
+
             <div class="span12">
-                <form method="POST">{% csrf_token %}
-                  <div class="form">
-                    <div class="alert alert-block">
-                      <button type="button" class="close" data-dismiss="alert">×</button>
-                      <h4>{% trans "Attention" %}!</h4>
-                      {% trans "Password will be generated automaticaly if password fields are clean" %}.
+                <div class="alert alert-block">
+                  <button type="button" class="close" data-dismiss="alert">×</button>
+                  <h4>{% trans "Attention" %}!</h4>
+                  {% trans "Password will be generated automaticaly if password fields are clean" %}.
+                </div>
+            </div>
+
+            <div class="span12">
+                <div class="box">
+                    <div class="box-header">
+                        <span class="title">Forms</span>
                     </div>
-                    {{ form.errors }}
-                    <ul class="form-layout">
 
-                      <li class="form-row clearfix" id="usernamecontainer">
-                        <b>{{ form.username.label }}</b>
-                        <div class="right-column">
-                        {{ form.username.errors }}{{ form.username }}
-                        {% if form.username.help_text %}<div>{{ form.username.help_text }}</div>{% endif %}
-                        </div>
-                        <span style="color:red; font-weight:bold" id="usernameerrors"></span>
-                      </li>
+                    <div class="box-content">
+                        <form class="fill-up" method="post">{% csrf_token %}
+                          <div class="form">
 
-                      {% formfield "" form "email" "li" %}
+                            {{ form.errors }}
+                            <ul class="form-layout">
 
-                      {% formfield "" form "password1" "li" %}
-                      {% formfield "" form "password2" "li" %}
+                              <li class="form-row clearfix" id="usernamecontainer">
+                                <b>{{ form.username.label }}</b>
+                                <div class="right-column">
+                                {{ form.username.errors }}{{ form.username }}
+                                {% if form.username.help_text %}<div>{{ form.username.help_text }}</div>{% endif %}
+                                </div>
+                                <span style="color:red; font-weight:bold" id="usernameerrors"></span>
+                              </li>
 
-                      {% formfield "" form "first_name" "li" %}
-                      {% formfield "" form "second_name" "li" %}
-                      {% formfield "" form "last_name" "li" %}
-                      {% formfield "" form "email_activation_key" "li" %}
-                      {% formfield "" form "is_staff" "li" %}
-                      {% formfield "" form "groups" "li" %}
-                      {% formfield "" form "sites" "li" %}
+                              {% formfield "" form "email" "li" %}
 
-                    </ul>
-                  </div>
-                  <div class="filter" >
-                    <div class="right-button"><input type="submit" value="{% trans "Create" %}"/></div>
-                    <div class="clr"> </div>
-                  </div>
-                </form>
+                              {% formfield "" form "password1" "li" %}
+                              {% formfield "" form "password2" "li" %}
+
+                              {% formfield "" form "first_name" "li" %}
+                              {% formfield "" form "second_name" "li" %}
+                              {% formfield "" form "last_name" "li" %}
+                              {% formfield "" form "email_activation_key" "li" %}
+                              {% formfield "" form "is_staff" "li" %}
+                              {% formfield "" form "groups" "li" %}
+                              {% formfield "" form "sites" "li" %}
+
+                            </ul>
+                          </div>
+                          <div class="filter" >
+                            <div class="right-button"><input type="submit" value="{% trans "Create" %}"/></div>
+                            <div class="clr"> </div>
+                          </div>
+                        </form>
+                    </div>
+                </div>
             </div>
        </div>
     </div>

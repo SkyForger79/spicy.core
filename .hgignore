@@ -5,7 +5,7 @@ docs/_build
 .idea
 dist*
 build*
-spicy.egg*
+*.egg*
 .DS_Store
 .project
 .pydevproject

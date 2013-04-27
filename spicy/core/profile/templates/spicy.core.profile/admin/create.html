@@ -1,0 +1,82 @@
+{% extends current_admin_base %}
+{% load crispy_forms_tags %}
+{% load spicy i18n navigator %}
+
+{% block title %}{% trans "Create user profile" %}{% endblock %}
+
+{#{% block navigation_root %}#}
+{#{% trans "Profiles" %}{% endblock %}#}
+{#{% block navigation_place %}<p id="validationTips">{% trans "Create user profile" %}</p>{% endblock %}#}
+{#{% block menu %}{% include "spicy.core.profile/admin/menu.html" %}{% endblock %}#}
+
+{% block extra_js %}
+{#<script type="text/javascript">#}
+{#  $(function() {#}
+{#   var field= $('usernamecontainer').select("input")[0];#}
+{#   field.observe("blur",function(){#}
+{#    url="/checkusername/";#}
+{#        new Ajax.Request(url, {#}
+{#            method: 'post',#}
+{#            parameters: { username: $F(field) },#}
+{#            onSuccess: function(transport) {#}
+{#                if(transport.responseText.evalJSON().result=="ok")#}
+{#                {#}
+{#                    $('usernameerrors').update();#}
+{#                }#}
+{#                else#}
+{#                {#}
+{#                    $('usernameerrors').update('Занято');#}
+{#                }#}
+{#            } });#}
+{#    });#}
+{##}
+{##}
+{#});#}
+{##}
+{#</script>#}
+    {{ form.media }}
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    {# DASH TITLE #}
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="alert alert-block">
+                  <button type="button" class="close" data-dismiss="alert">×</button>
+                  <h4>{% trans "Attention" %}!</h4>
+                  {% trans "Password will be generated automaticaly if password fields are clean" %}.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# FORM #}
+    <div class="container-fluid padded pad-top-null">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="box">
+                    <div class="box-header">
+                        <span class="title">{% trans "Create user profile" %}</span>
+                    </div>
+
+                    <div class="box-content">
+                        <form class="form-horizontal fill-up validatable" method="post" action=".">
+                            {% csrf_token %}
+                            <div class="row-fluid">
+                                <div class="padded separate-sections">
+                                    {{ form|crispy }}
+                                    <div class="form-actions controls">
+                                        <button type="submit" class="btn btn-blue">{% trans "Create" %}</button>
+                                    </div>
+                                </div>
+                             </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+       </div>
+    </div>
+</div>
+{% endblock content %}

@@ -1,37 +1,40 @@
-"""spicy core package"""
+import os
 from importlib import import_module
 from setuptools import setup, find_packages
 
-spicy_pkg = import_module('src.spicy')
-version = unicode(spicy_pkg.__version__)
-long_description = """spicy core package"""
+"""
+Spicy core package
+"""
+package_name = "spicy"
+package_version = import_module('spicy').__version__
+
+package_description = "spicy core"
+package_long_description = "spicy core package"
 
 
-def long_description():
-    """Return long description from README.rst if it's present
+def get_long_description():
+    """Return long description from README.md if it's present
     because it doesn't get installed."""
     try:
-        return open('README.rst').read()
+        return open('README.md').read()
     except IOError:
-        return long_description
+        return package_long_description
 
 setup(
-    name='spicy',
-    version=version,
-    author='Burtsev Alexander',
-    author_email='eburus@gmail.com',
-    description='spicy',
-    license='BSD',
-    keywords='django, cms',
-    url='', # TODO: define an url
+    namespace_packages=['spicy'],
+    packages=find_packages(),
+    # package_dir={
+    #     '': 'spicy',
+    #     # 'spicy.core': 'spicy/core',
+    # },
 
-    packages=find_packages('src'),
-    package_dir={
-        '': 'src',
-    },
     include_package_data=True,
+    package_data={
+        'spicy': ['*']
+    },
+
     zip_safe=False,
-    long_description=long_description(),
+
     install_requires=[
         'Django==1.4.3',
         'Fabric==1.6',
@@ -39,6 +42,9 @@ setup(
         'numpydoc==0.4',
         'raven==3.2.1',
         'python-memcached==1.48',
+
+        # utils
+        'django-crispy-forms==1.2.5',
 
         # ?? siteskin deps.
         'pytils==0.2.3',
@@ -57,11 +63,23 @@ setup(
         #'svn+http://django-simple-captcha.googlecode.com/svn/trunk@54#egg=django-captcha',
         #'git+https://github.com/krvss/django-social-auth.git#egg=django-social-auth-0.7.13.dev',
     ],
+
     entry_points={
         'console_scripts': [
             'spicy = spicy.script:handle_command_line',
         ],
     },
+
+    name=package_name,
+    version=package_version,
+    author='Burtsev Alexander',
+    author_email='eburus@gmail.com',
+    description=package_description,
+    long_description=get_long_description(),
+    license='BSD',
+    keywords='django, cms',
+    url='http://spicytool.com/',
+
     classifiers=[
         'Framework :: Django',
         'Development Status :: 1.1',

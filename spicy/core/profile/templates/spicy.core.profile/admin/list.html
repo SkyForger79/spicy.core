@@ -1,3 +1,45 @@
+{% extends current_admin_base %}
+{% load crispy_forms_tags %}
+{% load spicy_theme pagination %}
+
+{% block title %}
+    {% trans "All profiles" %}
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+  <div class="container-fluid padded">
+    <div class="row-fluid">
+        <div class="span12">
+
+{#            {% pagination 'foo' 'bar' %}#}
+
+            <div class="box">
+                <div class="box-header">
+                    <span class="title">{% trans "All profiles" %}</span>
+                </div>
+
+                <div class="box-content">
+                    <form class="fill-up validatable" method="get" action=".">
+                        {% csrf_token %}
+                        <div class="row-fluid">
+                            <div class="padded separate-sections">
+                                {{ form|crispy }}
+                                <div class="form-actions controls">
+                                    <button type="submit" class="btn btn-blue">{% trans "Search" %}</button>
+                                </div>
+                            </div>
+                         </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
 {#{% extends current_admin_base %}{% load navigator pagination sk %}#}
 {##}
 {#{% block content %}#}

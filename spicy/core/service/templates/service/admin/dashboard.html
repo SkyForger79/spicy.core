@@ -1,7 +1,9 @@
 {% extends current_admin_base %}
-{% load spicy %}
+{% load spicy spicy_theme %}
 
-{% block title %}{{ current_site.domain }} - {% trans "Spicy Dashboard" %}{% endblock title %}
+{% block title %}
+    {{ current_site.domain }} - {% trans "Spicy Dashboard" %}
+{% endblock title %}
 
 {% block content %}
 <div class="main-content">
@@ -20,13 +22,13 @@
         </div>
     </div>
 
-    <div class="row-fluid padded" style="padding-top: 0">
+    <div class="row-fluid padded pad-top-null">
         <div class="span12">
             <div class="action-nav-normal">
 
              {% if "spicy.core.profile"|installed_app %}
                 {% include "spicy.core.profile/admin/dashboard/button.html" %}
-            {% endif %}
+             {% endif %}
 
              </div>
          </div>

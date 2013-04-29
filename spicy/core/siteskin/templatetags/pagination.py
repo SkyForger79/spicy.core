@@ -12,7 +12,7 @@ def sk_pagination(context, style='default', neighbours=False):
     return _pagination(context, style='default', neighbours=False)
 
 
-@register.inclusion_tag('pagination.html', takes_context=True)
+@register.inclusion_tag('spicy.core.admin/admin/pagination.html', takes_context=True)
 def pagination(context, style='default', neighbours=False):
     return _pagination(context, style='default', neighbours=False)
 

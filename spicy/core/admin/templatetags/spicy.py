@@ -91,12 +91,3 @@ def formfield(context, title, form, field_name='', type='li'):
         label = field.label_tag(title or field.label)
 
     return dict(title=title, form=form, type=type, field=field, label=label)
-
-@register.filter('fieldtype')
-def fieldtype(obj):
-    """Helper for form rendering.
-
-    Returns name of field for conditional form building
-
-    """
-    return obj.__class__.__name__

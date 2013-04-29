@@ -45,6 +45,7 @@ setup(
 
         # utils
         'django-crispy-forms==1.2.5',
+        'django-classy-tags==0.4',
 
         # ?? siteskin deps.
         'pytils==0.2.3',

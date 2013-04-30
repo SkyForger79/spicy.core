@@ -1,3 +1,4 @@
+# coding: utf-8
 from . import defaults, forms
 from .decorators import is_staff
 from .models import BlacklistedIP
@@ -59,7 +60,7 @@ def create(request):
         form = forms.CreateProfileForm(request.POST)
         if form.is_valid():
             profile = form.save(realhost=request.get_host())
-            return HttpResponseRedirect('/admin/profile/%s/?new' % profile.id)
+            return HttpResponseRedirect('/admin/profile/%s/?action=new' % profile.id)
         else:
             message = settings.MESSAGES['error']
     else:
@@ -122,10 +123,17 @@ def delete_group(request, group_id):
                           ('extprofile.view_profile',)))
 @render_to('spicy.core.profile/admin/edit.html', use_admin=True)
 def edit(request, profile_id):
+    """Handles edit requests, renders template according `action`
+    get parameter
+
+    """
     message = None
+    action = request.GET.get('action') # what do we gonna doin?
     profile = get_object_or_404(Profile, id=profile_id)
-    if 'new' in request.GET:
+
+    if action == 'new':
         message = _('New account created, welcome to editing.')
+
     if request.method == 'POST' and request.user.has_perm(
         'extprofile.change_profile'):
         form = forms.ProfileForm(request.POST, instance=profile)
@@ -138,13 +146,15 @@ def edit(request, profile_id):
         form = forms.ProfileForm(instance=profile)
 
     passwd_form = forms.AdminPasswdForm(profile)
-    return {
+
+    return { # TODO: needs to be Context()?
+        'action': action,
         'profile': profile, 
         'form': form,
         'passwd_form': passwd_form,
         'message': message,
         'services': api.register.get_list(consumer=profile)
-        }
+    }
 
 
 @is_staff(required_perms='extprofile.moderate_profile')

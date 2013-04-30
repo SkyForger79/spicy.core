@@ -63,6 +63,8 @@
               <div class="row-fluid">
                 <div class="padded separate-sections">
                   {{ form|crispy }}
+
+                  {{ passwd_form|crispy }}
                   <div class="form-actions controls">
                     <button type="submit"
                             class="btn btn-blue">{% trans "Save" %}</button>

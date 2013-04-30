@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django import template
+import logging
 import urllib
 
 from spicy.core.siteskin import defaults
@@ -21,7 +22,7 @@ def _pagination(context, style='default', neighbours=False):
     """
     Return the list of A tags with links to pages.
     """
-    paginator = context['paginator']    
+    paginator = context['paginator']
     page_obj = paginator.current_page
     page_list = range(
         max(1, page_obj.number - defaults.PAGES_FROM_START),
@@ -47,14 +48,16 @@ def _pagination(context, style='default', neighbours=False):
         paginator_base_url = ''
     base_url = paginator_base_url + ('?%s&' % get_params if get_params else '?')
 
-    return {
+    result_dict = {
         'base_url': base_url,
         'page_obj': page_obj,
         'page_list': page_list,
         'style': style,
         'paginator': paginator,
         'neighbours': neighbours
-        }
+    }
+    # logger.debug(result_dict)
+    return result_dict
 
 @register.filter
 def take(value, arg):

@@ -190,7 +190,7 @@ def profiles_list(request):
             Q(first_name__icontains = nav.search_text) |
             Q(last_name__icontains = nav.search_text))
         
-    is_staff = request.GET.get('is_staff', None)
+    is_staff = request.GET.get('is_staff', False)
     if nav.is_staff:
         is_staff = is_staff != 'false'        
         search_kwargs['is_staff'] = is_staff
@@ -205,8 +205,19 @@ def profiles_list(request):
         Profile, reverse('profile:admin:index'),
         search_query=(search_args, search_kwargs),
         obj_per_page=sk_defaults.ADMIN_OBJECTS_PER_PAGE, 
-        )
+    )
     objects_list = paginator.current_page.object_list
+
+
+    # mock_profiles = []
+
+    mock_paginator = nav.get_queryset_with_paginator(
+        Profile, reverse('profile:admin:index'),
+        search_query=(search_args, search_kwargs),
+        obj_per_page=1,
+    )
+    objects_list = mock_paginator.current_page.object_list
+
 
     return {
         'nav': nav, 'objects_list': objects_list, 'paginator': paginator,

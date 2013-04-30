@@ -408,12 +408,6 @@ class Register(dict):
 
         try:
             self[service.name] = service()
-            if settings.DEBUG:
-                print_success(
-                    'Initialize [%s] service %s compatible with '
-                    'consumer_types: %s' % (
-                        service.name, self[service.name],
-                        self[service.name].print_schema()))
         except Exception:
             print_error('Error while initialize service %s\n' % service.name)
             print_text(traceback.format_exc())

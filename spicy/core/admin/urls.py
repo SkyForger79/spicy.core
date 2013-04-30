@@ -7,6 +7,7 @@ admin_urls = patterns(
     'spicy.core.admin.views',
 
     url(r'^login/$', 'login', name='login'),
+    url(r'^logout/$', 'logout', name='logout'),
 )
 
 urlpatterns = patterns('',

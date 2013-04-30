@@ -1,5 +1,9 @@
 /* Spicy style global overrides */
 
+td a {
+    text-decoration: underline;
+}
+
 /*
  Dashboard
 */
@@ -28,12 +32,32 @@
 
 
 /* util classes */
-.red {
-    color: #c75d5d;
-}
+/*.red {*/
+    /*color: #c75d5d;*/
+/*}*/
 
 .black { /* text black */
     color: #5F5F5F !important;
+}
+
+.red {
+  color: #C75D5D;
+}
+
+.orange {
+  color: #ff9f01;
+}
+
+.blue {
+  color: #6e97aa;
+}
+
+.gray {
+  color: #6B787F;
+}
+
+.green {
+  color: #8FAE53;
 }
 
 .normal-weight {
@@ -56,3 +80,8 @@
 /*.pad-top-null {*/
     /*padding-top: 0 !important;*/
 /*}*/
+
+.underdash a {
+    border-bottom-width: 1px;
+    border-bottom-style: dashed;
+}

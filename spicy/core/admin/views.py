@@ -12,4 +12,8 @@ def index(request):
 
 def login(request):
     return views.login(
-        request, template_name='admin/login.html')
+        request, template_name='spicy.core.admin/admin/login.html')
+
+
+def logout(request):
+    return views.logout(request)

@@ -6,6 +6,6 @@ from spicy.core.service import api
 
 
 @is_staff
-@render_to('service/admin/dashboard.html')
+@render_to('spicy.core.service/admin/dashboard.html')
 def index(request):
     return {'services': api.register.get_list()}

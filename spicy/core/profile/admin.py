@@ -73,7 +73,8 @@ def create(request):
 
 @is_staff(required_perms='auth.change_group')
 @render_to('spicy.core.profile/admin/groups.html', use_admin=True)
-def groups(request):   
+def groups(request):
+    """Groups list/formset combined view."""
     message = None
     if request.method == 'POST':
         groups = forms.GroupFormSet(request.POST, request.FILES, 
@@ -86,9 +87,9 @@ def groups(request):
     else:
         groups = forms.GroupFormSet(queryset=Group.objects.all())
     return {
-        'groups': groups,
+        'group_formset': groups,
         'message': message,
-        }                
+    }
 
 
 @is_staff(required_perms='auth.add_group')

@@ -466,12 +466,12 @@ class CreateProfileForm(forms.ModelForm, ValidateEmailMixin):
 class GroupForm(forms.ModelForm):
     permissions = forms.ModelMultipleChoiceField(
         label=_('Permissions'), required=False,
-        widget=forms.SelectMultiple(attrs={'class': 'SelectMultiple'}),
+        widget=forms.SelectMultiple(attrs={'class': 'SelectMultiple', 'size': 6}),
         queryset=Permission.objects.select_related('content_type'))
     class Meta:
         model = Group
         fields = ['name', 'permissions',]
-        #widgets = {
+        # widgets = {
         #    'permissions': forms.SelectMultiple(
         #        attrs={'class': 'SelectMultiple'})}
 

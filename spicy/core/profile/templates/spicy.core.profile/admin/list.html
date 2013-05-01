@@ -1,5 +1,5 @@
 {% extends current_admin_base %}
-{% load crispy_forms_tags %}
+{% load crispy_forms_tags crispy_forms_filters %}
 {% load spicy_theme navigator pagination %}
 
 {% block title %}
@@ -22,24 +22,66 @@
 
                 <div class="box-content">
                     <div class="table table-normal">
+                        {# LEFT #}
+                          <div class="span6">
+                            <div class="padded">
+                              {% if nav.last_login == 'month' %}
+                                  <a href=".">{% trans "All profiles" %}</a>
+                                {% else %}
+                                  {% nav_filter _("Month last login") "last_login" "month" nav %}
+                                {% endif %}
+                            </div>
+                            <div class="padded" style="padding-top: 0">
+                              {% if is_staff != False %}
+                                {{ form.group.label }}: {{ form.group }}
+                              {% endif %}
+                            </div>
+                          </div>
+                        {# RIGHT #}
+                          <div class="span6">
+                            <div style="margin-top: 15px">
+                              <form class="form form-inline">
+                                {{ form.search_text }}
+                                <button type="submit" class="btn btn-blue">{% trans 'Search' %}</button>
+                                <button class="btn btn-default">
+                                  <i class="icon-remove"></i> {% trans 'Clear' %}
+                                </button>
+                              </form>
+                            </div>
+                          </div>
 
-                      <div class="padded">
-                          <label class="inline underdash">
-                            {% if nav.last_login == 'month' %}
-                              <a href="../">{% trans "All profiles" %}</a>
-                            {% else %}
-                              {% nav_filter _("Month last login") "last_login" "month" nav %}
-                            {% endif %}
-                          </label>
+{#                            <form class="navbar-form pull-right span6 form-inline">#}
+{#                              <input class="span2" type="text" placeholder="Email">#}
+{#                              <input class="span2" type="password" placeholder="Password">#}
+{#                              {{ form.search_text }}#}
+{#                              <button type="submit" class="btn btn-inverse">{% trans 'Search' %}</button>#}
+{#                              <form class="navbar-search pull-right">#}
+{#              <input type="text" class="search-query animated" placeholder="Search">#}
+{#              <i class="icon-search"></i>#}
+{#            </form>#}
+{#                            </form>#}
 
-                          {% if is_staff != False %}
-                            {{ form.group.label }}: {{ form.group }}
-                          {% endif %}
-                        </div>
+
+{#                      <div class="padded">#}
+{#                          <label class="inline underdash">#}
+{#                            #}
+{#                          </label>#}
+{##}
+{#                          <div class="navbar-form pull-right">#}
+{#                            {{ form.search_text }}#}
+{#                            <input type="submit" value="{% trans 'Search' %}" />#}
+{#                          </div>#}
+{##}
+{#                          {% if is_staff != False %}#}
+{#                            {{ form.group.label }}: {{ form.group }}#}
+{#                          {% endif %}#}
+{#                        </div>#}
+
+                      <div class="clearfix"></div>
 
                       <div class="hpadded">
                         <div class="pagination pagination-small" style="margin-top: 0">
-                          {% pagination 'expert_page' 'expert_active' %}
+                          {% pagination %}
                         </div>
                       </div>
 
@@ -141,6 +183,14 @@
                                 {% endfor %}
                             </tbody>
                         </table>
+
+                        <div class="table-footer">
+                          <div class="hpadded" style="margin-top: 5px;">
+                            <div class="pagination pagination-small" style="margin-top: 0">
+                              {% pagination %}
+                            </div>
+                          </div>
+                        </div>
                     </div>
                 </div>
 

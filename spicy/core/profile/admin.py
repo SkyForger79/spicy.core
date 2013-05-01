@@ -174,7 +174,7 @@ def moderate(request, profile_id):
     return {'profile': profile, 'form': form, 'message': message}
 
 
-@is_staff(required_perms='extprofile')
+@is_staff()
 @render_to('spicy.core.profile/admin/list.html', use_admin=True)
 def profiles_list(request):
     nav = NavigationFilter(request, accepting_filters=[
@@ -200,24 +200,13 @@ def profiles_list(request):
     
     if nav.last_login == 'month':
         search_kwargs['last_login__gte'] = datetime.today() - timedelta(30)
-    
+
     paginator = nav.get_queryset_with_paginator(
         Profile, reverse('profile:admin:index'),
         search_query=(search_args, search_kwargs),
         obj_per_page=sk_defaults.ADMIN_OBJECTS_PER_PAGE, 
     )
     objects_list = paginator.current_page.object_list
-
-
-    # mock_profiles = []
-
-    mock_paginator = nav.get_queryset_with_paginator(
-        Profile, reverse('profile:admin:index'),
-        search_query=(search_args, search_kwargs),
-        obj_per_page=1,
-    )
-    objects_list = mock_paginator.current_page.object_list
-
 
     return {
         'nav': nav, 'objects_list': objects_list, 'paginator': paginator,

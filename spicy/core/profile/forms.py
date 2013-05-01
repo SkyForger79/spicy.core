@@ -16,6 +16,7 @@ from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
 from django.db import transaction
 from django.forms.extras.widgets import SelectDateWidget
+from django.forms.widgets import TextInput
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -648,4 +649,6 @@ class SigninForm(AuthenticationForm):
 class ProfileFiltersForm(forms.Form):
     group = forms.ModelChoiceField(
         label=_('Group'), queryset=Group.objects.all(), required=False)
-    search_text = forms.CharField(max_length=100, required=False)
+    search_text = forms.CharField(max_length=100, required=False, widget=TextInput(attrs={
+        'class': 'span9'
+    }))

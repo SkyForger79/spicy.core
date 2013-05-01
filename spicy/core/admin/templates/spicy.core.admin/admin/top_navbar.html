@@ -11,17 +11,6 @@
             {# CONTROLS #}
             <div class="nav-collapse nav-collapse-top">
 
-{#                <ul class="nav pull-right">#}
-{#                    <li class="toggle-primary-sidebar hidden-desktop"#}
-{#                        data-toggle="collapse"#}
-{#                        data-target=".nav-collapse-primary"><a><i#}
-{#                            class="icon-th-list"></i></a></li>#}
-{##}
-{#                    <li class="collapsed hidden-desktop" data-toggle="collapse"#}
-{#                        data-target=".nav-collapse-top"><a><i#}
-{#                            class="icon-align-justify"></i></a></li>#}
-{#                </ul>#}
-
                 {# USER #}
                 <ul class="nav full pull-right">
                     <li class="dropdown user-avatar">
@@ -32,16 +21,25 @@
                         </a>
 
                         <ul class="dropdown-menu">
-                            <li class="with-image">
-                                <span>{{ request.user.username }}</span>
-                            </li>
-
-                            <li class="divider"></li>
+{#                            <li class="with-image">#}
+{#                                <span>{{ request.user.username }}</span>#}
+{#                            </li>#}
+{##}
+{#                            <li class="divider"></li>#}
 
                             <li>
                                 <a href="{% url profile:admin:edit request.user.id %}">
                                     <i class="icon-user"></i>
                                     <span>{% trans "Your profile" %}</span>
+                                </a>
+                            </li>
+
+                            <li class="divider"></li>
+
+                            <li>
+                                <a href="{% url spicyadmin:admin:logout %}">
+                                    <i class="icon-signout"></i>
+                                    <span>{% trans "Logout" %}</span>
                                 </a>
                             </li>
                         </ul>

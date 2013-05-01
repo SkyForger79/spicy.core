@@ -1,5 +1,5 @@
 {% extends current_admin_base %}
-{% load crispy_forms_filters %}
+{% load crispy_forms_tags %}
 {% load spicy i18n navigator %}
 
 {% block title %}
@@ -14,9 +14,7 @@
         <div class="pull-left header">
           <h3 class="title">
             <i class="icon-edit"></i>
-
             {% include "spicy.core.profile/admin/forms/block_title.html" %}
-
           </h3>
 
           <h5>{% trans 'Profile' %}: <strong>{{ profile.username }}</strong>
@@ -55,8 +53,6 @@
               {% csrf_token %}
               <div class="row-fluid">
                 <div class="padded separate-sections">
-{#                  {{ form }}#}
-
                   {{ form|crispy }}
 
                   {{ passwd_form|crispy }}

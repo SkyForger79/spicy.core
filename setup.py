@@ -21,12 +21,18 @@ def get_long_description():
         return package_long_description
 
 setup(
-    namespace_packages=['spicy'],
-    packages=find_packages(),
-    # package_dir={
-    #     '': 'spicy',
-    #     # 'spicy.core': 'spicy/core',
-    # },
+    namespace_packages=['spicy', 'spicy.core'],
+    packages=find_packages('src'),
+    package_dir={
+        '': 'src',
+        # 'spicy.utils': 'src/spicy/utils',
+        # 'spicy.core': 'src/spicy/core',
+        # 'spicy.core.service': 'src',
+        # 'spicy.core.admin': 'src',
+        # 'spicy.core.profile': 'src',
+        # 'spicy.core.siteskin': 'src',
+        # 'spicy.core.rmanager': 'src',
+    },
 
     include_package_data=True,
     package_data={

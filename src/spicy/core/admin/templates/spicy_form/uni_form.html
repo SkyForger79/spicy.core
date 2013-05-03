@@ -1,0 +1,10 @@
+{% load crispy_forms_utils %}
+
+{% specialspaceless %}
+{% if form_show_errors %}
+    {% include "spicy_form/errors.html" %}
+{% endif %}
+{% for field in form %}
+    {% include "spicy_form/field.html" %}
+{% endfor %}
+{% endspecialspaceless %}

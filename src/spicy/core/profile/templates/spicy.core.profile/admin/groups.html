@@ -1,0 +1,25 @@
+{% extends current_admin_base %}{% load spicy i18n sk navigator %}
+{% block extra_js %}{{ groups.media }}{% endblock %}
+{% block navigation_root %}{% trans "Profiles" %}{% endblock %}
+{% block navigation_place %}{% trans "Groups & Permissions" %}{% endblock %}
+{% block menu %}{% include "spicy.core.profile/admin/menu.html" %}{% endblock %}
+{% block content %}
+<form method="post">{% csrf_token %}
+	<div class="expert_form expert_profile-groups">
+	<ul class="expert_form-layout">
+	{{ groups.management_form }}
+        {% for group_form in groups.forms %}
+	{% include "spicy.core.profile/admin/group_form.html" %}
+	{% endfor %}
+	</ul>
+	</div>
+	<div class="expert_filter" >
+	  <div class="expert_right-button"><input type="submit" value="{% trans "Save" %}"/></div>
+	  <div class="expert_clr"> </div>
+	</div>
+</form>	 
+{% endblock %}
+
+
+
+

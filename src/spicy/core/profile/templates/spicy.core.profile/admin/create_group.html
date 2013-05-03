@@ -1,0 +1,19 @@
+{% extends current_admin_base %}{% load i18n navigator %}
+{% block extra_js %}{{ form.media }}{% endblock %}
+{% block navigation_root %}{% trans "Profiles" %}{% endblock %}
+{% block navigation_place %}{% trans "Create users group" %}{% endblock %}
+{% block menu %}{% include "spicy.core.profile/admin/menu.html" %}{% endblock %}
+{% block content %}
+
+<form method="POST">{% csrf_token %}
+  <div class="expert_form"> 
+    <ul class="expert_form-layout">
+      {% include "spicy.core.profile/admin/group_form.html" %}
+    </ul>
+  </div>
+  <div class="expert_filter" >
+    <div class="expert_right-button"><input type="submit" value="{% trans "Create" %}"/></div>
+    <div class="expert_clr"> </div>
+  </div>	
+</form>	   
+{% endblock %}

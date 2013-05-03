@@ -1,0 +1,102 @@
+{#{% if perms.extprofile %}#}
+{#{% load navigator %}#}
+{#<ul class="admin-menu">#}
+{#  <li class="helper">{% trans "User profiles" %}:</li>#}
+{#  {% if perms.extprofile.add_profile %}#}
+{#  {% menu request "profile:admin:create" _("Create user profile") ""%}#}
+{#  {% endif %}#}
+{#  {% if perms.extprofile.change_profile or perms.extprofile.view_profile %}#}
+{#  {% menu request "profile:admin:index" _("All profiles") %}#}
+{#  {% endif %}#}
+{#  {% if perms.auth.add_group %}#}
+{#  {% menu request "profile:admin:create-group" _("Create users group") %}#}
+{#  {% endif %}#}
+{#  {% if perms.auth.change_group %}#}
+{#  {% menu request "profile:admin:groups" _("Groups & Permissions") %}#}
+{#  {% endif %}#}
+{#  {% menu request "profile:admin:blacklisted-ips" _("Blacklisted IPs") %}#}
+{#  {% if perms.extprofile.change_profile or perms.extprofile.view_profile %}#}
+{#  <li class="helper">{% trans "Account types" %}:</li>#}
+{#  {% menu request "profile:admin:index" _("Staff") "" "" "is_staff=true" %}#}
+{#  {% menu request "profile:admin:index" _("Users") "" "" "is_staff=false" %}#}
+{#  {% endif %}#}
+{#</ul>#}
+{#{% endif %}#}
+
+{#{% if perms.profile %}#}
+{#    {% with perms.profile as pm %}#}
+{#    <li class="active console">#}
+{#        <a href="#">{% trans "User profiles" %}</a>#}
+{#        <ul>#}
+{#            <li><a href="{% url profile:admin:edit request.user.id %}">{% trans "Your profile" %}</a></li>#}
+{#        {% if pm.change_profile or pm.view_profile %}#}
+{#            <li><a href="{% url profile:admin:index %}">{% trans "All profiles" %}</a></li>#}
+{#        {% endif %}#}
+{#        {% if pm.add_profile %}#}
+{#            <li><a href="{% url profile:admin:create %}">{% trans "Create user profile" %}</a></li>#}
+{#        {% endif %}#}
+{#        {% if perms.auth.change_group %}#}
+{#            <li><a href="{% url profile:admin:groups %}">{% trans "Groups & Permissions" %}</a></li>#}
+{#        {% endif %}#}
+{#        {% if perms.auth.add_group %}#}
+{#            <li><a href="{% url profile:admin:create-group %}">{% trans "Create users group" %}</a></li>#}
+{#        {% endif %}#}
+{#        </ul>#}
+{#    </li>#}
+{#    {% endwith %}#}
+{#{% endif %}#}
+
+{% if perms.profile %}{% with perms.profile as pm %}
+    <li class="dark-nav">
+        <span class="glow"></span>
+        <a class="accordion-toggle collapsed" data-toggle="collapse" href="#dash-user-profiles-dropdown">
+          <i class="icon-user icon-2x"></i>
+            <span>
+              {% trans "User profiles" %}
+              <i class="icon-caret-down"></i>
+            </span>
+        </a>
+
+        <ul id="dash-user-profiles-dropdown" class="collapse in">
+            {% if pm.change_profile or pm.view_profile %}
+                <li class="nav-header">
+                    <a href="{% url profile:admin:index %}">
+                        <i class="icon-group"></i> {% trans "All profiles" %}
+                    </a>
+                </li>
+            {% endif %}
+
+            <li class="">
+                <a href="{% url profile:admin:edit request.user.id %}">
+                    <i class="icon-cog"></i> {% trans "Your profile" %}
+                </a>
+            </li>
+
+            {% if pm.add_profile %}
+                <li class="">
+                    <a href="{% url profile:admin:create %}">
+                        <i class="icon-plus"></i> {% trans "Create user profile" %}
+                    </a>
+                </li>
+            {% endif %}
+
+            {% if perms.auth.change_group %}
+                <li class="nav-header">
+                    <a href="{% url profile:admin:groups %}">
+                        <i class="icon-folder-close"></i>
+                        {% trans "Groups & Permissions" %}
+                    </a>
+                </li>
+            {% endif %}
+
+            {% if perms.auth.add_group %}
+                <li class="">
+                    <a href="{% url profile:admin:create-group %}">
+                        <i class="icon-plus"></i>
+                        {% trans "Create users group" %}
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </li>
+{% endwith %}{% endif %}

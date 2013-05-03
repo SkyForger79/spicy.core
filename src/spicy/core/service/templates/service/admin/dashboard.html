@@ -1,0 +1,39 @@
+{% extends current_admin_base %}
+{% load spicy spicy_theme %}
+
+{% block title %}
+    {{ current_site.domain }} - {% trans "Spicy Dashboard" %}
+{% endblock title %}
+
+{% block content %}
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row-fluid">
+        <div class="area-top clearfix">
+            <div class="pull-left header">
+              <h3 class="title">
+                <i class="icon-dashboard"></i>
+                {% trans "Dashboard" %}
+              </h3>
+              <h5>
+                <a class="brand" href="/" title="{% trans 'Перейти на сайт' %}&nbsp;{{ current_site.domain }}">{% trans 'Перейти на сайт' %}&nbsp;{{ current_site.name }}</a>
+              </h5>
+            </div>
+        </div>
+    </div>
+
+    <div class="row-fluid padded pad-top-null">
+        <div class="span12">
+            <div class="action-nav-normal">
+
+             {% if "spicy.core.profile"|installed_app %}
+                {% include "spicy.core.profile/admin/dashboard/button.html" %}
+             {% endif %}
+
+             </div>
+         </div>
+       </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

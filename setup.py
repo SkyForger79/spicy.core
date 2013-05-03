@@ -1,12 +1,11 @@
 import os
-from importlib import import_module
 from setuptools import setup, find_packages
 
 """
 Spicy core package
 """
 package_name = "spicy"
-package_version = import_module('spicy').__version__
+package_version = '1.1'
 
 package_description = "spicy core"
 package_long_description = "spicy core package"

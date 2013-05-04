@@ -39,6 +39,8 @@ setup(
         'numpydoc==0.4',
         'raven==3.2.1',
         'python-memcached==1.48',
+        'configparser==3.3.0r2',
+        'Jinja2==2.6',
 
         # ?? siteskin deps.
         'pytils==0.2.3',

@@ -877,6 +877,8 @@ def handle_deploy(ns):
     #ns.user
     #ns.group
 
+    if ns.env_user:
+        env.user = ns.env_user
     env.sudo_user = ns.user
 
     config = configparser.ConfigParser()
@@ -963,6 +965,10 @@ deploy_parser.add_argument('-d', '--createdb', action='store_true', default=Fals
 deploy_parser.add_argument('-D', '--syncdb', action='store_true', default=False, help='Syncdb in the django projects.')
 
 deploy_parser.add_argument('-x', '--xconfiglabel', action='store_true', default=False, help='Use configuration file and defined project label. {0}'.format(SPICY_PROJECT_CONFIG_FILE))
+
+# issue 653
+deploy_parser.add_argument('-eu', '--env-user', action='store', default=None, help='Server user with access for APPS and ENV.')
+
 deploy_parser.set_defaults(func=handle_deploy)
 
 

@@ -314,6 +314,8 @@ class SignupForm(forms.Form, ValidateEmailMixin):
             profile = Profile.objects.create_inactive_user(
                 email,
                 password=self.cleaned_data['password2'],
+                first_name=self.cleaned_data['first_name'],
+                last_name=self.cleaned_data['last_name'],
                 send_email=True,
                 next_url=next_url,
                 realhost=realhost)

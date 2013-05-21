@@ -3,10 +3,10 @@ Spicy Core module documentation
 
 Describes parts related to `spicy` package and `spicy` shell command
 
-Spicy tool:
-----------
+Contents
+--------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
-   content/script/commands
+   content/contents

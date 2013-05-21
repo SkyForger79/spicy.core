@@ -1,0 +1,9 @@
+{% load i18n %}
+
+{% spaceless %}
+    {% if action == "edit" or action == None %}
+        {% trans "Edit profile" %}
+    {% endif %}{% if action == "new" %}
+        {% trans "Edit new profile" %}
+    {% endif %}
+{% endspaceless %}

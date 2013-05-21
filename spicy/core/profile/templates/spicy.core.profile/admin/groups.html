@@ -1,0 +1,78 @@
+{% extends current_admin_base %}
+{% load crispy_forms_tags crispy_forms_filters %}
+{% load spicy_theme navigator pagination %}
+
+{% block title %}
+    {% trans "All groups" %}
+{% endblock %}
+
+{% block content %}
+
+{#{% if objects_list.count > 0 %}#}
+<div class="container-fluid padded">
+    <div class="row-fluid">
+        <div class="span12">
+
+            <div class="box">
+                <div class="box-header">
+                    <span class="title">
+                      {% trans "All groups" %}
+                    </span>
+                </div>
+
+                <div class="box-content">
+                    <div class="table table-normal">
+
+                          <form class="form-horizontal fill-up validatable" method="post" action="." autocomplete="off">
+                          {% csrf_token %}
+                          {{ group_formset.management_form }}
+                          <div class="row-fluid">
+                            <div class="padded">
+                            {% for form in group_formset %}
+
+                              {{ form|crispy }}
+                              <hr>
+
+                            {% endfor %}
+                              <div class="form-actions controls">
+                                <button type="submit" class="btn btn-blue">{% trans "Update" %}</button>
+                              </div>
+                            </div>
+                          </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+   </div>
+</div>
+{#{% endif %}#}
+
+{% endblock content %}
+
+{#{% extends current_admin_base %}{% load spicy i18n sk navigator %}#}
+{#{% block extra_js %}{{ groups.media }}{% endblock %}#}
+{#{% block navigation_root %}{% trans "Profiles" %}{% endblock %}#}
+{#{% block navigation_place %}{% trans "Groups & Permissions" %}{% endblock %}#}
+{#{% block menu %}{% include "spicy.core.profile/admin/menu.html" %}{% endblock %}#}
+{#{% block content %}#}
+{#<form method="post">{% csrf_token %}#}
+{#	<div class="expert_form expert_profile-groups">#}
+{#	<ul class="expert_form-layout">#}
+{#	{{ groups.management_form }}#}
+{#        {% for group_form in groups.forms %}#}
+{#	{% include "spicy.core.profile/admin/group_form.html" %}#}
+{#	{% endfor %}#}
+{#	</ul>#}
+{#	</div>#}
+{#	<div class="expert_filter" >#}
+{#	  <div class="expert_right-button"><input type="submit" value="{% trans "Save" %}"/></div>#}
+{#	  <div class="expert_clr"> </div>#}
+{#	</div>#}
+{#</form>	 #}
+{#{% endblock %}#}
+{##}
+{##}
+{##}
+{##}

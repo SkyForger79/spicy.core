@@ -169,6 +169,7 @@ def sscp(appname, user, args):
 
     return True
 
+
 def handle_build_docs(args):
     """`build-docs` command handler.
 
@@ -205,6 +206,10 @@ def handle_build_docs(args):
                 local('make gettext; make html;', capture=False)
             # back to pwd of command was run
             sscp(app, user, args)
+
+
+def handle_create_project(ns):
+    raise NotImplementedError()
 
 
 def handle_create_app(ns):
@@ -294,9 +299,9 @@ class Application(object):
     build_path = os.path.abspath('.')
     remote_path = None
 
-    uwsgi_initd = '/etc/init.d/uwsgi.{project_name}-{app_name}'
-    uwsgi_conf = '/etc/conf.d/uwsgi.{project_name}-{app_name}'
-    nginx_conf = '/etc/nginx/vhosts.d/{project_name}-{app_name}.conf'
+    uwsgi_initd = '/etc/init.d/uwsgi.{version_label}-{app_name}'
+    uwsgi_conf = '/etc/conf.d/uwsgi.{version_label}-{app_name}'
+    nginx_conf = '/etc/nginx/vhosts.d/{version_label}-{app_name}.conf'
 
     def __init__(self, app_str, deployer):
         """
@@ -331,7 +336,7 @@ class Application(object):
 
         for attr in ('uwsgi_conf', 'uwsgi_initd', 'nginx_conf'):
             setattr(self, attr, getattr(self, attr).format(
-                    project_name=deployer.project_name,
+                    version_label=deployer.version_label,
                     app_name=self.name
                     ))
 
@@ -554,20 +559,22 @@ class Database(object):
         
         
 class ProjectDeployer(object):
-    project_name = None
+    # TODO version label from 'deploy version_label_param + host'
+    # its not flexible but more usefull
+    version_label = None
     server = None
     database = Database()
     config = None
     apps = []
     static_apps = []
 
-    def __init__(self, server, project_name, apps_string, 
+    def __init__(self, server, version_label, apps_string, 
                  static_string=None, version_control_util='hg', config=None):        
         """
         :param server: remote server instance
         :type class ``Server``
 
-        :param projectname: Project name
+        :param version_label: Project version label
         :type str
 
         :param apps_string: Example: foo=3.0.1,bar,zoo=2.1.3a
@@ -576,7 +583,7 @@ class ProjectDeployer(object):
         :type version_control_util str
 
         """        
-        self.project_name = project_name
+        self.version_label = version_label
         self.server = server
         self.config = config
         self.database = Database(config=config)
@@ -585,7 +592,7 @@ class ProjectDeployer(object):
         self.local_req_file = os.path.join(self._local_tmp, SPICY_REQ_FILE)
 
         self.server.configure()
-        self.remote_tmp = os.path.join(self.server.tmp, SPICY_BUILD_DIR, self.project_name)
+        self.remote_tmp = os.path.join(self.server.tmp, SPICY_BUILD_DIR, self.version_label)
         self.remote_req_file = os.path.join(self.remote_tmp, SPICY_REQ_FILE)
         
         # create `remote_SERVER_PATHS` for current project
@@ -594,7 +601,7 @@ class ProjectDeployer(object):
             if not hasattr(self, attr_name):
                 setattr(self, attr_name,
                         os.path.join(
-                        getattr(self.server, path_attr), self.project_name))
+                        getattr(self.server, path_attr), self.version_label))
         print_ok('[done] Create directories variables for remote server. {0}'.format(
                 ', '.join(self.server.req_dirs)))
         
@@ -718,14 +725,14 @@ class ProjectDeployer(object):
                     sudo('./bin/easy_install pip')
             
                 # env wrapper
-                #sudo('mkvirtualenv -r %s %s'%(self.remote_req_file, self.project_name))
+                #sudo('mkvirtualenv -r %s %s'%(self.remote_req_file, self.version_label))
                     
             with cd(self.remote_env_path):        
                 with prefix('source {0}/bin/activate'.format(self.remote_env_path)):               
                     sudo('./bin/pip install -r {0} --upgrade'.format(self.remote_req_file))
     
             # wrapper
-            #with prefix('workon %s'%self.project_name):
+            #with prefix('workon %s'%self.version_label):
             #    sudo('pip install -r %s --upgrade'%self.remote_req_file)        
 
     def _copy_archive(self, path, apps):
@@ -748,7 +755,7 @@ class ProjectDeployer(object):
         sudo('mkdir -m ug=rwx,o= {0}'.format(path))
 
         arch_name = '{0}-{1}.tar.bz2'.format(
-            self.project_name, '-'.join(['{0}.rev{1}'.format(a_,a_.short_rev_id) for a_ in apps]))        
+            self.version_label, '-'.join(['{0}.rev{1}'.format(a_,a_.short_rev_id) for a_ in apps]))        
         with lcd(self._local_tmp):
             local('tar cfj {0} {1}'.format(arch_name, ' '.join([str(a_) for a_ in apps])))
             put(arch_name, path)
@@ -889,15 +896,16 @@ def handle_deploy(ns):
         server_config = config['server']
 
     if ns.xconfiglabel:
-        project_config = config[ns.projectname]
+        project_config = config[ns.versionlabel]
         
         # overwrite server config using project values if exists
         for opt in project_config:
             server_config[opt] = project_config[opt]
 
         server = Server(project_config['host'], config=server_config)
+        
         deployer = ProjectDeployer(
-            server, project_config['project_name'], 
+            server, project_config['version_label'], 
             
             # TODO ?? overwrite or exception
             project_config['apps'],
@@ -915,7 +923,7 @@ def handle_deploy(ns):
     for host in hosts:        
         server = Server(host, config=server_config)
         deployer = ProjectDeployer(
-            server, ns.projectname, ns.apps, static_string=ns.static)
+            server, ns.versionlabel, ns.apps, static_string=ns.static)
 
         deployer(env_path=ns.envpath, buildenv=ns.buildenv, 
                  createdb=ns.createdb, syncdb=ns.syncdb)
@@ -940,14 +948,19 @@ build_docs_parser.add_argument('-u', '--user', action='store')
 build_docs_parser.add_argument('-p', '--path', action='store', required=True)
 build_docs_parser.set_defaults(func=handle_build_docs)
 
-create_app_parser = subparsers.add_parser('create-app', help="""TODO: write help""")
+create_app_parser = subparsers.add_parser('create-app', help="""Create Django/Spicy application with abstract models and services using common template.
+Do not forget declare youe services and applistion in the settings file.""")
 create_app_parser.add_argument('appname', action='store')
-create_app_parser.add_argument('-d', '--description', action='store', default='generic description')
+create_app_parser.add_argument('-w', '--webapp', action='store', required=True, default='webapp', help="Define Web application name.")
 create_app_parser.set_defaults(func=handle_create_app)
+
+create_project_parser = subparsers.add_parser('create-project', help="""Create Spicy project from template.""")
+create_project_parser.add_argument('projectname', action='store')
+create_project_parser.set_defaults(func=handle_create_project)
 
 deploy_parser = subparsers.add_parser(
     'deploy', help="""Advanced deployer build remote enviroment and application""")
-deploy_parser.add_argument('projectname', action='store')
+deploy_parser.add_argument('versionlabel', action='store')
 deploy_parser.add_argument('-H', '--hosts', action='store', default=None, help="remote hosts")
 deploy_parser.add_argument('-P', '--port', action='store', default=None, help='SSH port')
 

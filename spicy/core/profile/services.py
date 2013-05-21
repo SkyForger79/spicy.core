@@ -18,16 +18,16 @@ from spicy.core.siteskin.decorators import ajax_request, render_to, multi_view
 
 from . import defaults, models, utils
 from .decorators import is_staff
-# from .forms import SignupForm, LoginForm
-from spicy.core.profile.forms import SignupForm, LoginForm
+from .forms import SignupForm, LoginForm
 
 Profile = utils.get_concrete_profile()
 
-CUSTOM_USER_SIGNUP_FORM = getattr(settings, 'CUSTOM_USER_SIGNUP_FORM', 'spicy.core.profile.forms.SignupForm')
+CUSTOM_USER_SIGNUP_FORM = getattr(
+    settings, 'CUSTOM_USER_SIGNUP_FORM', 'spicy.core.profile.forms.SignupForm')
+
 
 class ProfileProvider(api.Provider):
     model = 'spicy.core.profile.ProfileProviderModel'
-
 
     @ajax_request('/$', is_public=True, use_siteskin=True, use_cache=False)
     def login(self, request):
@@ -36,10 +36,7 @@ class ProfileProvider(api.Provider):
         status = result['status']
         message = result['message']
 
-        return dict(status=status,
-                    message=message)
-
-
+        return dict(status=status, message=message)
 
     @ajax_request('/$', is_public=True, use_siteskin=True, use_cache=False)
     def register(self, request):
@@ -48,10 +45,7 @@ class ProfileProvider(api.Provider):
         status = result['status']
         message = result['message']
 
-        return dict(status=status,
-                    message=message)
-
-
+        return dict(status=status, message=message)
 
     @render_to('profile/social_associations.html', is_public=True,
                url_pattern='/(?P<profile_id>[\d]+)/$', use_siteskin=True)
@@ -69,7 +63,8 @@ class ProfileProvider(api.Provider):
             ('livejournal', 'Livejournal'),
             ('openid', 'OpenID'),
             )
-        associated = request.user.social_auth.all().values_list('provider', flat=True)
+        associated = request.user.social_auth.all().values_list(
+            'provider', flat=True)
         return {'backends': backends, 'associated': associated}
 
     @is_staff()
@@ -124,27 +119,9 @@ class ProfileProvider(api.Provider):
         from captcha.models import CaptchaStore
         challenge, response = get_challenge()()
         store = CaptchaStore.objects.create(
-            challenge=challenge,response=response)
+            challenge=challenge, response=response)
         key = store.hashkey
         return HttpResponse(key)
-
-    @multi_view(url_pattern='/(?P<user_id>[\d]+)/(?P<is_contributor>[0,1])/(?P<is_public>[0,1])/(?P<show_all_pubs>[0,1])/$',
-                is_public=True, use_cache=False) # TODO cache
-    def articles(self, request, user_id, is_contributor, is_public, show_all_pubs):
-        user = get_object_or_404(Profile, pk=user_id)
-        xtag = api.register['xtag'].userlink(user)
-
-        result = api.register['doc-list'].doc_list_by_params(
-            request, tags=[xtag.id],
-            is_contributor=bool(is_contributor == '1'),
-            is_public=bool(is_public == '1'),
-            show_all_pubs=bool(show_all_pubs == '1'))
-
-        result['user'] = user
-        result['template'] = 'deephunt.ru/presscenter/user_doc_list.html'
-        return result
-
-
 
 
 class ProfileService(api.Interface):
@@ -165,7 +142,6 @@ class ProfileService(api.Interface):
     PROVIDER_TEMPLATES_DIR = 'profile/providers/'
 
     schema = dict(GENERIC_CONSUMER=ProfileProvider)
-
 
     def login(self, request):
         status = 'error'
@@ -284,7 +260,6 @@ class ProfileService(api.Interface):
             form=form, REGISTRATION_ENABLED=defaults.REGISTRATION_ENABLED
             )
 
-
     def get_profiles(self, **kwargs):
         return Profile.objects.filter(**kwargs)
 
@@ -304,8 +279,9 @@ class ProfileService(api.Interface):
                 'date_joined', date_trunc, 'auth_user', from_date, to_date,
                 where)
         elif type == 'commented':
-            where.append('exists (select 1 from cm_comment '
-                    'where cm_comment.author_id = auth_user.id)')
+            where.append(
+                'exists (select 1 from cm_comment '
+                'where cm_comment.author_id = auth_user.id)')
             return make_stats(
                 'date_joined', date_trunc, 'auth_user', from_date, to_date,
                 where)

@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import random
+import string
 from . import defaults, models
 from .forms import PublicProfileForm, RestorePasswordForm
 from .forms import LoginForm, SetEmailForm, SocialProfileUpdateForm
@@ -25,7 +27,6 @@ Profile = get_concrete_profile()
 
 
 def generate_random_password(length=10):
-    import string, random
     chars = string.letters + string.digits
     return ''.join([random.choice(chars) for i in range(length)])
 
@@ -33,28 +34,7 @@ def generate_random_password(length=10):
 @render_to('profile/profile.html', use_siteskin=True)
 def profile(request, username):
     user = get_object_or_404(Profile, username=username)
-
-    #print '@@@@', dir(user),
     return dict(user=user)
-
-
-@render_to('profile/blog.html', use_siteskin=True)
-def blog(request, username):
-    user = get_object_or_404(Profile, username=username)
-    return dict(user=user)
-
-
-@render_to('profile/mention.html', use_siteskin=True)
-def mention(request, username):
-    user = get_object_or_404(Profile, username=username)
-    return dict(user=user)
-
-
-@render_to('profile/map.html', use_siteskin=True)
-def map(request, username):
-    user = get_object_or_404(Profile, username=username)
-    return dict(user=user)
-
 
 @login_required
 @render_to('profile/future_articles.html', use_siteskin=True)
@@ -76,9 +56,11 @@ def draft(request, username):
 
     return dict(user=user)
 
+
 @login_required
 @render_to('profile/edit.html', use_siteskin=True)
 def edit(request, username):
+    # XXX Deephunt code
     messages = ''
     user = get_object_or_404(Profile, username=username)
 
@@ -87,11 +69,11 @@ def edit(request, username):
 
     from xtag.forms import SportcardFormSet
 
-
     forms = SportcardFormSet(instance=user.xtag, prefix='scard')
 
     if request.POST:
-        forms = SportcardFormSet(request.POST, instance=user.xtag, prefix='scard')
+        forms = SportcardFormSet(
+            request.POST, instance=user.xtag, prefix='scard')
         if forms.is_valid():
             forms.save()
             forms = SportcardFormSet(instance=user.xtag, prefix='scard')
@@ -159,49 +141,6 @@ def settings_profile(request, profile_id):
         if form.is_valid():
             form.save()
     return dict(form=form, owner=owner)
-
-
-@login_required
-@render_to('profile/messages.html', use_siteskin=True)
-def messages(request, username):
-    user = get_object_or_404(Profile, username=username)
-    if request.user != user:
-        raise PermissionDenied()
-
-    messages=models.Message.objects.filter(receiver=request.user)
-
-    return dict(user=user, messages=messages, im_sender=False)
-
-@login_required
-@render_to('profile/messages.html', use_siteskin=True)
-def sent_messages(request, username):
-    user = get_object_or_404(Profile, username=username)
-    if request.user != user:
-        raise PermissionDenied()
-
-    messages=models.Message.objects.filter(
-        sender=request.user, is_system=False)
-
-    return dict(user=user, messages=messages, im_sender=True)
-
-
-@login_required
-@render_to('profile/message.html', use_siteskin=True)
-def message(request, username, message_id):
-    user = get_object_or_404(Profile, username=username)
-    if request.user != user:
-        raise PermissionDenied()
-
-    im_sender = True
-    message = get_object_or_404(models.Message, pk=message_id)
-
-    if request.user == message.receiver:
-        im_sender = False
-        message.is_unread = False
-        message.save()
-
-    return dict(user=user, message=message, im_sender=im_sender)
-
 
 
 @ajax_request

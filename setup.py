@@ -4,7 +4,7 @@ from setuptools import setup
 
 version = __import__('spicy').get_version()
 EXCLUDE_FROM_PACKAGES = [
-    'spicy.app',
+    'spicy.templates',
 ]
 
 
@@ -62,6 +62,8 @@ setup(
         'numpydoc==0.4',
         'raven==3.2.1',
         'python-memcached==1.48',
+        'configparser==3.3.0r2',
+        'Jinja2==2.6',
 
         # ?? siteskin deps.
         'pytils==0.2.3',
@@ -69,10 +71,10 @@ setup(
         'html5lib==0.95',
 
         # profile deps.
-        'sorl-thumbnail==3.2.5',
+        #'sorl-thumbnail==3.2.5',
         'django-crispy-forms==1.2.6',
-        'django-simple-captcha',
-        'django-social-auth==0.6.1',
+        #'django-simple-captcha',
+        #'django-social-auth==0.6.1',
 
         # debug deps.
         # 'logutils', #TODO: version?

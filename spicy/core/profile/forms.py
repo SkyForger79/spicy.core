@@ -15,17 +15,13 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
 from django.db import transaction
-from django.db.models.loading import get_model
 from django.forms.extras.widgets import SelectDateWidget
-from django.forms.widgets import TextInput
 from django.utils.translation import ugettext_lazy as _
 
 
 from spicy.core.siteskin.widgets import LabledRegexField, LabledEmailField
 
-from .defaults import CUSTOM_USER_MODEL
 from .utils import get_concrete_profile
-
 
 NAME_RE = re.compile(
     u'^[\\.\\-_a-zA-Z0-9абвгдеёжзийклмнопрстуфхцчшщъыьэюя'
@@ -33,6 +29,7 @@ NAME_RE = re.compile(
 
 
 Profile = get_concrete_profile()
+
 
 class CaptchaWithId(CaptchaTextInput):
     """
@@ -317,6 +314,8 @@ class SignupForm(forms.Form, ValidateEmailMixin):
             profile = Profile.objects.create_inactive_user(
                 email,
                 password=self.cleaned_data['password2'],
+                first_name=self.cleaned_data['first_name'],
+                last_name=self.cleaned_data['last_name'],
                 send_email=True,
                 next_url=next_url,
                 realhost=realhost)
@@ -403,7 +402,7 @@ class CreateProfileForm(forms.ModelForm, ValidateEmailMixin):
             "This value must contain only russian or english letters, numbers "
             "and underscores."),
         required=False)
-    email = forms.EmailField(label=_('Email'), max_length=30, required=True)
+    email = forms.EmailField(_('Email'), required=True)
 
     groups = forms.ModelMultipleChoiceField(
         label=_('Groups'), required=False,
@@ -468,7 +467,7 @@ class CreateProfileForm(forms.ModelForm, ValidateEmailMixin):
 class GroupForm(forms.ModelForm):
     permissions = forms.ModelMultipleChoiceField(
         label=_('Permissions'), required=False,
-        widget=forms.SelectMultiple(attrs={'class': 'SelectMultiple', 'size': 6}),
+        widget=forms.SelectMultiple(attrs={'class': 'SelectMultiple'}),
         queryset=Permission.objects.select_related('content_type'))
     class Meta:
         model = Group
@@ -651,6 +650,4 @@ class SigninForm(AuthenticationForm):
 class ProfileFiltersForm(forms.Form):
     group = forms.ModelChoiceField(
         label=_('Group'), queryset=Group.objects.all(), required=False)
-    search_text = forms.CharField(max_length=100, required=False, widget=TextInput(attrs={
-        'class': 'span9'
-    }))
+    search_text = forms.CharField(max_length=100, required=False)

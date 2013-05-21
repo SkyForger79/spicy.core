@@ -8,23 +8,13 @@ public_urls = patterns(
     
     url(r'^users/(?P<username>[\w\-_.]+)/$', 'profile', name='index'),
     url(r'^users/(?P<username>[\w\-_.]+)/edit/$', 'edit', name='edit'),
-    url(r'^users/(?P<username>[\w\-_.]+)/map/$', 'map', name='map'),
-
-    # presscenter 
-    url(r'^users/(?P<username>[\w\-_.]+)/blog/$', 'blog', name='blog'),
-    url(r'^users/(?P<username>[\w\-_.]+)/mention/$', 'mention', name='mention'),
-    url(r'^users/(?P<username>[\w\-_.]+)/draft/$', 'draft', name='draft'),
-    url(r'^users/(?P<username>[\w\-_.]+)/future/$', 'future_articles', name='future_articles'),
 
     # settings
-    url(r'^users/(?P<username>[\w\-_.]+)/settings/$', 'user_settings', name='settings'),
+    url(r'^users/(?P<username>[\w\-_.]+)/settings/$', 'user_settings',
+        name='settings'),
     url(r'^users/(?P<username>[\w\-_.]+)/passwd/$', 'passwd', name='passwd'),
-    
-    url(r'^users/(?P<username>[\w\-_.]+)/messages/$', 'messages', name='messages'),
-    url(r'^users/(?P<username>[\w\-_.]+)/sent-messages/$', 'sent_messages', name='sent-messages'),
-    url(r'^users/(?P<username>[\w\-_.]+)/message/(?P<message_id>\d+)/$', 'message', name='message'),
-
-    url(r'^activate/(?P<profile_id>\d+)/(?P<activation_key>\w+)/$', 'activate', name='activate'),  
+    url(r'^activate/(?P<profile_id>\d+)/(?P<activation_key>\w+)/$', 'activate',
+        name='activate'),  
 
     url(r'^signin/$', 'signin', name='signin'),
     url(r'^signout/$', 'signout', name='signout'),

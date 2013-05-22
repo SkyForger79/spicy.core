@@ -23,6 +23,8 @@ def base(request):
         'REDIRECT_FIELD_NAME': REDIRECT_FIELD_NAME,
         'SITESKIN': defaults.SITESKIN,
         'SITESKIN_ADMIN': defaults.SITESKIN_ADMIN,
+        'SITESKIN_ADMIN_APPS': defaults.SITESKIN_ADMIN_APPS,
+        'SITESKIN_ADMIN_DASHBOARD_APPS': defaults.SITESKIN_ADMIN_DASHBOARD_APPS,
         'DEBUG': settings.DEBUG,
         }
 

@@ -4,7 +4,7 @@
       <meta name="viewport" content="width=device-width, maximum-scale=1, initial-scale=1, user-scalable=0">
       <link rel="shortcut icon" href="{% static 'spicy.core.admin/favicon.ico' %}" type="image/x-icon"/>
       <meta charset="utf-8">
-      <title>{% block title %}{% trans "Spicy Dashboard" %}{% endblock %}</title>
+      <title>{% block title %}{% trans "Dashboard" %}{% endblock %} - SpicyCMS light</title>
 
       <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,600,800&subset=latin,cyrillic" rel="stylesheet" type="text/css">
       <link href="{% static 'spicy.core.admin/css/application.css' %}" media="screen" rel="stylesheet" type="text/css">
@@ -15,10 +15,9 @@
 
     <body>
 
-        {% block top_navbar %}
-            {% include 'spicy.core.admin/admin/top_navbar.html' %}
-        {% endblock top_navbar %}
-
+        {% block top_navbar %}{% include 'spicy.core.admin/admin/top_navbar.html' %}{% endblock top_navbar %}
+	
+	{% block menu %}
         <div class="sidebar-background">
           <div class="primary-sidebar-background"></div>
         </div>
@@ -34,25 +33,19 @@
                   <span>{% trans 'Dashboard' %}</span>
               </a>
             </li>
+	    
+	    {% for app in SITESKIN_ADMIN_APPS %}
+	    {% if app|installed_app %}{% captureas app_menu %}{{ app }}/admin/menu.html{% endcaptureas %}{% include app_menu %}{% endif %}
+	    {% endfor %}
 
             {% if "spicy.core.profile"|installed_app %}
                 {% include "spicy.core.profile/admin/menu.html" %}
             {% endif %}
 
-            {% if "spicy.presscenter"|installed_app %}
-                {% include "spicy.presscenter/admin/menu.html" %}
-            {% endif %}
-{##}
-{#            {% if "spicy.mediacenter"|installed_app %}#}
-{#                {% include "spicy.mediacenter/admin/menu.html" %}#}
-{#            {% endif %}#}
-{##}
-{#            {% if "spicy.feedback"|installed_app %}#}
-{#                {% include "spicy.feedback/admin/menu.html" %}#}
-{#            {% endif %}#}
-
+           
           </ul>
         </div>
+	{% endblock %}
 
         <div class="main-content">
             {% block content %}{% endblock %}

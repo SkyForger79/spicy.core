@@ -25,6 +25,8 @@ USE_CUSTOM_ADMIN = getattr(settings, 'USE_CUSTOM_ADMIN', True)
 
 SITESKIN = getattr(settings, 'SITESKIN', 'example.com')
 SITESKIN_ADMIN = getattr(settings, 'SITESKIN_ADMIN', None)
+SITESKIN_ADMIN_APPS = getattr(settings, 'SITESKIN_ADMIN_APPS', [])
+SITESKIN_ADMIN_DASHBOARD_APPS = getattr(settings, 'SITESKIN_ADMIN_DASHBOARD_APPS', [])
 
 OBJECTS_PER_PAGE = getattr(settings, 'OBJECTS_PER_PAGE', 50)
 ADMIN_OBJECTS_PER_PAGE = getattr(settings, 'ADMIN_OBJECTS_PER_PAGE', 50)

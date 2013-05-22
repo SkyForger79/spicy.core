@@ -16,4 +16,4 @@ def login(request):
 
 
 def logout(request):
-    return views.logout(request)
+    return views.logout(request, template_name='spicy.core.admin/admin/logout.html')

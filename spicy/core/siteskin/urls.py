@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.conf.urls import patterns, url, include
 
 from . import defaults
@@ -33,4 +34,14 @@ if defaults.USE_CUSTOM_ADMIN:
 urlpatterns += patterns(
     '',
     url(r'^', include(public_urls, namespace='public')),
+    )
+
+
+if settings.DEBUG:
+    urlpatterns += patterns('',
+        url(r'^%s(?P<path>.*)$' % settings.STATIC_ROOT.lstrip('/'),
+            'django.views.static.serve', {
+                'document_root': settings.STATIC_ROOT
+            }
+        ),
     )

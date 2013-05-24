@@ -25,7 +25,7 @@ def paint_text(text, color_name):
 
 
 
-def prefix_message(message, prefix='~> '):
+def prefix_message(message, prefix='spicy: '):
     """
     Prefix message with string. Useless, but dat's so cute ^_^
 

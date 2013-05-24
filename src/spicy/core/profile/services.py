@@ -27,7 +27,7 @@ CUSTOM_USER_SIGNUP_FORM = getattr(
 
 
 class ProfileProvider(api.Provider):
-    model = 'spicy.core.profile.ProfileProviderModel'
+    model = defaults.CUSTOM_PERMISSION_PROVIDER_MODEL
 
     @ajax_request('/$', is_public=True, use_siteskin=True, use_cache=False)
     def login(self, request):
@@ -142,6 +142,8 @@ class ProfileService(api.Interface):
     PROVIDER_TEMPLATES_DIR = 'profile/providers/'
 
     schema = dict(GENERIC_CONSUMER=ProfileProvider)
+
+    
 
     def login(self, request):
         status = 'error'

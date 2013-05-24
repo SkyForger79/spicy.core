@@ -320,9 +320,13 @@ class StaffAlias(models.Model):
         db_table = 'auth_profile_alias'
 
 
-class ProfileProviderModel(ProviderModel):
+class PermissionProviderModel(ProviderModel):
+    profile = models.ForeignKey(defaults.CUSTOM_USER_MODEL, null=False, blank=False)
+    role = models.ForeignKey(defaults.CUSTOM_ROLE_MODEL, null=False, blank=False)
+
     class Meta:
-        db_table = 'auth_provider'
+        db_table = 'auth_permission_provider'
+        unique_together = 'profile', 'consumer_id', 'consumer_type'
 
 
 class BlacklistedIP(models.Model):

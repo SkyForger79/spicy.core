@@ -142,8 +142,9 @@ class Provider(object):
                         name=name),
                     is_public))
 
-    def get_or_create(self, consumer, **kwargs):
+    def get_or_create(self, consumer, **kwargs):        
         instance = self.get_instance(consumer, **kwargs)
+        kwargs.pop('_quiet', None)
         return (
             instance if instance is not None else
             self.create_instance(consumer, **kwargs))

@@ -8,13 +8,8 @@ from django.utils.translation import ugettext_lazy as _
 from spicy.utils.html import make_slug
 
 USERNAME_MAX_LENGTH = getattr(settings, 'USERNAME_MAX_LENGTH', 100)
-
 SHA1_RE = getattr(settings, 'SHA1_RE', re.compile('^[a-f0-9]{40}$'))
-
-CUSTOM_USER_MODEL = getattr(settings, 'CUSTOM_USER_MODEL', 'profile.TestProfile')
-
 ACCOUNT_ACTIVATION_DAYS = getattr(settings, 'ACCOUNT_ACTIVATION_DAYS', 2)
-
 CHECK_USER_AGREEMENT = getattr(settings, 'CHECK_USER_AGREEMENT', False)
 REGISTRATION_ENABLED = getattr(settings, 'REGISTRATION_ENABLED', True)
 
@@ -76,3 +71,7 @@ TAG_EDIT_MIN_SCORE = getattr(settings, 'TAG_EDIT_MIN_SCORE', 10)
 
 DEFAULT_PROFILE_URL = getattr(
     settings, 'DEFAULT_PROFILE_URL', lambda u: u.get_absolute_url())
+
+CUSTOM_USER_MODEL = getattr(settings, 'CUSTOM_USER_MODEL', 'profile.TestProfile')
+CUSTOM_PERMISSION_PROVIDER_MODEL = getattr(settings, 'CUSTOM_PERMISSION_PROVIDER_MODEL', 'profile.PermissionProviderModel')
+CUSTOM_ROLE_MODEL = getattr(settings, 'CUSTOM_ROLE_MODEL', 'auth.Group')

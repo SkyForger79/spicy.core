@@ -14,20 +14,21 @@ from django.shortcuts import get_object_or_404
 
 from spicy.core.service import api
 from spicy.utils import load_module
+from spicy.utils.models import get_custom_model_class
 from spicy.core.siteskin.decorators import ajax_request, render_to, multi_view
 
 from . import defaults, models, utils
 from .decorators import is_staff
 from .forms import SignupForm, LoginForm
 
-Profile = utils.get_concrete_profile()
+Profile = get_custom_model_class(defaults.CUSTOM_USER_MODEL)
 
 CUSTOM_USER_SIGNUP_FORM = getattr(
     settings, 'CUSTOM_USER_SIGNUP_FORM', 'spicy.core.profile.forms.SignupForm')
 
 
 class ProfileProvider(api.Provider):
-    model = 'spicy.core.profile.ProfileProviderModel'
+    model = defaults.CUSTOM_PERMISSION_PROVIDER_MODEL
 
     @ajax_request('/$', is_public=True, use_siteskin=True, use_cache=False)
     def login(self, request):
@@ -142,6 +143,8 @@ class ProfileService(api.Interface):
     PROVIDER_TEMPLATES_DIR = 'profile/providers/'
 
     schema = dict(GENERIC_CONSUMER=ProfileProvider)
+
+    
 
     def login(self, request):
         status = 'error'

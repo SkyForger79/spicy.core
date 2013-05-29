@@ -142,8 +142,9 @@ class Provider(object):
                         name=name),
                     is_public))
 
-    def get_or_create(self, consumer, **kwargs):
+    def get_or_create(self, consumer, **kwargs):        
         instance = self.get_instance(consumer, **kwargs)
+        kwargs.pop('_quiet', None)
         return (
             instance if instance is not None else
             self.create_instance(consumer, **kwargs))
@@ -296,46 +297,52 @@ class Interface(object):
     def print_schema(self):
         return '%s' % self.__providers
 
-    def __getitem__(self, ctype):
+    def __getitem__(self, consumer):
         """
-        Get provider instance for the content_type.
+        Get provider instance for the defined content_type.
 
-        :param ctype: consumer content_type string
-        :type: str
+        :param consumer: consumer content_type string
+        :type: str or model
 
         :return : concrete provider for defined consumer
-        """
-        if ctype in self.__providers:
-            return self.__providers[ctype]
-        elif GENERIC_CONSUMER in self.__providers:
-            return self.__providers[GENERIC_CONSUMER]
-
-        raise ProviderSchemaError(
-            'Provider is not defined for the ContentType "%s"'
-            ' service "%s", schema "%s"'
-            % (ctype, self.label, self.schema))
-
-    def get_provider(self, consumer):
-        """
-        Get provider instance for the defined consumer.
-
-        :return: concrete ``Provider`` instance for defined consumer
         """
         if not isinstance(consumer, basestring):
             ctype = ContentType.objects.get_for_model(consumer)
             consumer = ctype.model
 
-        # TODO check consumer == type (Django/db/MODEL)
-
         if consumer in self.__providers:
-            return self[consumer]
+            return self.__providers[consumer]
         elif GENERIC_CONSUMER in self.__providers:
-            return self[GENERIC_CONSUMER]
+            if settings.DEBUG:
+                print_text('[{0}] Use GENERIC provider for: {1}'.format(
+                        self.name, consumer))
+            return self.__providers[GENERIC_CONSUMER]
 
         raise ProviderSchemaError(
             'Provider is not defined for the ContentType "%s"'
             ' service "%s", schema "%s"'
+
             % (consumer, self.label, self.schema))
+
+    def create_provider_instance(self, consumer, **kwargs):
+        return self[consumer].create_instance(consumer, **kwargs)
+        
+    def get_provider_instance(self, consumer, **kwargs):
+        return self[consumer].get_instance(consumer, **kwargs)
+
+    def get_provider_instances(self, consumer=None, **kwargs):
+        if consumer is not None:            
+            return self[consumer].get_instances(consumer=consumer, **kwargs)
+        elif GENERIC_CONSUMER in self.__providers:            
+            return self[GENERIC_CONSUMER].get_instances(**kwargs)
+
+    def get_or_create_provider_instance(self, consumer, **kwargs):
+        return self[consumer].get_or_create(consumer, **kwargs)
+
+    def get_provider(self, consumer):
+        print_error('Deprecated method Sevice.get_provider(consumer). User service[consumer] instead.'\
+                       'Will be deleted in versin Spicy-1.6')
+        return self[consumer]
 
     def urls(self, is_public=False):
         return [

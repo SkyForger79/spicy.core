@@ -44,17 +44,22 @@ class ProfileManager(UserManager):
         now = dt.datetime.now()
         if username == '':
             username = self.get_available_username(email.split('@')[0])
-        profile = self.model(
-            username=username, email=email, first_name=first_name,
-            last_name=last_name, is_staff=is_staff, is_active=False,
-            is_superuser=False, last_login=now, date_joined=now)
-        if password is None:
-            password = self.make_random_password()
-        profile.set_password(password)
 
-        profile.generate_activation_key(
-            send_email=send_email, password=password, realhost=realhost,
-            next_url=next_url)
+        try:
+            profile = self.get(email=email)
+        except self.model.DoesNotExist:
+
+            profile = self.model(
+                username=username, email=email, first_name=first_name,
+                last_name=last_name, is_staff=is_staff, is_active=False,
+                is_superuser=False, last_login=now, date_joined=now)
+            if password is None:
+                password = self.make_random_password()
+            profile.set_password(password)
+
+            profile.generate_activation_key(
+                send_email=send_email, password=password, realhost=realhost,
+                next_url=next_url)
         return profile
 
     def get_available_username(self, username):

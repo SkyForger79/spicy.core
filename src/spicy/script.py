@@ -885,8 +885,8 @@ def handle_deploy(ns):
     #ns.group
 
     if ns.env_user:
-        env.user = ns.env_user
-    env.sudo_user = ns.user
+        env.user = ns.env_user    
+    env.sudo_user = ns.sudo_user
 
     config = configparser.ConfigParser()
     config.read(SPICY_PROJECT_CONFIG_FILE)
@@ -966,8 +966,8 @@ deploy_parser.add_argument('versionlabel', action='store')
 deploy_parser.add_argument('-H', '--hosts', action='store', default=None, help="remote hosts")
 deploy_parser.add_argument('-P', '--port', action='store', default=None, help='SSH port')
 
-deploy_parser.add_argument('-u', '--user', action='store', default=SPICY_APPS_SERVER_USER, help='Remote server user with access for APPS and ENV. Sudoers.')
-deploy_parser.add_argument('-g', '--group', action='store', default=SPICY_APPS_SERVER_GROUP, help='Group for deploy')
+deploy_parser.add_argument('-su', '--sudo_user', action='store', default=SPICY_APPS_SERVER_USER, help='Remote server user with access for APPS and ENV. ``nginx`` for example.')
+deploy_parser.add_argument('-sg', '--sudo_group', action='store', default=SPICY_APPS_SERVER_GROUP, help='Group for deploy: ``nginx`` for example.')
 
 deploy_parser.add_argument('-a', '--apps', action='store', default=None, help="List fo apps or current app(current directory by default './' )")
 deploy_parser.add_argument('-s', '--static', action='store', default=None, help='Static APPS templates and JS/CSS/HTML web apps.')
@@ -981,8 +981,7 @@ deploy_parser.add_argument('-D', '--syncdb', action='store_true', default=False,
 
 deploy_parser.add_argument('-x', '--xconfiglabel', action='store_true', default=False, help='Use configuration file and defined project label. {0}'.format(SPICY_PROJECT_CONFIG_FILE))
 
-# issue 653
-deploy_parser.add_argument('-eu', '--env-user', action='store', default=None, help='Server user with access for APPS and ENV.')
+deploy_parser.add_argument('-u', '--user', action='store', default=os.getlogin(), help='Server SSH user with sudo access.')
 
 deploy_parser.set_defaults(func=handle_deploy)
 

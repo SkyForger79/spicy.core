@@ -340,6 +340,10 @@ class Application(object):
                     app_name=self.name
                     ))
 
+    @property
+    def rev_id(self):
+        return self.hashed_rev_id
+
     @with_settings(sudo_user='root')
     def update_nginx(self):
         if exists(self.nginx_conf):
@@ -408,7 +412,7 @@ class VersionControlBase(object):
         """
         with lcd(app.abspath):
             local(self.cmd_build_archive % dict(
-                    revision_id=app.short_rev_id, app_build_path=app.build_path))        
+                    revision_id=app.rev_id, app_build_path=app.build_path))        
 
     def get_revision(self, app):              
         """Parse revision values from version control utility using Application
@@ -761,7 +765,7 @@ class ProjectDeployer(object):
         sudo('mkdir -m ug=rwx,o= {0}'.format(path))
 
         arch_name = '{0}-{1}.tar.bz2'.format(
-            self.version_label, '-'.join(['{0}.rev{1}'.format(a_,a_.short_rev_id) for a_ in apps]))        
+            self.version_label, '-'.join(['{0}.{1}'.format(a_,a_.rev_id) for a_ in apps]))        
         with lcd(self._local_tmp):
             local('tar cfj {0} {1}'.format(arch_name, ' '.join([str(a_) for a_ in apps])))
             put(arch_name, path)

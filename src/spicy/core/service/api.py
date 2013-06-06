@@ -143,6 +143,10 @@ class Provider(object):
                     is_public))
 
     def get_or_create(self, consumer, **kwargs):        
+        """
+        TODO
+        return tuple from (is_exists_boolean, object_instance)
+        """
         instance = self.get_instance(consumer, **kwargs)
         kwargs.pop('_quiet', None)
         return (

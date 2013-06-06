@@ -880,12 +880,11 @@ class ProjectDeployer(object):
 
 
 def handle_deploy(ns):
-    #port = ns.port or 22
-    #ns.user
-    #ns.group
+    if ns.port:
+        env.port = ns.port
 
-    if ns.env_user:
-        env.user = ns.env_user    
+    if ns.user:
+        env.user = ns.user    
     env.sudo_user = ns.sudo_user
 
     config = configparser.ConfigParser()

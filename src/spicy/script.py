@@ -529,6 +529,7 @@ class Server(object):
 class Database(object):
     name = ''
     user = ''
+    host = '127.0.0.1'
     password = ''
     fixture = None
 
@@ -538,12 +539,17 @@ class Database(object):
         if self.config is not None:
             try:
                 self.name=config['database']
-                self.user=config['database_user']
+                self.user=config['database_user']                
                 self.password=config['database_password']
                 self.fixture=self.get_fixture()
 
             except KeyError:
                 print_err('Can not configure database settings. Check spicy.conf file.')
+
+            try:
+                self.host=config['database_host']
+            except KeyError:
+                pass
 
     def get_fixture(self):
         if 'database_fixture' in self.config:

@@ -367,10 +367,9 @@ class Application(object):
                 '/etc/init.d/uwsgi', self.uwsgi_initd))
         print_ok('[done] Create uwsgi configs for app: {0}'.format(self.name))
 
-    @with_settings(sudo_user='root')
     def restart(self):
         if self.is_webapp():
-            sudo('{0} restart'.format(self.uwsgi_initd))
+            sudo('{0} restart'.format(self.uwsgi_initd), user='root')
 
         if self.is_daemon():
             with cd(self.remote_path):

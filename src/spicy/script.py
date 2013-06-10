@@ -242,10 +242,12 @@ def handle_create_app(ns):
                     ns.appname))
                 if proceed in ['n','N']:
                     print_info('Exiting')
-                    sys.exit()
+                    break
+
                 if proceed not in ['y','Y']:
                     print_warn('Press y, Y, n or N')
                     continue
+
                 if proceed in ['y', 'Y']:
                     print_warn('Overwriting')
                     shutil.rmtree(dest_app_dir)
@@ -751,7 +753,7 @@ class ProjectDeployer(object):
                     self.server.host, path))
                 if proceed in ['n','N']:
                     print_info('Exiting')
-                    sys.exit(0)
+                    break
 
                 if proceed not in ['y','Y']:
                     print_warn('Press y, Y, n or N')

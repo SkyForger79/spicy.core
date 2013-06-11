@@ -241,8 +241,8 @@ def handle_create_app(ns):
                 proceed = raw_input('Overwrite existing app catalog ({})? y\\n: '.format(
                     ns.appname))
                 if proceed in ['n','N']:
-                    print_info('Exiting')
-                    break
+                    print_info('Cancel')
+                    return
 
                 if proceed not in ['y','Y']:
                     print_warn('Press y, Y, n or N')
@@ -752,8 +752,8 @@ class ProjectDeployer(object):
                 proceed = raw_input_cyan('Overwrite existing project catalog: {0}:{1}? y\\n: '.format(
                     self.server.host, path))
                 if proceed in ['n','N']:
-                    print_info('Exiting')
-                    break
+                    print_info('Cancel')
+                    return
 
                 if proceed not in ['y','Y']:
                     print_warn('Press y, Y, n or N')
@@ -906,8 +906,12 @@ def handle_deploy(ns):
         server_config = config['server']
 
     if ns.xconfiglabel:
-        project_config = config[ns.versionlabel]
-        
+        try:
+            project_config = config[ns.versionlabel]
+        except KeyError:
+            print_err('Check for spicy.conf file. Cannot find ``{}`` configuration.'.format(ns.versionlabel))
+            sys.exit(-1)
+            
         # overwrite server config using project values if exists
         for opt in project_config:
             server_config[opt] = project_config[opt]

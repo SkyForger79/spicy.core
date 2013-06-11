@@ -4,7 +4,8 @@ import smtplib
 import socket
 import sys
 import datetime as dt
-from . import cache, defaults
+from uuid import uuid4
+
 from django.conf import settings
 from django.contrib.auth.models import User, UserManager, Group, Permission
 from django.contrib.auth.models import AnonymousUser as BasicAnonymousUser
@@ -17,10 +18,14 @@ from django.utils.hashcompat import sha_constructor
 from django.utils.html import escape
 from django.utils.translation import ugettext_lazy as _
 from django.core.management.color import color_style
+
 #from social_auth.signals import pre_update
+
+from spicy.utils.printing import print_error, print_info
 from spicy.core.service.models import ProviderModel
 from spicy.core.siteskin import defaults as sk_defaults
-from uuid import uuid4
+
+from . import cache, defaults
 
 
 style = color_style()
@@ -56,10 +61,17 @@ class ProfileManager(UserManager):
             if password is None:
                 password = self.make_random_password()
             profile.set_password(password)
+                       
+            if defaults.MANUAL_ACTIVATION:
+                self.model.email_hello(profile, password=password)
+                profile.is_banned = defaults.MANUAL_ACTIVATION
+                profile.activate()
 
-            profile.generate_activation_key(
-                send_email=send_email, password=password, realhost=realhost,
+            else:
+                profile.generate_activation_key(
+                    send_email=send_email, password=password, realhost=realhost,
                 next_url=next_url)
+
         return profile
 
     def get_available_username(self, username):
@@ -108,7 +120,8 @@ class AbstractProfile(User):
     IS_ACTIVATED = 'Already activated'
     activation_key = models.CharField(_('activation key'), max_length=40)
     is_banned = models.BooleanField(
-        _('user is banned'), blank=True, default=False)
+        _('user is banned'), blank=True, default=defaults.MANUAL_ACTIVATION)
+
     accept_agreement = models.BooleanField(
         _('Accept user agreement'), blank=True, default=True)
     subscribe_me = models.BooleanField(
@@ -176,7 +189,7 @@ class AbstractProfile(User):
         self.save()
         if send_email:
             self.email_activation_key(
-                password, realhost, next_url=next_url)
+                password, realhost, next_url=next_url)        
 
     def activation_key_expired(self):
         expiration_date = dt.timedelta(
@@ -198,19 +211,23 @@ class AbstractProfile(User):
         except socket.error, e:
             # TODO: log error
             if e.errno == errno.ECONNREFUSED:
-                sys.stderr.write(
-                    style.ERROR(
-                        'Connection refused, please configure your mail server'
-                        'correctly.\n'))
-            else:
-                sys.stderr.write(
-                    style.ERROR(
-                        'Can not send mail, error: %s\n' % e))
+                print_error('Connection refused, please configure your mail server correctly.\n')
+            else:                
+                print_error('Can not send mail, error: {}\n'.format(e))
         except smtplib.SMTPException, e:
-            sys.stderr.write(
-                style.ERROR(
-                    'Can not send mail, SMTP error: %s\n' % e))
+            print_error('Can not send mail, SMTP error: {}\n'.format(e))
 
+    def email_hello(self, password='not-activated', realhost=None, next_url=None):
+        site = Site.objects.get_current()
+        context = {
+            'expiration_days': defaults.ACCOUNT_ACTIVATION_DAYS,
+            'user_id': self.id, 'user':self, 'site': site,
+            'password': password, 'key': self.activation_key, 'email': self.email, 'next_url': next_url,
+            'realhost': realhost,}
+        subject = render_to_string(sk_defaults.SITESKIN + '/mail/hello_subject.txt', context)
+        subject = ''.join(subject.splitlines())
+        message = render_to_string(sk_defaults.SITESKIN + '/mail/hello_email.txt', context)
+        self.email_user(subject, message)
 
     def email_activation_key(self, password, realhost=None, next_url=None):
         if not self.email:

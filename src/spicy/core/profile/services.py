@@ -214,7 +214,7 @@ class ProfileService(api.Interface):
 
             else:
                 if not form.is_valid():
-                    message = _('Login or password is incorrect. Try again.')
+                    message = form.errors.as_text()
                 elif not can_login or is_blacklisted:
                     message = _('Login is disabled or your account is banned.')
         else:

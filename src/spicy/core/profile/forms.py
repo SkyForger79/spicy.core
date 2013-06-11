@@ -316,7 +316,7 @@ class SignupForm(forms.Form, ValidateEmailMixin):
                 password=self.cleaned_data['password2'],
                 first_name=self.cleaned_data['first_name'],
                 last_name=self.cleaned_data['last_name'],
-                send_email=True,
+                send_email=defaults.MANUAL_ACTIVATION,
                 next_url=next_url,
                 realhost=realhost)
             # TODO add additional form fields while creating user with real form data post

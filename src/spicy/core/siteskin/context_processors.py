@@ -10,11 +10,13 @@ def base(request):
     sites = Site.objects.all()
     current = Site.objects.get_current()
 
+    siteskin_base = defaults.SITESKIN + '/base.html'
+    admin_base = defaults.SITESKIN_ADMIN + '/base.html'
     return {
         'current_site': current,
         'sites': sites,
-        'current_base': defaults.SITESKIN + '/base.html',
-        'current_admin_base': defaults.SITESKIN_ADMIN + '/base.html',
+        'current_base': siteskin_base.strip('/'),
+        'current_admin_base': admin_base.strip('/'),
         'current_path': request.path,
         'REDIRECT_FIELD_NAME': REDIRECT_FIELD_NAME,
         'SITESKIN': defaults.SITESKIN,

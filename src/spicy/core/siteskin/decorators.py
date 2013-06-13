@@ -145,7 +145,7 @@ class ViewRendererToResponse(ViewInterface):
             return output
 
         response = render_to_response(
-            self.template, output,
+            self.template.strip('/'), output,
             context_instance=RequestContext(request))
 
         if self.use_cache:
@@ -185,7 +185,7 @@ class ViewMultiResponse(ViewInterface):
             template = defaults.SITESKIN_ADMIN + '/' + template
 
         response = render_to_response(
-            template, output,
+            template.strip('/'), output,
             context_instance=RequestContext(request))
 
         if self.use_cache:

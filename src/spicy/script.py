@@ -292,10 +292,9 @@ class ServerError(Exception):
 
 class Application(object):
     name = None
-    version_label = None
 
-    hashed_rev_id = None
-    short_rev_id = None
+    version_label = None
+    revision_id = None
 
     abspath = os.path.abspath('.')
     build_path = os.path.abspath('.')
@@ -307,34 +306,26 @@ class Application(object):
 
     def __init__(self, app_str, deployer):
         """
-        :param app_str: Application string example: `foo=version-label` OR `bar=3.0.3`
-        :param vc: version control utility instance
-        :type vc: ``VersionControlBase`` interface implementation. 
+        :param app_str: Application string example: `foo=version-tag-label` equal to `bar=3.0.3`
+        :param deployer: 
 
-        """    
-        self.version_label = deployer._vc.default_version_label
 
-        _app = re.split('=', app_str)
-        if len(_app) == 2:
-            self.name, self.version_label = _app
-        elif len(_app) == 1:
-            self.name = _app[0]
-        else:
-            print_err('Error while parsing app versions from string: %s'%app_str)
-            raise VersionError
+        """                    
         
+        try:
+            self.name, self.version_label, self.revision_id =\
+                deployer._vc.get_app_version(app_str)
+        except TypeError, e:
+            print(traceback.format_exc())
+            print_err('Check applications direcories. You current PWD is: {0}'.format(
+                    os.path.abspath('.')))
+
         self.abspath = os.path.join(os.path.abspath('.'), self.name)
 
         self.build_path = os.path.join(os.path.abspath(SPICY_BUILD_DIR), self.name)
         self.req_file = os.path.join(self.build_path, SPICY_REQ_FILE)
         
-        self.remote_path = os.path.join(os.path.abspath(deployer.remote_apps_path), self.name)
-        
-        try:
-            self.short_rev_id, self.hashed_rev_id = deployer._vc.get_revision(self)
-        except TypeError:
-            print_err('Check applications direcories. You current PWD is: {0}'.format(
-                    os.path.abspath('.')))
+        self.remote_path = os.path.join(os.path.abspath(deployer.remote_apps_path), self.name)        
 
         for attr in ('uwsgi_conf', 'uwsgi_initd', 'nginx_conf'):
             setattr(self, attr, getattr(self, attr).format(
@@ -344,7 +335,7 @@ class Application(object):
 
     @property
     def rev_id(self):
-        return self.hashed_rev_id
+        return self.revision_id
 
     @with_settings(sudo_user='root')
     def update_nginx(self):
@@ -399,10 +390,13 @@ class Application(object):
 
 
 class VersionControlBase(object):
-    default_version_label = None              
-    cmd_get_labels = None
+    default_branch = 'default'
+    cmd_tags = None
     cmd_build_archive = None
+    cmd_revision_by_branch = None
+    cmd_branch_by_revision = None
 
+    
     def create_build(self, app):
         """Creating application ``build copy`` using defined revision label.
         
@@ -413,35 +407,105 @@ class VersionControlBase(object):
         """
         with lcd(app.abspath):
             local(self.cmd_build_archive % dict(
-                    revision_id=app.rev_id, app_build_path=app.build_path))        
+                    revision_id=app.revision_id, app_build_path=app.build_path))        
 
-    def get_revision(self, app):              
-        """Parse revision values from version control utility using Application
-        and defined version label/tag.
+    def get_app_version(
+        self, app_str, app_path=os.path.abspath('.')):
+        """
+        :param app_str: Application string and version code  example: 
 
-        :param app:
+        1) Using tag label
+         foo=version-tag-label
+         bar=3.0.3
+         
+        2) Using branch/origin
+        foo@branch-name
+        bar@default
+
+        3) default definition used branch/origin @default
+        `foo` is equal to `foo@default`
+
+        4) Concrete revision hash
+        foo#42079195ebd5f8134e47c71b9d7d97575fa7b416
+        
+        """
+        if '=' in app_str:                        
+            app_name, version_label = app_str.split('=')
+            revision_id = self.get_revision_by_tag(
+                app_name, version_label, app_path)
+
+        elif '@' in app_str:
+            app_name, branch_name = app_str.split('@')
+            version_label = branch_name
+            revision_id = self.get_revision_by_branch(
+                app_name, branch_name, app_path)
+
+        elif '#' in app_str:
+            app_name, revision_id = app_str.split('#')
+            version_label = self.get_branch_by_revision(
+                app_name, revision_id, app_path)
+        else:
+            # use default branch last commit
+            app_name = app_str
+            version_label = self.default_branch
+            revision_id = self.get_revision_by_branch(
+                app_name, self.default_branch, app_path)
+
+        return app_name, version_label, revision_id
+        #print_err('Error while parsing app versions from string: %s'%app_str)
+        #raise VersionError
+
+    def get_branch_by_revision_id(self, app_name, revision_id, app_path):
+        with lcd(os.path.join(os.path.abspath('.'), app_name)):
+            branch_name = local(self.cmd_branch_by_revision % dict(revision_id=revision_id), capture=True)
+            if not branch_name:
+                print_err('Can not find revision data for application [{0}].\n' \
+                              'Try to run deployer from dirrectory above current. $cd .. '.format(app_name))
+                raise VersionError
+            return branch_name
+
+    def get_revision_by_branch(self, app_name, branch_name, app_path):              
+        with lcd(os.path.join(os.path.abspath('.'), app_name)):
+            revision_id = local(self.cmd_revision_by_branch % dict(branch_name=branch_name), capture=True)
+            if not revision_id:
+                print_err('Can not find revision data for application [{0}].\n' \
+                              'Try to run deployer from dirrectory above current. $cd .. '.format(app_name))
+                raise VersionError
+            return revision_id
+
+    def get_revision_by_tag(self, app_name, tag_name, app_path):              
+        """Parse revision id from version control utility using  defined version label/tag.
+
+        :param app_name:
+        :param tag_name:
         :type class ``Application``
 
-        return: short numeric revision id and hashed revision ID: 
-            (short_revision_id, hashed_revision_id)
+        return: revision id hash code 
         """
-        with lcd(app.abspath):
-            tags = local(self.cmd_get_labels, capture=True)
-            if not tags:
-                print_err('Can not find revision data for application [{0}].\n' \
-                              'Check application absolute path: {1}' \
-                              'Try to run deployer from dirrectory above current. $cd .. '.format(app, app.abspath))
-                raise VersionError
-
-            for tagline in tags.splitlines():
-                if tagline.startswith(app.version_label):
-                    return tagline.strip(app.version_label).strip().split(':')
+        raise NotImplementerError
 
 
 class HgVersionControl(VersionControlBase):
-    default_version_label = 'tip'
-    cmd_get_labels = 'hg tags'
+    cmd_tags = 'hg tags'
     cmd_build_archive = 'hg archive -r %(revision_id)s %(app_build_path)s'
+
+    cmd_revision_by_branch = "hg head -r %(branch_name)s --template '{node}'"
+    cmd_branch_by_revision = "hg head -r %(revision_id)s --template '{branch}'"
+
+    default_branch = 'default'
+
+    def get_revision_by_tag(self, app_name, tag_name):                  
+        with lcd(os.path.join(os.path.abspath('.'), app_name)):
+            tags = local(self.cmd_tags, capture=True)
+            if not tags:
+                print_err('Can not find revision data for application [{0}].\n' \
+                              'Try to run deployer from dirrectory above current. $cd .. '.format(app_name))
+                raise VersionError
+
+            for tagline in tags.splitlines():
+                if tagline.startswith(tag_name):
+                    return tagline.strip(tag_name).strip().split(':')[1]
+            raise VersionError('Can not find defined tag label: {}'.format(tag_name))
 
 
 VERSION_CONTROL_MAP = {

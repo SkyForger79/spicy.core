@@ -5,7 +5,17 @@ from spicy.core.siteskin import defaults
 
 public_urls = patterns(
     'spicy.core.profile.views',    
-    
+
+    # done
+    url(r'^signin/$', 'signin', name='signin'),
+    url(r'^signup/$', 'signup', name='signup'),
+    url(r'^signout/$', 'signout', name='signout'),
+    url(r'^email-notify/$', 'email_notify', name='email-notify'),
+    url(r'^activate/(?P<profile_id>\d+)/(?P<activation_key>\w+)/$', 'activate', name='activate'),  
+    url(r'^restore-passwd/$', 'restorepass', name='restorepass'),
+    url(r'^user-agreement/$', 'user_agreement', name='user-agreement'),
+
+    # refactoring required
     url(r'^users/(?P<username>[\w\-_.]+)/$', 'profile', name='index'),
     url(r'^users/(?P<username>[\w\-_.]+)/edit/$', 'edit', name='edit'),
 
@@ -13,18 +23,13 @@ public_urls = patterns(
     url(r'^users/(?P<username>[\w\-_.]+)/settings/$', 'user_settings',
         name='settings'),
     url(r'^users/(?P<username>[\w\-_.]+)/passwd/$', 'passwd', name='passwd'),
-    url(r'^activate/(?P<profile_id>\d+)/(?P<activation_key>\w+)/$', 'activate',
-        name='activate'),  
 
-    url(r'^signin/$', 'signin', name='signin'),
-    url(r'^signout/$', 'signout', name='signout'),
     url(r'^login/widget/$', 'login_widget', name='login-widget'),
     url(r'^registration/widget/$', 'registration_widget', name='registration-widget'),
-    url(r'^signup/$', 'signup', name='signup'),
-    url(r'^email-notify/$', 'email_notify', name='email-notify'),
+
+
 
     # XXX ???
-    url(r'^restorepass/$', 'restorepass', name='restorepass'),
     url(r'^set_email/$', 'set_email', name='set_email'),
 
     url(r'^checkusername/$', 'check_unic_username', name='check_username'),

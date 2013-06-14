@@ -167,40 +167,54 @@ def activate(request, profile_id, activation_key):
     return dict(profile=profile, next_url=next_url)
 
 
+@render_to('profile/user_agreement.html', use_siteskin=True)
+def user_agreement(request):
+    return dict()
+
+
 @csrf_protect
 @render_to('profile/restore.html', use_siteskin=True)
 def restorepass(request):
+    message = ''
     if request.method == 'POST':
         form = RestorePasswordForm(request.POST)
         if form.is_valid():
             profile = Profile.objects.get(email__iexact=form.cleaned_data['email'])
+
             if request.POST.has_key('send_pass'):
                 newpass = generate_random_password()
                 profile.set_password(newpass)
                 profile.save()
                 profile.email_forgotten_passwd(newpass)
-                return dict(finished=True, email=profile.email)
+                                                
+                return dict(
+                    form=form, message=_('New password has been sent to you email address'))
+
             elif request.POST.has_key('resend_activation'):
                 if profile.check_activation():
-                    return {'form': form, 'error': _('Profile is already active')}
+                    return dict(
+                        form=form, message= _('Profile has been already activated'))
+
                 else:
                     try:
                         profile.generate_activation_key(
                             realhost=request.get_host(), next_url=request.path)
-                        return {
-                            'finished': True, 'activation': True,
-                            'email': profile.email}
+
+                        message = _('New activation key has been sent to yout email address.')
+                        return dict(form=form, message=message)
+
                     except Exception:
-                        return {
-                            'form': form,
-                            'error': _('Unable to send activation key, please '
-                                       'try again later')}
+                        return dict(
+                            form=form,
+                            message = _('Unable to send activation key, please try again later'))
+        else:
+            message = form.errors.as_text()
     else:
         if request.user.is_authenticated():
             form = RestorePasswordForm(initial={'email': request.user.email})
         else:
             form = RestorePasswordForm()
-    return dict(form=form)
+    return dict(form=form, message=message)
 
 
 @login_required

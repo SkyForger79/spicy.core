@@ -23,7 +23,7 @@ from django.core.management.color import color_style
 
 from spicy.utils.printing import print_error, print_info
 from spicy.core.service.models import ProviderModel
-from spicy.core.siteskin import defaults as sk_defaults
+from spicy.core.siteskin.utils import get_template
 
 from . import cache, defaults
 
@@ -224,9 +224,9 @@ class AbstractProfile(User):
             'user_id': self.id, 'user':self, 'site': site,
             'password': password, 'key': self.activation_key, 'email': self.email, 'next_url': next_url,
             'realhost': realhost,}
-        subject = render_to_string(sk_defaults.SITESKIN + '/mail/hello_subject.txt', context)
+        subject = render_to_string(get_template('mail/hello_subject.txt'), context)
         subject = ''.join(subject.splitlines())
-        message = render_to_string(sk_defaults.SITESKIN + '/mail/hello_email.txt', context)
+        message = render_to_string(get_template('mail/hello_email.txt'), context)
         self.email_user(subject, message)
 
     def email_activation_key(self, password, realhost=None, next_url=None):
@@ -240,9 +240,9 @@ class AbstractProfile(User):
             'password': password, 'user_id': self.id, 'user':self, 'site': site,
             'key': self.activation_key, 'email': self.email, 'next_url': next_url,
             'realhost': realhost,}
-        subject = render_to_string(sk_defaults.SITESKIN + '/mail/activation_email_subject.txt', context)
+        subject = render_to_string(get_template('mail/activation_email_subject.txt'), context)
         subject = ''.join(subject.splitlines())
-        message = render_to_string(sk_defaults.SITESKIN + '/mail/activation_email.txt', context)
+        message = render_to_string(get_template('mail/activation_email.txt'), context)
         self.email_user(subject, message)
 
     def get_hash(self, email=None):
@@ -258,9 +258,9 @@ class AbstractProfile(User):
 
         site = Site.objects.get_current()
         context = {'password': password, 'user': self, 'site': site}
-        subject = render_to_string(sk_defaults.SITESKIN + '/mail/passwd_email_subj.txt', context)
+        subject = render_to_string(get_template('mail/passwd_email_subj.txt'), context)
         subject = ''.join(subject.splitlines())
-        message = render_to_string(sk_defaults.SITESKIN + '/mail/passwd_email.txt', context)
+        message = render_to_string(get_template('mail/passwd_email.txt'), context)
         self.email_user(subject, message)
 
     def email_confirm(self, email):
@@ -269,8 +269,8 @@ class AbstractProfile(User):
             'user': self, 'site': site, 'email': email,
             'hash': self.get_hash(email)}
         subject = ' '.join(
-            render_to_string(sk_defaults.SITESKIN + '/mail/set_email_subject.txt', context).splitlines())
-        message = render_to_string(sk_defaults.SITESKIN + '/mail/set_email.txt', context)
+            render_to_string(get_template('mail/set_email_subject.txt'), context).splitlines())
+        message = render_to_string(get_template('mail/set_email.txt'), context)
         self.email_user(subject, message, email=email)
 
     def email_message_notify(self, msg):
@@ -281,7 +281,7 @@ class AbstractProfile(User):
         site = Site.objects.get_current()
         subject = unicode(_('You received a new message from %s'%msg.sender.screenname))
 
-        message = render_to_string(sk_defaults.SITESKIN + '/mail/message_notify_email.txt',
+        message = render_to_string(get_template('mail/message_notify_email.txt'),
             dict(msg=msg, user=self, site=site))
         self.email_user(subject, message)
 
@@ -293,7 +293,7 @@ class AbstractProfile(User):
         site = Site.objects.get_current()
         subject = unicode(_('Restore password for you account on the %s'%site.domain.capitalize()))
 
-        message = render_to_string(sk_defaults.SITESKIN + '/mail/forgotten_passwd_email.txt',
+        message = render_to_string(get_template('mail/forgotten_passwd_email.txt'),
             dict(password=password, user=self, site=site))
         self.email_user(subject, message)
 
@@ -325,7 +325,7 @@ models.signals.post_delete.connect(
 class AnonymousUser(BasicAnonymousUser):
     timezone = settings.TIME_ZONE
     theme = 'default'
-    obj_per_page = sk_defaults.OBJECTS_PER_PAGE
+    obj_per_page = 20
 
     def fullname(self):
         return _('Anonymous')

@@ -1,5 +1,12 @@
 from django import http
 from spicy.core.siteskin import defaults
+from . import defaults
+
+
+def get_template(template):
+    if defaults.SITESKIN:
+        return defaults.SITESKIN + '/' + template
+    return template
 
 
 def get_render_from_response(request, url, get_forwarding=False):

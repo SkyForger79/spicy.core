@@ -20,15 +20,15 @@ from django.utils.translation import ugettext_lazy as _
 
 
 from spicy.core.siteskin.widgets import LabledRegexField, LabledEmailField
-
-from .utils import get_concrete_profile
+from spicy.utils.models import get_custom_model_class
+from . import defaults
 
 NAME_RE = re.compile(
     u'^[\\.\\-_a-zA-Z0-9абвгдеёжзийклмнопрстуфхцчшщъыьэюя'
     u'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ ]+$')
 
 
-Profile = get_concrete_profile()
+Profile = get_custom_model_class(defaults.CUSTOM_USER_MODEL)
 
 
 class CaptchaWithId(CaptchaTextInput):

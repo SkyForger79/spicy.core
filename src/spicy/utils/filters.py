@@ -3,8 +3,9 @@ from django.core.paginator import Paginator, InvalidPage
 from django.http import Http404
 
 OBJECTS_PER_PAGE = getattr(settings, 'OBJECTS_PER_PAGE', 50)
-DEFAULT_FILTERS = getattr(settings, 'DEFAULT_FILTERS', 
+DEFAULT_FILTERS = getattr(settings, 'DEFAULT_FILTERS',
                           [('search_text', ''),])
+
 
 class NavigationFilter:
     def __init__(self, request, accepting_filters=DEFAULT_FILTERS,

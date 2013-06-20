@@ -5,6 +5,18 @@ from django.contrib.sites.models import Site
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from spicy.utils import cached_property
+
+
+class CustomAbstractModel(models.Model):
+    @cached_property
+    def ctype(self):
+        return self._meta.object_name.lower()
+
+    class Meta:
+        abstract = True
+
+
 
 class ProviderModel(models.Model):
     consumer_type = models.ForeignKey(ContentType, blank=True)
@@ -26,9 +38,10 @@ class ContentProviderModel(ProviderModel):
 
     @property
     def get_template(self):
-        from spicy.core.service import api
-        return api.register[
-            self.service.name].PROVIDER_TEMPLATES_DIR + self.template
+        return self.template
+        #from spicy.core.service import api
+        #return api.register[
+        #    self.service.name].PROVIDER_TEMPLATES_DIR + self.template
     """
     def clean_cache(self):
         cache_key = '%s:%s'%(Site.objects.get_current().domain, request.path)

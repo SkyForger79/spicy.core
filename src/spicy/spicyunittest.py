@@ -22,12 +22,12 @@ class SpicyTextTestResult(unittest.TestResult):
     def getDescription(self, test):
         doc_first_line = test.shortDescription()
         if self.descriptions and doc_first_line:
-            return '{0}\n{1}\nShort desc: {2}'.format(
+            return '{0}\n{1}\nShort desc: {2}\n'.format(
                 self.separator2,
                 yellow(test),
                 green(doc_first_line))
         else:
-            return '{0}\n{1}\nShort desc: {2}'.format(
+            return '{0}\n{1}\nShort desc: {2}\n'.format(
                 self.separator2,
                 yellow(test),
                 red('Unavailable (docstring not defined)'))

@@ -1,9 +1,7 @@
-from . import defaults, forms
-from .decorators import is_staff
-from .models import BlacklistedIP
 from datetime import datetime, timedelta
 from django.conf import settings
-from django.contrib.auth.models import Group
+from django.contrib import admin
+from django.contrib.auth.models import Group, User
 from django.contrib.sites.models import Site
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
@@ -11,14 +9,49 @@ from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
-from spicy.core.profile.utils import get_concrete_profile
+
 from spicy.core.service import api
+from spicy.utils.models import get_custom_model_class
 from spicy.core.siteskin.decorators import render_to, ajax_request
-from spicy.core.siteskin import defaults as sk_defaults
+from spicy.core.admin.conf import AdminAppBase, AdminLink, Perms
+from spicy.core.admin import defaults as admin_defaults
+
+from . import defaults, forms
+from .decorators import is_staff
+from .models import BlacklistedIP
+
 from spicy.utils import NavigationFilter, make_slug
 
-Profile = get_concrete_profile()
 
+Profile = get_custom_model_class(defaults.CUSTOM_USER_MODEL)
+
+admin.site.register(Profile)
+admin.site.unregister(User)
+
+
+class AdminApp(AdminAppBase):    
+    name = 'profile'
+    label = _('Profile')
+    order_number = 10
+
+    menu_items = (
+        AdminLink('profile:admin:create', _('Create profile')),
+        AdminLink('profile:admin:index', _('All profiles')),
+        AdminLink('profile:admin:groups', _('Groups & Permissions')),
+        AdminLink('profile:admin:create-group', _('Create group')),
+        )
+
+    create = AdminLink('profile:admin:create', _('Create profile'),)
+
+    perms = Perms(view=[],  write=[], manage=[])
+
+    @render_to('menu.html', use_admin=True)
+    def menu(self, request, *args, **kwargs):
+        return dict(app=self, *args, **kwargs)
+
+    @render_to('dashboard.html', use_admin=True)
+    def dashboard(self, request, *args, **kwargs):
+        return dict(app=self, *args, **kwargs)
 
 
 @is_staff
@@ -34,7 +67,7 @@ def main(request):
         raise PermissionDenied(_("Unable to redirect to main page"))
         
 
-@is_staff(required_perms='extprofile.change_profile')
+@is_staff(required_perms='profile.change_profile')
 @ajax_request
 def passwd(request, profile_id):
     message = ''
@@ -51,15 +84,15 @@ def passwd(request, profile_id):
     return dict(message=unicode(message),)
 
 
-@is_staff(required_perms='extprofile.add_profile')
-@render_to('profile/create.html', use_admin=True)
+@is_staff(required_perms='profile.add_profile')
+@render_to('create.html', use_admin=True)
 def create(request):
     message = None
     if request.method == 'POST':
         form = forms.CreateProfileForm(request.POST)
         if form.is_valid():
             profile = form.save(realhost=request.get_host())
-            return HttpResponseRedirect('/admin/profile/%s/?new' % profile.id)
+            return HttpResponseRedirect('/admin/profile/%s/?action=new' % profile.id)
         else:
             message = settings.MESSAGES['error']
     else:
@@ -71,8 +104,9 @@ def create(request):
 
 
 @is_staff(required_perms='auth.change_group')
-@render_to('profile/groups.html', use_admin=True)
-def groups(request):   
+@render_to('groups.html', use_admin=True)
+def groups(request):
+    """Groups list/formset combined view."""
     message = None
     if request.method == 'POST':
         groups = forms.GroupFormSet(request.POST, request.FILES, 
@@ -85,13 +119,13 @@ def groups(request):
     else:
         groups = forms.GroupFormSet(queryset=Group.objects.all())
     return {
-        'groups': groups,
+        'group_formset': groups,
         'message': message,
-        }                
+    }
 
 
 @is_staff(required_perms='auth.add_group')
-@render_to('profile/create_group.html', use_admin=True)
+@render_to('spicy.core.profile/admin/create_group.html', use_admin=True)
 def create_group(request):
     if request.method == 'POST':
         form = forms.GroupForm(request.POST)
@@ -108,7 +142,7 @@ def create_group(request):
 
 
 @is_staff(required_perms='auth.delete_group')
-@render_to('profile/delete_group.html', use_admin=True)
+@render_to('spicy.core.profile/admin/delete_group.html', use_admin=True)
 def delete_group(request, group_id):
     group = get_object_or_404(Group, pk=group_id)
     if request.method == 'POST':
@@ -118,14 +152,21 @@ def delete_group(request, group_id):
     return {'group': group}
 
 
-@is_staff(required_perms=(('extprofile.change_profile',),
-                          ('extprofile.view_profile',)))
-@render_to('profile/edit.html', use_admin=True)
+@is_staff(required_perms=(('profile.change_profile',),
+                          ('profile.view_profile',)))
+@render_to('spicy.core.profile/admin/edit.html', use_admin=True)
 def edit(request, profile_id):
+    """Handles edit requests, renders template according `action`
+    get parameter
+
+    """
     message = None
+    action = request.GET.get('action') # what do we gonna doin?
     profile = get_object_or_404(Profile, id=profile_id)
-    if 'new' in request.GET:
+
+    if action == 'new':
         message = _('New account created, welcome to editing.')
+
     if request.method == 'POST' and request.user.has_perm(
         'extprofile.change_profile'):
         form = forms.ProfileForm(request.POST, instance=profile)
@@ -138,17 +179,19 @@ def edit(request, profile_id):
         form = forms.ProfileForm(instance=profile)
 
     passwd_form = forms.AdminPasswdForm(profile)
-    return {
+
+    return { # TODO: needs to be Context()?
+        'action': action,
         'profile': profile, 
         'form': form,
         'passwd_form': passwd_form,
         'message': message,
         'services': api.register.get_list(consumer=profile)
-        }
+    }
 
 
-@is_staff(required_perms='extprofile.moderate_profile')
-@render_to('profile/moderate.html', use_admin=True)
+@is_staff(required_perms='profile.moderate_profile')
+@render_to('spicy.core.profile/admin/moderate.html', use_admin=True)
 def moderate(request, profile_id):
     message = None
     profile = get_object_or_404(Profile, id=profile_id)
@@ -164,8 +207,8 @@ def moderate(request, profile_id):
     return {'profile': profile, 'form': form, 'message': message}
 
 
-@is_staff(required_perms='extprofile')
-@render_to('profile/list.html', use_admin=True)
+@is_staff()
+@render_to('spicy.core.profile/admin/list.html', use_admin=True)
 def profiles_list(request):
     nav = NavigationFilter(request, accepting_filters=[
         ('group', None), ('search_text', ''), ('is_staff', None),
@@ -180,7 +223,7 @@ def profiles_list(request):
             Q(first_name__icontains = nav.search_text) |
             Q(last_name__icontains = nav.search_text))
         
-    is_staff = request.GET.get('is_staff', None)
+    is_staff = request.GET.get('is_staff', False)
     if nav.is_staff:
         is_staff = is_staff != 'false'        
         search_kwargs['is_staff'] = is_staff
@@ -190,12 +233,12 @@ def profiles_list(request):
     
     if nav.last_login == 'month':
         search_kwargs['last_login__gte'] = datetime.today() - timedelta(30)
-    
+
     paginator = nav.get_queryset_with_paginator(
         Profile, reverse('profile:admin:index'),
         search_query=(search_args, search_kwargs),
-        obj_per_page=sk_defaults.ADMIN_OBJECTS_PER_PAGE, 
-        )
+        obj_per_page=admin_defaults.ADMIN_OBJECTS_PER_PAGE, 
+    )
     objects_list = paginator.current_page.object_list
 
     return {
@@ -203,7 +246,7 @@ def profiles_list(request):
         'is_staff': is_staff, 'form': form}
 
 
-@is_staff(required_perms='extprofile.delete_profile')
+@is_staff(required_perms='profile.delete_profile')
 @ajax_request
 def delete_profile_list(request):
     message = ''
@@ -219,7 +262,7 @@ def delete_profile_list(request):
     return dict(message=unicode(message), status=status)
 
 
-@is_staff(required_perms="extprofile.change_profile")
+@is_staff(required_perms="profile.change_profile")
 @ajax_request
 def resend_activation(request, profile_id):
     try:
@@ -267,20 +310,20 @@ def last_created(request, form_input_name, staff_only=False):
                 for user in users[:20]])
 
 
-@is_staff(required_perms='extprofile')
-@render_to('profile/blacklisted_ips.html', use_admin=True)
+@is_staff(required_perms='profile')
+@render_to('spicy.core.profile/blacklisted_ips.html', use_admin=True)
 def blacklisted_ips(request):
     nav = NavigationFilter(request)
     paginator = nav.get_queryset_with_paginator(
         BlacklistedIP, reverse('profile:admin:blacklisted-ips'),
-        obj_per_page=sk_defaults.ADMIN_OBJECTS_PER_PAGE, 
+        obj_per_page=admin_defaults.ADMIN_OBJECTS_PER_PAGE, 
         )
     objects_list = paginator.current_page.object_list
 
     return {'nav': nav, 'objects_list': objects_list, 'paginator': paginator}
 
 
-@is_staff(required_perms='extprofile.delete_blacklistedip')
+@is_staff(required_perms='profile.delete_blacklistedip')
 @ajax_request
 def delete_blacklisted_ips(request):
     message = ''

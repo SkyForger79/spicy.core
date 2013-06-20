@@ -2,6 +2,7 @@
 import sys
 from fabric import colors
 
+
 def paint_text(text, color_name):
     """
     Paints text with color. Parameter ``color`` must be string name
@@ -55,7 +56,7 @@ def print_warning(message):
 
 
 def print_info(message):
-    sys.stdout.write(paint_text(prefix_message(message), 'cyan') + '\n')
+    sys.stdout.write(paint_text(prefix_message(message), 'green') + '\n')
 
 
 def print_success(message):
@@ -71,3 +72,31 @@ def print_text(message):
         message (str): Message to print
     """
     sys.stdout.write(prefix_message(message) + '\n')
+
+
+def spicy_info(*args):
+    print_info(' '.join(str(arg) for arg in args))
+
+def spicy_warn(*args):
+    print_warning(' '.join(str(arg) for arg in args))
+
+
+def sp_info(title, message):
+    """"""
+    sys.stdout.write('%s: %s\n' % (colors.green(title),
+                                   colors.cyan(message)))
+
+
+class SpicyPrintingHelper(object):
+    """Print helpers."""
+
+    def _write_stream(self, text):
+        sys.stdout.write('%s\n' % (text))
+
+    def action_info(self, action, description, color='white'):
+        text = ''.join([
+            paint_text(action, 'green'),
+            paint_text(': ', 'blue'),
+            paint_text(description, color)
+        ])
+        self._write_stream(text)

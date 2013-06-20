@@ -9,6 +9,7 @@ from uuid import uuid4
 from django.conf import settings
 from django.contrib.auth.models import User, UserManager, Group, Permission
 from django.contrib.auth.models import AnonymousUser as BasicAnonymousUser
+from uuid import uuid4
 from django.contrib.sites.models import Site
 from django.core.mail import send_mail
 from django.db import models, transaction
@@ -23,6 +24,7 @@ from django.core.management.color import color_style
 
 from spicy.utils.printing import print_error, print_info
 from spicy.core.service.models import ProviderModel
+
 from spicy.core.siteskin.utils import get_template
 
 from . import cache, defaults
@@ -310,7 +312,6 @@ class AbstractProfile(User):
 
 
 
-
     # Signals for permission cache invalidation.
 models.signals.m2m_changed.connect(
     cache.m2m_changed_permission, sender=User.user_permissions.through)
@@ -331,14 +332,6 @@ class AnonymousUser(BasicAnonymousUser):
         return _('Anonymous')
 
     can_edit_tags = False
-
-
-class StaffAlias(models.Model):
-    fullname = models.CharField(max_length=255)
-    profile = models.ForeignKey(User, unique=True)
-
-    class Meta:
-        db_table = 'auth_profile_alias'
 
 
 class PermissionProviderModel(ProviderModel):

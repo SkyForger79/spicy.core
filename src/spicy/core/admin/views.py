@@ -5,26 +5,15 @@ from spicy.core.siteskin.decorators import render_to
 
 
 @is_staff
-@render_to('index.html')
-def index(request):
+@render_to('spicy.core.admin/admin/dashboard.html')
+def dashboard(request):
     return {'services': api.register.get_list()}
 
 
 def login(request):
     return views.login(
-        request, template_name='spicy-admin/admin/login.html')
+        request, template_name='spicy.core.admin/admin/login.html')
 
 
-#
-# Snippets
-#
-# @is_staff
-# @render_to('snippets/add_new_item.html')
-# def add_new_item(request):
-#     print('add_new_item_url')
-#     return {'services': api.register.get_list()}
-#
-
-# # @is_staff
-# def add_new_item(request):
-#     return render_to('snippets/add_new_item.html', )
+def logout(request):
+    return views.logout(request, template_name='spicy.core.admin/admin/logout.html')

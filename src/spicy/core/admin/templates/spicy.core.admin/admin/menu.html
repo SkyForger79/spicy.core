@@ -1,0 +1,20 @@
+{% if user.is_superuser %}
+<li class="dark-nav{% if "/admin/settings" in request.path %} active{% endif %}">
+  <span class="glow"></span>
+  <a class="accordion-toggle collapsed" data-toggle="collapse" href="#settings">
+    <i class="icon-wrench icon-2x"></i>
+    <span>{% trans "Settings" %}
+      <i class="icon-caret-down"></i>
+    </span>
+  </a>
+
+  <ul id="presscenter" class="collapse {% if "/admin/settings" in request.path %} in{% endif %}">
+    <li>
+      <a href="{#% url 'spicyadmin:admin:theme' %#}">
+        <i class="icon-list-alt"></i> {% trans "Theme" %}
+      </a>
+    </li>
+
+  </ul>
+</li>
+{% endif %}

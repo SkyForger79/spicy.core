@@ -2,7 +2,7 @@
 """
 Stuff utils for abstract models
 """
-from django.db.models import get_model
+from django.db.models.loading import cache
 
 
 def get_custom_model_class(custom_model_name):
@@ -12,4 +12,4 @@ def get_custom_model_class(custom_model_name):
     Args:
         custom_model_name (str): Custom model name in format 'appName.UserModel'
     '''
-    return get_model(*custom_model_name.split('.'))
+    return cache.get_model(*custom_model_name.split('.'))

@@ -1,0 +1,77 @@
+{% extends current_admin_base %}{% load spicy i18n navigator %}
+
+{% block title %}{% trans "Create user profile" %}{% endblock %}
+{% block status_title %}<i class="icon-plus-sign-alt"></i> {% trans "Create user" %}{% endblock status_title %}
+
+{% block content %}
+
+<div class="container-fluid hpadded">
+  <div class="row-fluid">
+    <div class="alert-block alert">
+      <button type="button" class="close" data-dismiss="alert">×</button>
+      <h4>{% trans "Attention" %}!</h4>
+      {% trans "Password will be generated automaticaly if password fields are clean" %}
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid hpadded">
+  <div class="row-fluid">
+    <div class="span12">
+      <div class="box">
+        <div class="box-header">
+          <span class="title">{% trans "Create user profile" %}</span>
+        </div>
+	
+        <div class="box-content">
+
+	  
+<form action="" method="post" name="delete_group">{% csrf_token %}
+  {% with group.permissions.all as permissions %}
+  {% if permissions %}
+  <h3>{% trans "Group permissions" %}</h3>
+  <ul>
+    {% for permission in permissions %}
+    <li>{{ permission }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  {% endwith %}
+  
+  {% with group.user_set.all as users %}
+  {% with perms.extprofile.change_profile as change_profile %}
+  {% if users %}
+  <h3>{% trans "Group members" %}</h3>
+  <ul>
+    {% for user in users %}
+    <li>
+      {% if change_profile %}<a href="{% url profile:admin:edit user.pk %}">{{ user }}</a>
+      {% else %}{{ user }}
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  <h3>{% trans "Users will lose permissions granted by this group, but won't be deleted" %}</h3>
+  {% endif %}
+  {% endwith %}
+  {% endwith %}
+
+  <div class="form-actions">
+    <button type="submit" class="btn btn-red" onclick="document.delete_group.submit()">{% trans "Delete" %}</button>
+    <input type="checkbox" class="icheck" name="confirm"> {% trans "Are you sure want to delete this group?" %}
+    <div class="pull-right">
+      <a class="" href="{% url 'profile:admin:groups' %}">{% trans "Return to groups list" %}</a>
+    </div>
+  </div>
+</form>
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}{{ form.media }}{% endblock %}
+

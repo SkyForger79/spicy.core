@@ -1,5 +1,4 @@
-{% load i18n spicy spicy_theme %}
-{% load url from future %}
+{% load i18n spicy_admin %}{% load url from future %}
 
 <div class="navbar navbar-top navbar-inverse">
   <div class="navbar-inner">
@@ -67,7 +66,7 @@
             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class=" icon-plus-sign-alt"></i> {% trans "Create" %} <b class="caret"></b></a>
             <ul class="dropdown-menu">
 	      {% for app in ADMIN_APPS %}
-              <li><a href="{{ app|admin_create_url }}">{% trans app|app_label %}</a></li>
+              <li><a href="{{ app.create.url }}">{{ app.create.label }}</a></li>
 	      {% endfor %}
             </ul>
           </li>

@@ -1,4 +1,4 @@
-<!doctype html>{% load staticfiles spicy sk i18n %}{% load url from future %}
+<!doctype html>{% load staticfiles spicy_admin sk i18n %}{% load url from future %}
 <html>
   <head>
     <meta name="viewport" content="width=device-width, maximum-scale=1, initial-scale=1, user-scalable=0">
@@ -8,10 +8,13 @@
     <!-- Always force latest IE rendering engine or request Chrome Frame -->
     <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
     
-    <script src="{% static 'spicy.core.admin/js/jquery-1.9.1.min.js' %}" type="text/javascript"></script>  
+    <script src="{% static 'spicy.core.admin/js/jquery-1.10.1.min.js' %}" type="text/javascript"></script>
+    {# <script src="{% static 'spicy.core.admin/js/jquery-1.9.1.min.js' %}" type="text/javascript"></script> #}
 
     <link href="{% static 'spicy.core.admin/themes/default/stylesheets/application.css' %}" media="screen" rel="stylesheet" type="text/css">  
     <script src="{% static 'spicy.core.admin/themes/default/javascripts/application.js' %}" type="text/javascript"></script>
+    
+    {% block extra_head %}{% endblock %}
     
     <!--[if lt IE 9]>
 	<script src="{% static 'spicy.core.admin/themes/default/javascripts/vendor/html5shiv.js' %}" type="text/javascript"></script>
@@ -19,6 +22,9 @@
 	<![endif]-->
     
     <style type="text/css">.jqstooltip { position: absolute;left: 0px;top: 0px;visibility: hidden;background: rgb(0, 0, 0) transparent;background-color: rgba(0,0,0,0.6);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000);-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000)";color: white;font: 10px arial, san serif;text-align: left;white-space: nowrap;padding: 5px;border: 1px solid white;z-index: 10000;}.jqsfield { color: white;font: 10px arial, san serif;text-align: left;}</style>
+    {% block extra_css %}{% endblock extra_css %}
+    {% block extra_js %}{% endblock extra_js %}
+
     
     <title>{% block title %}{% trans "Administrator interface" %}{% endblock %} - SpicyCMS light</title>
   </head>
@@ -41,12 +47,8 @@
             <i class="icon-dashboard icon-2x"></i>
             <span>{% trans 'Dashboard' %}</span>
           </a>
-        </li>
-	
-	{% for app in ADMIN_APPS %}
-	{% if app|installed_app %}{% captureas app_menu %}{{ app }}/admin/menu.html{% endcaptureas %}{% include app_menu %}{% endif %}
-	{% endfor %}		        
-	
+        </li>	
+	{% for app in ADMIN_APPS %}{% app_menu request app %}{% endfor %}	
       </ul>
     </div>
     {% endblock %}
@@ -104,6 +106,5 @@
       {% block content %}{% endblock content %}
     </div>
     
-    {% block extra_js %}{% endblock extra_js %}
   </body>
 </html>

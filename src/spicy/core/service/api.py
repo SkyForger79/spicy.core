@@ -10,7 +10,7 @@ from spicy.core.service.utils import MethodDecoratorAdaptor
 from spicy.core.siteskin.decorators import render_to, ViewInterface
 from spicy.utils import cached_property, load_module
 from spicy.utils.models import get_custom_model_class
-from spicy.utils.printing import print_error, print_text, print_success
+from spicy.utils.printing import print_error, print_text, print_success, print_warning
 
 
 GENERIC_CONSUMER = 'GENERIC_CONSUMER'
@@ -143,6 +143,17 @@ class Provider(object):
                     is_public))
 
     def get_or_create(self, consumer, **kwargs):        
+        """
+        Checking if ``self.model`` {0} instance is exists. Creating new instance if does not exists.
+        And allways return boolean flag is_created=True id if new instance was created while executing.
+
+        return tuple: is_created, instance
+        """.format(self.model)
+
+        print_warning(
+            'TODO: Deprecated method api.'
+            'Return instace instead tuple of is_created boolean flag and instance.')
+
         instance = self.get_instance(consumer, **kwargs)
         kwargs.pop('_quiet', None)
         return (
@@ -340,8 +351,9 @@ class Interface(object):
         return self[consumer].get_or_create(consumer, **kwargs)
 
     def get_provider(self, consumer):
-        print_error('Deprecated method Sevice.get_provider(consumer). User service[consumer] instead.'\
-                       'Will be deleted in versin Spicy-1.6')
+        print_error('Deprecated method Sevice.get_provider(consumer). Use service[consumer] to get prvoder instance.'
+                    'For common provider methods use (get|create|get_or_create)_provider_instance|s call.'
+                    'Will be deleted in versin Spicy-1.6')
         return self[consumer]
 
     def urls(self, is_public=False):

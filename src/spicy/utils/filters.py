@@ -2,22 +2,9 @@ from django.conf import settings
 from django.core.paginator import Paginator, InvalidPage
 from django.http import Http404
 
-# OBJECTS_PER_PAGE = getattr(settings, 'OBJECTS_PER_PAGE', 50)
-# DEFAULT_FILTERS = getattr(settings, 'DEFAULT_FILTERS',
-#                           [('search_text', ''),])
-
-#TODO: refactor to defaults
-from spicy.utils.configuration import is_settings_loaded, get_default_value
-
-OBJECTS_PER_PAGE = 50
-DEFAULT_FILTERS = [('search_text', ''),]
-
-
-if is_settings_loaded():
-    OBJECTS_PER_PAGE = get_default_value('OBJECTS_PER_PAGE')
-    DEFAULT_FILTERS = get_default_value('DEFAULT_FILTERS')
-else:
-    pass
+OBJECTS_PER_PAGE = getattr(settings, 'OBJECTS_PER_PAGE', 50)
+DEFAULT_FILTERS = getattr(settings, 'DEFAULT_FILTERS',
+                          [('search_text', ''),])
 
 
 class NavigationFilter:

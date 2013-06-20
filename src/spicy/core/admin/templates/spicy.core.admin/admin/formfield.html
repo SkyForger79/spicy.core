@@ -1,3 +1,108 @@
+{% spaceless %}
+{# new admin #}
+
+{% if type == 'li-file' %}
+<li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
+  {{ field }}
+  {% if field.errors %}<span class="help-block note"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+{% endif %}
+
+{% if type == 'li-checkbox' %}
+<li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
+  <input type="checkbox" class="icheck" name="{{ field.html_name }}" {% if field.value %}checked="on"{% endif %} id="{{ field.html_initial_id }}"/>
+  {{ label }}
+  {% if field.errors %}<span class="help-block note"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+{% endif %}
+
+{% if type == 'li-text' %}
+<li class="input">
+  {{ label }} {#{ default_value}#}
+  <input type="text" name="{{ field.html_name }}" placeholder="{{ title }}" value="{{ field.value }}" id="{{ field.html_initial_id }}"/>
+  {% if preview_link %}<a href="{{ form.instance.get_absolute_url }}" target="blank"><i class="icon-eye-open icon-2x"></i></a>{% endif %}
+  {% if field.errors %}<span class="help-block note"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+{% endif %}
+
+{% if type == 'li-password' %}
+<li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
+  {{ label }}
+  <input type="password" name="{{ field.html_name }}" placeholder="{{ title }}" id="{{ field.html_initial_id }}"/>
+  {% if field.errors %}<span class="help-block note"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+{% endif %}
+
+{% if type == 'li-chat-editor' %}
+<li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
+  {{ label }}
+  <div class="closable-chat-box">
+    <div class="chat-message-box">
+      <textarea name="{{ field.html_name }}" placeholder="{{ title }}" rows="6" id="{{ field.html_initial_id }}">{{ field.value }}</textarea>
+    </div>
+  </div>
+  {% if field.errors %}<span class="help-block note"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+{% endif %}
+
+{% if type == 'li-editor' %}
+<li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
+  {{ label }}
+  
+  <div class="">
+  <textarea name="{{ field.html_name }}" placeholder="{{ title }}" rows="6" id="{{ field.html_initial_id }}"
+	    style="width: 99%; height: 400px;">{{ field.value }}</textarea>
+  </div>
+  {% if field.errors %}<span class="help-block note"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+{% endif %}
+
+{% if type == 'li-date' %}
+<li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
+  {{ label }}
+  <input class="datepicker fill-up"  {#data-viewformat="dd.mm.yyyy"#} type="text" name="{{ field.html_name }}" placeholder="{{ title }}" value="{{ field.value }}" id="{{ field.html_initial_id }}"/>
+  {% if field.errors %}<span class="help-block note"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+{% endif %}
+
+{% if type == 'li-select' %}
+<li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
+  {{ label }}
+  <select name="{{ field.html_name }}" class="uniform" id="{{ field.html_initial_id }}">
+    {% for id, name in field.field.choices %}
+    <option value="{{ id }}" {% if field.value == id %}selected="on"{% endif %}>{{ name }}</option>
+    {% endfor %}
+  </select>
+  {% if field.errors %}<span class="help-block note"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+{% endif %}
+
+{# new admin end #}
+
 {% if type == 'td' %}
     <td class="half">
       {{ label }}{{ field }}
@@ -142,3 +247,4 @@
     {{ field.errors }}
 </li>
 {% endif %}
+{% endspaceless %}

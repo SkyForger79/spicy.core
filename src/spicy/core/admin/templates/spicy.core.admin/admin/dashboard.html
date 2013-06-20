@@ -1,4 +1,4 @@
-{% extends current_admin_base %}{% load sk spicy %}
+{% extends current_admin_base %}{% load sk spicy_admin %}
 
 {% block title %}{% trans "Dashboard" %}{% endblock title %}
 
@@ -12,9 +12,7 @@
       <div class="action-nav-normal">
 	
 	<div class="row-fluid">
-	  {% for app in ADMIN_DASHBOARD_APPS %}
-	  {% if app|installed_app %}{% captureas app_dashboard %}{{ app }}/admin/dashboard.html{% endcaptureas %}{% include app_dashboard %}{% endif %}
-	  {% endfor %}	
+	  {#% for app in ADMIN_APPS %}{% app_dashboard request app  %}{% endfor %#}	
 	</div>
 
 

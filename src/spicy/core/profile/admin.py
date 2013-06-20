@@ -13,7 +13,7 @@ from django.utils.translation import ugettext as _
 from spicy.core.service import api
 from spicy.utils.models import get_custom_model_class
 from spicy.core.siteskin.decorators import render_to, ajax_request
-
+from spicy.core.admin.conf import AdminAppBase, AdminLink, Perms
 from spicy.core.admin import defaults as admin_defaults
 
 from . import defaults, forms
@@ -27,6 +27,32 @@ Profile = get_custom_model_class(defaults.CUSTOM_USER_MODEL)
 
 admin.site.register(Profile)
 admin.site.unregister(User)
+
+
+class AdminApp(AdminAppBase):    
+    name = 'profile'
+    label = _('Profile')
+    order_number = 10
+
+    menu_items = (
+        AdminLink('profile:admin:create', _('Create profile')),
+        AdminLink('profile:admin:index', _('All profiles')),
+        AdminLink('profile:admin:groups', _('Groups & Permissions')),
+        AdminLink('profile:admin:create-group', _('Create group')),
+        )
+
+    create = AdminLink('profile:admin:create', _('Create profile'),)
+
+    perms = Perms(view=[],  write=[], manage=[])
+
+    @render_to('menu.html', use_admin=True)
+    def menu(self, request, *args, **kwargs):
+        return dict(app=self, *args, **kwargs)
+
+    @render_to('dashboard.html', use_admin=True)
+    def dashboard(self, request, *args, **kwargs):
+        return dict(app=self, *args, **kwargs)
+
 
 @is_staff
 def main(request):
@@ -59,7 +85,7 @@ def passwd(request, profile_id):
 
 
 @is_staff(required_perms='profile.add_profile')
-@render_to('spicy.core.profile/admin/create.html', use_admin=True)
+@render_to('create.html', use_admin=True)
 def create(request):
     message = None
     if request.method == 'POST':
@@ -78,7 +104,7 @@ def create(request):
 
 
 @is_staff(required_perms='auth.change_group')
-@render_to('spicy.core.profile/admin/groups.html', use_admin=True)
+@render_to('groups.html', use_admin=True)
 def groups(request):
     """Groups list/formset combined view."""
     message = None

@@ -4,6 +4,7 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 ADMIN_THEME = getattr(settings, 'ADMIN_THEME', None)
+DEBUG_ADMIN = getattr(settings, 'DEBUG_ADMIN', settings.DEBUG)
 
 USE_CUSTOM_ADMIN = getattr(settings, 'USE_CUSTOM_ADMIN', True)
 ADMIN_OBJECTS_PER_PAGE = getattr(settings, 'ADMIN_OBJECTS_PER_PAGE', 50)

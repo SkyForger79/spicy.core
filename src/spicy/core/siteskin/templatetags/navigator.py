@@ -103,12 +103,3 @@ def menu(request, url_path, title, li_style='', extra_style='', get='', url_para
         'class': mk_style(li_style), 'content': content}
 
 
-@register.inclusion_tag('admin/formfield.html', takes_context=True)
-def formfield(context, title, form, field_name='', type='li'):
-    label = title
-    field = None
-    if field_name:
-        field = form[field_name]
-        label = field.label_tag(title or field.label)
-    
-    return dict(title=title, form=form, type=type, field=field, label=label)

@@ -1,4 +1,10 @@
-{% extends current_admin_base %}{% load spicy i18n navigator %}
+{% extends current_admin_base %}{% load spicy_admin staticfiles %}
+
+{#<link rel="stylesheet" type="text/css" href="{% static '' %}">#}
+{# <script type="text/javascript" src="{% static 'admin/js/SelectFilter2.js' %}"></script> #}
+{# <script type="text/javascript" src="{% static 'admin/js/SelectBox.js' %}"></script> #}
+
+
 
 {% block title %}{% trans "Profile" %}{% endblock %}
 {% block status_title %}<i class="icon-user"></i> {{ profile.username }}{% endblock status_title %}

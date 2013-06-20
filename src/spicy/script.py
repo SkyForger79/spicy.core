@@ -17,7 +17,7 @@ SPICY_SERVER_STATIC_PATH = '/var/ftp/static'
 import string
 import errno
 import shutil
-from spicy import version
+from spicy import version as spicy_version
 
 import os
 import sys
@@ -928,10 +928,9 @@ def handle_deploy(ns):
         deployer(env_path=ns.envpath, buildenv=ns.buildenv, 
                  createdb=ns.createdb, syncdb=ns.syncdb)
 
-
 parser = argparse.ArgumentParser()
 parser.add_argument('--version', action='version',
-                    version=version.__version__, default=False)
+                    version=spicy_version.__version__, default=False)
 
 subparsers = parser.add_subparsers(
     title='SpicyTool commands',

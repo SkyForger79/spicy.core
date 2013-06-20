@@ -23,6 +23,8 @@ if not settings.configured:
 
 
 SITESKIN = getattr(settings, 'SITESKIN', 'example.com')
+SITESKIN_DEBUG = getattr(settings, 'SITESKIN_DEBUG', settings.DEBUG)
+SITESKIN_DEBUG_CODE_LEN = 3
 
 OBJECTS_PER_PAGE = getattr(settings, 'OBJECTS_PER_PAGE', 50)
 

@@ -1,4 +1,4 @@
-{% if perms.profile %}{% with perms.profile as pm %}
+{% load url from future %}{% if perms.profile %}{% with perms.profile as pm %}
 <li class="dark-nav{% if "/admin/profile" in request.path %} active{% endif %}">
   <span class="glow"></span>
   <a class="accordion-toggle collapsed" data-toggle="collapse" href="#profile">
@@ -11,7 +11,7 @@
   <ul id="profile" class="collapse {% if "/admin/profile" in request.path %} in{% endif %}">
     {% if pm.add_profile %}
     <li>
-      <a href="{% url profile:admin:create %}">
+      <a href="{% url 'profile:admin:create' %}">
         <i class="icon-plus-sign-alt"></i> {% trans "Create profile" %}
       </a>
     </li>
@@ -19,7 +19,7 @@
 
     {% if pm.change_profile or pm.view_profile %}
     <li>
-      <a href="{% url profile:admin:index %}">
+      <a href="{% url 'profile:admin:index' %}">
         <i class="icon-list-alt"></i> {% trans "All profiles" %}
       </a>
     </li>
@@ -27,7 +27,7 @@
 
     {% if perms.auth.change_group %}
     <li>
-      <a href="{% url profile:admin:groups %}">
+      <a href="{% url 'profile:admin:groups' %}">
         <i class="icon-cogs"></i> {% trans "Groups & Permissions" %}
       </a>
     </li>
@@ -35,7 +35,7 @@
 
     {% if perms.auth.add_group %}
     <li>      
-      <a href="{% url profile:admin:create-group %}">
+      <a href="{% url 'profile:admin:create-group' %}">
 	<i class="icon-plus-sign-alt"></i> {% trans "Create group" %}
       </a>
     </li>

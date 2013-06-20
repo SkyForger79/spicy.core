@@ -33,7 +33,7 @@ def generic_ssi(parser, token):
     bits = token.split_contents()
     if len(bits) < 2:
         raise template.TemplateSyntaxError(
-            "'%s' takes twoe arguments maximum (path to a view [GET "
+            "'%s' takes two arguments maximum (path to a view [GET "
             "forwarding false|true])" % bits[0])
     url = parser.compile_filter(bits[1])
 

@@ -2,7 +2,8 @@ from importlib import import_module
 from setuptools import setup, find_packages
 
 spicy_pkg = import_module('src.spicy')
-version = unicode(spicy_pkg.__version__)
+version = import_module('src.spicy.version').__version__
+
 long_description = """spicy core package"""
 
 
@@ -25,12 +26,10 @@ setup(
     license='BSD',
     keywords='django, cms',
     url='', # TODO: define an url
-
-    packages=packages,
-    package_data=package_data,
     
     packages=find_packages('src'),
     package_dir={'': 'src',},
+
     include_package_data=True,
     zip_safe=False,
     long_description=long_description(),
@@ -65,10 +64,24 @@ setup(
         'django-devserver',
         'django-extensions',
     ],
-
+    dependency_links=[
+        #'svn+http://django-simple-captcha.googlecode.com/svn/trunk@54#egg=django-captcha',
+        #'git+https://github.com/krvss/django-social-auth.git#egg=django-social-auth-0.7.13.dev',
+    ],
     entry_points={
         'console_scripts': [
             'spicy = spicy.script:handle_command_line',
-        ],
+        ],       
     },
+    classifiers=[
+        'Framework :: Django',
+        'Development Status :: 1.1',
+        'Topic :: Internet',
+        'License :: OSI Approved :: BSD License',
+        'Intended Audience :: Developers',
+        'Environment :: Web Environment',
+        'Programming Language :: Python :: 2.5',
+        'Programming Language :: Python :: 2.6',
+        'Programming Language :: Python :: 2.7',
+    ]
 )

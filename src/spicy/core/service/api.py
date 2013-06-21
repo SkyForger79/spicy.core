@@ -106,7 +106,7 @@ class Provider(object):
     Provide common views, api methods for defined web-application service.
     Service choose provider instance using own schema.
 
-    provider = api.register['service_name'].get_provider(ConsumerDjangoModel)
+    provider = api.register['service_name'][ConsumerDjangoModel]
 
     :param model: ManyToMany model for consumer 'app.ModelName'
     :type str:
@@ -119,7 +119,9 @@ class Provider(object):
     form_mod = None
 
     is_inline = True
-    form_template = None
+
+    template = None
+    create_template = None
 
     def __init__(self, service):
         self.service = service

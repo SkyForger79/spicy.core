@@ -8,14 +8,14 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils import simplejson
 from django.template import RequestContext, loader
-from django.template.base import TemplateDoesNotExist
+from django.template.base import TemplateDoesNotExist, TemplateSyntaxError
 from django.utils.translation import ugettext as _
 
 from spicy.core.siteskin import cache, defaults
 from spicy.utils import make_cache_key
-from spicy.utils.printing import print_error, print_info
+from spicy.utils.printing import print_error, print_info, print_warning
 
-from . import defaults
+from . import defaults, utils
 
 class APIResponse(object):
     """Класс представляет объек ответа API функций.
@@ -166,7 +166,17 @@ class ViewInterface(object):
         """        
         
         if self.use_siteskin:
-            return defaults.SITESKIN + '/' + template_name
+            app_template = utils.get_template(defaults.SITESKIN + '/' + template_name)
+            try:
+                t = loader.find_template(app_template)
+                return app_template
+
+            except TemplateDoesNotExist, e:                                                
+                print_warning('Can not find template: {}'.format(app_template))
+                return template_name
+
+            except TemplateSyntaxError, e:
+                return app_template
 
         elif self.app_name in template_name and self.use_admin:
             return template_name
@@ -187,6 +197,8 @@ class ViewInterface(object):
                             ''.join(code[:defaults.SITESKIN_DEBUG_CODE_LEN]), 
                             app_template, template))
                 return template
+            except TemplateSyntaxError, e:
+                return app_template
 
         return template_name
 

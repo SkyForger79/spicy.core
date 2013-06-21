@@ -1,7 +1,8 @@
-{% extends current_admin_base %}{% load spicy_admin i18n navigator %}
+{% extends current_admin_base %}{% load spicy_admin i18n %}
 
 {% block title %}{% trans "Create" %} {{ app.create.label }}{% endblock %}
 {% block status_title %}<i class="icon-plus-sign-alt"></i> {{ app.create.label }}{% endblock status_title %}
+{% block status_stats %}{% endblock status_stats %}
 
 {% block content %}
 <div class="container-fluid hpadded">
@@ -15,9 +16,10 @@
         <div class="box-content">
           <form class="form-horizontal fill-up validatable" method="post" action="." autocomplete="off"
 		enctype="multipart/form-data">{% csrf_token %}
-            {% csrf_token %}
             <div class="row-fluid">
-              <div class="padded separate-sections">{{ form }}</div>           
+              <ul class="padded separate-sections">
+		{{ form.as_ul }}
+	      </ul>           
             </div>
             
 	    <div class="form-actions">

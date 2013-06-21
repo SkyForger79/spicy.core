@@ -15,8 +15,14 @@ class AdminLink(object):
 
     @property
     def url(self):
-        #pass                                                                                                                                                                                           
-        return reverse(self.url_ns, args=[])
+        if isinstance(self.url_ns, tuple):
+            if len(self.url_ns) > 1:                
+                return reverse(self.url_ns[0], args=self.url_ns[1:])
+            return reverse(self.url_ns[0])
+
+        elif isinstance(self.url_ns, basestring):
+            return reverse(self.url_ns, args=[])
+        raise TypeError
 
 
 class Perms(object):

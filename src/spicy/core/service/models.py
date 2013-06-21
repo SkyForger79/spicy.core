@@ -18,8 +18,47 @@ class CustomAbstractModel(models.Model):
 
 
 
+
+class ServiceManager(models.Manager):
+    def get_by_natural_key(self, name):
+        return self.get(name=name)
+
+
+class Service(models.Model):
+    name = models.CharField(_('Name'), max_length=255)
+    description = models.TextField(_('Description'), blank=True)
+
+    date_joined = models.DateTimeField(_('Date joined'), auto_now=True)
+    is_default = models.BooleanField('Is enabled by default', default=True)
+
+    price = models.PositiveIntegerField(_('Price'), default=0)
+    site = models.ManyToManyField(Site)
+    is_enabled = models.BooleanField('Is enabled', default=True)
+
+    #default = generic.GenericRelation(_('Default settings'), blank=True)                                                                                                                               
+
+    objects = ServiceManager()
+
+    def is_free(self):
+        return (self.price == 0)
+    is_free.boolean = True
+
+    def __unicode__(self):
+        return self.name
+
+    def natural_key(self):
+        return (self.name,)
+
+    class Meta:
+        abstract = True
+        # XXX
+        db_table = 'srv_register'
+
+
 class ProviderModel(models.Model):
-    consumer_type = models.ForeignKey(ContentType, blank=True)
+    #service = models.ForeignKey(Service)
+
+    consumer_type = models.ForeignKey(ContentType, blank=True)    
     consumer_id = models.PositiveIntegerField()
     consumer = generic.GenericForeignKey(
         ct_field='consumer_type', fk_field='consumer_id')
@@ -38,10 +77,11 @@ class ContentProviderModel(ProviderModel):
 
     @property
     def get_template(self):
-        return self.template
-        #from spicy.core.service import api
-        #return api.register[
-        #    self.service.name].PROVIDER_TEMPLATES_DIR + self.template
+        #return self.template
+
+        from spicy.core.service import api
+        return api.register[
+            self.service.name].PROVIDER_TEMPLATES_DIR + self.template
     """
     def clean_cache(self):
         cache_key = '%s:%s'%(Site.objects.get_current().domain, request.path)

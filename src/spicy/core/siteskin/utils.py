@@ -4,7 +4,7 @@ from . import defaults
 
 
 def get_template(template):
-    if defaults.SITESKIN:
+    if defaults.SITESKIN and not defaults.SITESKIN in template:
         return defaults.SITESKIN + '/' + template
     return template
 

@@ -1,16 +1,19 @@
 import sys
-from . import defaults
 from datetime import datetime as dt
 from django import http
 from django.shortcuts import render_to_response
 from django.template import RequestContext, loader
-from django.core.management.color import color_style
+
+from . import defaults
+from spicy.utils.printing import print_error
+
+def get_template(template):
+    if defaults.SITESKIN:
+        return defaults.SITESKIN + '/' + template
+    return template
 
 
-style = color_style()
-
-
-def page_not_found(request, template_name='%s/404.html' % defaults.SITESKIN):
+def page_not_found(request, template_name='404.html'):
     """
     Default 404 handler.
 
@@ -19,20 +22,18 @@ def page_not_found(request, template_name='%s/404.html' % defaults.SITESKIN):
         request_path
             The path of the requested URL (e.g., '/app/pages/bad_page/')
     """
-
     if defaults.DEBUG_ERROR_PAGES:
-        sys.stderr.write(style.ERROR(
-            'handler404: %s %s %s %s\n' % (
+        print_error('handler404: %s %s %s %s\n' % (
                 dt.now(), request.GET, request.POST,
-                request.get_full_path())))
+                request.get_full_path()))
 
-    t = loader.get_template(template_name)
+    t = loader.get_template(get_template(template_name))
     # You need to create a 404.html template.
     return http.HttpResponseNotFound(
         t.render(RequestContext(request, {'request_path': request.path})))
 
 
-def forbidden(request, template_name='%s/403.html' % defaults.SITESKIN):
+def forbidden(request, template_name='403.html'):
     """
     Default 404 handler.
 
@@ -43,17 +44,17 @@ def forbidden(request, template_name='%s/403.html' % defaults.SITESKIN):
     """
 
     if defaults.DEBUG_ERROR_PAGES:
-        sys.stderr.write(style.ERROR(
+        print_error(
             'handler403: %s %s %s %s\n' % (
-                dt.now(), request.GET, request.POST, request.get_full_path())))
+                dt.now(), request.GET, request.POST, request.get_full_path()))
 
-    t = loader.get_template(template_name)
+    t = loader.get_template(get_template(template_name))
     # You need to create a 403.html template.
     return http.HttpResponseNotFound(t.render(RequestContext(
         request, {'request_path': request.path})))
 
 
-def server_error(request, template_name='%s/500.html' % defaults.SITESKIN):
+def server_error(request, template_name='500.html'):
     """
     500 error handler.
 
@@ -61,11 +62,11 @@ def server_error(request, template_name='%s/500.html' % defaults.SITESKIN):
     Context: None
     """
     if defaults.DEBUG_ERROR_PAGES:
-        sys.stderr.write(style.ERROR(
+        print_error(
             'handler505: %s %s %s %s\n' % (
-                dt.now(), request.GET, request.POST, request.get_full_path())))
+                dt.now(), request.GET, request.POST, request.get_full_path()))
 
-    t = loader.get_template(template_name)
+    t = loader.get_template(get_template(template_name))
     # You need to create a 500.html template.
     return http.HttpResponseServerError(t.render(RequestContext(request)))
 
@@ -75,10 +76,9 @@ def render(request, template, **kwargs):
     Example of universal rubric rendering
     """
     page = kwargs.pop('page', None)
-    template = defaults.SITESKIN + '/' + ((
-        'index/flatpages/' + (page.template_name or 'default.html'))
-        if (page and page.content and page.content != 'autocreated')
-        else template)
+    template = get_template(('index/flatpages/' + (page.template_name or 'default.html'))
+                            if (page and page.content and page.content != 'autocreated')
+                            else template)
     return render_to_response(
         template,
         {'page_slug': kwargs.pop('page_slug', page.title if page else None)},

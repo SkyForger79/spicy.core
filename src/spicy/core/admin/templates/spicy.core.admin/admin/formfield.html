@@ -1,0 +1,250 @@
+{% spaceless %}
+{# new admin #}
+
+{% if type == 'li-file' %}
+<li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
+  {{ field }}
+  {% if field.errors %}<span class="help-block note"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+{% endif %}
+
+{% if type == 'li-checkbox' %}
+<li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
+  <input type="checkbox" class="icheck" name="{{ field.html_name }}" {% if field.value %}checked="on"{% endif %} id="{{ field.html_initial_id }}"/>
+  {{ label }}
+  {% if field.errors %}<span class="help-block note"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+{% endif %}
+
+{% if type == 'li-text' %}
+<li class="input">
+  {{ label }} {#{ default_value}#}
+  <input type="text" name="{{ field.html_name }}" placeholder="{{ title }}" value="{% if field.value %}{{ field.value }}{% endif %}" id="{{ field.html_initial_id }}"/>
+  {% if preview_link %}<a href="{{ form.instance.get_absolute_url }}" target="blank"><i class="icon-eye-open icon-2x"></i></a>{% endif %}
+  {% if field.errors %}<span class="help-block note"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+{% endif %}
+
+{% if type == 'li-password' %}
+<li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
+  {{ label }}
+  <input type="password" name="{{ field.html_name }}" placeholder="{{ title }}" id="{{ field.html_initial_id }}"/>
+  {% if field.errors %}<span class="help-block note"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+{% endif %}
+
+{% if type == 'li-chat-editor' %}
+<li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
+  {{ label }}
+  <div class="closable-chat-box">
+    <div class="chat-message-box">
+      <textarea name="{{ field.html_name }}" placeholder="{{ title }}" rows="6" id="{{ field.html_initial_id }}">{% if field.value %}{{ field.value }}{% endif %}</textarea>
+    </div>
+  </div>
+  {% if field.errors %}<span class="help-block note"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+{% endif %}
+
+{% if type == 'li-editor' %}
+<li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
+  {{ label }}
+  
+  <div class="">
+  <textarea name="{{ field.html_name }}" placeholder="{{ title }}" rows="6" id="{{ field.html_initial_id }}"
+	    style="width: 99%; height: 400px;">{% if field.value %}{{ field.value }}{% endif %}</textarea>
+  </div>
+  {% if field.errors %}<span class="help-block note"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+{% endif %}
+
+{% if type == 'li-date' %}
+<li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
+  {{ label }}
+  <input class="datepicker fill-up"  {#data-viewformat="dd.mm.yyyy"#} type="text" name="{{ field.html_name }}" placeholder="{{ title }}" value="{% if field.value %}{{ field.value }}{% endif %}" id="{{ field.html_initial_id }}"/>
+  {% if field.errors %}<span class="help-block note"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+{% endif %}
+
+{% if type == 'li-select' %}
+<li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
+  {{ label }}
+  <select name="{{ field.html_name }}" class="uniform" id="{{ field.html_initial_id }}">
+    {% for id, name in field.field.choices %}
+    <option value="{{ id }}" {% if field.value == id %}selected="on"{% endif %}>{{ name }}</option>
+    {% endfor %}
+  </select>
+  {% if field.errors %}<span class="help-block note"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+{% endif %}
+
+{# new admin end #}
+
+{% if type == 'td' %}
+    <td class="half">
+      {{ label }}{{ field }}
+      <div>
+	{{ field.errors }}
+	{% if field.help_text %}<div><em>{{ field.help_text }}</em></div>{% endif %}
+      </div>
+    </td>
+{% endif %}
+
+{% if type == 'td-span2' %}
+    <td colspan="2">
+      {{ label }}{{ field }}
+      <div class="right-column">
+	{{ field.errors }}
+	{% if field.help_text %}<div><em>{{ field.help_text }}</em></div>{% endif %}
+      </div>
+    </td>
+{% endif %}
+
+{% if type == 'td-person-info' %} <!-- Для редактирования профайов -->
+    <td>
+      {{ label }}{{ field }}
+      <div>{{ field.errors }}</div>
+    </td>
+{% endif %}
+
+{% if type == 'td-person-info-span2' %} <!-- Для редактирования профайов -->
+    <td colspan="2">
+      {{ label }}{{ field }}
+      <div>{{ field.errors }}</div>
+<!--       <div class="clr"></div>-->
+    </td>
+{% endif %}
+
+
+{# OLD TYPES #}
+
+{% if type == "collapsable" %}
+    <div class="collapsed-block"> 
+      <div class="collapsed-header">{{ label }}
+	<div class="collapsed_box_button">&ndash;</div>
+      </div>
+      <div class="collapsed-content">{{ field }}{{ field.errors }}</div>
+    </div> 	
+{% endif %}
+{% if type == "collapsable-none" %}
+    <div class="collapsed-block"> 
+      <div class="collapsed-header">{{ label }}
+	<div class="collapsed_box_button">&ndash;</div>
+      </div>
+      <div class="collapsed-content" style="display:none;">{{ field }}{{ field.errors }}</div>
+    </div> 	
+{% endif %}
+{% if type == 'inline' %}
+    {{ label }} {{ field }}{{ field.errors }}
+{% endif %}
+{% if type == 'li' %}
+    <li class="form-row clearfix">
+      {{ label }}
+      <div class="right-column">
+	{{ field.errors }}{{ field }}
+	{% if field.help_text %}<div>{{ field.help_text }}</div>{% endif %}
+      </div>
+    <!--   !!! Если сломается вернуть вместа clearfix <div class="clr"></div>-->
+    </li>
+{% endif %}
+{% if type == 'li-short' %}
+    <li class="form-row clearfix">
+      {{ label }}
+      <div class="right-column short-field">{{ field.errors }}{{ field }}</div>
+<!--       <div class="clr"></div>-->
+    </li>
+ {% endif %}
+
+{% if type == 'li-full-size' %}
+    <li class="form-row clearfix">
+      {{ label }}
+      <div class="right-column full-size">{{ field.errors }}{{ field }}</div>      
+      {% if field.help_text %}
+      <div class="clr"></div>
+      <div>{{ field.help_text|safe }}</div>
+      {% endif %}
+      
+    </li>
+{% endif %}
+
+{% if type == 'li-vlarge-size' %}
+    <li class="form-row clearfix">
+      {{ label }}
+      <div class="right-column full-size vl-tarea">{{ field.errors }}{{ field }}</div>
+<!--       <div class="clr"></div>-->
+    </li>
+{% endif %}
+
+{% if type == 'li-person-info' %} <!-- Для редактирования профайов -->
+    <li class="form-row clearfix">
+      {{ label }}
+      <div class="person-info">{{ field.errors }}{{ field }}</div>
+<!--       <div class="clr"></div>-->
+    </li>
+{% endif %}
+
+{% if type == 'li-tags' %}
+{% if form.errors %}<li>{% for ftag in form.forms %}{{ ftag.errors }}{% endfor %}</li>{% endif %}
+<li class="form-row">
+  <label>{{ label }}</label>
+  <div id="{% if form.vocabulary %}{{ form.vocabulary }}{% else %}tag{% endif %}_hidden_data">
+    {{ form.management_form }}
+
+    {% for ftag in form.forms %}
+    {{ ftag.id }}
+    {{ ftag.tag }}
+    {{ ftag.position }}
+    {{ ftag.text }}
+    {{ ftag.service }}
+    {{ ftag.DELETE }}
+    {% endfor %}
+  </div>
+
+  <div id="{% if form.vocabulary %}{{ form.vocabulary }}{% else %}tag{% endif %}_input"></div>
+  <div class="clr"></div>
+</li>
+{% endif %}
+
+{% if type == 'li-sub' %}
+<li id="{{ field.html_initial_id }}">
+{{ label }}
+{% if field.field.required %}
+<span class="required">*</span>
+{% endif %}
+{{ field }}
+{{ field.errors }}
+</li>
+{% endif %}
+
+{% if type == 'pd-row' %}
+<li class="pd-row form-230" id="{{ field.html_initial_id }}">
+    <label for="">{{ field.label }} {% if field.field.required %}<span class="required">*</span>{% endif %}</label>
+    {{ field }}
+    {% if field.help_text %}<div>{{ field.help_text|safe }}</div>{% endif %}
+    {{ field.errors }}
+</li>
+{% endif %}
+{% endspaceless %}

@@ -1,5 +1,12 @@
-from . import defaults
-from django.core.cache import get_cache
+__import__('pkg_resources').declare_namespace(__name__)
 
 
-cache = get_cache(defaults.SITESKIN_CACHE_BACKEND)
+from django.conf import settings
+
+
+if settings.configured:
+    from spicy.core.siteskin import defaults
+    from django.core.cache import get_cache
+
+
+    cache = get_cache(defaults.SITESKIN_CACHE_BACKEND)

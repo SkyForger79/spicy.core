@@ -10,7 +10,7 @@ from spicy.core.service.utils import MethodDecoratorAdaptor
 from spicy.core.siteskin.decorators import render_to, ViewInterface
 from spicy.utils import cached_property, load_module
 from spicy.utils.models import get_custom_model_class
-from spicy.utils.printing import print_error, print_text, print_success
+from spicy.utils.printing import print_error, print_text, print_success, print_warning
 
 
 GENERIC_CONSUMER = 'GENERIC_CONSUMER'
@@ -106,7 +106,7 @@ class Provider(object):
     Provide common views, api methods for defined web-application service.
     Service choose provider instance using own schema.
 
-    provider = api.register['service_name'].get_provider(ConsumerDjangoModel)
+    provider = api.register['service_name'][ConsumerDjangoModel]
 
     :param model: ManyToMany model for consumer 'app.ModelName'
     :type str:
@@ -119,7 +119,9 @@ class Provider(object):
     form_mod = None
 
     is_inline = True
-    form_template = None
+
+    template = None
+    create_template = None
 
     def __init__(self, service):
         self.service = service
@@ -144,9 +146,15 @@ class Provider(object):
 
     def get_or_create(self, consumer, **kwargs):        
         """
-        TODO
-        return tuple from (is_exists_boolean, object_instance)
+        Checking if ``self.model`` instance is exists. Creating new instance if does not exists.
+        And allways return boolean flag is_created=True id if new instance was created while executing.
+
+        return tuple: is_created, instance
         """
+        print_warning(
+            'TODO: Deprecated method api.'
+            'Returning instace instead tuple of (is_created, instance)')
+
         instance = self.get_instance(consumer, **kwargs)
         kwargs.pop('_quiet', None)
         return (
@@ -344,8 +352,9 @@ class Interface(object):
         return self[consumer].get_or_create(consumer, **kwargs)
 
     def get_provider(self, consumer):
-        print_error('Deprecated method Sevice.get_provider(consumer). User service[consumer] instead.'\
-                       'Will be deleted in versin Spicy-1.6')
+        print_error('Deprecated method Sevice.get_provider(consumer). Use service[consumer] to get prvoder instance.'
+                    'For common provider methods use (get|create|get_or_create)_provider_instance|s call.'
+                    'Will be deleted in versin Spicy-1.6')
         return self[consumer]
 
     def urls(self, is_public=False):

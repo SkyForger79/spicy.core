@@ -28,8 +28,11 @@ def get_templates(
         return []
 
 
-CACHE_PREFIX = getattr(settings, 'CACHE_PREFIX', 'spicy')
-CACHE_TIMEOUT = getattr(settings, 'CACHE_TIMEOUT', 1*60)
+# CACHE_PREFIX = getattr(settings, 'CACHE_PREFIX', 'spicy')
+# CACHE_TIMEOUT = getattr(settings, 'CACHE_TIMEOUT', 1*60)
+# TODO: refactor
+CACHE_PREFIX = 'spicy'
+CACHE_TIMEOUT = 1 * 60
 
 def make_cache_key(request=None, path=None):
     path = '%s:%s' % (

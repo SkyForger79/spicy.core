@@ -1,1 +1,20 @@
-# context
+from django.conf import settings
+
+from spicy.utils.printing import print_info
+from . import defaults
+from .conf import admin_apps_register
+
+def base(request):
+    current_admin_base = 'spicy.core.admin/admin/base.html'
+    if defaults.ADMIN_THEME is not None:
+        current_admin_base = defaults.ADMIN_THEME + '/base.html'
+
+    return {
+        'current_admin_base': current_admin_base,
+        'ADMIN_THEME': defaults.ADMIN_THEME,
+
+        'ADMIN_APPS': sorted(admin_apps_register.values(), key=lambda x: x.order_number, reverse=False),
+
+        'ADMIN_DASHBOARD_APPS': defaults.ADMIN_DASHBOARD_APPS,
+        }
+

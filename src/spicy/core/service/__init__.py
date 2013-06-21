@@ -1,3 +1,4 @@
+__import__('pkg_resources').declare_namespace(__name__)
 # XXX #1819
 from django.db import connection
 from django.core import signals

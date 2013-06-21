@@ -1,4 +1,3 @@
-# coding: utf-8
 """spicy main test cases."""
 import unittest
 
@@ -14,15 +13,4 @@ class TestSpicy(unittest.TestCase):
 
     def test_version(self):
         """All is up to date?"""
-        self.assertEqual(spicy.__version__, '1.1')
-
-    def test_is_not_correct_package(self):
-        """It's must crush due wrong params"""
-        self.assertFalse(tool.is_package('some random foo about bar'))
-
-    def test_sscp(self):
-        """It's must crush due wrong params"""
-        self.assertFalse(tool.sscp(appname='foo',
-                                   user='bar',
-                                   host='baz',
-                                   remotepath='/unixway'))
+        self.assertEqual(spicy.get_version(), '.'.join([str(x) for x in spicy.VERSION]))

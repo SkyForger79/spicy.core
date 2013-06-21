@@ -21,6 +21,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from spicy.core.siteskin.widgets import LabledRegexField, LabledEmailField
 from spicy.utils.models import get_custom_model_class
+
 from . import defaults
 
 NAME_RE = re.compile(

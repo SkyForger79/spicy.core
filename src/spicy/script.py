@@ -644,7 +644,7 @@ class ProjectDeployer(object):
     static_apps = []
 
     def __init__(self, server, version_label, apps_string, 
-                 static_string=None, version_control_util='hg', config=None):        
+                 static_string=None, version_control_util='hg', config=None, force=False):
         """
         :param server: remote server instance
         :type class ``Server``
@@ -661,6 +661,7 @@ class ProjectDeployer(object):
         self.version_label = version_label
         self.server = server
         self.config = config
+        self.force = force
         self.database = Database(config=config)
 
         self._local_tmp = os.path.join(os.path.abspath('.'), SPICY_BUILD_DIR)
@@ -696,11 +697,11 @@ class ProjectDeployer(object):
                 self.static_apps = self._get_apps(static_string)
     
             if os.path.exists(self._local_tmp):
-                local('rm -rf %s'%self._local_tmp)
-            local('mkdir -m ug=rwx,o= %s'%self._local_tmp)
-            print_ok('[done] Make local build directory: %s'%self._local_tmp)        
-        
-        # creating application ``build copy`` using defined revision label.
+                local('rm -rf %s' % self._local_tmp)
+            local('mkdir -m ug=rwx,o= %s' % self._local_tmp)
+            print_ok('[done] Make local build directory: %s' % self._local_tmp)
+
+            # creating application ``build copy`` using defined revision label.
         # and use this ``build copy`` for requirements.txt generation, configure app. templates etc...
         for app in self.apps:
             self._vc.create_build(app)
@@ -734,12 +735,12 @@ class ProjectDeployer(object):
         data = []
         for app_index, app in enumerate(self.apps):
             if not os.path.exists(app.build_path):
-                print_err('Application [%s] not found.'%app)
+                print_err('Application [%s] not found.' % app)
                 raise ApplicationNotFound
 
             if os.path.exists(app.req_file):
                 req_app_fd = open(app.req_file)
-                print_info('[in progress] %s -> %s'%(app.req_file, self.local_req_file))
+                print_info('[in progress] %s -> %s' % (app.req_file, self.local_req_file))
 
                 app_reqs = []
                 for req in req_app_fd.readlines():
@@ -753,32 +754,35 @@ class ProjectDeployer(object):
                     elif len(tmp) == 1:
                         rmod = tmp[0]
                     else:
-                        print_err('Can not parse %s version error: %s'%(app.req_file, req))
+                        print_err('Can not parse %s version error: %s' % (app.req_file, req))
                         raise VersionError
-                        
+
                     for module in data:
                         module = module.strip()
                         if module.startswith(rmod) and module != req:
-                            print_err('[warning] While prepare requirements sequence mistmach version detected: [%s] %s != [%s] %s'%(
+                            print_err(
+                                '[warning] While prepare requirements sequence mistmach version detected: '
+                                '[%s] %s != [%s] %s' % (
                                     ','.join([str(a_) for a_ in self.apps[:app_index]]), module, app, req))
                             print_info('Don\'t forget commit changes before next deployment build.')
                             raise VersionError
 
                         elif module.startswith(rmod) and module == req:
-                            print_info('Equal requirements [%s]: %s'%(','.join([str(a_) for a_ in self.apps[:app_index+1]]), module))
+                            print_info('Equal requirements [%s]: %s' % (
+                            ','.join([str(a_) for a_ in self.apps[:app_index + 1]]), module))
                             break
                     else:
-                        app_reqs.append(req)                            
+                        app_reqs.append(req)
 
                 data.extend(app_reqs)
-                print_ok('[done] %s in the application [%s] has been prepared.'%(SPICY_REQ_FILE, app))
+                print_ok('[done] %s in the application [%s] has been prepared.' % (SPICY_REQ_FILE, app))
             else:
-                print_info('Application [%s] hasn\'t %s file.'%(app, SPICY_REQ_FILE))
+                print_info('Application [%s] hasn\'t %s file.' % (app, SPICY_REQ_FILE))
 
         req_file_fd = open(self.local_req_file, 'a')
         req_file_fd.writelines('\n'.join(data))
         req_file_fd.close()
-        print_done('[done] Common %s file generation completed.'%(SPICY_REQ_FILE))
+        print_done('[done] Common %s file generation completed.' % (SPICY_REQ_FILE))
 
         return self.local_req_file
 
@@ -812,25 +816,30 @@ class ProjectDeployer(object):
 
     def _copy_archive(self, path, apps):
         if exists(path):
-            while True:
+            overwrite = self.force
+            while not self.force:
                 proceed = raw_input_cyan('Overwrite existing project catalog: {0}:{1}? y\\n: '.format(
                     self.server.host, path))
-                if proceed in ['n','N']:
+                if proceed in ['n', 'N']:
                     print_info('Cancel')
                     return
 
-                if proceed not in ['y','Y']:
+                if proceed not in ['y', 'Y']:
                     print_warn('Press y, Y, n or N')
                     continue
 
                 if proceed in ['y', 'Y']:
-                    print_info('Overwriting: {0}'.format(path))
-                    sudo('rm -rf {0}'.format(path))
-                    break       
+                    overwrite = True
+                    break
+
+            if overwrite:
+                print_info('Overwriting: {0}'.format(path))
+                sudo('rm -rf {0}'.format(path))
+
         sudo('mkdir -m ug=rwx,o= {0}'.format(path))
 
         arch_name = '{0}-{1}.tar.bz2'.format(
-            self.version_label, '-'.join(['{0}.{1}'.format(a_,a_.rev_id) for a_ in apps]))        
+            self.version_label, '-'.join(['{0}.{1}'.format(a_, a_.rev_id) for a_ in apps]))
         with lcd(self._local_tmp):
             local('tar cfj {0} {1}'.format(arch_name, ' '.join([str(a_) for a_ in apps])))
             put(arch_name, path)
@@ -914,9 +923,9 @@ class ProjectDeployer(object):
                         fd = codecs.open(config, 'w', encoding='utf-8')
                         fd.write(data)
                         fd.close()
-                        
+
                         with settings(
-                            hide('warnings', 'running', 'stdout', 'stderr'), warn_only=True):
+                                hide('warnings', 'running', 'stdout', 'stderr'), warn_only=True):
                             local('rm {0}'.format(file_path))
                         print_ok('[done] Config has been rendered: {0}'.format(config))
         print_done('[done] All config files has been configured successful.')
@@ -988,7 +997,8 @@ def handle_deploy(ns):
             # TODO ?? overwrite or exception
             project_config['apps'],
             static_string=project_config['static'], 
-            config=project_config)
+            config=project_config,
+            force=ns.force)
 
         deployer(env_path=ns.envpath, buildenv=ns.buildenv, 
                  createdb=ns.createdb, syncdb=ns.syncdb)
@@ -1061,6 +1071,7 @@ deploy_parser.add_argument('-D', '--syncdb', action='store_true', default=False,
 deploy_parser.add_argument('-x', '--xconfiglabel', action='store_true', default=False, help='Use configuration file and defined project label. {0}'.format(SPICY_PROJECT_CONFIG_FILE))
 
 deploy_parser.add_argument('-u', '--user', action='store', default=os.getlogin(), help='Server SSH user with sudo access.')
+deploy_parser.add_argument('-f', '--force', action='store_true', default=False, help='Force overwriting all existing apps.')
 
 deploy_parser.set_defaults(func=handle_deploy)
 

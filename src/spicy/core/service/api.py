@@ -426,7 +426,7 @@ class Register(dict):
             raise WrongServiceAPI(
                 'You must inherit services.Interface at first.')
 
-        # NOT working
+        # Tested - works.
         if service.name in self:
             return
 
@@ -475,6 +475,11 @@ class Register(dict):
             return dict.__getitem__(self, name)
         except KeyError:
             raise ServiceDoesNotExist(name)
+
+    def load_urls(self):
+        for service in settings.SERVICES:
+            self.add(service)
+        return self
 
 
 register = Register()

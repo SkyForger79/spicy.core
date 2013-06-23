@@ -2,7 +2,7 @@ from django.conf import settings
 from django.conf.urls import patterns, url, include
 from . import api
 
-api.register.load_urls()
+api.register.load_services()
 
 public_urls = patterns('')
 

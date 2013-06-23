@@ -476,7 +476,7 @@ class Register(dict):
         except KeyError:
             raise ServiceDoesNotExist(name)
 
-    def load_urls(self):
+    def load_services(self):
         for service in settings.SERVICES:
             self.add(service)
         return self

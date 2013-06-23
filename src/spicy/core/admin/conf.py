@@ -77,4 +77,18 @@ class AdminAppBase(object):
         return dict(app=self, *args, **kwargs)
 
 
-admin_apps_register = dict()
+admin_apps_register = None
+ 
+if admin_apps_register is None:
+    admin_apps_register = {}
+    for app_name in settings.INSTALLED_APPS:
+        try:
+            app_mod = __import__(app_name + '.admin', fromlist=['admin'])
+            admin_apps_register[app_name] = getattr(app_mod, 'AdminApp')()
+
+            if defaults.DEBUG_ADMIN:
+                print_info('Use Spicy AdminApp for: {0}'.format(app_name))
+        except (ImportError, AttributeError):
+            if defaults.DEBUG_ADMIN:
+                print_info('Can not find AdminApp for: {0}'.format(app_name))
+

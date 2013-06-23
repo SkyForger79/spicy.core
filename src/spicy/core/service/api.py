@@ -412,6 +412,7 @@ class ServiceList(object):
 
 class Register(dict):
     _instance = None
+    _is_loaded = False
     # TODO. singleton for dict
 
     def __new__(cls, *args, **kwargs):
@@ -471,6 +472,8 @@ class Register(dict):
             [srv for srv in self.itervalues() if srv.stype == stype])
 
     def __getitem__(self, name):
+        if not self._is_loaded:
+            self.load_services()
         try:
             return dict.__getitem__(self, name)
         except KeyError:
@@ -479,6 +482,7 @@ class Register(dict):
     def load_services(self):
         for service in settings.SERVICES:
             self.add(service)
+        self._is_loaded = True
         return self
 
 

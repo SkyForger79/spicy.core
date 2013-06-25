@@ -263,6 +263,59 @@ class ProfileService(api.Interface):
             form=form, REGISTRATION_ENABLED=defaults.REGISTRATION_ENABLED
             )
 
+    def restore(self, request):
+        message = ''
+        RestorePasswordForm = load_module(defaults.RESTORE_PASSWORD_FORM)
+        if request.method == 'POST':
+            form = RestorePasswordForm(request.POST)
+            if form.is_valid():
+                profile = Profile.objects.get(
+                    email__iexact=form.cleaned_data['email'])
+
+                if request.POST.has_key('send_pass'):
+                    newpass = generate_random_password()
+                    profile.set_password(newpass)
+                    profile.save()
+                    profile.email_forgotten_passwd(newpass)
+
+                                                
+                    return dict(
+                        form=form,
+                        message=_(
+                            'New password has been sent to you email address'))
+
+                elif request.POST.has_key('resend_activation'):
+                    if profile.check_activation():
+                        return dict(
+                            form=form,
+                            message= _('Profile has been already activated'))
+
+                    else:
+                        try:
+                            profile.generate_activation_key(
+                                realhost=request.get_host(),
+                                next_url=request.path)
+
+                            message = _(
+                                'New activation key has been sent to your '
+                                'email address.')
+                            return dict(form=form, message=message)
+
+                        except Exception:
+                            return dict(
+                                form=form,
+                                message = _(
+                                    'Unable to send activation key, please '
+                                    'try again later'))
+            else:
+                message = form.errors.as_text()
+        else:
+            if request.user.is_authenticated():
+                form = RestorePasswordForm(initial={'email': request.user.email})
+            else:
+                form = RestorePasswordForm()
+        return dict(form=form, message=message)
+
     def get_profiles(self, **kwargs):
         return Profile.objects.filter(**kwargs)
 

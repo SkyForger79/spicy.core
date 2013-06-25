@@ -76,3 +76,6 @@ DEFAULT_PROFILE_URL = getattr(
 CUSTOM_USER_MODEL = getattr(settings, 'CUSTOM_USER_MODEL', 'profile.TestProfile')
 CUSTOM_PERMISSION_PROVIDER_MODEL = getattr(settings, 'CUSTOM_PERMISSION_PROVIDER_MODEL', 'profile.PermissionProviderModel')
 CUSTOM_ROLE_MODEL = getattr(settings, 'CUSTOM_ROLE_MODEL', 'auth.Group')
+RESTORE_PASSWORD_FORM = getattr(
+    settings, 'RESTORE_PASSWORD_FORM',
+    'spicy.core.profile.forms.RestorePasswordForm')

@@ -19,9 +19,7 @@ MESSAGES = {'success': _('Changes were successfully saved.'),
 
 
 def make_cache_key(request=None, path=None):
-    path = '%s:%s' % (
-        defaults.CACHE_PREFIX, (
-            request.get_full_path() if request else path))
+    path = request.get_full_path() if request else path
     if hasattr(request, 'geos'):
         from maps.utils import get_geos_coords
         path += ':%s,%s' % get_geos_coords(request.geos)

@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.core.urlresolvers import reverse
+from django.utils.functional import SimpleLazyObject, new_method_proxy
 from django.utils.translation import ugettext_lazy as _
 from spicy.core.siteskin.decorators import render_to
 from spicy.utils.printing import print_info
@@ -77,9 +78,8 @@ class AdminAppBase(object):
         return dict(app=self, *args, **kwargs)
 
 
-admin_apps_register = None
- 
-if admin_apps_register is None:
+
+def _init_admin(): 
     _register = {}
     for app_name in settings.INSTALLED_APPS:
         try:
@@ -91,4 +91,25 @@ if admin_apps_register is None:
         except (ImportError, AttributeError):
             if defaults.DEBUG_ADMIN:
                 print_info('Can not find AdminApp for: {0}'.format(app_name))
-    admin_apps_register = _register
+    return _register
+
+
+class BackportedSimpleLazyObject(SimpleLazyObject):
+    """
+    This class is not needed in django 1.5 - just use SimpleLazyObject instead.
+    """
+    # Dictionary methods support
+    @new_method_proxy
+    def __getitem__(self, key):
+        return self[key]
+
+    @new_method_proxy
+    def __setitem__(self, key, value):
+        self[key] = value
+
+    @new_method_proxy
+    def __delitem__(self, key):
+        del self[key]
+
+
+admin_apps_register = BackportedSimpleLazyObject(_init_admin)

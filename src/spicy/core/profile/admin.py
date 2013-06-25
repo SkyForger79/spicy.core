@@ -54,18 +54,6 @@ class AdminApp(AdminAppBase):
         return dict(app=self, *args, **kwargs)
 
 
-@is_staff
-def main(request):
-    for app in defaults.APP_ORDER:
-        if isinstance(app, basestring):
-            module = app
-        else:
-            module, app = app
-        if request.user.has_module_perms(app):
-            return HttpResponseRedirect(reverse('%s:admin:index' % module))
-    else:
-        raise PermissionDenied(_("Unable to redirect to main page"))
-        
 
 @is_staff(required_perms='profile.change_profile')
 @ajax_request
@@ -78,7 +66,6 @@ def passwd(request, profile_id):
             form.save()
             message = settings.MESSAGES['success']
         else:
-            print '###', form.errors
             message = settings.MESSAGES['error']
         
     return dict(message=unicode(message),)

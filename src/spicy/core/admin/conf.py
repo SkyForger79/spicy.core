@@ -94,6 +94,7 @@ def _init_admin():
     return _register
 
 
+
 class BackportedSimpleLazyObject(SimpleLazyObject):
     """
     This class is not needed in django 1.5 - just use SimpleLazyObject instead.

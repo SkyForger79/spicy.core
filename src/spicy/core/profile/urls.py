@@ -64,7 +64,6 @@ info_dict = {'queryset': User.objects.all(), 'search_by': 'username'}
 
 admin_urls = patterns(
     'spicy.core.profile.admin',
-    url(r'^main/$', 'main', name='main'),
     url(r'^list/$', 'profiles_list', name='index'),
     url(r'^groups/$', 'groups', name='groups'),
     url(r'^groups/create/$', 'create_group', name='create-group'),

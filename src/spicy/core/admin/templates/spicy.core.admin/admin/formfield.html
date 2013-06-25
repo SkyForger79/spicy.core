@@ -78,7 +78,7 @@
 {% if type == 'li-date' %}
 <li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
   {{ label }}
-  <input class="datepicker fill-up"  {#data-viewformat="dd.mm.yyyy"#} type="text" name="{{ field.html_name }}" placeholder="{{ title }}" value="{% if field.value %}{{ field.value }}{% endif %}" id="{{ field.html_initial_id }}"/>
+  <input class="datetime fill-up"  type="text" name="{{ field.html_name }}" value="{% if field.value %}{{ field.value|date:"Y-m-d H:i" }}{% endif %}" id="{{ field.html_initial_id }}"/>
   {% if field.errors %}<span class="help-block note"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
   {% if field.help_text %}
   <div class="note pull-right">{{ field.help_text }}</div>

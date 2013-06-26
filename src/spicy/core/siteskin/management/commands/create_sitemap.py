@@ -1,18 +1,15 @@
 import datetime
 import gzip
 import os
-from collections import defaultdict
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sitemaps import ping_google
 from django.contrib.sites.models import Site
 from django.core.management.base import BaseCommand
 from django.db.models.loading import get_model
-from itertools import chain, groupby
 from math import ceil
-from operator import itemgetter
 from optparse import make_option
-from spicy.mediacenter.defaults import THUMBNAILS, MEDIACENTER_ROOT
+from spicy.mediacenter.defaults import MEDIACENTER_ROOT
 from spicy.presscenter.defaults import DOC_THUMB_SIZE, CUSTOM_DOCUMENT_MODEL
 from spicy.core.service import api
 from spicy.core.siteskin import defaults
@@ -30,7 +27,7 @@ SITEMAP = [
             'loc': lambda x: x.get_absolute_url(),
             'changefreq': 'daily',
             'priority':'0.8'
-            },
+        },
         'has_media': True,
     },
     {
@@ -46,11 +43,12 @@ SITEMAP = [
 DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S+03:00'
 OBJECTS_LIMIT = 20000
 
+
 class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
         make_option('--limit', default=None, help='Limit number of objects'),
     )
-    
+
     sub_dir = ''
     text_start = (
         u'<?xml version="1.0" encoding="UTF-8"?>'
@@ -80,9 +78,8 @@ class Command(BaseCommand):
                     "Sitemap dir doesn't exist at '%s', unable to create" %
                     self.sitemap_dir)
                 raise
-            
+
         self.sitemap_sub_dir = os.path.join(self.sitemap_dir, self.sub_dir)
-        
         self.domain = Site.objects.get_current().domain
         self.main_sitemap_file_name = '%s/sitemap.xml' % self.sitemap_dir
 
@@ -107,14 +104,14 @@ class Command(BaseCommand):
             if not loc:
                 self.broken_cnt += 1
                 continue
-            
-            self.string_cnt += 1            
+
+            self.string_cnt += 1
             data = {}
 
             data['loc'] = u'<loc>http://%s%s</loc>' % (self.domain, loc)
             lastmod = result_gen.get('lastmod')
             data['lastmod'] = (
-                u'<lastmod>%s</lastmod>'% lastmod if lastmod else '')
+                u'<lastmod>%s</lastmod>' % lastmod if lastmod else '')
             data['changefreq'] = u'<changefreq>%s</changefreq>' % result_gen[
                 'changefreq']
             data['priority'] = u'<priority>%s</priority>' % result_gen[
@@ -135,7 +132,7 @@ class Command(BaseCommand):
         if self.string_cnt >= OBJECTS_LIMIT:
             self.string_cnt = 0
             self.change_file()
-    
+
     def file_close(self):
         self.file_obj.write(self.text_end)
 
@@ -151,11 +148,11 @@ class Command(BaseCommand):
             u'<sitemap><loc>http://%s/%ssitemap_%i.xml.gz</loc>'
             '</sitemap>' % (
                 self.domain, defaults.SITEMAP_URL.lstrip('/'), self.file_i))
-        
+
     def file_create(self):
         self.file_obj = StringIO()
         self.file_obj.write(self.text_start)
-    
+
     def change_file(self):
         self.file_close()
         self.file_i += 1
@@ -169,7 +166,7 @@ class Command(BaseCommand):
                 os.remove('%s%s' % (self.sitemap_sub_dir, f,))
 
         self.main_sitemap_file = open(self.main_sitemap_file_name, 'w+')
-        self.main_sitemap_file.write(self.main_text_start)            
+        self.main_sitemap_file.write(self.main_text_start)
         self.file_create()
 
         sitemap = SITEMAP
@@ -182,7 +179,7 @@ class Command(BaseCommand):
             content_type = ContentType.objects.get_for_model(model)
 
             query = getattr(model, manager)
-                
+
             # Get filter params for query.
             filter_params = import_object.get('filter')
             if filter_params:
@@ -202,7 +199,7 @@ class Command(BaseCommand):
 
             only = import_object.get('only')
             if only:
-                query = query.only(*only)                    
+                query = query.only(*only)
             if limit is not None:
                 query = query[:int(limit)]
             num_cycles = int(ceil(query.count() / float(OBJECTS_LIMIT)))
@@ -219,7 +216,7 @@ class Command(BaseCommand):
                     sub_query, gen, content_type, object_model, verbosity)
 
         self.file_close()
-        self.main_sitemap_file.write(self.main_text_end)        
+        self.main_sitemap_file.write(self.main_text_end)
         self.main_sitemap_file.close()
 
         if verbosity > 1 or (self.broken_cnt and verbosity == 1):
@@ -231,7 +228,7 @@ class Command(BaseCommand):
             #    print q
             print 'Total queries made: %i' % len(connection.queries)
         ping_google(defaults.SITEMAP_URL + 'sitemap.xml')
-            
+
     def handle_normal(self, query, gen, content_type, object_model, verbosity):
         thumb_width, thumb_height = DOC_THUMB_SIZE
         for i, data in enumerate(query):
@@ -240,15 +237,15 @@ class Command(BaseCommand):
             extras = []
             for url in self.gen_url(data, gen):
                 for prov in api.register['media'][data].get_instances(
-                    data, view_type__in=('photo', 'video')):
+                        data, view_type__in=('photo', 'video')):
                     title = prov.title or prov.media.title or unicode(prov)
                     desc = prov.desc or prov.media.desc or unicode(prov)
 
                     if prov.view_type == 'photo':
                         # Image media.
                         extra = (
-                        u'<image:loc>http://%s%s</image:loc>' % (
-                            self.domain, prov.get_absolute_url()))
+                            u'<image:loc>http://%s%s</image:loc>' % (
+                                self.domain, prov.get_absolute_url()))
                         extra += (
                             u'<image:title>%s</image:title>' % cdata(title))
                         extra += (
@@ -257,9 +254,8 @@ class Command(BaseCommand):
                         extras.append(
                             u'<image:image>%s</image:image>' % extra)
                     elif prov.view_type == 'video':
-                        preview = getattr(
-                            prov.media, 'preview')
-                        preview = preview or prov.consumer.preview         
+                        preview = getattr(prov.media, 'preview')
+                        preview = preview or prov.consumer.preview
                         thumbnail_url = (
                             preview.get_absolute_url() if preview else None)
                         #thumbnail_url = THUMBNAILS.get_thumbnail(
@@ -268,17 +264,17 @@ class Command(BaseCommand):
                         if not thumbnail_url:
                             if verbosity > 1:
                                 print (
-                                    u'Unable to generate video without preview '
-                                    'for %s (%s: %s)' %
+                                    u'Unable to generate video without '
+                                    'preview for %s (%s: %s)' %
                                     (data, object_model, data.pk))
                             continue
-                        
+
                         # Video media.
                         extra = (
                             u'<video:thumbnail_loc>http://%s%s'
                             '</video:thumbnail_loc>' % (
                                 self.domain, thumbnail_url))
-                    
+
                         extra += u'<video:title>%s</video:title>' % cdata(
                             title or unicode(prov))
 
@@ -287,7 +283,8 @@ class Command(BaseCommand):
                             cdata(desc or unicode(prov)))
 
                         extra += (
-                            u'<video:content_loc>http://%s%s</video:content_loc>'
+                            u'<video:content_loc>http://%s%s'
+                            '</video:content_loc>'
                             % (self.domain, prov.get_absolute_url()))
 
                         extra += (
@@ -297,4 +294,3 @@ class Command(BaseCommand):
                         extras.append(u'<video:video>%s</video:video>' % extra)
 
                 self.write(url, u''.join(extras))
-            

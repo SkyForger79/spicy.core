@@ -1,10 +1,12 @@
+import functools
+import importlib
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils.functional import SimpleLazyObject, new_method_proxy
 from django.utils.translation import ugettext_lazy as _
-from spicy.core.siteskin.decorators import render_to
 from spicy.utils.printing import print_info
 from . import defaults
+
 
 class AdminLink(object):
     url_ns = None
@@ -17,7 +19,7 @@ class AdminLink(object):
     @property
     def url(self):
         if isinstance(self.url_ns, tuple):
-            if len(self.url_ns) > 1:                
+            if len(self.url_ns) > 1:
                 return reverse(self.url_ns[0], args=self.url_ns[1:])
             return reverse(self.url_ns[0])
 
@@ -47,12 +49,11 @@ class Perms(object):
 
 class AdminAppBase(object):
     """
-    
     menu_items = (
         AdminLink('mediacenter:admin:create', _('Create library')),
         AdminLink('mediacenter:admin:index', _('All libraries')),
         )
-        
+
     create = AdminLink('mediacenter:admin:create', _('Create library'),)
     """
     order_number = 0
@@ -61,7 +62,7 @@ class AdminAppBase(object):
 
     menu_items = tuple()
 
-    create = None    
+    create = None
     perms = Perms(view=[], write=[], manage=[])
 
     def __init__(self):
@@ -71,28 +72,30 @@ class AdminAppBase(object):
     #@render_to('menu.html', use_admin=True)
     def menu(self, request, *args, **kwargs):
         return dict(app=self, *args, **kwargs)
-    
+
     # uncomment only in the working admin app module
     #@render_to('dashboard.html', use_admin=True)
     def dashboard(self, request, *args, **kwargs):
         return dict(app=self, *args, **kwargs)
 
 
-
-def _init_admin(): 
+def _find_modules(admin_apps=True):
     _register = {}
     for app_name in settings.INSTALLED_APPS:
+        app_import_name = app_name
+        if admin_apps:
+            app_import_name += '.admin'
         try:
-            app_mod = __import__(app_name + '.admin', fromlist=['admin'])
-            _register[app_name] = getattr(app_mod, 'AdminApp')()
+            app_mod = importlib.import_module(app_import_name)
+            _register[app_name] = (
+                getattr(app_mod, 'AdminApp')() if admin_apps else app_mod)
 
-            if defaults.DEBUG_ADMIN:
+            if defaults.DEBUG_ADMIN and admin_apps:
                 print_info('Use Spicy AdminApp for: {0}'.format(app_name))
         except (ImportError, AttributeError):
-            if defaults.DEBUG_ADMIN:
+            if defaults.DEBUG_ADMIN and admin_apps:
                 print_info('Can not find AdminApp for: {0}'.format(app_name))
     return _register
-
 
 
 class BackportedSimpleLazyObject(SimpleLazyObject):
@@ -113,4 +116,6 @@ class BackportedSimpleLazyObject(SimpleLazyObject):
         del self[key]
 
 
-admin_apps_register = BackportedSimpleLazyObject(_init_admin)
+admin_apps_register = BackportedSimpleLazyObject(_find_modules)
+app_modules_register = BackportedSimpleLazyObject(
+    functools.partial(_find_modules, admin_apps=False))

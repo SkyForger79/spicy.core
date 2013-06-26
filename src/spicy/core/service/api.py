@@ -10,7 +10,8 @@ from spicy.core.service.utils import MethodDecoratorAdaptor
 from spicy.core.siteskin.decorators import render_to, ViewInterface
 from spicy.utils import cached_property, load_module
 from spicy.utils.models import get_custom_model_class
-from spicy.utils.printing import print_error, print_text, print_success, print_warning
+from spicy.utils.printing import print_error, print_text, print_success
+from spicy.utils.printing import print_warning
 
 
 GENERIC_CONSUMER = 'GENERIC_CONSUMER'
@@ -140,16 +141,18 @@ class Provider(object):
             else:
                 method.set_instance(self)
             self.urls.append((
-                    url(pattern % {'service_name': service.name}, method,
-                        name=name),
-                    is_public))
+                url(pattern % {'service_name': service.name}, method,
+                    name=name),
+                is_public))
 
-    def get_or_create(self, consumer, **kwargs):        
+    def get_or_create(self, consumer, **kwargs):
         """
-        Checking if ``self.model`` instance is exists. Creating new instance if does not exists.
-        And allways return boolean flag is_created=True id if new instance was created while executing.
+        Checking if ``self.model`` instance is exists. Creating new instance if
+        does not exists.
+        And always return boolean flag is_created=True if new instance was
+         created while executing.
 
-        return tuple: is_created, instance
+        Return tuple: is_created, instance
         """
         print_warning(
             'TODO: Deprecated method api.'
@@ -228,7 +231,7 @@ class Provider(object):
                 _("Setup form_mod attributes at first."))
 
     def inline_formset(self, request, consumer, prefix='provider'):
-        raise NotImplemented()
+        raise NotImplementedError()
 
     def create(self, request):
         # XXX DEPRECATED
@@ -327,7 +330,7 @@ class Interface(object):
         elif GENERIC_CONSUMER in self.__providers:
             if settings.DEBUG:
                 print_text('[{0}] Use GENERIC provider for: {1}'.format(
-                        self.name, consumer))
+                    self.name, consumer))
             return self.__providers[GENERIC_CONSUMER]
 
         raise ProviderSchemaError(
@@ -338,23 +341,26 @@ class Interface(object):
 
     def create_provider_instance(self, consumer, **kwargs):
         return self[consumer].create_instance(consumer, **kwargs)
-        
+
     def get_provider_instance(self, consumer, **kwargs):
         return self[consumer].get_instance(consumer, **kwargs)
 
     def get_provider_instances(self, consumer=None, **kwargs):
-        if consumer is not None:            
+        if consumer is not None:
             return self[consumer].get_instances(consumer=consumer, **kwargs)
-        elif GENERIC_CONSUMER in self.__providers:            
+        elif GENERIC_CONSUMER in self.__providers:
             return self[GENERIC_CONSUMER].get_instances(**kwargs)
 
     def get_or_create_provider_instance(self, consumer, **kwargs):
         return self[consumer].get_or_create(consumer, **kwargs)
 
     def get_provider(self, consumer):
-        print_error('Deprecated method Sevice.get_provider(consumer). Use service[consumer] to get prvoder instance.'
-                    'For common provider methods use (get|create|get_or_create)_provider_instance|s call.'
-                    'Will be deleted in versin Spicy-1.6')
+        print_error(
+            'Deprecated method Sevice.get_provider(consumer). Use '
+            'service[consumer] to get prvoder instance.'
+            'For common provider methods use (get|create|get_or_create)'
+            '_provider_instance|s call.'
+            'Will be deleted in version Spicy-1.6')
         return self[consumer]
 
     def urls(self, is_public=False):
@@ -362,11 +368,19 @@ class Interface(object):
             [url for url, is_pub in prv.urls if is_pub == is_public]
             for prv in self.__providers.itervalues()]
 
-    @property
+    @cached_property
     def content_templates(self):
-        templates = [
-            (tmpl, tmpl) for tmpl in os.listdir(
-                settings.TEMPLATE_DIRS[0] + self.PROVIDER_TEMPLATES_DIR)]
+        from spicy.core.admin.conf import app_modules_register
+        templates = []
+        for app in app_modules_register.values():
+            try:
+                templates.extend(
+                    [(tmpl, tmpl) for tmpl in os.listdir(
+                        os.path.join(
+                            os.path.dirname(app.__file__), 'templates',
+                            self.PROVIDER_TEMPLATES_DIR))])
+            except OSError:
+                pass
         templates.sort()
         return templates
 
@@ -384,9 +398,8 @@ class Interface(object):
         raise NotImplementedError()
 
     # TODO admin app
-    
     def create_url(self):
-        return 
+        return
 
     def dashboard(self, request):
         return NotImplementedError()

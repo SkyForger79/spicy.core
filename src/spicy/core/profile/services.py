@@ -7,20 +7,16 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.utils.html import escape
 from django.utils.translation import ugettext_lazy as _
-from django.core.exceptions import PermissionDenied
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import REDIRECT_FIELD_NAME
-from django.shortcuts import get_object_or_404
-
 from spicy.core.profile.views import generate_random_password
 from spicy.core.service import api
 from spicy.utils import load_module
 from spicy.utils.models import get_custom_model_class
-from spicy.core.siteskin.decorators import ajax_request, render_to, multi_view
-
-from . import defaults, models, utils
+from spicy.core.siteskin.decorators import ajax_request, render_to
+from . import defaults, models
 from .decorators import is_staff
-from .forms import SignupForm, LoginForm
+from .forms import LoginForm
 
 Profile = get_custom_model_class(defaults.CUSTOM_USER_MODEL)
 
@@ -64,7 +60,7 @@ class ProfileProvider(api.Provider):
             ('yandex', 'Yandex'),
             ('livejournal', 'Livejournal'),
             ('openid', 'OpenID'),
-            )
+        )
         associated = request.user.social_auth.all().values_list(
             'provider', flat=True)
         return {'backends': backends, 'associated': associated}
@@ -86,7 +82,7 @@ class ProfileProvider(api.Provider):
 
         results = {}
         users_dict = {}
-        for i, (cache_key, result_name) in enumerate(cache_keys):
+        for cache_key, result_name in cache_keys:
             access_dict = cache.get(cache_key, {})
             new_dict = {}
             current_user_ids = set()
@@ -100,7 +96,7 @@ class ProfileProvider(api.Provider):
             current_user_ids.add(request.user.pk)
 
             for user_id in current_user_ids:
-                if not users_dict.has_key(user_id):
+                if not user_id in users_dict.has_key:
                     profile = Profile.objects.get(pk=user_id)
                     users_dict[user_id] = u'%s &lt;%s&gt;' % (
                         escape(profile), profile.email)
@@ -128,7 +124,6 @@ class ProfileProvider(api.Provider):
 
 class ProfileService(api.Interface):
     name = 'profile'
-    stype = 'content'
     label = _('Profile provider service')
 
     statistic_types = (
@@ -144,8 +139,6 @@ class ProfileService(api.Interface):
     PROVIDER_TEMPLATES_DIR = 'profile/providers/'
 
     schema = dict(GENERIC_CONSUMER=ProfileProvider)
-
-    
 
     def login(self, request):
         status = 'error'
@@ -165,8 +158,7 @@ class ProfileService(api.Interface):
             return dict(
                 status='ok',
                 message=unicode(_('User is signed in already')),
-                redirect=redirect,
-                )
+                redirect=redirect)
 
         can_login = True
         #captcha_required = False
@@ -194,7 +186,7 @@ class ProfileService(api.Interface):
             if can_login and not is_blacklisted and form.is_valid():
 
                 if not redirect or ' ' in redirect or (
-                    '//' in redirect and re.match(r'[^\?]*//', redirect)):
+                        '//' in redirect and re.match(r'[^\?]*//', redirect)):
                     redirect = settings.LOGIN_REDIRECT_URL
 
                 if form.cleaned_data['is_remember']:
@@ -228,8 +220,7 @@ class ProfileService(api.Interface):
 
         return dict(
             status=status, message=unicode(message), redirect=redirect,
-            form=form, REGISTRATION_ENABLED=defaults.REGISTRATION_ENABLED
-            )
+            form=form, REGISTRATION_ENABLED=defaults.REGISTRATION_ENABLED)
 
     def register(self, request):
         status = 'error'
@@ -261,8 +252,7 @@ class ProfileService(api.Interface):
 
         return dict(
             status=status, message=unicode(message), redirect=redirect,
-            form=form, REGISTRATION_ENABLED=defaults.REGISTRATION_ENABLED
-            )
+            form=form, REGISTRATION_ENABLED=defaults.REGISTRATION_ENABLED)
 
     def restore(self, request):
         message = ''
@@ -272,25 +262,22 @@ class ProfileService(api.Interface):
             if form.is_valid():
                 profile = Profile.objects.get(
                     email__iexact=form.cleaned_data['email'])
-
-                if request.POST.has_key('send_pass'):
+                if 'send_pass' in request.POST:
                     newpass = generate_random_password()
                     profile.set_password(newpass)
                     profile.save()
                     profile.email_forgotten_passwd(newpass)
 
-                                                
                     return dict(
                         form=form,
                         message=_(
                             'New password has been sent to you email address'))
 
-                elif request.POST.has_key('resend_activation'):
+                elif 'resend_activation' in request.POST:
                     if profile.check_activation():
                         return dict(
                             form=form,
-                            message= _('Profile has been already activated'))
-
+                            message=_('Profile has been already activated'))
                     else:
                         try:
                             profile.generate_activation_key(
@@ -305,14 +292,15 @@ class ProfileService(api.Interface):
                         except Exception:
                             return dict(
                                 form=form,
-                                message = _(
+                                message=_(
                                     'Unable to send activation key, please '
                                     'try again later'))
             else:
                 message = form.errors.as_text()
         else:
             if request.user.is_authenticated():
-                form = RestorePasswordForm(initial={'email': request.user.email})
+                form = RestorePasswordForm(
+                    initial={'email': request.user.email})
             else:
                 form = RestorePasswordForm()
         return dict(form=form, message=message)
@@ -365,8 +353,8 @@ class ProfileService(api.Interface):
                 'sh_prepaid_content_provider.activated_from', date_trunc,
                 'auth_user', from_date, to_date, where,
                 join=('sh_prepaid_content_provider on '
-                      'auth_user.id = sh_prepaid_content_provider.profile_id'),
-                )
+                      'auth_user.id = sh_prepaid_content_provider.profile_id')
+            )
         elif type == 'pins_not_activated':
             where.append('sh_prepaid_content_provider.is_activated = false')
             return make_stats(

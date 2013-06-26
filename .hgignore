@@ -26,3 +26,4 @@ build
 *.mp4
 # audio files
 *.mp3
+*.orig

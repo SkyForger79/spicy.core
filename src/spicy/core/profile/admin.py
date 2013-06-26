@@ -2,25 +2,20 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth.models import Group, User
-from django.contrib.sites.models import Site
-from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
-
-from spicy.core.service import api
-from spicy.utils.models import get_custom_model_class
-from spicy.core.siteskin.decorators import render_to, ajax_request
-from spicy.core.admin.conf import AdminAppBase, AdminLink, Perms
 from spicy.core.admin import defaults as admin_defaults
-
+from spicy.core.admin.conf import AdminAppBase, AdminLink, Perms
+from spicy.core.service import api
+from spicy.core.siteskin.decorators import render_to, ajax_request
+from spicy.utils import NavigationFilter
+from spicy.utils.models import get_custom_model_class
 from . import defaults, forms
 from .decorators import is_staff
 from .models import BlacklistedIP
-
-from spicy.utils import NavigationFilter, make_slug
 
 
 Profile = get_custom_model_class(defaults.CUSTOM_USER_MODEL)
@@ -29,7 +24,7 @@ admin.site.register(Profile)
 admin.site.unregister(User)
 
 
-class AdminApp(AdminAppBase):    
+class AdminApp(AdminAppBase):
     name = 'profile'
     label = _('Profile')
     order_number = 10
@@ -39,7 +34,7 @@ class AdminApp(AdminAppBase):
         AdminLink('profile:admin:index', _('All profiles')),
         AdminLink('profile:admin:groups', _('Groups & Permissions')),
         AdminLink('profile:admin:create-group', _('Create group')),
-        )
+    )
 
     create = AdminLink('profile:admin:create', _('Create profile'),)
 
@@ -54,7 +49,6 @@ class AdminApp(AdminAppBase):
         return dict(app=self, *args, **kwargs)
 
 
-
 @is_staff(required_perms='profile.change_profile')
 @ajax_request
 def passwd(request, profile_id):
@@ -67,7 +61,7 @@ def passwd(request, profile_id):
             message = settings.MESSAGES['success']
         else:
             message = settings.MESSAGES['error']
-        
+
     return dict(message=unicode(message),)
 
 
@@ -79,12 +73,13 @@ def create(request):
         form = forms.CreateProfileForm(request.POST)
         if form.is_valid():
             profile = form.save(realhost=request.get_host())
-            return HttpResponseRedirect('/admin/profile/%s/?action=new' % profile.id)
+            return HttpResponseRedirect(
+                '/admin/profile/%s/?action=new' % profile.id)
         else:
             message = settings.MESSAGES['error']
     else:
-        form = forms.CreateProfileForm(initial={
-                'email_activation_key': True})
+        form = forms.CreateProfileForm(
+            initial={'email_activation_key': True})
     return {
         'form': form,
         'message': message}
@@ -96,8 +91,8 @@ def groups(request):
     """Groups list/formset combined view."""
     message = None
     if request.method == 'POST':
-        groups = forms.GroupFormSet(request.POST, request.FILES, 
-                              queryset=Group.objects.all())
+        groups = forms.GroupFormSet(
+            request.POST, request.FILES, queryset=Group.objects.all())
         if groups.is_valid():
             groups.save()
             message = settings.MESSAGES['success']
@@ -135,7 +130,7 @@ def delete_group(request, group_id):
     if request.method == 'POST':
         if 'confirm' in request.POST:
             group.delete()
-            return HttpResponseRedirect(reverse('profile:admin:groups'))    
+            return HttpResponseRedirect(reverse('profile:admin:groups'))
     return {'group': group}
 
 
@@ -148,14 +143,14 @@ def edit(request, profile_id):
 
     """
     message = None
-    action = request.GET.get('action') # what do we gonna doin?
+    action = request.GET.get('action')
     profile = get_object_or_404(Profile, id=profile_id)
 
     if action == 'new':
         message = _('New account created, welcome to editing.')
 
-    if request.method == 'POST' and request.user.has_perm(
-        'extprofile.change_profile'):
+    if (request.method == 'POST' and request.user.has_perm(
+            'extprofile.change_profile')):
         form = forms.ProfileForm(request.POST, instance=profile)
         if form.is_valid():
             form.save()
@@ -167,9 +162,9 @@ def edit(request, profile_id):
 
     passwd_form = forms.AdminPasswdForm(profile)
 
-    return { # TODO: needs to be Context()?
+    return {
         'action': action,
-        'profile': profile, 
+        'profile': profile,
         'form': form,
         'passwd_form': passwd_form,
         'message': message,
@@ -205,26 +200,26 @@ def profiles_list(request):
 
     if nav.search_text:
         search_args.append(
-            Q(username__icontains = nav.search_text) |
-            Q(email__icontains = nav.search_text) |
-            Q(first_name__icontains = nav.search_text) |
-            Q(last_name__icontains = nav.search_text))
-        
+            Q(username__icontains=nav.search_text) |
+            Q(email__icontains=nav.search_text) |
+            Q(first_name__icontains=nav.search_text) |
+            Q(last_name__icontains=nav.search_text))
+
     is_staff = request.GET.get('is_staff', False)
     if nav.is_staff:
-        is_staff = is_staff != 'false'        
+        is_staff = is_staff != 'false'
         search_kwargs['is_staff'] = is_staff
-    
-    if is_staff != False and nav.group:
-        search_args.append(Q(groups=nav.group))        
-    
+
+    if is_staff is not False and nav.group:
+        search_args.append(Q(groups=nav.group))
+
     if nav.last_login == 'month':
         search_kwargs['last_login__gte'] = datetime.today() - timedelta(30)
 
     paginator = nav.get_queryset_with_paginator(
         Profile, reverse('profile:admin:index'),
         search_query=(search_args, search_kwargs),
-        obj_per_page=admin_defaults.ADMIN_OBJECTS_PER_PAGE, 
+        obj_per_page=admin_defaults.ADMIN_OBJECTS_PER_PAGE,
     )
     objects_list = paginator.current_page.object_list
 
@@ -240,7 +235,7 @@ def delete_profile_list(request):
     status = 'ok'
     try:
         for profile in Profile.objects.filter(
-            id__in=request.POST.getlist('id')):
+                id__in=request.POST.getlist('id')):
             profile.delete()
         message = _('All objects have been deleted successfully')
     except KeyError:
@@ -303,8 +298,7 @@ def blacklisted_ips(request):
     nav = NavigationFilter(request)
     paginator = nav.get_queryset_with_paginator(
         BlacklistedIP, reverse('profile:admin:blacklisted-ips'),
-        obj_per_page=admin_defaults.ADMIN_OBJECTS_PER_PAGE, 
-        )
+        obj_per_page=admin_defaults.ADMIN_OBJECTS_PER_PAGE)
     objects_list = paginator.current_page.object_list
 
     return {'nav': nav, 'objects_list': objects_list, 'paginator': paginator}

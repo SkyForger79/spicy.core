@@ -12,6 +12,7 @@ from django.contrib.auth import login as auth_login
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.shortcuts import get_object_or_404
 
+from spicy.core.profile.views import generate_random_password
 from spicy.core.service import api
 from spicy.utils import load_module
 from spicy.utils.models import get_custom_model_class

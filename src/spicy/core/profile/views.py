@@ -2,7 +2,7 @@
 import random
 import string
 from . import defaults, models
-from .forms import PublicProfileForm, RestorePasswordForm
+from .forms import PublicProfileForm
 from .forms import LoginForm, SetEmailForm, SocialProfileUpdateForm
 from .models import BlacklistedIP
 from django.conf import settings
@@ -35,6 +35,7 @@ def generate_random_password(length=10):
 def profile(request, username):
     user = get_object_or_404(Profile, username=username)
     return dict(user=user)
+
 
 @login_required
 @render_to('profile/future_articles.html', use_siteskin=True)
@@ -102,6 +103,7 @@ def passwd(request, username):
             message = _('Password has been change successful')
 
     return dict(user=user, form=form, message=message)
+
 
 @login_required
 @render_to('profile/settings.html', use_siteskin=True)
@@ -177,6 +179,7 @@ def user_agreement(request):
 def restorepass(request):
     return api.register['profile'].restore(request)
 
+
 @login_required
 def signout(request):
     redirect_to = request.GET.get('next', settings.LOGIN_REDIRECT_URL)
@@ -186,6 +189,7 @@ def signout(request):
         pass
     auth_logout(request)
     return HttpResponseRedirect(redirect_to)
+
 
 @login_required
 @render_to('profile/set_email.html', use_siteskin=True)

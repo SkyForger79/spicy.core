@@ -489,7 +489,8 @@ class HgVersionControl(VersionControlBase):
     cmd_tags = 'hg tags'
     cmd_build_archive = 'hg archive -r %(revision_id)s %(app_build_path)s'
 
-    cmd_revision_by_branch = "hg head -r %(branch_name)s --template '{node}'"
+    cmd_revision_by_branch = "hg heads --template '{branch}:{node}\n' | sed -n 's/^%(branch_name)s:\(.*\)$/\\1/pg'"
+    # cmd_revision_by_branch = "hg head -r %(branch_name)s --template '{node}'"  # <- ОШИБКА: может вернуть 2 ревизии
     cmd_branch_by_revision = "hg head -r %(revision_id)s --template '{branch}'"
 
     default_branch = 'default'

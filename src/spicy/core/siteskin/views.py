@@ -1,6 +1,6 @@
 from datetime import datetime as dt
 from django import http
-from django.shortcuts import render as dj_render
+from django.shortcuts import render_to_response
 from django.template import RequestContext, loader
 from spicy.utils.printing import print_error
 from . import defaults
@@ -67,6 +67,6 @@ def render(request, template, **kwargs):
     """
     Example of universal rubric rendering
     """
-    return dj_render(
-        request, template,
-        {'page_slug': kwargs.pop('page_slug', None)}, **kwargs)
+    context = RequestContext(request)
+    context['page_slug'] = kwargs.pop('page_slug', None)
+    return render_to_response(template, context, **kwargs)

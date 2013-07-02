@@ -1,16 +1,10 @@
 from django import http
+from django.test.client import Client, FakePayload
 from spicy.core.siteskin import defaults
 from . import defaults
 
 
-def get_template(template):
-    if defaults.SITESKIN and not defaults.SITESKIN in template:
-        return defaults.SITESKIN + '/' + template
-    return template
-
-
 def get_render_from_response(request, url, get_forwarding=False):
-    from django.test.client import Client, FakePayload
 
     path, query = url, ''
 

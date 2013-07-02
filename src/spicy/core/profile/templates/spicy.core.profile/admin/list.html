@@ -4,9 +4,9 @@
 {% block status_title %}<i class="icon-user"></i> {% trans "All profiles" %}{% endblock status_title %}
 
 {% block content %}
-{% with perms.extprofile.change_profile as change_profile %}
-{% with perms.extprofile.view_profile as view_profile %}
-{% with perms.extprofile.delete_profile as delete_profile %}
+{% with perms.profile.change_profile as change_profile %}
+{% with perms.profile.view_profile as view_profile %}
+{% with perms.profile.delete_profile as delete_profile %}
 
 {% if objects_list.count > 0 %}
 

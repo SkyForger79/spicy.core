@@ -161,40 +161,38 @@ class ViewInterface(object):
         """Choose template for rendering.
 
         Uses self.use_admin and self.use_siteskin attributes.
-        
+
         :param template_name: - Template name.
-        """        
-        
+        """
         if self.use_siteskin:
-            app_template = utils.get_template(defaults.SITESKIN + '/' + template_name)
             try:
-                t = loader.find_template(app_template)
-                return app_template
-
-            except TemplateDoesNotExist, e:                                                
-                print_warning('Can not find template: {}'.format(app_template))
+                t = loader.find_template(template_name)
                 return template_name
-
+            except TemplateDoesNotExist:
+                print_warning(
+                    'Can not find template: {}'.format(template_name))
+                return template_name
             except TemplateSyntaxError, e:
-                return app_template
-
+                return template_name
         elif self.app_name in template_name and self.use_admin:
             return template_name
-
-        elif self.use_admin:            
-            app_template =  self.app_name + '/admin/' + template_name            
+        elif self.use_admin:
+            app_template = self.app_name + '/admin/' + template_name
             try:
                 t = loader.find_template(app_template)
                 return app_template
-            except TemplateDoesNotExist, e:                                                
-                template =  'spicy.core.admin/admin/app/' + template_name            
+            except TemplateDoesNotExist:
+                template = 'spicy.core.admin/admin/app/' + template_name
                 if defaults.SITESKIN_DEBUG:
-                    code, line_num  = inspect.getsourcelines(self.func)
-                    print_info('Renderer uses admin template. App module: {0}. Code line: {1}\n\n {2}\n'
-                               'Template does not exist: {3}\n'
-                               'Use common template: {4}\n'.format(
-                            self.module.__name__, line_num, 
-                            ''.join(code[:defaults.SITESKIN_DEBUG_CODE_LEN]), 
+                    code, line_num = inspect.getsourcelines(self.func)
+                    print_info(
+                        'Renderer uses admin template. App module: {0}. '
+                        'Code line: {1}\n\n {2}\n'
+                        'Template does not exist: {3}\n'
+                        'Use common template: {4}\n'.format(
+                            self.module.__name__, line_num,
+                            ''.join(
+                                code[:defaults.SITESKIN_DEBUG_CODE_LEN]),
                             app_template, template))
                 return template
             except TemplateSyntaxError, e:
@@ -215,8 +213,7 @@ class ViewRendererToResponse(ViewInterface):
                 return HttpResponse(cached_data)
 
         output = super(
-            ViewRendererToResponse, self).__call__(
-            request, *args, **kwargs)
+            ViewRendererToResponse, self).__call__(request, *args, **kwargs)
 
         if not isinstance(output, dict):
             if self.use_cache and isinstance(output, HttpResponse):
@@ -224,7 +221,7 @@ class ViewRendererToResponse(ViewInterface):
                     make_cache_key(request), output.content,
                     self.cache_timeout)
 
-            return output        
+            return output
 
         response = render_to_response(
             self.template, self.update_context(output),
@@ -259,7 +256,7 @@ class ViewMultiResponse(ViewInterface):
         template = output.get('template', None)
         if template is None:
             raise ValueError
-        
+
         template = self.get_template(template)
 
         response = render_to_response(
@@ -281,7 +278,8 @@ class JsonRenderer(ViewInterface):
 
         if not request.is_ajax() and not settings.DEBUG:
             return JsonResponse(
-                APIResponseFail(messages=[_('AJAX request required!'),]).response()
+                APIResponseFail(
+                    messages=[_('AJAX request required!')]).response()
             )
 
         if self.use_cache:
@@ -296,7 +294,7 @@ class JsonRenderer(ViewInterface):
         if self.use_cache:
             cached_data = output
             if not isinstance(output, (dict, list)) and isinstance(
-                output, HttpResponse):
+                    output, HttpResponse):
                 cached_data = output.content
             cache.set(
                 make_cache_key(request), cached_data, self.cache_timeout)
@@ -312,7 +310,7 @@ def render_to(template, *args, **kwargs):
     """Render controller data to defined template
 
     See ``ViewInterface`` attributes for details.
-    
+
     Common atrributes:
 
     :param template: template name to use
@@ -332,9 +330,9 @@ def ajax_request(obj, *args, **kwargs):
     You controller must return a ``template`` variable to define used template.
 
     See ``ViewInterface`` attributes for details.
-    
+
     Common atrributes:
-    
+
     :param use_cache: True|False
 
     return: ``spicy.core.siteskin.decorators.JsonResponse`` instance
@@ -353,7 +351,7 @@ def multi_view(*args, **kwargs):
     You controller must return a ``template`` variable to define used template.
 
     See ``ViewInterface`` attributes for details.
-    
+
     Common atrributes:
 
     :param use_siteskin: True|False

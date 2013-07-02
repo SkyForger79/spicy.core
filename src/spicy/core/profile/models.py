@@ -2,14 +2,10 @@ import errno
 import random
 import smtplib
 import socket
-import sys
 import datetime as dt
-from uuid import uuid4
-
 from django.conf import settings
 from django.contrib.auth.models import User, UserManager, Group, Permission
 from django.contrib.auth.models import AnonymousUser as BasicAnonymousUser
-from uuid import uuid4
 from django.contrib.sites.models import Site
 from django.core.mail import send_mail
 from django.db import models, transaction
@@ -19,14 +15,9 @@ from django.utils.hashcompat import sha_constructor
 from django.utils.html import escape
 from django.utils.translation import ugettext_lazy as _
 from django.core.management.color import color_style
-
-#from social_auth.signals import pre_update
-
-from spicy.utils.printing import print_error, print_info
+from spicy.utils.printing import print_error
 from spicy.core.service.models import ProviderModel
-
-from spicy.core.siteskin.utils import get_template
-
+from uuid import uuid4
 from . import cache, defaults
 
 
@@ -45,9 +36,10 @@ class ProfileManager(UserManager):
                 pass
 
     @transaction.commit_on_success
-    def create_inactive_user(self, email, password=None, is_staff=False,
-                             first_name='', last_name='', username='',
-                             send_email=True, next_url=None, realhost=None):
+    def create_inactive_user(
+            self, email, password=None, is_staff=False, first_name='',
+            last_name='', username='', send_email=True, next_url=None,
+            realhost=None):
         now = dt.datetime.now()
         if username == '':
             username = self.get_available_username(email.split('@')[0])
@@ -63,7 +55,7 @@ class ProfileManager(UserManager):
             if password is None:
                 password = self.make_random_password()
             profile.set_password(password)
-                       
+
             if defaults.MANUAL_ACTIVATION:
                 self.model.email_hello(profile, password=password)
                 profile.is_banned = defaults.MANUAL_ACTIVATION
@@ -71,8 +63,8 @@ class ProfileManager(UserManager):
 
             else:
                 profile.generate_activation_key(
-                    send_email=send_email, password=password, realhost=realhost,
-                next_url=next_url)
+                    send_email=send_email, password=password,
+                    realhost=realhost, next_url=next_url)
 
         return profile
 
@@ -181,7 +173,8 @@ class AbstractProfile(User):
         return self.is_active  # and (self.activation_key == self.IS_ACTIVATED)
 
     def generate_activation_key(
-        self, send_email=True, password=None, realhost=None, next_url=None):
+            self, send_email=True, password=None, realhost=None,
+            next_url=None):
         if next_url is None:
             next_url = settings.LOGIN_URL
         salt = sha_constructor(str(random.random())).hexdigest()[:5]
@@ -191,13 +184,13 @@ class AbstractProfile(User):
         self.save()
         if send_email:
             self.email_activation_key(
-                password, realhost, next_url=next_url)        
+                password, realhost, next_url=next_url)
 
     def activation_key_expired(self):
         expiration_date = dt.timedelta(
             days=int(defaults.ACCOUNT_ACTIVATION_DAYS))
-        return self.activation_key == self.IS_ACTIVATED or \
-               (self.date_joined + expiration_date <= dt.datetime.now())
+        return self.activation_key == self.IS_ACTIVATED or (
+            self.date_joined + expiration_date <= dt.datetime.now())
     activation_key_expired.boolean = True
 
     def email_user(self, subject, message, email=None):
@@ -213,22 +206,26 @@ class AbstractProfile(User):
         except socket.error, e:
             # TODO: log error
             if e.errno == errno.ECONNREFUSED:
-                print_error('Connection refused, please configure your mail server correctly.\n')
-            else:                
+                print_error(
+                    'Connection refused, please configure your mail server '
+                    'correctly.\n')
+            else:
                 print_error('Can not send mail, error: {}\n'.format(e))
         except smtplib.SMTPException, e:
             print_error('Can not send mail, SMTP error: {}\n'.format(e))
 
-    def email_hello(self, password='not-activated', realhost=None, next_url=None):
+    def email_hello(
+            self, password='not-activated', realhost=None, next_url=None):
         site = Site.objects.get_current()
         context = {
             'expiration_days': defaults.ACCOUNT_ACTIVATION_DAYS,
-            'user_id': self.id, 'user':self, 'site': site,
-            'password': password, 'key': self.activation_key, 'email': self.email, 'next_url': next_url,
-            'realhost': realhost,}
-        subject = render_to_string(get_template('mail/hello_subject.txt'), context)
+            'user_id': self.id, 'user': self, 'site': site,
+            'password': password, 'key': self.activation_key,
+            'email': self.email, 'next_url': next_url,
+            'realhost': realhost}
+        subject = render_to_string('mail/hello_subject.txt', context)
         subject = ''.join(subject.splitlines())
-        message = render_to_string(get_template('mail/hello_email.txt'), context)
+        message = render_to_string('mail/hello_email.txt', context)
         self.email_user(subject, message)
 
     def email_activation_key(self, password, realhost=None, next_url=None):
@@ -239,12 +236,13 @@ class AbstractProfile(User):
         site = Site.objects.get_current()
         context = {
             'expiration_days': defaults.ACCOUNT_ACTIVATION_DAYS,
-            'password': password, 'user_id': self.id, 'user':self, 'site': site,
-            'key': self.activation_key, 'email': self.email, 'next_url': next_url,
-            'realhost': realhost,}
-        subject = render_to_string(get_template('mail/activation_email_subject.txt'), context)
+            'password': password, 'user_id': self.id, 'user': self,
+            'site': site, 'key': self.activation_key, 'email': self.email,
+            'next_url': next_url, 'realhost': realhost}
+        subject = render_to_string(
+            'mail/activation_email_subject.txt', context)
         subject = ''.join(subject.splitlines())
-        message = render_to_string(get_template('mail/activation_email.txt'), context)
+        message = render_to_string('mail/activation_email.txt', context)
         self.email_user(subject, message)
 
     def get_hash(self, email=None):
@@ -260,9 +258,9 @@ class AbstractProfile(User):
 
         site = Site.objects.get_current()
         context = {'password': password, 'user': self, 'site': site}
-        subject = render_to_string(get_template('mail/passwd_email_subj.txt'), context)
+        subject = render_to_string('mail/passwd_email_subj.txt', context)
         subject = ''.join(subject.splitlines())
-        message = render_to_string(get_template('mail/passwd_email.txt'), context)
+        message = render_to_string('mail/passwd_email.txt', context)
         self.email_user(subject, message)
 
     def email_confirm(self, email):
@@ -271,8 +269,9 @@ class AbstractProfile(User):
             'user': self, 'site': site, 'email': email,
             'hash': self.get_hash(email)}
         subject = ' '.join(
-            render_to_string(get_template('mail/set_email_subject.txt'), context).splitlines())
-        message = render_to_string(get_template('mail/set_email.txt'), context)
+            render_to_string(
+                'mail/set_email_subject.txt', context).splitlines())
+        message = render_to_string('mail/set_email.txt', context)
         self.email_user(subject, message, email=email)
 
     def email_message_notify(self, msg):
@@ -281,9 +280,11 @@ class AbstractProfile(User):
             return
 
         site = Site.objects.get_current()
-        subject = unicode(_('You received a new message from %s'%msg.sender.screenname))
+        subject = unicode(_(
+            'You received a new message from %s' % msg.sender.screenname))
 
-        message = render_to_string(get_template('mail/message_notify_email.txt'),
+        message = render_to_string(
+            'mail/message_notify_email.txt',
             dict(msg=msg, user=self, site=site))
         self.email_user(subject, message)
 
@@ -293,23 +294,18 @@ class AbstractProfile(User):
             return
 
         site = Site.objects.get_current()
-        subject = unicode(_('Restore password for you account on the %s'%site.domain.capitalize()))
+        subject = unicode(_(
+            'Restore password for you account on the %s' %
+            site.domain.capitalize()))
 
-        message = render_to_string(get_template('mail/forgotten_passwd_email.txt'),
+        message = render_to_string(
+            'mail/forgotten_passwd_email.txt',
             dict(password=password, user=self, site=site))
         self.email_user(subject, message)
-
-    def delete(self, *args, **kwargs):
-        user_comments = self.comments.all()
-        for comment in user_comments:
-            comment.delete()
-        super(Profile, self).delete(*args, **kwargs)
 
     @models.permalink
     def get_absolute_url(self):
         return 'profile:public:index', (self.username,), {}
-
-
 
 
     # Signals for permission cache invalidation.
@@ -335,8 +331,10 @@ class AnonymousUser(BasicAnonymousUser):
 
 
 class PermissionProviderModel(ProviderModel):
-    profile = models.ForeignKey(defaults.CUSTOM_USER_MODEL, null=False, blank=False)
-    role = models.ForeignKey(defaults.CUSTOM_ROLE_MODEL, null=False, blank=False)
+    profile = models.ForeignKey(
+        defaults.CUSTOM_USER_MODEL, null=False, blank=False)
+    role = models.ForeignKey(
+        defaults.CUSTOM_ROLE_MODEL, null=False, blank=False)
 
     class Meta:
         db_table = 'auth_permission_provider'
@@ -363,4 +361,3 @@ class TestProfile(AbstractProfile):
     class Meta:
         abstract = False
         db_table = 'test_profile'
-

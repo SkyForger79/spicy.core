@@ -8,10 +8,9 @@ from django.core.exceptions import ImproperlyConfigured
 from itertools import chain
 from spicy.core.service.utils import MethodDecoratorAdaptor
 from spicy.core.siteskin.decorators import render_to, ViewInterface
-from spicy.utils import cached_property, load_module
-from spicy.utils.models import get_custom_model_class
-from spicy.utils.printing import print_error, print_text, print_success
-from spicy.utils.printing import print_warning
+from spicy.utils import cached_property, load_module, find_templates
+from spicy.utils import get_custom_model_class, print_warning
+from spicy.utils import print_error, print_text, print_success
 
 
 GENERIC_CONSUMER = 'GENERIC_CONSUMER'
@@ -370,19 +369,7 @@ class Interface(object):
 
     @cached_property
     def content_templates(self):
-        from spicy.core.admin.conf import app_modules_register
-        templates = []
-        for app in app_modules_register.values():
-            try:
-                templates.extend(
-                    [(tmpl, tmpl) for tmpl in os.listdir(
-                        os.path.join(
-                            os.path.dirname(app.__file__), 'templates',
-                            self.PROVIDER_TEMPLATES_DIR))])
-            except OSError:
-                pass
-        templates.sort()
-        return templates
+        return find_templates(self.PROVIDER_TEMPLATES_DIR)
 
     # TODO default documentation view for the service
     # register it like a request controller

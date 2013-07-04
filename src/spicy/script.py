@@ -593,6 +593,7 @@ class Server(object):
                     sudo('mkdir -m ug=rwx,o= {0}'.format(path))
                     print_ok('[{0}] Creating remote directory: {1}'.format(
                             self.host, path))
+                
         print_done('[done] {0}:{1} server configuration completed.'.format(self.host, self.ip))
         
 
@@ -679,7 +680,7 @@ class ProjectDeployer(object):
                 setattr(self, attr_name,
                         os.path.join(
                         getattr(self.server, path_attr), self.version_label))
-        print_ok('[done] Create directories variables for remote server. {0}'.format(
+        print_ok('[done] Create variables for remote server dirs. {0}'.format(
                 ', '.join(self.server.req_dirs)))
         
         if config is not None:
@@ -687,7 +688,11 @@ class ProjectDeployer(object):
                 self.remote_env_path = config['env_path']
                 print_info('Overwire ENV_PATH, using custom env path from config: {0}'.format(self.remote_env_path))
             
-        print_err('# TODO create remote dirs.')
+        #print_err('# TODO create remote dirs.')
+        if not exists(self.remote_tmp):
+            sudo('mkdir -p -m ug=rwx,o= {0}'.format(self.remote_tmp))
+            print_ok('Creating remote temporary directory: {1}'.format(self.remote_tmp))
+
         
         with settings(
             hide('warnings', 'running', 'stdout', 'stderr'), warn_only=True):

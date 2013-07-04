@@ -818,21 +818,45 @@ class ProjectDeployer(object):
 
         Builder use native `virtualenv` utility. 
         """
+        def make_env():
+            # TODO use native virtualenv or wrapper
+
+            sudo('virtualenv --no-site-packages -p python{0} {1}'.format(
+                    SPICY_SERVER_REQUIREMENTS['python'], self.remote_env_path))            
+            with cd(self.remote_env_path):        
+                sudo('./bin/easy_install pip')
+            
+            # env wrapper
+            #sudo('mkvirtualenv -r %s %s'%(self.remote_req_file, self.version_label))
+
         print_info('[in progress] Upgrade remote enviroment: {0}'.format(self.remote_env_path))
         put(self.local_req_file, self.remote_req_file)
 
         with shell_env(HOME=self.server.env_path, WORKON_HOME=self.server.env_path):        
             if not exists(self.remote_env_path):
-                # TODO use native virtualenv or wrapper
+                make_env()
+            else:
+                overwrite = self.force
+                while not self.force:
+                    proceed = raw_input_cyan('Overwrite existing ENV catalog: {0}? y\\n: '.format(self.remote_env_path))
+                    if proceed in ['n', 'N']:
+                        print_info('Cancel')
+                        return
 
-                sudo('virtualenv --no-site-packages -p python{0} {1}'.format(
-                        SPICY_SERVER_REQUIREMENTS['python'], self.remote_env_path))            
-                with cd(self.remote_env_path):        
-                    sudo('./bin/easy_install pip')
-            
-                # env wrapper
-                #sudo('mkvirtualenv -r %s %s'%(self.remote_req_file, self.version_label))
-                    
+                    if proceed not in ['y', 'Y']:
+                        print_warn('Press y, Y, n or N')
+                        continue
+
+                    if proceed in ['y', 'Y']:
+                        overwrite = True
+                        break
+
+                if overwrite:
+                    print_info('Overwriting: {0}'.format(self.remote_env_path))
+
+                    sudo('rm -rf {}'.format(self.remote_env_path))
+                    make_env()
+
             with cd(self.remote_env_path):        
                 with prefix('source {0}/bin/activate'.format(self.remote_env_path)):               
                     sudo('./bin/pip install -r {0} --upgrade'.format(self.remote_req_file))

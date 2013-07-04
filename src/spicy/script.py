@@ -300,6 +300,8 @@ class Application(object):
     build_path = os.path.abspath('.')
     remote_path = None
 
+    is_django = False
+
     uwsgi_initd = '/etc/init.d/uwsgi.{version_label}-{app_name}'
     uwsgi_conf = '/etc/conf.d/uwsgi.{version_label}-{app_name}'
     nginx_conf = '/etc/nginx/vhosts.d/{version_label}-{app_name}.conf'
@@ -378,6 +380,20 @@ class Application(object):
                 and exists(os.path.join(self.remote_path, 'uwsgi.conf')):
             return True
         return False
+
+    def sync_database(self):
+        # Do not forget enable ENV in the deployer before call this function
+        if self.is_django:
+            with cd(self.remote_path):
+                sudo('./manage.py syncdb')        
+                print_done('Sync database completed.')
+    
+    def collectstatic(self):
+        # Do not forget enable ENV in the deployer before call this function
+        if self.is_django:
+            with cd(self.remote_path):                
+                sudo('./manage.py collectstatic --link --noinput')        
+                print_done('Collect static in the STATIC_ROOT directory.')
     
     def has_cron_tasks(self):
         if exists(os.path.join(self.remote_path, SPICY_APP_CRON_CONFIG)):
@@ -628,8 +644,13 @@ class Database(object):
                 return self.config['database_fixture']
         print_info('Can not get database fixture.')
         
+    @with_settings(sudo_user='postgres')
     def create(self):
-        raise NotImplementedError
+        try:
+            sudo('createdb --encoding=utf8 -O {0} {1}'.format(self.user, self.name))
+            print_done('Create new database')
+        except:
+            pass
 
     def restore_from_fixture(self):
         raise NotImplementedError
@@ -881,6 +902,8 @@ class ProjectDeployer(object):
                 with cd(app.remote_path):
                     if exists('manage.py'):
                         sudo('chmod 755 manage.py')
+                        app.is_django = True
+
                     print_info('Change mode for executable files.: {0}/manage.py'.format(app.remote_path))
 
                 sudo('/etc/init.d/nginx reload', user='root')
@@ -941,6 +964,18 @@ class ProjectDeployer(object):
             app.restart()            
             print_info('restart app: {0}'.format(app))
 
+    def sync_database(self):        
+        with prefix('source {0}/bin/activate'.format(self.remote_env_path)):               
+            for app in self.apps:
+                app.sync_database()            
+                print_info('Sync database app: {0}'.format(app))
+
+    def collectstatic(self):        
+        with prefix('source {0}/bin/activate'.format(self.remote_env_path)):               
+            for app in self.apps:
+                app.collectstatic()            
+                print_info('Collect static files for: {0}'.format(app))
+
     def __call__(self, env_path=None, buildenv=False, 
                  createdb=False, syncdb=False):
         """Main deploy alg.
@@ -964,6 +999,8 @@ class ProjectDeployer(object):
 
         if syncdb:
             self.sync_database()
+
+        self.collectstatic()
                     
         self.restart_apps()
         print_done('Congratulation! Deploy completed.')

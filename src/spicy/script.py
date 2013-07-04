@@ -712,7 +712,7 @@ class ProjectDeployer(object):
         #print_err('# TODO create remote dirs.')
         if not exists(self.remote_tmp):
             sudo('mkdir -p -m ug=rwx,o= {0}'.format(self.remote_tmp))
-            print_ok('Creating remote temporary directory: {1}'.format(self.remote_tmp))
+            print_ok('Creating remote temporary directory: {0}'.format(self.remote_tmp))
 
         
         with settings(

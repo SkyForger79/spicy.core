@@ -72,7 +72,7 @@ class ProviderModel(models.Model):
 
 class ContentProviderModel(ProviderModel):
     template = models.CharField(
-        _('Template'), max_length=255, 
+        _('Template'), max_length=255,
         default='default.html')
 
     @property

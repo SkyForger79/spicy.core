@@ -9,11 +9,13 @@ from django.utils.html import escape
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import REDIRECT_FIELD_NAME
+
 from spicy.core.profile.views import generate_random_password
 from spicy.core.service import api
 from spicy.utils import load_module
 from spicy.utils.models import get_custom_model_class
 from spicy.core.siteskin.decorators import ajax_request, render_to
+
 from . import defaults, models
 from .decorators import is_staff
 from .forms import LoginForm

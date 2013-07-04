@@ -41,6 +41,7 @@ setup(
         'numpydoc==0.4',
         'raven==3.2.1',
         'python-memcached==1.48',
+        'uwsgi',
         
         # spicy.scripts.py: deploy
         'configparser==3.3.0r2',

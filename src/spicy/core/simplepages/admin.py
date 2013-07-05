@@ -76,15 +76,18 @@ def find(request):
         basename = '.'.join(splitted[:-1])
         baseurl = '/'.join(splitted[:-1])
         url = '/{0}/'.format(baseurl)
+        content = file(filepath).read()
         page, is_created = SimplePage.objects.get_or_create(
             title=basename, url=url,
             template_name=os.path.join(base_dir, filename),
-            defaults={'content': file(filepath).read()})
-        if not is_created:
-            existing.append(page)
-        else:
+            defaults={'content': content})
+        if is_created:
             page.sites = [site]
             found.append(page)
+        else:
+            existing.append(page)
+            page.content = content
+            page.save()
     return {'found': found, 'existing': existing}
 
 

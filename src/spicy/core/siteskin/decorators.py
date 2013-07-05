@@ -1,25 +1,22 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 import inspect
-import traceback
 from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
-from django.template import RequestContext
-from django.utils import simplejson
 from django.template import RequestContext, loader
 from django.template.base import TemplateDoesNotExist, TemplateSyntaxError
+from django.utils import simplejson
 from django.utils.translation import ugettext as _
-
 from spicy.core.siteskin import cache, defaults
 from spicy.utils import make_cache_key
 from spicy.utils.printing import print_error, print_info, print_warning
+from . import defaults
 
-from . import defaults, utils
 
 class APIResponse(object):
     """Класс представляет объек ответа API функций.
-    
+
     :param version: версия API 
     :type version: str
     :param code: код результата, может быть либо ``success``, либо ``error``. По умолчанию: ``JSON_API_STATUS_CODE_SUCCESS``
@@ -31,14 +28,16 @@ class APIResponse(object):
     :param data: словарь с данными, представляющими результат работы API функции. По умолчанию: None
     :type data: dict
     """
-    
+
     version = defaults.AJAX_API_VERSION
     code = defaults.AJAX_API_STATUS_CODE_SUCCESS
     messages = None
     errors = None
     data = None
-    
-    def __init__(self, code=defaults.AJAX_API_STATUS_CODE_SUCCESS, messages=None, data=None, errors=None):
+
+    def __init__(
+            self, code=defaults.AJAX_API_STATUS_CODE_SUCCESS,
+            messages=None, data=None, errors=None):
         """Инициализирует объект :class:`APIResponse`
 
         :param code: код результата, может быть либо ``success``, либо ``error``
@@ -79,7 +78,9 @@ class APIResponseFail(APIResponse):
             errors=errors,
         )
 
-AJAX_ACCESS_CONTROL_ALLOW_ORIGIN = getattr(settings, 'AJAX_ACCESS_CONTROL_ALLOW_ORIGIN', None)
+AJAX_ACCESS_CONTROL_ALLOW_ORIGIN = getattr(
+    settings, 'AJAX_ACCESS_CONTROL_ALLOW_ORIGIN', None)
+
 
 class JsonResponse(HttpResponse):
     """
@@ -94,7 +95,8 @@ class JsonResponse(HttpResponse):
             self['Content-Length'] = len(self.content)
 
         if AJAX_ACCESS_CONTROL_ALLOW_ORIGIN is not None:
-            self['Access-Control-Allow-Origin'] = AJAX_ACCESS_CONTROL_ALLOW_ORIGIN;
+            self['Access-Control-Allow-Origin'] = \
+                AJAX_ACCESS_CONTROL_ALLOW_ORIGIN
 
 
 # TODO make tests for this "view interface" implementation
@@ -104,10 +106,11 @@ class ViewInterface(object):
     instance = None
     template = None
 
-    def __init__(self, func, url_pattern=None, instance=None, template=None,
-                 is_public=False, use_cache=False,
-                 cache_timeout=cache.default_timeout,
-                 use_siteskin=False, use_admin=False, use_geos=False):
+    def __init__(
+            self, func, url_pattern=None, instance=None, template=None,
+            is_public=False, use_cache=False,
+            cache_timeout=cache.default_timeout,
+            use_siteskin=False, use_admin=False, use_geos=False):
         self.func = func
         self.url_pattern = url_pattern
         self.instance = instance  # provider_instance
@@ -153,7 +156,7 @@ class ViewInterface(object):
                 context.update(dict(app=admin_apps_register[self.app_name]))
             except KeyError:
                 print_error('Can not load admin application class: {0}'.format(
-                        self.module.__name__))
+                    self.module.__name__))
 
         return context
 

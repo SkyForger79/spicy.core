@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 import random
 import string
-from . import defaults, models
-from .forms import PublicProfileForm
-from .forms import LoginForm, SetEmailForm, SocialProfileUpdateForm
-from .models import BlacklistedIP
+from uuid import uuid4
 from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.core.exceptions import PermissionDenied
@@ -18,10 +15,16 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.cache import never_cache
+
 from spicy.core.profile.utils import get_concrete_profile
 from spicy.core.service import api
 from spicy.core.siteskin.decorators import render_to, ajax_request
-from uuid import uuid4
+
+from . import defaults, models
+from .forms import PublicProfileForm
+from .forms import LoginForm, SetEmailForm, SocialProfileUpdateForm
+from .models import BlacklistedIP
+
 
 Profile = get_concrete_profile()
 

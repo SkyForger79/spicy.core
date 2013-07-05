@@ -300,6 +300,8 @@ class Application(object):
     build_path = os.path.abspath('.')
     remote_path = None
 
+    is_django = False
+
     uwsgi_initd = '/etc/init.d/uwsgi.{version_label}-{app_name}'
     uwsgi_conf = '/etc/conf.d/uwsgi.{version_label}-{app_name}'
     nginx_conf = '/etc/nginx/vhosts.d/{version_label}-{app_name}.conf'
@@ -378,6 +380,20 @@ class Application(object):
                 and exists(os.path.join(self.remote_path, 'uwsgi.conf')):
             return True
         return False
+
+    def sync_database(self):
+        # Do not forget enable ENV in the deployer before call this function
+        if self.is_django:
+            with cd(self.remote_path):
+                sudo('./manage.py syncdb')        
+                print_done('Sync database completed.')
+    
+    def collectstatic(self):
+        # Do not forget enable ENV in the deployer before call this function
+        if self.is_django:
+            with cd(self.remote_path):                
+                sudo('./manage.py collectstatic --link --noinput')        
+                print_done('Collect static in the STATIC_ROOT directory.')
     
     def has_cron_tasks(self):
         if exists(os.path.join(self.remote_path, SPICY_APP_CRON_CONFIG)):
@@ -593,6 +609,7 @@ class Server(object):
                     sudo('mkdir -m ug=rwx,o= {0}'.format(path))
                     print_ok('[{0}] Creating remote directory: {1}'.format(
                             self.host, path))
+                
         print_done('[done] {0}:{1} server configuration completed.'.format(self.host, self.ip))
         
 
@@ -627,8 +644,13 @@ class Database(object):
                 return self.config['database_fixture']
         print_info('Can not get database fixture.')
         
+    @with_settings(sudo_user='postgres')
     def create(self):
-        raise NotImplementedError
+        try:
+            sudo('createdb --encoding=utf8 -O {0} {1}'.format(self.user, self.name))
+            print_done('Create new database')
+        except:
+            pass
 
     def restore_from_fixture(self):
         raise NotImplementedError
@@ -679,7 +701,7 @@ class ProjectDeployer(object):
                 setattr(self, attr_name,
                         os.path.join(
                         getattr(self.server, path_attr), self.version_label))
-        print_ok('[done] Create directories variables for remote server. {0}'.format(
+        print_ok('[done] Create variables for remote server dirs. {0}'.format(
                 ', '.join(self.server.req_dirs)))
         
         if config is not None:
@@ -687,7 +709,11 @@ class ProjectDeployer(object):
                 self.remote_env_path = config['env_path']
                 print_info('Overwire ENV_PATH, using custom env path from config: {0}'.format(self.remote_env_path))
             
-        print_err('# TODO create remote dirs.')
+        #print_err('# TODO create remote dirs.')
+        if not exists(self.remote_tmp):
+            sudo('mkdir -p -m ug=rwx,o= {0}'.format(self.remote_tmp))
+            print_ok('Creating remote temporary directory: {0}'.format(self.remote_tmp))
+
         
         with settings(
             hide('warnings', 'running', 'stdout', 'stderr'), warn_only=True):
@@ -792,21 +818,45 @@ class ProjectDeployer(object):
 
         Builder use native `virtualenv` utility. 
         """
+        def make_env():
+            # TODO use native virtualenv or wrapper
+
+            sudo('virtualenv --no-site-packages -p python{0} {1}'.format(
+                    SPICY_SERVER_REQUIREMENTS['python'], self.remote_env_path))            
+            with cd(self.remote_env_path):        
+                sudo('./bin/easy_install pip')
+            
+            # env wrapper
+            #sudo('mkvirtualenv -r %s %s'%(self.remote_req_file, self.version_label))
+
         print_info('[in progress] Upgrade remote enviroment: {0}'.format(self.remote_env_path))
-        put(self.local_req_file, self.remote_req_file)
+        put(self.local_req_file, self.remote_req_file, use_sudo=True)
 
         with shell_env(HOME=self.server.env_path, WORKON_HOME=self.server.env_path):        
             if not exists(self.remote_env_path):
-                # TODO use native virtualenv or wrapper
+                make_env()
+            else:
+                overwrite = self.force
+                while not self.force:
+                    proceed = raw_input_cyan('Overwrite existing ENV catalog: {0}? y\\n: '.format(self.remote_env_path))
+                    if proceed in ['n', 'N']:
+                        print_info('Cancel')
+                        return
 
-                sudo('virtualenv --no-site-packages -p python{0} {1}'.format(
-                        SPICY_SERVER_REQUIREMENTS['python'], self.remote_env_path))            
-                with cd(self.remote_env_path):        
-                    sudo('./bin/easy_install pip')
-            
-                # env wrapper
-                #sudo('mkvirtualenv -r %s %s'%(self.remote_req_file, self.version_label))
-                    
+                    if proceed not in ['y', 'Y']:
+                        print_warn('Press y, Y, n or N')
+                        continue
+
+                    if proceed in ['y', 'Y']:
+                        overwrite = True
+                        break
+
+                if overwrite:
+                    print_info('Overwriting: {0}'.format(self.remote_env_path))
+
+                    sudo('rm -rf {}'.format(self.remote_env_path))
+                    make_env()
+
             with cd(self.remote_env_path):        
                 with prefix('source {0}/bin/activate'.format(self.remote_env_path)):               
                     sudo('./bin/pip install -r {0} --upgrade'.format(self.remote_req_file))
@@ -876,6 +926,8 @@ class ProjectDeployer(object):
                 with cd(app.remote_path):
                     if exists('manage.py'):
                         sudo('chmod 755 manage.py')
+                        app.is_django = True
+
                     print_info('Change mode for executable files.: {0}/manage.py'.format(app.remote_path))
 
                 sudo('/etc/init.d/nginx reload', user='root')
@@ -936,6 +988,18 @@ class ProjectDeployer(object):
             app.restart()            
             print_info('restart app: {0}'.format(app))
 
+    def sync_database(self):        
+        with prefix('source {0}/bin/activate'.format(self.remote_env_path)):               
+            for app in self.apps:
+                app.sync_database()            
+                print_info('Sync database app: {0}'.format(app))
+
+    def collectstatic(self):        
+        with prefix('source {0}/bin/activate'.format(self.remote_env_path)):               
+            for app in self.apps:
+                app.collectstatic()            
+                print_info('Collect static files for: {0}'.format(app))
+
     def __call__(self, env_path=None, buildenv=False, 
                  createdb=False, syncdb=False):
         """Main deploy alg.
@@ -959,6 +1023,8 @@ class ProjectDeployer(object):
 
         if syncdb:
             self.sync_database()
+
+        self.collectstatic()
                     
         self.restart_apps()
         print_done('Congratulation! Deploy completed.')

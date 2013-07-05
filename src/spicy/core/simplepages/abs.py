@@ -5,13 +5,18 @@ from django.utils.translation import ugettext_lazy as _
 class AbstractBasePage(models.Model):
     url = models.CharField(_('URL'), max_length=100, db_index=True)
     title = models.CharField(_('title'), max_length=200)
-    content = models.TextField(_('content'), blank=True)
+    content = models.TextField(
+        _('content'), blank=True,
+        default=(
+            '{% block content %}\n<!-- Page content here-->\n'
+            '{% endblock %}'))
     template_name = models.CharField(
         _('template name'), max_length=70, blank=True,
-        default='default.html',
+        default='spicy.core.simplepages/default.html',
         help_text=_(
             "Example: 'contact_page.html'. If this isn't "
-            "provided, the system will use 'default.html'."))
+            "provided, the system will use "
+            "'spicy.core.simplepages/default.html'."))
     sites = models.ManyToManyField('sites.Site')
 
     class Meta:

@@ -830,7 +830,7 @@ class ProjectDeployer(object):
             #sudo('mkvirtualenv -r %s %s'%(self.remote_req_file, self.version_label))
 
         print_info('[in progress] Upgrade remote enviroment: {0}'.format(self.remote_env_path))
-        put(self.local_req_file, self.remote_req_file)
+        put(self.local_req_file, self.remote_req_file, use_sudo=True)
 
         with shell_env(HOME=self.server.env_path, WORKON_HOME=self.server.env_path):        
             if not exists(self.remote_env_path):

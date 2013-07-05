@@ -1,0 +1,48 @@
+{% extends current_admin_base %}
+{% load spicy i18n navigator %}
+
+{% block title %}{% trans "Create user profile" %}{% endblock %}
+{% block status_title %}<i class="icon-plus-sign-alt"></i> {% trans "Create group" %}{% endblock status_title %}
+
+{% block content %}
+<div class="container-fluid hpadded">
+    <div class="row-fluid">
+      <div class="span12">
+        <div class="box">
+          <div class="box-header">
+            <span class="title">{% trans "Create user group" %}</span>
+          </div>
+
+          <div class="box-content">
+            <form class="fill-up validatable" method="post"
+                  action="." autocomplete="off">
+              {% csrf_token %}
+              <div class="row-fluid">
+                <div class="padded separate-sections">
+                  <ul>
+		    <li>
+		      <h2>{{ group_form.name }}{{ group_form.name.errors  }}</h2>{{ group_form.id }}		      
+		      <div class="form">
+			{{ group_form.permissions }}
+			{{ group_form.permissions.errors }}
+		      </div>
+		    </li>
+                  </ul>
+		</div>
+                <div class="form-actions controls">
+                  <button type="submit" class="btn btn-blue">{% trans "Create" %}</button>
+		  {% if perms.auth.delete_group and group_form.instance.pk %}
+		  <a href="{% url profile:admin:delete-group group_form.instance.pk %}">{% trans "Delete" %}</a>{% endif %}
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+
+{% block extra_js %}{{ form.media }}{% endblock %}
+
+

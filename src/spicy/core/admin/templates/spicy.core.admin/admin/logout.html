@@ -1,0 +1,27 @@
+{% extends current_admin_base %}{% load i18n %}{% load url from future %}
+{% block title %}{% trans "Goodbye" %}{% endblock title %}
+{% block top_navbar %}{% endblock top_navbar %}
+
+{% block menu %}{% endblock menu %}
+{% block status_board %}{% endblock status_board %}
+
+{% block content-class %}container{% endblock %}
+{% block content %}
+<div class="span4 offset4">
+  <div class="padded">
+    <div class="login box" style="margin-top: 80px;">
+
+      <div class="box-header">
+        <span class="title">{% trans "Goodbye" %}</span>
+      </div>
+      
+      <div class="box-content padded">	
+	<p>{% trans "Thanks for spending some quality time with the Web site today." %}</p>	
+	<p><a href="{% url 'spicyadmin:public:login' %}" class="btn btn-blue btn-block">
+	    {% trans 'Log in again' %} <i class="icon-signin"></i></a></p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+

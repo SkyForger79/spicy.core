@@ -159,7 +159,7 @@ def sscp(appname, user, args):
     Using subprocess.PIPE, if you're not reading from the pipe,
     could cause your program to block if it generates a lot of output.
     via. http://stackoverflow.com/questions/10251391/suppressing-output-in-python-subprocess-call"""
-    devnull = open('/dev/null', 'w')
+    devnull = codecs.open('/dev/null', 'w', encoding='utf-8')
     # result = subprocess.call(cmd_list, stdout=devnull, stderr=devnull)
     result = subprocess.call(cmd_list)
 
@@ -262,14 +262,14 @@ def handle_create_app(ns):
 
             if file_with_path.endswith(('.py',)):
                 """Post-copying processing (template rendering)"""
-                template_str = open(file_with_path, 'r').read()
+                template_str = codecs.open(file_with_path, 'r', encoding='utf-8').read()
                 if template_str:
                     print_info('Processing now: {}'.format(green(file_with_path)))
 
                 template = string.Template(template_str)
                 #: using safe substituting, it's not throwing exceptions
                 result_str = template.safe_substitute(template_ctx)
-                fh = open(file_with_path, 'w+')
+                fh = codecs.open(file_with_path, 'w+', encoding='utf-8')
                 fh.write(result_str)
                 fh.close()
 
@@ -766,7 +766,7 @@ class ProjectDeployer(object):
                 raise ApplicationNotFound
 
             if os.path.exists(app.req_file):
-                req_app_fd = open(app.req_file)
+                req_app_fd = codecs.open(app.req_file, encoding='utf-8')
                 print_info('[in progress] %s -> %s' % (app.req_file, self.local_req_file))
 
                 app_reqs = []
@@ -806,7 +806,7 @@ class ProjectDeployer(object):
             else:
                 print_info('Application [%s] hasn\'t %s file.' % (app, SPICY_REQ_FILE))
 
-        req_file_fd = open(self.local_req_file, 'a')
+        req_file_fd = codecs.open(self.local_req_file, 'w', encoding='utf-8')
         req_file_fd.writelines('\n'.join(data))
         req_file_fd.close()
         print_done('[done] Common %s file generation completed.' % (SPICY_REQ_FILE))
@@ -829,8 +829,14 @@ class ProjectDeployer(object):
             # env wrapper
             #sudo('mkvirtualenv -r %s %s'%(self.remote_req_file, self.version_label))
 
-        print_info('[in progress] Upgrade remote enviroment: {0}'.format(self.remote_env_path))
-        put(self.local_req_file, self.remote_req_file, use_sudo=True)
+        if exists(self.remote_req_file):
+            sudo('rm {}'.format(self.remote_req_file))
+            
+        # TODO: put(self.local_req_file, self.remote_req_file, user_sudo=True)
+        # error while copy file  using `put` call.
+        local('scp {0} {1}:{2}'.format(self.local_req_file, self.server.host, self.remote_req_file))
+        
+        print_info('[in progress] Upgrade remote enviroment: {0}'.format(self.remote_env_path))        
 
         with shell_env(HOME=self.server.env_path, WORKON_HOME=self.server.env_path):        
             if not exists(self.remote_env_path):

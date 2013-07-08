@@ -1,7 +1,7 @@
 import functools
 import importlib
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, NoReverseMatch
 from django.utils.functional import SimpleLazyObject, new_method_proxy
 from django.utils.translation import ugettext_lazy as _
 from spicy.utils.printing import print_info
@@ -67,6 +67,14 @@ class AdminAppBase(object):
 
     def __init__(self):
         pass
+
+    def edit_url(self, args=[0,]):        
+        try:
+            return reverse(self.name + ':admin:edit', args=args)
+        except NoReverseMatch:
+            if settings.DEBUG:
+                print_info('AppAdmin [{0}] has no admin:edit url'.format(self.name))
+        
 
     # uncomment only in the working admin app module
     #@render_to('menu.html', use_admin=True)

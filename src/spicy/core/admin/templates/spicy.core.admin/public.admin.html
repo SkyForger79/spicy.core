@@ -1,0 +1,35 @@
+{% load sk staticfiles %}{% load url from future %}
+{% if request.user.is_staff %}
+
+<link rel="stylesheet" href="{% static 'spicy.core.admin/css/public.admin.css' %}">
+<script>
+$(function(){
+  $(".spicy-admin").each( function(i, val){
+    var tmp = val.id.split('_');
+    if (tmp[0] && tmp[1]) {
+      cid = tmp[0], app = tmp[1];
+
+      var url;
+     
+{% for app in ADMIN_APPS %}
+{% if app.edit_url %}
+{#% if app.perms.view %#}
+
+if (app == '{{ app.name }}'){
+   url = "{{ app.edit_url }}";
+}
+
+{#% endif %#}
+{% endif %}
+
+{% endfor %}
+
+      if (url)
+          $(this).prepend(
+              "<a href='" + url.replace(0, cid) +
+              "' class='edit' target='blank' title='{% trans "Edit" %} "+app+".id="+cid+"'><i></i></a>");
+    };
+  });
+});
+</script>
+{% endif %}

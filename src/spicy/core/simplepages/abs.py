@@ -11,7 +11,7 @@ class AbstractBasePage(models.Model):
             '{% block content %}\n<!-- Page content here-->\n'
             '{% endblock %}'))
     template_name = models.CharField(
-        _('template name'), max_length=70, blank=True,
+        _('template name'), max_length=255, blank=True,
         default='spicy.core.simplepages/default.html',
         help_text=_(
             "Example: 'contact_page.html'. If this isn't "

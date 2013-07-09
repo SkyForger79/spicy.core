@@ -1,0 +1,84 @@
+{% extends current_admin_base %}{% load navigator pagination %}{% load url from future %}
+
+{% block title %}{% trans "All pages" %}{% endblock %}
+{% block status_title %}<i class="icon-user"></i> {% trans "All pages" %}{% endblock status_title %}
+
+{% block content %}
+{% with perms.simplepages.change_simplepage as change_simplepage %}
+{% with perms.simplepage.delete_simplepage as delete_simplepage %}
+
+{% if objects_list.count > 0 %}
+
+<div class="container-fluid padded">
+  <div class="row-fluid">
+    <div class="span12">      	
+          <div class="table table-normal">            
+            <div class="hpadded">
+              <div class="pagination pagination-small" style="margin-top: 0">
+                {% pagination %}
+              </div>
+            </div>
+
+            <table class="table table-normal" style="border-top: 1px solid #CDCDCD;">
+              <thead>
+                <tr role="row">
+                  <td>
+                    &nbsp;
+                  </td>
+                  <td>{% nav_order_url nav 'url' _('URL') "icon-sort" "icon-sort-down" "icon-sort-up" %}</td>
+                  <td>{% nav_order_url nav 'title' _('title') "icon-sort" "icon-sort-down" "icon-sort-up" %}</td>
+                  <td>{% nav_order_url nav 'template_name' _('template name') "icon-sort" "icon-sort-down" "icon-sort-up" %}</td>
+                  <td>{% trans 'Sites' %}</td>
+                  <td>{% nav_order_url nav 'enable_comments' _('enable comments') "icon-sort" "icon-sort-down" "icon-sort-up" %}</td>
+                  <td>{% nav_order_url nav 'registration_required' _('registration required') "icon-sort" "icon-sort-down" "icon-sort-up" %}</td>
+                </tr>
+              </thead>
+
+              <tbody>
+                {% for simplepage in objects_list %}
+                <tr class="{% cycle 'odd' 'even' %}">
+                  <td class="icon">
+                    <input type="checkbox" name="select"  class="groupSelectCheckbox" id="groupSelect_simplepage_{{ simplepage.id }}" autocomplete="off" />
+                  </td>
+                  <td>
+		    {% if change_simplepage or view_simplepage %}		    
+                    <a href="{% url 'simplepages:admin:edit' simplepage.id %}"><i class="icon-user"></i> {{ simplepage.url }}</a>
+		    {% else %}<i class="icon-user"></i> {{ simplepage.url }}{% endif %}
+                  </td>
+                  <td>{{ simplepage.title }}</td>
+                  <td>{{ simplepage.template_name }}</td>
+                  <td>
+                    {% for site in simplepage.sites.all %}
+                    <a href="http://{{ site.domain }}">{{ site.name }}</a>
+                    {% if not forloop.last %}, {% endif %}{% empty %}{% trans "No site" %}{% endfor %}
+                  </td>
+                  <td style="text-align: center;">
+                    <i class="{{ simplepage.enable_comments|yesno:'green icon-ok,icon-remove red' }}"></i>
+		  </td>
+                  <td style="text-align: center;">
+                    <i class="{{ simplepage.registration_required|yesno:'green icon-ok,icon-remove red' }}"></i>
+		  </td>
+		</tr>
+		{% endfor %}
+	      </tbody>
+	    </table>
+
+	    <div class="table-footer">
+	      <div class="hpadded" style="margin-top: 5px;">
+		<div class="pagination pagination-small" style="margin-top: 0">
+		  {% pagination %}
+		</div>
+	      </div>
+	    </div>
+	    
+	  </div>
+	</div>
+	
+	{% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endwith %}{% endwith %}
+{% endblock %}

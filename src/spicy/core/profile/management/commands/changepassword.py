@@ -1,7 +1,10 @@
 from django.contrib.auth.management.commands.changepassword import Command
 from django.core.management.base import CommandError
 
-from extprofile.models import Profile
+from spicy.utils.models import get_custom_model_class
+from spicy.core.profile import defaults
+
+Profile = get_custom_model_class(defaults.CUSTOM_USER_MODEL)
 
 import getpass
 
@@ -17,7 +20,7 @@ class Command(Command):
             email = getpass.getuser()
 
         try:
-            p = Profile.objects.get(email=email)
+            profile = Profile.objects.get(email=email)
         except Profile.DoesNotExist:
             raise CommandError("profile '%s' does not exist" % email)
 

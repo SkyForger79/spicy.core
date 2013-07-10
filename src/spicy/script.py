@@ -566,7 +566,9 @@ class Server(object):
     def __init__(self, host, config=None):        
         host_info = local('host {0}'.format(str(host.strip())), capture=True)        
         try:
-            self.ip = host_info.splitlines()[0].split('has address')[1].strip()
+            for line in host_info.splitlines():
+                if 'has address' in line:
+                    self.ip = line.split('has address')[1].strip()
         except Exception, e:
             print_err('Can not get server ip address')            
             print(traceback.format_exc())

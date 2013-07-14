@@ -1,0 +1,9 @@
+.error {
+    color: red;
+}
+
+.thumbnails > li {
+float: left;
+margin-bottom: 0px;
+margin-left: 0px;
+}

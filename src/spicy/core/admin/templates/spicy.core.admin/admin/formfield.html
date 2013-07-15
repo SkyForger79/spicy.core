@@ -3,6 +3,7 @@
 
 {% if type == 'li-file' %}
 <li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
+  {{ label }}
   {{ field }}
   {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
   {% if field.help_text %}

@@ -1,3 +1,4 @@
+{% load url from future %}
 {% if request.user.is_superuser %}
 <li class="dark-nav{% if "/admin/settings" in request.path %} active{% endif %}">
   <span class="glow"></span>

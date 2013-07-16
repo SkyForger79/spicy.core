@@ -24,15 +24,3 @@ urlpatterns = patterns(
     url(r'^jsi18n/$', 'django.views.i18n.javascript_catalog'),
     )
 
-
-# BUG delete this
-# if settings.DEBUG:
-#     urlpatterns += patterns(
-#         '',
-#         url(r'^{0}(?P<path>.*)$'.format(settings.STATIC_ROOT.lstrip('/')),
-#             'django.views.static.serve', {'document_root': settings.STATIC_ROOT}),
-
-#         url(r'^{0}(?P<path>.*)$'.format(settings.MEDIA_URL.lstrip('/')),
-#             'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
-                            
-#     )

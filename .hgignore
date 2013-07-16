@@ -17,7 +17,6 @@ build
 .\#*
 \#*
 # archive files
-*.zip
 *.tar.gz
 *.rar
 # picture files

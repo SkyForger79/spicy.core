@@ -1,52 +1,28 @@
 # -*- coding: utf-8 -*-
-import base64
-import hashlib
 import os
 import pytils
 import re
 import sys
-from datetime import datetime
-from math import ceil
-
-from django.conf import settings
-from django.core.paginator import Paginator, InvalidPage
-from django.http import Http404
-from django.utils.encoding import smart_str
 from django.utils.translation import ugettext_lazy as _
 
 
+# XXX title_func unused
+# This is broken, use find_templates from utils.templates!
 def get_templates(
-    path, title_func=lambda template: template,
-    filter_func=lambda template: True):
+        path, title_func=lambda template: template,
+        filter_func=lambda template: True):
     try:
         templates = [
-           (template, template) for template in os.listdir(path)
-           if filter_func(template)]
+            (template, template) for template in os.listdir(path)
+            if filter_func(template)]
         templates.sort()
         return templates
     except OSError:
         return []
 
 
-# CACHE_PREFIX = getattr(settings, 'CACHE_PREFIX', 'spicy')
-# CACHE_TIMEOUT = getattr(settings, 'CACHE_TIMEOUT', 1*60)
-# TODO: refactor
-CACHE_PREFIX = 'spicy'
-CACHE_TIMEOUT = 1 * 60
-
 def make_cache_key(request=None, path=None):
-    path = '%s:%s' % (
-        CACHE_PREFIX, (
-            request.get_full_path() if request else path))
-
-    return path
-    #params = [request.get_full_path()]
-    #if hasattr(request, 'geos'):
-    #    from maps.utils import get_geos_coords
-    #    params.append(','.join(map(str(get_geos_coords(request.geos)))))
-    #params = hashlib.sha512(''.join(map(str, params))).hexdigest()
-    #return ':'.join([CACHE_PREFIX, params])
-
+    return path or request.get_full_path()
 
 RU_ALPHABET = [
     u'А', u'Б', u'В', u'Г', u'Д', u'Е', u'Ё',
@@ -104,7 +80,7 @@ KNOWN_CHARS = (
     ('_-', '-'),
     #('--', '-'),
     #('__', '_'),
-    )
+)
 
 MONTHS = (
     _("January"), _("February"), _("March"), _("April"), _("May"), _("June"),
@@ -154,13 +130,12 @@ cdata = lambda s: '<![CDATA[%s]]>' % CDATA_RE.sub(
 # escape quoutes and tags in inserted data, but using CDATA is faster.
 
 
-
 def strip_invalid_chars(data, extra=u'', verbose=False):
     """
     Remove characters that break XML parsers.
 
-    This is meant to clean weird shit that occasionally appears in text, probably
-    because M$ Word was used.
+    This is meant to clean weird shit that occasionally appears in text,
+    probably because M$ Word was used.
     """
     remove_re = re.compile(u'[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F%s]' % extra)
     data, count = remove_re.subn('', data)

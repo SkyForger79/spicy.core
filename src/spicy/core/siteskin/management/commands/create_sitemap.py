@@ -12,6 +12,7 @@ from optparse import make_option
 from spicy.mediacenter.defaults import MEDIACENTER_ROOT
 from spicy.presscenter.defaults import DOC_THUMB_SIZE, CUSTOM_DOCUMENT_MODEL
 from spicy.core.service import api
+from spicy.core.simplepages.defaults import SIMPLE_PAGE_MODEL
 from spicy.core.siteskin import defaults
 from spicy.core.siteskin.common import cdata
 from cStringIO import StringIO
@@ -31,7 +32,7 @@ SITEMAP = [
         'has_media': True,
     },
     {
-        'model': 'flatpages.FlatPage',
+        'model': SIMPLE_PAGE_MODEL,
         'filter': {'sites__id__exact': settings.SITE_ID},
         'exclude': {'url__startswith': '/test/'},
         'gen': {

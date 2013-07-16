@@ -5,7 +5,6 @@ from . import defaults
 
 
 def get_render_from_response(request, url, get_forwarding=False):
-
     path, query = url, ''
 
     if '?' in url:

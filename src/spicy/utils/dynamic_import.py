@@ -1,4 +1,5 @@
-import sys, traceback
+import sys
+import traceback
 from django.utils.importlib import import_module
 from django.core.exceptions import ImproperlyConfigured
 

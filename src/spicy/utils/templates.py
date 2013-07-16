@@ -1,8 +1,7 @@
 import os
-import traceback
 from django.conf import settings
 from spicy.core.admin.conf import app_modules_register
-from spicy.utils.printing import print_error, print_text
+
 
 def find_templates(base_dir, name_tuples=True):
     templates = []
@@ -27,9 +26,7 @@ def find_templates(base_dir, name_tuples=True):
                 templates.extend(
                     [os.path.join(path, template)
                      for template in os.listdir(path)])
-        except OSError, e:
-            #print_error(e)
-            #print_text(traceback.format_exc())
+        except OSError:
             pass
 
     templates.sort()

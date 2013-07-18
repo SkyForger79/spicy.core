@@ -1,6 +1,5 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-
 from spicy.core.service import api
 from spicy.core.service.models import ProviderModel
 from spicy.core.profile.defaults import CUSTOM_USER_MODEL
@@ -11,6 +10,7 @@ class NonTrashManager(models.Manager):
     def get_query_set(self):
         query_set = super(NonTrashManager, self).get_query_set()
         return query_set.filter(is_deleted=False)
+
 
 class TrashManager(models.Manager):
     def get_query_set(self):
@@ -43,8 +43,9 @@ class TrashModel(models.Model):
                     user = get_current_user()
                 prov.user = user
                 prov.save()
-            except:
-                print u"@@ Object %s already in trash" % self
+            except Exception, e:
+                print u"Error while moving %s to trash: %s" % (
+                    e, self)
         else:
             super(TrashModel, self).delete()
 

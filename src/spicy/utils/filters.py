@@ -1,10 +1,11 @@
 from django.conf import settings
 from django.core.paginator import Paginator, InvalidPage
+from django.utils.translation import ugettext as _
 from django.http import Http404
 
 OBJECTS_PER_PAGE = getattr(settings, 'OBJECTS_PER_PAGE', 50)
-DEFAULT_FILTERS = getattr(settings, 'DEFAULT_FILTERS',
-                          [('search_text', ''),])
+DEFAULT_FILTERS = getattr(
+    settings, 'DEFAULT_FILTERS', [('search_text', '')])
 
 
 class NavigationFilter:
@@ -35,15 +36,15 @@ class NavigationFilter:
             self.order = [direction + field for field in fields]
 
     def get_queryset_with_paginator(
-        self, model, base_url=None, search_query=None,
-        obj_per_page=OBJECTS_PER_PAGE, manager='objects',
-        result_manager='objects', distinct=False):
+            self, model, base_url=None, search_query=None,
+            obj_per_page=OBJECTS_PER_PAGE, manager='objects',
+            result_manager='objects', distinct=False):
 
         base_url = base_url or self.request.path
 
         model_manager = getattr(model, manager)
         model_qset = model_manager.values_list('id', flat=True)
-        
+
         # XXX: check usage
         if type(search_query) is dict:
             queryset = model_qset.filter(**search_query)
@@ -51,7 +52,7 @@ class NavigationFilter:
         elif type(search_query) is tuple:
             queryset = model_qset.filter(*search_query[0], **search_query[1])
 
-        elif callable(search_query): # XXX
+        elif callable(search_query):  # XXX
             queryset = search_query(model_qset)
 
         elif search_query is not None:
@@ -72,14 +73,14 @@ class NavigationFilter:
 
             page = paginator.page(self.page)
         except InvalidPage:
-            raise Http404(unicode(_('Page %s does not exist.' % self.page)))
+            raise Http404(_('Page %s does not exist.') % self.page)
             # Django that can't throw exceptions other than 404.
 
         result_qset = getattr(
             model, result_manager).filter(
-            id__in=tuple(page.object_list))
+                id__in=tuple(page.object_list))
         if self.order:
-            result_qset = result_qset.order_by(*self.order) # 1082
+            result_qset = result_qset.order_by(*self.order)  # 1082
 
         # XXX
         page.object_list = result_qset
@@ -90,4 +91,3 @@ class NavigationFilter:
         paginator.base_url = base_url
 
         return paginator
-

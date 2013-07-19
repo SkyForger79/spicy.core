@@ -1,0 +1,72 @@
+{% extends current_base %}{% load url from future %}{% load staticfiles sk %}
+
+{% block content %}
+
+<h2>Регистрация или <a href="{% url 'profile:public:signin' %}?{{ REDIRECT_FIELD_NAME }}={{ redirect }}" id="login-link">Авторизация</a></h2>
+{% if message %}<p>{{ message }}</p>{% endif %}
+  <form method="POST" action="{% if next %}?next={{ next }}{% endif %}" enctype="multipart/form-data" id="auth-registration-form">{% csrf_token %}
+    <ul>
+      <li><i>*</i><label>Email:</label>{{ form.email }}
+        {{ form.email.errors }}</li>
+      <li><i>*</i><label>Пароль:</label>{{ form.password }}
+        {{ form.password.errors }}</li>
+      <li><i>*</i><label>Повторите пароль:</label>{{ form.password2 }}
+        {{ form.password2.errors }}</li>
+      <li><i>*</i><label>Защитный код:</label>{{ form.captcha }}{{ form.captcha.errors }}</li>
+    </ul>
+
+    {% comment %}
+    
+          <p>Экспресс регистрация с помощью аккаунта других сервисов и социальных сетей</p>
+          {% include "spicy.core.profile/social/networks.html" %}
+
+      {% endcomment %}
+
+      <ul>
+        <li><label>{{ form.subscribe_news }} Хочу получать рассылку с последними новостями</label></li>
+        <li><label>{{ form.accept_agreement }} Я прочитал и принимаю условия<!--[if IE]><br><![endif]--> <a href="{% 'profile:public:user-agreement' %}">пользовательского соглашения</a></label>
+          {{ form.accept_agreement.errors }}</li>
+      </ul>
+
+      {% if no_signup_notify_redirect %}
+      <input type="hidden" name="no_signup_notify_redirect" value="1" />
+      {% endif %}
+
+
+    <input type="submit" value="Зарегистрироваться"/>
+  </form>
+<script type="text/javascript">
+{% if redirect_now %}
+window.location.href = '{{ redirect }}';
+{% else %}
+$('#login-link').click(
+  function(){
+    $.get(
+      '{% url profile:public:login-widget %}',
+      function(data){
+        $('#auth-registration-block').html(data);
+      }
+    );
+    return false;
+  }
+);
+$('#auth-registration-form').submit(
+  function(){
+    $.ajax({
+      type: 'POST',
+      url: '{% url profile:public:registration-widget %}',
+      Data: $('#auth-registration-form').serialize(),
+      success: function(data, textStatus){
+        $('#auth-registration-block').html(data);
+      }
+    });
+    return false;
+  }
+);
+{% endif %}
+</script>
+
+
+
+
+{% endblock content %}

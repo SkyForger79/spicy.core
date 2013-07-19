@@ -10,7 +10,7 @@ from django.utils.translation import ugettext as _
 from spicy.core.admin import defaults as admin_defaults
 from spicy.core.admin.conf import AdminAppBase, AdminLink, Perms
 from spicy.core.service import api
-from spicy.core.siteskin.decorators import render_to, ajax_request
+from spicy.core.siteskin.decorators import render_to, ajax_request, APIResponse, APIResponseFail
 from spicy.utils import NavigationFilter
 from spicy.utils.models import get_custom_model_class
 from . import defaults, forms
@@ -58,11 +58,11 @@ def passwd(request, profile_id):
         form = forms.AdminPasswdForm(profile, request.POST)
         if form.is_valid():
             form.save()
-            message = settings.MESSAGES['success']
-        else:
-            message = settings.MESSAGES['error']
+            return APIResponse(messages=[_('Password successfully changed.'),])
+        return APIResponseFail(errors=[unicode(form.errors.as_text()),])            
 
-    return dict(message=unicode(message),)
+    return APIResponse(
+        messages=[_('Not enough parametes has been passed. Use POST request.'),])
 
 
 @is_staff(required_perms='profile.add_profile')
@@ -150,7 +150,7 @@ def edit(request, profile_id):
         message = _('New account created, welcome to editing.')
 
     if (request.method == 'POST' and request.user.has_perm(
-            'extprofile.change_profile')):
+            'profile.change_profile')):
         form = forms.ProfileForm(request.POST, instance=profile)
         if form.is_valid():
             form.save()
@@ -171,6 +171,16 @@ def edit(request, profile_id):
         'services': api.register.get_list(consumer=profile)
     }
 
+@is_staff(required_perms='profile.delete')
+@render_to('delete.html', use_admin=True)
+def delete(request, profile_id):
+    message = ''
+    profile = get_object_or_404(Profile, id=profile_id)
+    if request.POST.get('confirm', False):
+        media.delete()
+        return HttpResponseRedirect(reverse('profile:admin:index'))
+    return {
+        'message': message, 'instance': profile}
 
 @is_staff(required_perms='profile.moderate_profile')
 @render_to('spicy.core.profile/admin/moderate.html', use_admin=True)
@@ -249,17 +259,14 @@ def delete_profile_list(request):
 def resend_activation(request, profile_id):
     try:
         profile = Profile.objects.get(pk=profile_id)
-        if profile.check_activation():
-            message = _('Profile is already active')
-            status = 'error'
-        else:
-            profile.generate_activation_key(realhost=request.get_host())
-            message = ''
-            status = 'ok'
+        if profile.is_active:
+            return APIResponseFail(messages=[_('Profile is already activated.'),])
+
+        profile.generate_activation_key(realhost=request.get_host())
+        return APIResponse(messages=[_('Activation key has been sent.'),])
     except Profile.DoesNotExist:
-        message = _('Unable to send activation key, please try again later')
-        status = 'error'
-    return {'message': message, 'status': status}
+        return APIResponseFail(messages=[_('Profile does not exists!'),])
+    return APIResponse(messages=[_('Do nothing.. Use correct API call'),])
 
 
 @is_staff

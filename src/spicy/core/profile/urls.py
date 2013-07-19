@@ -8,18 +8,20 @@ public_urls = patterns(
     url(r'^signin/$', 'signin', name='signin'),
     url(r'^signup/$', 'signup', name='signup'),
     url(r'^signout/$', 'signout', name='signout'),
-    url(r'^email-notify/$', 'email_notify', name='email-notify'),
+
+    url(r'^success-signup/$', 'success_signup', name='success-signup'),
     url(r'^activate/(?P<profile_id>\d+)/(?P<activation_key>\w+)/$', 'activate', name='activate'),  
+
+    url(r'^set_email/$', 'set_email', name='set_email'),
     url(r'^restore-passwd/$', 'restorepass', name='restorepass'),
+
     url(r'^user-agreement/$', 'user_agreement', name='user-agreement'),
 
     # refactoring required
     url(r'^users/(?P<username>[\w\-_.]+)/$', 'profile', name='index'),
     url(r'^users/(?P<username>[\w\-_.]+)/edit/$', 'edit', name='edit'),
 
-    # settings
-    url(r'^users/(?P<username>[\w\-_.]+)/settings/$', 'user_settings',
-        name='settings'),
+    # ??? restorepass
     url(r'^users/(?P<username>[\w\-_.]+)/passwd/$', 'passwd', name='passwd'),
 
     url(r'^login/widget/$', 'login_widget', name='login-widget'),
@@ -28,7 +30,7 @@ public_urls = patterns(
 
 
     # XXX ???
-    url(r'^set_email/$', 'set_email', name='set_email'),
+
 
     url(r'^checkusername/$', 'check_unic_username', name='check_username'),
 
@@ -73,6 +75,7 @@ admin_urls = patterns(
     #url(r'^role-sequences/$', 'create', name='create'),
     #url(r'^changepass/$', 'changepass', name='changepass'),
     url(r'^(?P<profile_id>\d+)/$', 'edit', name='edit'),
+    url(r'^(?P<profile_id>\d+)/delete/$', 'delete', name='delete'),
     url(r'^(?P<profile_id>\d+)/moderate/$', 'moderate', name='moderate'),
     url(r'^(?P<profile_id>\d+)/passwd/$', 'passwd', name='passwd'),
     url(r'^(?P<profile_id>\d+)/activation/$', 'resend_activation',

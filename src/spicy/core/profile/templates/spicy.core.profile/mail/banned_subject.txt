@@ -1,0 +1,1 @@
+Account {% if user.is_banned %}is banned{% else %}unbanned{% endif %} {{ site }}

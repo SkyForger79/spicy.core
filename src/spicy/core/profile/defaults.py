@@ -13,6 +13,7 @@ ACCOUNT_ACTIVATION_DAYS = getattr(settings, 'ACCOUNT_ACTIVATION_DAYS', 2)
 CHECK_USER_AGREEMENT = getattr(settings, 'CHECK_USER_AGREEMENT', False)
 REGISTRATION_ENABLED = getattr(settings, 'REGISTRATION_ENABLED', True)
 MANUAL_ACTIVATION = getattr(settings, 'MANUAL_ACTIVATION', False)
+NOTIFY_MANAGERS = getattr(settings, 'NOTIFY_MANAGERS', True)
 
 USE_CAPTCHA = getattr(settings, 'USE_CAPTCHA', True)
 # django.contrib.auth required settings

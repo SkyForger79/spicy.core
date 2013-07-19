@@ -1,0 +1,6 @@
+Username: {{ user.username }}
+New password: {{ password }}
+
+--
+Support team.
+{{ site.domain }}

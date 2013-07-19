@@ -42,8 +42,10 @@
                   </td>
                   <td>
 		    {% if change_simplepage or view_simplepage %}		    
-                    <a href="{% url 'simplepages:admin:edit' simplepage.id %}"><i class="icon-user"></i> {{ simplepage.url }}</a>
-		    {% else %}<i class="icon-user"></i> {{ simplepage.url }}{% endif %}
+                    <a href="{% url 'simplepages:admin:edit' simplepage.id %}"> {{ simplepage.url }}</a>
+		    {% else %}{{ simplepage.url }}{% endif %}
+		    
+		    <a target="blank" class="pull-right" href="{{ simplepage.get_absolute_url }}"><i class="icon-eye-open"></i></a>
                   </td>
                   <td>{{ simplepage.title }}</td>
                   <td>{{ simplepage.template_name }}</td>

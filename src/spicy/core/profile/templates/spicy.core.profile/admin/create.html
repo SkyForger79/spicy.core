@@ -1,19 +1,9 @@
-{% extends current_admin_base %}{% load spicy i18n navigator %}
+{% extends current_admin_base %}{% load spicy_admin i18n %}
 
 {% block title %}{% trans "Create user profile" %}{% endblock %}
 {% block status_title %}<i class="icon-plus-sign-alt"></i> {% trans "Create user" %}{% endblock status_title %}
 
 {% block content %}
-
-<div class="container-fluid hpadded">
-  <div class="row-fluid">
-    <div class="alert-block alert">
-      <button type="button" class="close" data-dismiss="alert">×</button>
-      <h4>{% trans "Attention" %}!</h4>
-      {% trans "Password will be generated automaticaly if password fields are clean" %}
-    </div>
-  </div>
-</div>
 
 <div class="container-fluid hpadded">
   <div class="row-fluid">
@@ -27,11 +17,48 @@
           <form class="form-horizontal fill-up validatable" method="post" action="." autocomplete="off">
             {% csrf_token %}
             <div class="row-fluid">
-              <div class="padded separate-sections">{{ form }}</div>           
-            </div>
+	      <div class="span6">
+		<ul class="padded separate-sections">
+		  {% formfield "" form "username" "li-text" %}
+		  {% formfield "" form "email" "li-text" %}
+		  <hr/>		  
+		  <div class="alert-block alert">
+		    <button type="button" class="close" data-dismiss="alert">×</button>
+		    <h4>{% trans "Attention" %}!</h4>
+		    {% trans "Password will be generated automaticaly if password fields are clean" %}
+		  </div>
+		  {% formfield "" form "password1" "li-password" %}		
+		  {% formfield "" form "password2" "li-password" %}		
+		  <hr/>
+		  {% formfield "" form "is_staff" "li-checkbox" %}		
+		  {% formfield "" form "is_superuser" "li-checkbox" %}		
+		  {% formfield "" form "is_active" "li-checkbox" %}		
+		  {% formfield "" form "is_banned" "li-checkbox" %}		
+		  {% formfield "" form "email_activation_key" "li-checkbox" %}				  
+		</ul>
+	      </div>
+	      <div class="span6">
+		<ul class="padded separate-sections">
+		  {% formfield "" form "first_name" "li-text" %}
+		  {% formfield "" form "last_name" "li-text" %}
+		  {% formfield "" form "second_name" "li-text" %}		 
+		  <hr/>
+		  {% formfield "" form "accept_agreement" "li-checkbox" %}		
+		  {% formfield "" form "subscribe_me" "li-checkbox" %}		
+		  {% formfield "" form "hide_email" "li-checkbox" %}				  
+		  <hr/>
+		  {% formfield "" form "sites" "li-multiple-select" %}
+		  {% formfield "" form "groups" "li-multiple-select" %}
+		  {% formfield "" form "user_permissions" "li-multiple-select" %}
+		  <hr/>
+		  {% formfield "" form "phone" "li-text" %}
+		  {% formfield "" form "timezone" "li-text" %}
+		</ul>
+	      </div>
+	    </div>	    
             
 	    <div class="form-actions">
-	      <button type="submit" class="btn btn-blue">{% trans "Create" %}</button>
+	      <button type="submit" class="btn btn-green pull-right">{% trans "Create" %}</button>
             </div>
 
           </form>

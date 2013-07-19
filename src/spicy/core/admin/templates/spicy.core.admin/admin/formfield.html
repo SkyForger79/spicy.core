@@ -14,11 +14,11 @@
 
 {% if type == 'li-checkbox' %}
 <li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
-  <input type="checkbox" class="icheck" name="{{ field.html_name }}" {% if field.value %}checked="on"{% endif %} id="{{ field.html_initial_id }}"/>
+  <input type="checkbox" id="id_{{ field.html_name }}" class="icheck" name="{{ field.html_name }}" {% if field.value %}checked="on"{% endif %}/>
   {{ label }}
   {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
   {% if field.help_text %}
-  <div class="note pull-right">{{ field.help_text }}</div>
+  <div class="note">{{ field.help_text }}</div>
   {% endif %}
 </li>
 {% endif %}
@@ -26,7 +26,7 @@
 {% if type == 'li-text' %}
 <li class="input">
   {{ label }} {#{ default_value}#}
-  <input type="text" name="{{ field.html_name }}" placeholder="{{ title }}" value="{{ field.value|default_if_none:'' }}" id="{{ field.html_initial_id }}"/>
+  <input type="text" name="{{ field.html_name }}" placeholder="{{ title }}" value="{{ field.value|default_if_none:'' }}" id="id_{{ field.html_name }}"/>
   {% if preview_link %}<a href="{{ form.instance.get_absolute_url }}" target="blank"><i class="icon-eye-open icon-2x"></i></a>{% endif %}
   {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
   {% if field.help_text %}
@@ -38,7 +38,7 @@
 {% if type == 'li-password' %}
 <li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
   {{ label }}
-  <input type="password" name="{{ field.html_name }}" placeholder="{{ title }}" id="{{ field.html_initial_id }}"/>
+  <input type="password" name="{{ field.html_name }}" placeholder="{{ title }}" id="id_{{ field.html_name }}"/>
   {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
   {% if field.help_text %}
   <div class="note pull-right">{{ field.help_text }}</div>
@@ -51,7 +51,7 @@
   {{ label }}
   <div class="closable-chat-box">
     <div class="chat-message-box">
-      <textarea name="{{ field.html_name }}" placeholder="{{ title }}" rows="6" id="{{ field.html_initial_id }}">{{ field.value|default_if_none:'' }}</textarea>
+      <textarea name="{{ field.html_name }}" placeholder="{{ title }}" rows="6" id="id_{{ field.html_name }}">{{ field.value|default_if_none:'' }}</textarea>
     </div>
   </div>
   {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
@@ -66,7 +66,7 @@
   {{ label }}
   
   <div class="">
-  <textarea name="{{ field.html_name }}" placeholder="{{ title }}" rows="6" id="{{ field.html_initial_id }}"
+  <textarea name="{{ field.html_name }}" placeholder="{{ title }}" rows="6" id="id_{{ field.html_name }}"
 	    style="width: 99%; height: 400px;">{{ field.value|default_if_none:'' }}</textarea>
   </div>
   {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
@@ -79,7 +79,7 @@
 {% if type == 'li-date' %}
 <li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
   {{ label }}
-  <input class="datetime fill-up"  type="text" name="{{ field.html_name }}" value="{% if field.value %}{{ field.value|date:"Y-m-d H:i"|default:field.value }}{% endif %}" id="{{ field.html_initial_id }}"/>
+  <input class="datetime fill-up"  type="text" name="{{ field.html_name }}" value="{% if field.value %}{{ field.value|date:"Y-m-d H:i"|default:field.value }}{% endif %}" id="id_{{ field.html_name }}"/>
   {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
   {% if field.help_text %}
   <div class="note pull-right">{{ field.help_text }}</div>
@@ -90,7 +90,7 @@
 {% if type == 'li-select' %}
 <li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
   {{ label }}
-  <select name="{{ field.html_name }}" class="uniform" id="{{ field.html_initial_id }}">
+  <select name="{{ field.html_name }}" class="uniform" id="id_{{ field.html_name }}">
     {% for id, name in field.field.choices %}
     <option value="{{ id }}" {% ifequal field.value|stringformat:"s" id|stringformat:"s" %}selected="on"{% endifequal %}>{{ name }}</option>
     {% endfor %}
@@ -105,11 +105,40 @@
 {% if type == 'li-select2' %}
 <li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
   {{ label }}  
-  <select name="{{ field.html_name }}" id="{{ field.html_initial_id }}" class="chzn-select select2-offscreen" tabindex="-1">
+  <select name="{{ field.html_name }}" id="id_{{ field.html_name }}" class="chzn-select select2-offscreen" tabindex="-1">
     {% for id, name in field.field.choices %}
     <option value="{{ id }}" {% if field.value == id %}selected="on"{% endif %}>{{ name }}</option>
     {% endfor %}
   </select>
+  {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+{% endif %}
+
+{% if type == 'li-multiple-select' %}
+<li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
+  {{ label }}  
+  <select name="{{ field.html_name }}" multiple="multiple" id="id_{{ field.html_name }}" class="chzn-select" tabindex="-1">
+    {% for id, name in field.field.choices %}
+    <option value="{{ id }}" {% if field.value == id %}selected="on"{% endif %}>{{ name }}</option>
+    {% endfor %}
+  </select>
+  {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+{% endif %}
+
+{% if type == 'li-simple-tags' %}
+<li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
+  {{ label }}
+  
+  <div class="">
+    <textarea class="tags" name="{{ field.html_name }}" placeholder="{{ title }}" rows="2" id="id_{{ field.html_name }}">{{ field.value|default_if_none:'' }}</textarea>
+  </div>
   {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
   {% if field.help_text %}
   <div class="note pull-right">{{ field.help_text }}</div>
@@ -246,7 +275,7 @@
 {% endif %}
 
 {% if type == 'li-sub' %}
-<li id="{{ field.html_initial_id }}">
+<li id="id_{{ field.html_name }}">
 {{ label }}
 {% if field.field.required %}
 <span class="required">*</span>
@@ -257,7 +286,7 @@
 {% endif %}
 
 {% if type == 'pd-row' %}
-<li class="pd-row form-230" id="{{ field.html_initial_id }}">
+<li class="pd-row form-230" id="id_{{ field.html_name }}">
     <label for="">{{ field.label }} {% if field.field.required %}<span class="required">*</span>{% endif %}</label>
     {{ field }}
     {% if field.help_text %}<div>{{ field.help_text|safe }}</div>{% endif %}

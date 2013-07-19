@@ -55,7 +55,7 @@ class ProfileManager(UserManager):
             if password is None:
                 password = self.make_random_password()
             profile.set_password(password)
-
+        
             if defaults.MANUAL_ACTIVATION:
                 self.model.email_hello(profile, password=password)
                 profile.is_banned = defaults.MANUAL_ACTIVATION
@@ -65,6 +65,9 @@ class ProfileManager(UserManager):
                 profile.generate_activation_key(
                     send_email=send_email, password=password,
                     realhost=realhost, next_url=next_url)
+
+            if defaults.NOTIFY_MANAGERS:
+                self.model.notify_managers(profile)
 
         return profile
 
@@ -144,6 +147,18 @@ class AbstractProfile(User):
             ('moderate_profile', 'Can moderate profiles'),
         )
 
+    def save(self, *args, **kwargs):
+        is_old = bool(self.id or False)
+        if is_old:
+            old = self.__class__.objects.get(pk=self.pk)
+
+        result = super(AbstractProfile, self).save(*args, **kwargs)
+        if is_old:
+            if old.is_banned != self.is_banned:
+                self.email_banned()
+
+        return result
+
     @property
     def screenname(self):
         # Social auth sets a string value to self.fullname, here's a
@@ -192,6 +207,12 @@ class AbstractProfile(User):
         return self.activation_key == self.IS_ACTIVATED or (
             self.date_joined + expiration_date <= dt.datetime.now())
     activation_key_expired.boolean = True
+    
+    def get_hash(self, email=None):
+        if email is None:
+            email = self.email
+        key = ':'.join((str(self.pk), email, settings.SECRET_KEY))
+        return sha_constructor(key).hexdigest()
 
     def email_user(self, subject, message, email=None):
         email = email or self.email
@@ -223,10 +244,29 @@ class AbstractProfile(User):
             'password': password, 'key': self.activation_key,
             'email': self.email, 'next_url': next_url,
             'realhost': realhost}
-        subject = render_to_string('mail/hello_subject.txt', context)
+        subject = render_to_string('spicy.core.profile/mail/hello_subject.txt', context)
         subject = ''.join(subject.splitlines())
-        message = render_to_string('mail/hello_email.txt', context)
+        message = render_to_string('spicy.core.profile/mail/hello_email.txt', context)
         self.email_user(subject, message)
+
+    def email_banned(self):
+        site = Site.objects.get_current()
+        context = {'user': self, 'site': site,}
+
+        subject = render_to_string('spicy.core.profile/mail/banned_subject.txt', context)
+        subject = ''.join(subject.splitlines())
+        message = render_to_string('spicy.core.profile/mail/banned_email.txt', context)
+        self.email_user(subject, message)
+
+    def notify_managers(self):
+        context = {'user': self, 'site': Site.objects.get_current() }
+        subject = render_to_string('spicy.core.profile/mail/notify_managers_subject.txt', context)
+        subject = ''.join(subject.splitlines())
+        message = render_to_string('spicy.core.profile/mail/notify_managers_email.txt', context)
+        try:
+            send_mail(subject, message, None, [admin_email for admin_name, admin_email in settings.ADMINS])
+        except Exception, e:
+            print_error('Can not send registration notify, error: {}\n'.format(e))
 
     def email_activation_key(self, password, realhost=None, next_url=None):
         if not self.email:
@@ -239,17 +279,10 @@ class AbstractProfile(User):
             'password': password, 'user_id': self.id, 'user': self,
             'site': site, 'key': self.activation_key, 'email': self.email,
             'next_url': next_url, 'realhost': realhost}
-        subject = render_to_string(
-            'mail/activation_email_subject.txt', context)
+        subject = render_to_string('spicy.core.profile/mail/activation_email_subject.txt', context)
         subject = ''.join(subject.splitlines())
-        message = render_to_string('mail/activation_email.txt', context)
+        message = render_to_string('spicy.core.profile/mail/activation_email.txt', context)
         self.email_user(subject, message)
-
-    def get_hash(self, email=None):
-        if email is None:
-            email = self.email
-        key = ':'.join((str(self.pk), email, settings.SECRET_KEY))
-        return sha_constructor(key).hexdigest()
 
     def email_passwd(self, password):
         if not self.email:
@@ -258,9 +291,9 @@ class AbstractProfile(User):
 
         site = Site.objects.get_current()
         context = {'password': password, 'user': self, 'site': site}
-        subject = render_to_string('mail/passwd_email_subj.txt', context)
+        subject = render_to_string('spicy.core.profile/mail/passwd_subject.txt', context)
         subject = ''.join(subject.splitlines())
-        message = render_to_string('mail/passwd_email.txt', context)
+        message = render_to_string('spicy.core.profile/mail/passwd_email.txt', context)
         self.email_user(subject, message)
 
     def email_confirm(self, email):
@@ -268,13 +301,14 @@ class AbstractProfile(User):
         context = {
             'user': self, 'site': site, 'email': email,
             'hash': self.get_hash(email)}
-        subject = ' '.join(
-            render_to_string(
-                'mail/set_email_subject.txt', context).splitlines())
-        message = render_to_string('mail/set_email.txt', context)
+        subject = ' '.join(render_to_string('spicy.core.profile/mail/set_email_subject.txt', context).splitlines())
+        message = render_to_string('spicy.core.profile/mail/set_email_email.txt', context)
         self.email_user(subject, message, email=email)
 
     def email_message_notify(self, msg):
+        # !!! deprecated method use spicy.messages app
+
+
         if not self.email:
             # No email - do nothing.
             return
@@ -284,7 +318,7 @@ class AbstractProfile(User):
             'You received a new message from %s' % msg.sender.screenname))
 
         message = render_to_string(
-            'mail/message_notify_email.txt',
+            'spicy.core.profile/mail/message_notify_email.txt',
             dict(msg=msg, user=self, site=site))
         self.email_user(subject, message)
 
@@ -294,12 +328,11 @@ class AbstractProfile(User):
             return
 
         site = Site.objects.get_current()
-        subject = unicode(_(
-            'Restore password for you account on the %s' %
-            site.domain.capitalize()))
-
+        subject = render_to_string(
+            'spicy.core.profile/mail/forgotten_password_subject.txt',
+            dict(password=password, user=self, site=site))
         message = render_to_string(
-            'mail/forgotten_passwd_email.txt',
+            'spicy.core.profile/mail/forgotten_password_email.txt',
             dict(password=password, user=self, site=site))
         self.email_user(subject, message)
 

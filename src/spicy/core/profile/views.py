@@ -16,7 +16,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.cache import never_cache
 
-from spicy.core.profile.utils import get_concrete_profile
+from spicy.utils.printing import print_warning
+from spicy.utils.models import get_custom_model_class
 from spicy.core.service import api
 from spicy.core.siteskin.decorators import render_to, ajax_request
 
@@ -26,7 +27,7 @@ from .forms import LoginForm, SetEmailForm, SocialProfileUpdateForm
 from .models import BlacklistedIP
 
 
-Profile = get_concrete_profile()
+Profile = get_custom_model_class(defaults.CUSTOM_USER_MODEL)
 
 
 def generate_random_password(length=10):
@@ -34,64 +35,43 @@ def generate_random_password(length=10):
     return ''.join([random.choice(chars) for i in range(length)])
 
 
-@render_to('profile/profile.html', use_siteskin=True)
+@render_to('spicy.core.profile/profile.html')
 def profile(request, username):
     user = get_object_or_404(Profile, username=username)
     return dict(user=user)
 
 
-@login_required
-@render_to('profile/future_articles.html', use_siteskin=True)
-def future_articles(request, username):
-    user = get_object_or_404(Profile, username=username)
-    if request.user != user:
-        raise PermissionDenied()
-
-    return dict(user=user)
-
 
 @login_required
-@render_to('profile/draft.html', use_siteskin=True)
-def draft(request, username):
-    user = get_object_or_404(Profile, username=username)
-
-    if request.user != user:
-        raise PermissionDenied()
-
-    return dict(user=user)
-
-
-@login_required
-@render_to('profile/edit.html', use_siteskin=True)
+@render_to('spicy.core.profile/edit.html')
 def edit(request, username):
-    # XXX Deephunt code
     messages = ''
     user = get_object_or_404(Profile, username=username)
 
     if request.user != user:
         raise PermissionDenied()
 
-    from xtag.forms import SportcardFormSet
-
-    forms = SportcardFormSet(instance=user.xtag, prefix='scard')
+    form = forms.PublicProfileForm(instance=user)
 
     if request.POST:
-        forms = SportcardFormSet(
-            request.POST, instance=user.xtag, prefix='scard')
+        forms = PublicProfileForm(request.POST, instance=user)
         if forms.is_valid():
-            forms.save()
-            forms = SportcardFormSet(instance=user.xtag, prefix='scard')
+            forms.save()            
 
     return dict(
         user=user,
-        forms=forms,
+        form=form,
         messages=messages,
         )
 
 
 @login_required
-@render_to('profile/passwd.html', use_siteskin=True)
+@render_to('spicy.core.profile/passwd.html')
 def passwd(request, username):
+    # Dublicate in the spicy.core.profile.admin
+    # TODO: use service
+    print_warning('Deprecated method spicy.core.profile.views.passwd')
+
     message = ''
     user = get_object_or_404(Profile, username=username)
 
@@ -108,48 +88,13 @@ def passwd(request, username):
     return dict(user=user, form=form, message=message)
 
 
-@login_required
-@render_to('profile/settings.html', use_siteskin=True)
-def user_settings(request, username):
-    user = get_object_or_404(Profile, username=username)
-
-    if request.user != user:
-        raise PermissionDenied()
-
-    form = PublicProfileForm(instance=user)
-
-    from xtag.forms import UserTagForm
-
-    xtag_form = UserTagForm(instance=user.xtag)
-
-    if request.POST:
-        form = PublicProfileForm(request.POST, instance=user)
-        if form.is_valid():
-            user = form.save()
-
-        xtag_form = UserTagForm(request.POST, instance=user.xtag)
-        if xtag_form.is_valid():
-            xtag_form.save()
-
-    return dict(form=form, xtag_form=xtag_form, user=user)
-
-
-@csrf_protect
-@login_required
-@render_to('profile/profile.html', use_siteskin=True)
-def settings_profile(request, profile_id):
-    owner = get_object_or_404(Profile, pk=profile_id)
-
-    form = PublicProfileForm(instance=request.user)
-    if request.method == 'POST':
-        form = PublicProfileForm(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
-    return dict(form=form, owner=owner)
-
 
 @ajax_request
 def check_unic_username(request):
+    # Dublicate in the spicy.core.profile.admin
+    # TODO: use service
+    print_warning('Deprecated method spicy.core.profile.views.check_unic_username')
+
     mssgs = dict(error='error', success='ok')
     username = request.POST.get('username', None)
 
@@ -165,20 +110,20 @@ def check_unic_username(request):
 
 
 @csrf_protect
-@render_to('profile/activate.html', use_siteskin=True)
+@render_to('spicy.core.profile/activate.html')
 def activate(request, profile_id, activation_key):
     next_url = request.GET.get('next', '/')
     profile = Profile.objects.activate_user(activation_key)
     return dict(profile=profile, next_url=next_url)
 
 
-@render_to('profile/user_agreement.html', use_siteskin=True)
+@render_to('spicy.core.profile/user_agreement.html')
 def user_agreement(request):
     return dict()
 
 
 @csrf_protect
-@render_to('profile/restore.html', use_siteskin=True)
+@render_to('spicy.core.profile/restore_password.html')
 def restorepass(request):
     return api.register['profile'].restore(request)
 
@@ -195,7 +140,7 @@ def signout(request):
 
 
 @login_required
-@render_to('profile/set_email.html', use_siteskin=True)
+@render_to('spicy.core.profile/set_email.html')
 def set_email(request):
 
     if request.user.email:
@@ -220,7 +165,7 @@ def set_email(request):
 
 
 @never_cache
-@render_to('profile/signin.html', use_siteskin=True)
+@render_to('spicy.core.profile/signin.html')
 def signin(request):
     if request.user.is_authenticated():
         redirect_to = request.REQUEST.get(
@@ -244,7 +189,7 @@ def signin(request):
 
 
 @never_cache
-@render_to('profile/signup.html', use_siteskin=True)
+@render_to('spicy.core.profile/signup.html')
 def signup(request):
     if request.user.is_authenticated():
         redirect_to = request.REQUEST.get(
@@ -261,7 +206,7 @@ def signup(request):
     return result
 
 
-@render_to('profile/login_widget.html', use_siteskin=True)
+@render_to('spicy.core.profile/widgets/signin_form.html')
 def login_widget(request):
     if request.user.is_authenticated():
         redirect_to = request.REQUEST.get(
@@ -277,7 +222,7 @@ def login_widget(request):
     return result
 
 
-@render_to('profile/registration_widget.html', use_siteskin=True)
+@render_to('spicy.core.profile/widgets/signup_form.html')
 def registration_widget(request):
     if request.user.is_authenticated():
         redirect_to = request.REQUEST.get(
@@ -292,14 +237,14 @@ def registration_widget(request):
     return result
 
 
-@render_to('profile/email_notify.html', use_siteskin=True)
-def email_notify(request):
+@render_to('spicy.core.profile/success_signup.html')
+def success_signup(request):
     next = request.GET.get('next', '/')
     email = request.session.get('profile_email', '')
     return dict(next=next, email=email)
 
 
-@render_to('profile/signin.html', use_siteskin=True)
+@render_to('spicy.core.profile/social/signin.html')
 def signin_social(request, backend):
     real_ip = request.META.get('REMOTE_ADDR')
     if real_ip and BlacklistedIP.objects.filter(ip=real_ip).exists():
@@ -315,7 +260,7 @@ def signin_social(request, backend):
     return sa_views.auth(request, backend)
 
 
-@render_to("profile/new_social_user.html", use_siteskin=True)
+@render_to("spicy.core.profile/social/new_user.html")
 def new_social_user(request):
     new_user = request.session.get('NEW_USER')
     if not new_user:

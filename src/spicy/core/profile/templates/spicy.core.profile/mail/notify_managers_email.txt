@@ -1,0 +1,9 @@
+{% load url from future %}New user is registered {{ now }}
+
+username: {{ user.username }}
+First Name: {{ user.first_name }}
+Second Name: {{ user.second_name }}
+Last Name: {{ user.last_name }}
+Phone: {{ user.phone }}
+
+http://{{site.domain}}{% url 'profile:admin:edit' user.pk %}

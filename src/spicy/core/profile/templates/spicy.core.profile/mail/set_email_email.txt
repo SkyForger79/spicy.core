@@ -1,0 +1,10 @@
+{% load url from future %}Подтверждения адреса электронной почты для вашей учетной записи на сайте {{ site.name }}
+
+http://{{ site.domain }}{% url 'profile:public:set_email' %}?email={{ email }}&hash={{ hash }}
+
+Email: {{ email }}
+Имя пользователя: {{ user.username }}
+
+Спасибо Вам за то, что Вы с нами.
+
+--

@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-
+from django.template import loader, Template
+from spicy.utils import cached_property
 
 class AbstractBasePage(models.Model):
     url = models.CharField(_('URL'), max_length=100, db_index=True)
@@ -18,6 +19,12 @@ class AbstractBasePage(models.Model):
             "provided, the system will use "
             "'spicy.core.simplepages/default.html'."))
     sites = models.ManyToManyField('sites.Site')
+
+    #@cached_property
+    def get_template(self):
+        if self.template_name:
+            return loader.get_template(self.template_name)
+        return Template(self.content)
 
     class Meta:
         abstract = True

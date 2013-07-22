@@ -1,1 +1,1 @@
-Activation account email for {{ user.username }}
+{% blocktrans with username=user.username %}Activation account email for {{ username }}{% endblocktrans%}

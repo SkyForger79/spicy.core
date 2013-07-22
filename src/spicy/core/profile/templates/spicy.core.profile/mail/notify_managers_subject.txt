@@ -1,1 +1,1 @@
-New registration {{ user.username}} - {{ site.domain }}
+{% trans "New registration" %} {{ user.username}} - {{ site.domain }}

@@ -1,1 +1,1 @@
-Change email for {{ user.username }} {{ site.domain }}
+{% blocktrans with username=user.username domain=site.domain %}Change email for {{ username }} on {{ domain }}{% endblocktrans %}

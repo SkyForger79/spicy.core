@@ -55,7 +55,7 @@ class ProfileManager(UserManager):
             if password is None:
                 password = self.make_random_password()
             profile.set_password(password)
-        
+
             if defaults.MANUAL_ACTIVATION:
                 self.model.email_hello(profile, password=password)
                 profile.is_banned = defaults.MANUAL_ACTIVATION
@@ -245,30 +245,39 @@ class AbstractProfile(User):
             'password': password, 'key': self.activation_key,
             'email': self.email, 'next_url': next_url,
             'realhost': realhost}
-        subject = render_to_string('spicy.core.profile/mail/hello_subject.txt', context)
+        subject = render_to_string(
+            'spicy.core.profile/mail/hello_subject.txt', context)
         subject = ''.join(subject.splitlines())
-        message = render_to_string('spicy.core.profile/mail/hello_email.txt', context)
+        message = render_to_string(
+            'spicy.core.profile/mail/hello_email.txt', context)
         self.email_user(subject, message)
 
     def email_banned(self):
         site = Site.objects.get_current()
-        context = {'user': self, 'site': site,}
+        context = {'user': self, 'site': site}
 
-        subject = render_to_string('spicy.core.profile/mail/banned_subject.txt', context)
+        subject = render_to_string(
+            'spicy.core.profile/mail/banned_subject.txt', context)
         subject = ''.join(subject.splitlines())
-        message = render_to_string('spicy.core.profile/mail/banned_email.txt', context)
+        message = render_to_string(
+            'spicy.core.profile/mail/banned_email.txt', context)
         self.email_user(subject, message)
 
     def notify_managers(self):
-        context = {'user': self, 'site': Site.objects.get_current() }
-        subject = render_to_string('spicy.core.profile/mail/notify_managers_subject.txt', context)
+        context = {
+            'user': self, 'site': Site.objects.get_current()}
+        subject = render_to_string(
+            'spicy.core.profile/mail/notify_managers_subject.txt', context)
         subject = ''.join(subject.splitlines())
-        message = render_to_string('spicy.core.profile/mail/notify_managers_email.txt', context)
+        message = render_to_string(
+            'spicy.core.profile/mail/notify_managers_email.txt', context)
         try:
-            send_mail(subject.strip('\n'), message, None, 
-                      [admin_email for admin_name, admin_email in settings.ADMINS])
+            send_mail(
+                subject.strip('\n'), message, None,
+                [admin_email for admin_name, admin_email in settings.ADMINS])
         except Exception, e:
-            print_error('Can not send registration notify, error: {}\n'.format(e))
+            print_error(
+                'Can not send registration notify, error: {}\n'.format(e))
 
     def email_activation_key(self, password, realhost=None, next_url=None):
         if not self.email:
@@ -281,9 +290,11 @@ class AbstractProfile(User):
             'password': password, 'user_id': self.id, 'user': self,
             'site': site, 'key': self.activation_key, 'email': self.email,
             'next_url': next_url, 'realhost': realhost}
-        subject = render_to_string('spicy.core.profile/mail/activation_email_subject.txt', context)
+        subject = render_to_string(
+            'spicy.core.profile/mail/activation_email_subject.txt', context)
         subject = ''.join(subject.splitlines())
-        message = render_to_string('spicy.core.profile/mail/activation_email.txt', context)
+        message = render_to_string(
+            'spicy.core.profile/mail/activation_email.txt', context)
         self.email_user(subject, message)
 
     def email_passwd(self, password):
@@ -293,9 +304,11 @@ class AbstractProfile(User):
 
         site = Site.objects.get_current()
         context = {'password': password, 'user': self, 'site': site}
-        subject = render_to_string('spicy.core.profile/mail/passwd_subject.txt', context)
+        subject = render_to_string(
+            'spicy.core.profile/mail/passwd_subject.txt', context)
         subject = ''.join(subject.splitlines())
-        message = render_to_string('spicy.core.profile/mail/passwd_email.txt', context)
+        message = render_to_string(
+            'spicy.core.profile/mail/passwd_email.txt', context)
         self.email_user(subject, message)
 
     def email_confirm(self, email):
@@ -303,21 +316,23 @@ class AbstractProfile(User):
         context = {
             'user': self, 'site': site, 'email': email,
             'hash': self.get_hash(email)}
-        subject = ' '.join(render_to_string('spicy.core.profile/mail/set_email_subject.txt', context).splitlines())
-        message = render_to_string('spicy.core.profile/mail/set_email_email.txt', context)
+        subject = ' '.join(
+            render_to_string(
+                'spicy.core.profile/mail/set_email_subject.txt', context
+            ).splitlines())
+        message = render_to_string(
+            'spicy.core.profile/mail/set_email_email.txt', context)
         self.email_user(subject, message, email=email)
 
     def email_message_notify(self, msg):
         # !!! deprecated method use spicy.messages app
-
-
         if not self.email:
             # No email - do nothing.
             return
 
         site = Site.objects.get_current()
         subject = unicode(_(
-            'You received a new message from %s' % msg.sender.screenname))
+            'You received a new message from %s') % msg.sender.screenname)
 
         message = render_to_string(
             'spicy.core.profile/mail/message_notify_email.txt',

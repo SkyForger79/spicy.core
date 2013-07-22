@@ -15,15 +15,11 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.cache import never_cache
-
 from spicy.utils.printing import print_warning
 from spicy.utils.models import get_custom_model_class
 from spicy.core.service import api
 from spicy.core.siteskin.decorators import render_to, ajax_request
-
-from . import defaults, models
-from .forms import PublicProfileForm
-from .forms import LoginForm, SetEmailForm, SocialProfileUpdateForm
+from . import defaults, models, forms
 from .models import BlacklistedIP
 
 
@@ -41,7 +37,6 @@ def profile(request, username):
     return dict(user=user)
 
 
-
 @login_required
 @render_to('spicy.core.profile/edit.html')
 def edit(request, username):
@@ -54,15 +49,14 @@ def edit(request, username):
     form = forms.PublicProfileForm(instance=user)
 
     if request.POST:
-        forms = PublicProfileForm(request.POST, instance=user)
-        if forms.is_valid():
-            forms.save()            
+        form = forms.PublicProfileForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
 
     return dict(
         user=user,
         form=form,
-        messages=messages,
-        )
+        messages=messages)
 
 
 @login_required
@@ -88,12 +82,12 @@ def passwd(request, username):
     return dict(user=user, form=form, message=message)
 
 
-
 @ajax_request
 def check_unic_username(request):
     # Dublicate in the spicy.core.profile.admin
     # TODO: use service
-    print_warning('Deprecated method spicy.core.profile.views.check_unic_username')
+    print_warning(
+        'Deprecated method spicy.core.profile.views.check_unic_username')
 
     mssgs = dict(error='error', success='ok')
     username = request.POST.get('username', None)
@@ -146,7 +140,7 @@ def set_email(request):
     if request.user.email:
         return {'msg': _('Email address is already set')}
     if request.method == 'POST':
-        form = SetEmailForm(request.POST)
+        form = forms.SetEmailForm(request.POST)
         if form.is_valid():
             # Send validation email.
             request.user.email_confirm(form.cleaned_data['email'])
@@ -160,7 +154,7 @@ def set_email(request):
             return HttpResponseRedirect(
                 reverse('profile:public:index', args=[request.user.username]))
     else:
-        form = SetEmailForm()
+        form = forms.SetEmailForm()
     return {'form': form}
 
 
@@ -176,7 +170,7 @@ def signin(request):
             user_redirect_uri = defaults.DEFAULT_PROFILE_URL(request.user)
         else:
             user_redirect_uri = defaults.DEFAULT_PROFILE_URL
-            
+
         return HttpResponseRedirect(
             redirect_to or user_redirect_uri)
 
@@ -214,7 +208,8 @@ def login_widget(request):
 
         return {
             'redirect_now': True,
-            'redirect': redirect_to or defaults.DEFAULT_PROFILE_URL(request.user)}
+            'redirect': (
+                redirect_to or defaults.DEFAULT_PROFILE_URL(request.user))}
 
     result = api.register['profile'].login(request)
     if result['status'] == 'ok':
@@ -229,7 +224,8 @@ def registration_widget(request):
             REDIRECT_FIELD_NAME, request.session.get(REDIRECT_FIELD_NAME))
         return {
             'redirect_now': True,
-            'redirect': redirect_to or defaults.DEFAULT_PROFILE_URL(request.user)}
+            'redirect': (
+                redirect_to or defaults.DEFAULT_PROFILE_URL(request.user))}
 
     result = api.register['profile'].register(request)
     if result['status'] == 'ok':
@@ -257,6 +253,8 @@ def signin_social(request, backend):
     if redirect_to and not request.session.get(REDIRECT_FIELD_NAME):
         request.session[REDIRECT_FIELD_NAME] = redirect_to
         request.session['newuser-next'] = redirect_to
+
+    from social_auth import views as sa_views
     return sa_views.auth(request, backend)
 
 
@@ -273,8 +271,9 @@ def new_social_user(request):
     if request.method == 'POST':
         if request.POST.get('signin'):
             # Associate with existing account.
-            login_form = LoginForm(request, request.POST, prefix='associate')
-            update_form = SocialProfileUpdateForm(
+            login_form = forms.LoginForm(
+                request, request.POST, prefix='associate')
+            update_form = forms.SocialProfileUpdateForm(
                 instance=new_user, prefix='newuser')
             if login_form.is_valid():
                 old_user = login_form.get_user()
@@ -306,8 +305,8 @@ def new_social_user(request):
                         'profile:public:index',
                         args=[old_user.username]))
         else:
-            login_form = LoginForm(request, prefix='associate')
-            update_form = SocialProfileUpdateForm(
+            login_form = forms.LoginForm(request, prefix='associate')
+            update_form = forms.SocialProfileUpdateForm(
                 request.POST, instance=new_user, prefix='newuser')
 
             old_email = new_user.email
@@ -343,8 +342,8 @@ def new_social_user(request):
                         'profile:public:index', args=[user.username]))
     else:
         new_user.sites = Site.objects.all()
-        login_form = LoginForm(request, prefix='associate')
-        update_form = SocialProfileUpdateForm(
+        login_form = forms.LoginForm(request, prefix='associate')
+        update_form = forms.SocialProfileUpdateForm(
             instance=new_user, prefix='newuser')
 
     return {
@@ -361,6 +360,7 @@ def sa_get_username(details, user=None, *args, **kwargs):
     if user:
         return {'username': user.username}
 
+    from social_auth.backends.pipeline import USERNAME
     if details.get(USERNAME):
         username = details[USERNAME]
     else:
@@ -371,7 +371,7 @@ def sa_get_username(details, user=None, *args, **kwargs):
 
 
 def sa_set_new_user_inactive(
-    backend, details, response, uid, username, user=None, *args, **kwargs):
+        backend, details, response, uid, username, user=None, *args, **kwargs):
     if user:
         return {'user': user}
     if not username:

@@ -9,13 +9,11 @@ from django.utils.html import escape
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import REDIRECT_FIELD_NAME
-
 from spicy.core.profile.views import generate_random_password
 from spicy.core.service import api
 from spicy.utils import load_module
 from spicy.utils.models import get_custom_model_class
 from spicy.core.siteskin.decorators import ajax_request, render_to
-
 from . import defaults, models
 from .decorators import is_staff
 from .forms import LoginForm
@@ -234,13 +232,11 @@ class ProfileService(api.Interface):
         if request.method == "POST":
             form = load_module(CUSTOM_USER_SIGNUP_FORM)(request.POST)
             redirect = reverse('profile:public:success-signup')
-            print form.errors
             if not is_blacklisted and form.is_valid():
                 status = 'ok'
                 new_profile = form.save(
                     request=request, realhost=request.get_host(),
                     next_url=request.session.get(REDIRECT_FIELD_NAME, '/'))
-                print new_profile
                 request.session['profile_id'] = new_profile.pk
                 request.session['profile_email'] = new_profile.email
 

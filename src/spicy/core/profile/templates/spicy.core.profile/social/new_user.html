@@ -35,7 +35,7 @@
           <li><i>*</i><label>{% trans "Email" %}</label>{{ update_form.email }}
             {{ update_form.email.errors }}</li>
         </ul>
-        <label>{{ update_form.accept_agreement }} {% trans 'I have read and accepted <a href="{% 'profile:public:user-agreement' %}">user agreement</a>' %}</label>
+        <label>{{ update_form.accept_agreement }} {% url 'profile:public:user-agreement' as user_agreement_url %}{% blocktrans %}I have read and accepted <a href="{{ user_agreement_url }}">user agreement</a>{% endblocktrans %}</label>
         {{ update_form.accept_agreement.errors }}
         <input type="submit" name="create" value="{% trans "Create" %}"/>
 

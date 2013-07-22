@@ -10,7 +10,8 @@ from django.utils.translation import ugettext as _
 from spicy.core.admin import defaults as admin_defaults
 from spicy.core.admin.conf import AdminAppBase, AdminLink, Perms
 from spicy.core.service import api
-from spicy.core.siteskin.decorators import render_to, ajax_request, APIResponse, APIResponseFail
+from spicy.core.siteskin.decorators import render_to, ajax_request
+from spicy.core.siteskin.decorators import APIResponse, APIResponseFail
 from spicy.utils import NavigationFilter
 from spicy.utils.models import get_custom_model_class
 from . import defaults, forms
@@ -58,11 +59,12 @@ def passwd(request, profile_id):
         form = forms.AdminPasswdForm(profile, request.POST)
         if form.is_valid():
             form.save()
-            return APIResponse(messages=[_('Password successfully changed.'),])
-        return APIResponseFail(errors=[unicode(form.errors.as_text()),])            
+            return APIResponse(messages=[_('Password successfully changed.')])
+        return APIResponseFail(errors=[unicode(form.errors.as_text())])
 
     return APIResponse(
-        messages=[_('Not enough parametes has been passed. Use POST request.'),])
+        messages=[
+            _('Not enough parametes has been passed. Use POST request.')])
 
 
 @is_staff(required_perms='profile.add_profile')
@@ -171,16 +173,18 @@ def edit(request, profile_id):
         'services': api.register.get_list(consumer=profile)
     }
 
+
 @is_staff(required_perms='profile.delete')
 @render_to('delete.html', use_admin=True)
 def delete(request, profile_id):
     message = ''
     profile = get_object_or_404(Profile, id=profile_id)
     if request.POST.get('confirm', False):
-        media.delete()
+        profile.delete()
         return HttpResponseRedirect(reverse('profile:admin:index'))
     return {
         'message': message, 'instance': profile}
+
 
 @is_staff(required_perms='profile.moderate_profile')
 @render_to('spicy.core.profile/admin/moderate.html', use_admin=True)
@@ -260,13 +264,14 @@ def resend_activation(request, profile_id):
     try:
         profile = Profile.objects.get(pk=profile_id)
         if profile.is_active:
-            return APIResponseFail(messages=[_('Profile is already activated.'),])
+            return APIResponseFail(
+                messages=[_('Profile is already activated.')])
 
         profile.generate_activation_key(realhost=request.get_host())
-        return APIResponse(messages=[_('Activation key has been sent.'),])
+        return APIResponse(messages=[_('Activation key has been sent.')])
     except Profile.DoesNotExist:
-        return APIResponseFail(messages=[_('Profile does not exists!'),])
-    return APIResponse(messages=[_('Do nothing.. Use correct API call'),])
+        return APIResponseFail(messages=[_('Profile does not exists!')])
+    return APIResponse(messages=[_('Do nothing.. Use correct API call')])
 
 
 @is_staff
@@ -318,7 +323,7 @@ def delete_blacklisted_ips(request):
     status = 'ok'
     try:
         for ip in BlacklistedIP.objects.filter(
-            id__in=request.POST.getlist('id')):
+                id__in=request.POST.getlist('id')):
             ip.delete()
         message = _('All objects have been deleted successfully')
     except KeyError:

@@ -1,6 +1,6 @@
-Username: {{ user.username }}
-New password: {{ password }}
+{% trans "Username" %}: {{ user.username }}
+{% trans "New password" %}: {{ password }}
 
 --
-Support team.
+{% trans "Support team" %},
 {{ site.domain }}

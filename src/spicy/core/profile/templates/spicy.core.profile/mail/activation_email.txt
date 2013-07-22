@@ -1,23 +1,24 @@
-Добро пожаловать на {{ site.name }}
+{% blocktrans with sitename=site.name %}Welcome to {{ site_name }}!{% endblocktrans %}
 
-Ваша учетная запись еще не активирована. Для активации нажмите эту ссылку:
+{% trans "Your account is not acivated yet. To activate press the following link:" %}
 
 http://{{ realhost }}{% url profile:public:activate user_id key %}?next={{ next_url }}
 
-Если по каким-либо причинам у вас нет возможности открыть ссылку непосредственно из
-письма, просто выделите ее, скопируйте и вставьте в адресную строку Вашего браузера.
-Будте внимательны при выделении - если вы скопируете ссылку не полностью, активация
-не произойдет.
+{% trans "If you're unable to follow the link in this mail, just copy it to your browser's address bar." %}
 
-Ваши регистрационные данные:
+{% trans "Be careful while copying the link - using incomplete text would not lead to your account's activation" %}
 
-Email: {{ email }}
-Имя пользователя: {{ user.username }}
-{% if password %}Пароль: {{ password }}
+{% trans "Your registration data:" %}
+
+{% trans "Email%}: {{ email }}
+{% trans "Username" %}: {{ user.username }}
+{% if password %}{% trans "Password" %}: {{ password }}
 {% endif %}
 
-Срок действия ключа активации - {{ expiration_days }} дня.
+{% blocktrans %}Key expires in {{ expiration_days }} days.{% endblocktrans %}
 
-Спасибо Вам за регистрацию на нашем сайте.
+{% trans "Thank you for registering on our site" %}
 
 --
+
+{{ site.domain }}

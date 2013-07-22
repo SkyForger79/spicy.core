@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
-
 import re
-
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-
 from spicy.utils.html import make_slug
+
 
 USERNAME_MAX_LENGTH = getattr(settings, 'USERNAME_MAX_LENGTH', 100)
 SHA1_RE = getattr(settings, 'SHA1_RE', re.compile('^[a-f0-9]{40}$'))
@@ -29,24 +27,13 @@ REASSOCIATION_TIMEOUT = getattr(settings, 'REASSOCIATION_TIMEOUT', 300)
 # How many seconds will we let user to start reassociation with existing
 # profile after authorization in a social network.
 
-
 PASSWORD_HASH_KEY = '_PASSWORD_HASH'
-
-
-
-BRUTEFORCE_CHECK = getattr(settings, 'BRUTEFORCE_CHECK', False)
-
-BRUTEFORCE_SOFT_LIMIT = 5
-BRUTEFORCE_SOFT_PERIOD = 300
-BRUTEFORCE_HARD_LIMIT = 20
-BRUTEFORCE_HARD_PERIOD = 3600
-
 AUTH_ALLOW, AUTH_WARN, AUTH_DISALLOW = range(3)
 
 
 ACCESS_CACHE_PREFIX = 'access-cache'
-ACCESS_CACHE_PERIOD = 60 # Period for tracking doc access, in seconds.
-ACCESS_RELOAD_PERIOD = 10 # Period for reloading doc access info in admin.
+ACCESS_CACHE_PERIOD = 60  # Period for tracking doc access, in seconds.
+ACCESS_RELOAD_PERIOD = 10  # Period for reloading doc access info in admin.
 
 ACCESS_LEVEL = (
     (0, _('Public for web')),
@@ -58,7 +45,8 @@ ACCESS_LEVEL = (
 
 DEFAULT_ACCESS_LEVEL = 0
 
-MESSAGE_NOTIFICATION, MESSAGE_FREQUEST, MESSAGE_MESSAGE, MESSAGE_EVENT = range(4)
+MESSAGE_NOTIFICATION, MESSAGE_FREQUEST, MESSAGE_MESSAGE, MESSAGE_EVENT = \
+    range(4)
 MESSAGE_TYPE = (
     (MESSAGE_NOTIFICATION, _('Notification')),
     (MESSAGE_FREQUEST, _('Friend request')),
@@ -75,8 +63,11 @@ TAG_EDIT_MIN_SCORE = getattr(settings, 'TAG_EDIT_MIN_SCORE', 10)
 DEFAULT_PROFILE_URL = getattr(
     settings, 'DEFAULT_PROFILE_URL', lambda u: u.get_absolute_url())
 
-CUSTOM_USER_MODEL = getattr(settings, 'CUSTOM_USER_MODEL', 'profile.TestProfile')
-CUSTOM_PERMISSION_PROVIDER_MODEL = getattr(settings, 'CUSTOM_PERMISSION_PROVIDER_MODEL', 'profile.PermissionProviderModel')
+CUSTOM_USER_MODEL = getattr(
+    settings, 'CUSTOM_USER_MODEL', 'profile.TestProfile')
+CUSTOM_PERMISSION_PROVIDER_MODEL = getattr(
+    settings, 'CUSTOM_PERMISSION_PROVIDER_MODEL',
+    'profile.PermissionProviderModel')
 CUSTOM_ROLE_MODEL = getattr(settings, 'CUSTOM_ROLE_MODEL', 'auth.Group')
 RESTORE_PASSWORD_FORM = getattr(
     settings, 'RESTORE_PASSWORD_FORM',

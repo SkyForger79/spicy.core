@@ -1,9 +1,9 @@
-{% load url from future %}New user is registered {{ now }}
+{% load url from future %}{% blocktrans %}New user is registered {{ now }}{% endblocktrans %}
 
-username: {{ user.username }}
-First Name: {{ user.first_name }}
-Second Name: {{ user.second_name }}
-Last Name: {{ user.last_name }}
-Phone: {{ user.phone }}
+{% trans "Username" %}: {{ user.username }}
+{% trans "First Name" %}: {{ user.first_name }}
+{% trans "Second Name" %}: {{ user.second_name }}
+{% trans "Last Name" %}: {{ user.last_name }}
+{% trans "Phone" %}: {{ user.phone }}
 
 http://{{site.domain}}{% url 'profile:admin:edit' user.pk %}

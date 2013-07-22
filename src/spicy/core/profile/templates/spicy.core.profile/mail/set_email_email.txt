@@ -1,10 +1,8 @@
-{% load url from future %}Подтверждения адреса электронной почты для вашей учетной записи на сайте {{ site.name }}
+{% load url from future %}{% blocktrans with sitename=site.name %}Confirmation email for your account on {{ sitename }}{% endblocktrans %}
 
 http://{{ site.domain }}{% url 'profile:public:set_email' %}?email={{ email }}&hash={{ hash }}
 
-Email: {{ email }}
-Имя пользователя: {{ user.username }}
+{% trans "Email" %}: {{ email }}
+{% trans "Username" %}: {{ user.username }}
 
-Спасибо Вам за то, что Вы с нами.
-
---
+{% trans "Thank you for being with us" %}

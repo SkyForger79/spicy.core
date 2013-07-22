@@ -235,9 +235,9 @@ def registration_widget(request):
 
 @render_to('spicy.core.profile/success_signup.html')
 def success_signup(request):
-    next = request.GET.get('next', '/')
+    next_url = request.GET.get(REDIRECT_FIELD_NAME, '/')
     email = request.session.get('profile_email', '')
-    return dict(next=next, email=email)
+    return dict(next=next_url, email=email)
 
 
 @render_to('spicy.core.profile/social/signin.html')

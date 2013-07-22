@@ -28,6 +28,11 @@ REASSOCIATION_TIMEOUT = getattr(settings, 'REASSOCIATION_TIMEOUT', 300)
 # profile after authorization in a social network.
 
 PASSWORD_HASH_KEY = '_PASSWORD_HASH'
+BRUTEFORCE_CHECK = getattr(settings, 'BRUTEFORCE_CHECK', False)
+BRUTEFORCE_SOFT_LIMIT = 5
+BRUTEFORCE_SOFT_PERIOD = 300
+BRUTEFORCE_HARD_LIMIT = 20
+BRUTEFORCE_HARD_PERIOD = 3600
 AUTH_ALLOW, AUTH_WARN, AUTH_DISALLOW = range(3)
 
 
@@ -44,21 +49,6 @@ ACCESS_LEVEL = (
 )
 
 DEFAULT_ACCESS_LEVEL = 0
-
-MESSAGE_NOTIFICATION, MESSAGE_FREQUEST, MESSAGE_MESSAGE, MESSAGE_EVENT = \
-    range(4)
-MESSAGE_TYPE = (
-    (MESSAGE_NOTIFICATION, _('Notification')),
-    (MESSAGE_FREQUEST, _('Friend request')),
-    (MESSAGE_MESSAGE, _('Message')),
-    (MESSAGE_EVENT, _('Event')),
-)
-
-DEFAULT_MESSAGE_TYPE = 0
-
-MAX_INVITES = getattr(settings, 'MAX_INVITES', 10)
-
-TAG_EDIT_MIN_SCORE = getattr(settings, 'TAG_EDIT_MIN_SCORE', 10)
 
 DEFAULT_PROFILE_URL = getattr(
     settings, 'DEFAULT_PROFILE_URL', lambda u: u.get_absolute_url())

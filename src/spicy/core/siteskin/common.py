@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-import base64
-import hashlib
 import os
 import pytils
 import re
@@ -8,9 +6,7 @@ import sys
 from . import defaults
 from datetime import datetime
 from django import http
-from django.conf import settings
 from django.core.paginator import Paginator, InvalidPage
-from django.utils.encoding import smart_str
 from django.utils.translation import ugettext_lazy as _
 from math import ceil
 
@@ -92,7 +88,7 @@ KNOWN_CHARS = (
     ('_-', '-'),
     #('--', '-'),
     #('__', '_'),
-    )
+)
 
 MONTHS = (
     _("January"), _("February"), _("March"), _("April"), _("May"), _("June"),
@@ -121,15 +117,17 @@ DEFAULT_FILTERS = [
     ('search_text', ''),
 ]
 
+
 def chunks(data, num_cols):
     col_length = int(ceil(len(data) / float(num_cols)))
     for i in xrange(0, num_cols):
-        yield data[i * col_length : (i + 1) * col_length]
+        yield data[i * col_length: (i + 1) * col_length]
 
 
 class NavigationFilter:
-    def __init__(self, request, accepting_filters=DEFAULT_FILTERS,
-                 default_order=None, force_filter=None):
+    def __init__(
+            self, request, accepting_filters=DEFAULT_FILTERS,
+            default_order=None, force_filter=None):
         self.request = request
         self.querydict = request.GET
 
@@ -155,9 +153,9 @@ class NavigationFilter:
             self.order = [direction + field for field in fields]
 
     def get_queryset_with_paginator(
-        self, model, base_url=None, search_query=None,
-        obj_per_page=defaults.OBJECTS_PER_PAGE, manager='objects',
-        result_manager='objects', distinct=False):
+            self, model, base_url=None, search_query=None,
+            obj_per_page=defaults.OBJECTS_PER_PAGE, manager='objects',
+            result_manager='objects', distinct=False):
 
         base_url = base_url or self.request.path
 
@@ -171,7 +169,7 @@ class NavigationFilter:
         elif type(search_query) is tuple:
             queryset = model_qset.filter(*search_query[0], **search_query[1])
 
-        elif callable(search_query): # XXX
+        elif callable(search_query):  # XXX
             queryset = search_query(model_qset)
 
         elif search_query is not None:
@@ -192,14 +190,15 @@ class NavigationFilter:
 
             page = paginator.page(self.page)
         except InvalidPage:
-            raise http.Http404(unicode(_('Page %s does not exist.' % self.page)))
+            raise http.Http404(
+                unicode(_('Page %s does not exist.' % self.page)))
             # Django that can't throw exceptions other than 404.
 
         result_qset = getattr(
             model, result_manager).filter(
-            id__in=tuple(page.object_list))
+                id__in=tuple(page.object_list))
         if self.order:
-            result_qset = result_qset.order_by(*self.order) # 1082
+            result_qset = result_qset.order_by(*self.order)  # 1082
 
         # XXX
         page.object_list = result_qset
@@ -236,35 +235,12 @@ cdata = lambda s: '<![CDATA[%s]]>' % CDATA_RE.sub(
 # escape quoutes and tags in inserted data, but using CDATA is faster.
 
 
-def make_message(message, status=''):
-    if not message:
-        return ''
-
-    message = smart_str('|'.join((message, status)))
-    encoded = base64.encodestring(message)[:-2]
-    code = hashlib.md5(encoded + settings.SECRET_KEY).hexdigest()
-    return 'message=%s&code=%s' % (encoded, code)
-
-
-def check_message(request):
-    encoded = request.GET.get('message')
-    code = request.GET.get('code')
-    if (not (encoded and code) or
-        len(encoded) > defaults.MAX_MESSAGE_STRING_LENGTH):
-        return
-
-    expected_code = hashlib.md5(encoded + settings.SECRET_KEY).hexdigest()
-    if code != expected_code:
-        return
-
-    return base64.decodestring(encoded + '==\n').split('|')
-
 def strip_invalid_chars(data, extra=u'', verbose=False):
     """
     Remove characters that break XML parsers.
 
-    This is meant to clean weird shit that occasionally appears in text, probably
-    because M$ Word was used.
+    This is meant to clean weird shit that occasionally appears in text,
+    probably because M$ Word was used.
     """
     remove_re = re.compile(u'[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F%s]' % extra)
     data, count = remove_re.subn('', data)
@@ -277,12 +253,12 @@ def strip_invalid_chars(data, extra=u'', verbose=False):
 
 
 def get_templates(
-    path, title_func=lambda template: template,
-    filter_func=lambda template: True):
+        path, title_func=lambda template: template,
+        filter_func=lambda template: True):
     try:
         templates = [
-           (template, template) for template in os.listdir(path)
-           if filter_func(template)]
+            (template, template) for template in os.listdir(path)
+            if filter_func(template)]
         templates.sort()
         return templates
     except OSError:

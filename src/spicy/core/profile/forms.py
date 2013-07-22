@@ -245,7 +245,9 @@ class ValidateEmailMixin:
 
 
 class RestorePasswordForm(forms.Form):
-    captcha = CaptchaField(widget=CaptchaWithId)
+    if defaults.USE_CAPTCHA:
+        captcha = CaptchaField(widget=CaptchaWithId)
+
     email = LabledEmailField(label=_('Registered email'), required=True)
 
     def clean_email(self):
@@ -261,7 +263,9 @@ class RestorePasswordForm(forms.Form):
 
 
 class SetEmailForm(forms.Form):
-    captcha = CaptchaField(widget=CaptchaWithId)
+    if defaults.USE_CAPTCHA:
+        captcha = CaptchaField(widget=CaptchaWithId)
+
     email = forms.EmailField(_('Email'), required=True)
 
     def clean_email(self):
@@ -556,8 +560,9 @@ class SigninForm(AuthenticationForm):
         label=_('User name'), max_length=30, regex=r'^[\w\-_\.]+$')
     password = forms.CharField(
         label=_("Password"), widget=forms.PasswordInput, required=False)
-    captcha = CaptchaField(
-        required=False, initial=[u'', u''], widget=CaptchaWithId)
+    if defaults.USE_CAPTCHA:
+        captcha = CaptchaField(
+            required=False, initial=[u'', u''], widget=CaptchaWithId)
     password1 = forms.CharField(
         label=_('Password'), required=False, widget=forms.PasswordInput())
     password2 = forms.CharField(

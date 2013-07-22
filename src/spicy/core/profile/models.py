@@ -222,7 +222,7 @@ class AbstractProfile(User):
             return
 
         try:
-            send_mail(subject, message, None, [email])
+            send_mail(subject.strip('\n'), message, None, [email])
             return True
         except socket.error, e:
             # TODO: log error

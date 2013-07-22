@@ -201,7 +201,7 @@ def signup(request):
     if result['status'] == 'ok':
         return HttpResponseRedirect(
             '%s?next=%s' % (
-                reverse('profile:public:email-notify'),
+                reverse('profile:public:success-signup'),
                 result['redirect']))
     return result
 

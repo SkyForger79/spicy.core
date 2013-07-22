@@ -233,7 +233,7 @@ class ProfileService(api.Interface):
 
         if request.method == "POST":
             form = load_module(CUSTOM_USER_SIGNUP_FORM)(request.POST)
-            redirect = reverse('profile:public:email-notify')
+            redirect = reverse('profile:public:success-signup')
             print form.errors
             if not is_blacklisted and form.is_valid():
                 status = 'ok'

@@ -60,6 +60,7 @@ class ProfileManager(UserManager):
                 self.model.email_hello(profile, password=password)
                 profile.is_banned = defaults.MANUAL_ACTIVATION
                 profile.activate()
+                profile.save()
 
             else:
                 profile.generate_activation_key(
@@ -264,7 +265,8 @@ class AbstractProfile(User):
         subject = ''.join(subject.splitlines())
         message = render_to_string('spicy.core.profile/mail/notify_managers_email.txt', context)
         try:
-            send_mail(subject, message, None, [admin_email for admin_name, admin_email in settings.ADMINS])
+            send_mail(subject.strip('\n'), message, None, 
+                      [admin_email for admin_name, admin_email in settings.ADMINS])
         except Exception, e:
             print_error('Can not send registration notify, error: {}\n'.format(e))
 

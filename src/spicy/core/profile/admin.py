@@ -174,7 +174,7 @@ def edit(request, profile_id):
     }
 
 
-@is_staff(required_perms='profile.delete')
+@is_staff(required_perms='profile.delete_profile')
 @render_to('delete.html', use_admin=True)
 def delete(request, profile_id):
     message = ''

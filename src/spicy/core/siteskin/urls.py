@@ -7,6 +7,7 @@ public_urls = patterns(
     '',
     url(r'^$', defaults.SITESKIN_INDEX_VIEW,
         {'template': 'index.html', 'page_slug': 'index'}, name='index'),
+    (r'^jsi18n/$', 'django.views.i18n.javascript_catalog'),
 )
 
 public_urls += patterns(

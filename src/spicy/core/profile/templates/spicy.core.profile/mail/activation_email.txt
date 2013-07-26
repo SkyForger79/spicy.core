@@ -10,7 +10,7 @@ http://{{ realhost }}{% url profile:public:activate user_id key %}?next={{ next_
 
 {% trans "Your registration data:" %}
 
-{% trans "Email%}: {{ email }}
+{% trans "Email" %}: {{ email }}
 {% trans "Username" %}: {{ user.username }}
 {% if password %}{% trans "Password" %}: {{ password }}
 {% endif %}

@@ -238,6 +238,8 @@ class ValidateEmailMixin:
                 Profile.objects.get(email__iexact=email)
             except Profile.DoesNotExist:
                 return email
+            except Profile.MultipleObjectsReturned:
+                pass
             raise forms.ValidationError(
                 _(u'This address already belongs to other user'))
         elif self.fields['email'].required:

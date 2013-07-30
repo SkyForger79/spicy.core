@@ -1,11 +1,5 @@
 {% extends current_admin_base %}{% load spicy_admin staticfiles %}{% load url from future %}
 
-{#<link rel="stylesheet" type="text/css" href="{% static '' %}">#}
-{# <script type="text/javascript" src="{% static 'admin/js/SelectFilter2.js' %}"></script> #}
-{# <script type="text/javascript" src="{% static 'admin/js/SelectBox.js' %}"></script> #}
-
-
-
 {% block title %}{% trans "Profile" %}{% endblock %}
 {% block status_title %}<i class="icon-user"></i> {{ profile.username }}{% endblock status_title %}
 {% block status_subtitle %}{{ profile.fullname }}{% endblock status_subtitle %}
@@ -14,6 +8,7 @@
 {% endblock status_stats %}
 
 {% block content %}
+
 {% if perms.profile.change_profile %}
 
 <div id="passwd" class="modal hide fade">
@@ -78,6 +73,7 @@
 		  {% formfield "" form "sites" "li-multiple-select" %}
 		  {% formfield "" form "groups" "li-multiple-select" %}
 		  {% formfield "" form "user_permissions" "li-multiple-select" %}
+		  {# <li>{{ form.user_permissions }}</li> #}
 		</ul>
 	      </div>
 	      <div class="span6">
@@ -112,4 +108,14 @@
 {% endif %}
 {% endblock content %}
 
-{% block extra_js %}{{ form.media }}{% endblock %}
+{% block extra_js %}
+
+{% comment %}
+<script type="text/javascript" src="/jsi18n/"></script>
+<script type="text/javascript" src="{% static 'admin/js/jquery.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'admin/js/jquery.init.js' %}"></script>
+
+{{ form.media }}
+{% endcomment %}
+
+{% endblock %}

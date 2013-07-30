@@ -58,7 +58,6 @@ setup(
 
         # debug deps.
         # 'logutils', #TODO: version?
-        'pycallgraph',
         'numpydoc',
         'django-nose',
         'django-debug-toolbar',

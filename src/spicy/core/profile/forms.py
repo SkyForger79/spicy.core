@@ -9,6 +9,7 @@ from captcha.fields import CaptchaField, CaptchaTextInput, ImproperlyConfigured
 
 from django.conf import settings
 from django import forms
+from django.contrib.admin import widgets
 from django.contrib.auth.forms import AdminPasswordChangeForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import Group, Permission
@@ -167,17 +168,17 @@ class ProfileForm(forms.ModelForm):
 
     groups = forms.ModelMultipleChoiceField(
         label=_('Groups'), required=False,
-        widget=forms.SelectMultiple(attrs={'class': 'SelectMultiple'}),
+        widget=widgets.FilteredSelectMultiple(_("Groups"), is_stacked=False),
         queryset=Group.objects.all())
 
     sites = forms.ModelMultipleChoiceField(
-        label=_('Sites'), required=False,
+        label=_('Sites'), required=False,        
         widget=forms.SelectMultiple(attrs={'class': 'SelectMultiple nosearch'}),
         queryset=Site.objects.all())
 
     user_permissions = forms.ModelMultipleChoiceField(
         label=_('Permissions'), required=False,
-        widget=forms.SelectMultiple(attrs={'class': 'SelectMultiple'}),
+        widget=widgets.FilteredSelectMultiple(_("Permissions"), is_stacked=False),
         queryset=Permission.objects.all())
 
     def save(self, *args, **kwargs):
@@ -237,6 +238,8 @@ class ValidateEmailMixin:
                 Profile.objects.get(email__iexact=email)
             except Profile.DoesNotExist:
                 return email
+            except Profile.MultipleObjectsReturned:
+                pass
             raise forms.ValidationError(
                 _(u'This address already belongs to other user'))
         elif self.fields['email'].required:

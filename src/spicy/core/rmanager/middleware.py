@@ -14,7 +14,6 @@ import cPickle
 import pstats
 import sys
 import tempfile
-import time
 from base64 import b64decode, b64encode
 from cStringIO import StringIO
 from decimal import Decimal
@@ -32,28 +31,6 @@ except ImportError:
     import profile
 
 style = color_style()
-
-try:
-    import pycallgraph
-except ImportError:
-    sys.stderr.write(style.ERROR('Install pycallgraph in the python environment.\n'))
-
-CALLGRAPH_INCLUDE = getattr(settings, 'CALLGRAPH_INCLUDE', ['account.*'])
-CALLGRAPH_EXCLUDE = getattr(settings, 'CALLGRAPH_EXCLUDE', ['django.*'])
-
-class CallgraphMiddleware(object):
-    def process_view(self, request, callback, callback_args, callback_kwargs):
-        if settings.DEBUG and 'graph' in request.GET:
-            filter_func = pycallgraph.GlobbingFilter(
-                include=CALLGRAPH_INCLUDE,
-                exclude=CALLGRAPH_EXCLUDE)
-            pycallgraph.start_trace(filter_func=filter_func)
-
-    def process_response(self, request, response):
-        if settings.DEBUG and 'graph' in request.GET:
-            pycallgraph.make_dot_graph(
-                'callgraph-' + str(time.time()) + '.png')
-        return response
 
 
 class StdoutWrapper(object):

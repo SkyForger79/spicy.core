@@ -143,7 +143,7 @@ class NavigationFilter:
         for filter, default in accepting_filters:
             setattr(self, filter, request.GET.get(filter, default))
 
-        self.page = request.GET.get('page', 1)
+        self.page = request.GET.get('page') or 1
 
         self.field = request.GET.get('field', default_order)
         fields = self.field.split(' ') if self.field else None

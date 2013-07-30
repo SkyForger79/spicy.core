@@ -1,4 +1,6 @@
-{% extends current_admin_base %}{% load navigator sk pagination %}{% load url from future %}
+{% extends current_admin_base %}
+{% load navigator sk pagination %}
+{% load url from future %}
 
 {% block title %}{% trans "List of" %} {{ app.label }}{% endblock %}
 {% block status_title %}{% trans "List of" %} {{ app.label }}{% endblock status_title %}
@@ -6,7 +8,7 @@
 
 {% block content %}
 
-{% if objects_list.count > 0 %}
+{% if objects_list|length > 0 %}
 
 <div class="container-fluid padded">
   <div class="row-fluid">
@@ -43,7 +45,7 @@
                   </td>
 		  <td>{{ obj.id }}</td>
                   <td>
-		    {% captureas edit_url %}{{ app.name }}:admin:edit{% endcaptureas %}
+		    {% if not edit_url %}{% captureas edit_url %}{{ app.name }}:admin:edit{% endcaptureas %}{% endif %}
                     <a href="{% url edit_url obj.pk %}"> {{ obj }}</a>
                   </td>                  
 		</tr>

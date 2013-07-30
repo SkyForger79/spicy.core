@@ -10,16 +10,30 @@ $(function(){
       cid = tmp[0], app = tmp[1];
 
       var url;
-     
-{% for app in ADMIN_APPS %}
-{% if app.edit_url %}
-{#% if app.perms.view %#}
 
-if (app == '{{ app.name }}'){
-   url = "{{ app.edit_url }}";
+if (!app.length) {
+    console.log('Invalid APP name')
 }
 
-{#% endif %#}
+{% for app in ADMIN_APPS %}
+{% if app.name == 'comments' %}
+else if (app == 'comment') {
+   url = "{% url 'comments:admin:comments-edit' 0 %}";
+}
+else if (app == 'topic') {
+   url = "{% url 'comments:admin:topics-edit' 0 %}";
+}
+else if (app == 'thread') {
+   url = "{% url 'comments:admin:threads-edit' 0 %}";
+}
+{% endif %}     
+{% endfor %}
+
+{% for app in ADMIN_APPS %}
+{% if app.edit_url %}{#% if app.perms.view %#}
+else if (app == '{{ app.name }}'){
+   url = "{{ app.edit_url }}";
+}{#% endif %#}
 {% endif %}
 
 {% endfor %}

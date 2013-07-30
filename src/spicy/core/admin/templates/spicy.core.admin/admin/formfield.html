@@ -146,6 +146,8 @@
 </li>
 {% endif %}
 {% if type == 'table-formset'%}
+<div class="row-fluid">
+  <table class="table table-normal">
 <thead>
     <tr>
         {% for field in form.forms.0 %}
@@ -153,7 +155,6 @@
                 <td>{{ field.label }}</td>
             {% endif %}
         {% endfor %}
-	<td><i class="icon-trash"></i></td>
     </tr>
     </thead>
     <tbody>
@@ -177,12 +178,15 @@
            </tr>
         {% endfor %}
     </tbody>
-    <tr>
-        <td colspan="2">
-            <button type="button" class="add_formset" class="btn btn-link">
-            <i class="icon-plus-sign"></i> Добавить поле</button>
-        </td>
-    </tr>
+<table>
+</div>
+
+<div class="form-actions">
+  <button type="button" class="add_formset btn btn-green">
+    <i class="icon-plus-sign"></i> Добавить поле
+  </button>
+</div>
+
 <script>
     $(document).ready(function () {
     function updateElementIndex(el, prefix, ndx) {
@@ -225,9 +229,12 @@
             $(row).removeAttr('id').hide().insertAfter(".item:last").slideDown(300);
             
             // Add an event handler for the delete item/form link 
-            $(row).append('<span class="delete_formset">'+
-                '<i class="icon-trash"></i>'+
-                '</span>').find(".delete_formset").click(function () {
+            $(row).find(':last').replaceWith(
+			'<span class="btn btn-red delete_formset" style="cursor: pointer;">'+
+			'<i class="icon-trash"></i>'+
+			'</span>');
+
+	    $(row).find(".delete_formset").click(function () {
                 return deleteForm(this, prefix);
             });
 

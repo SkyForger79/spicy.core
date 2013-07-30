@@ -153,6 +153,7 @@
                 <td>{{ field.label }}</td>
             {% endif %}
         {% endfor %}
+	<td><i class="icon-trash"></i></td>
     </tr>
     </thead>
     <tbody>
@@ -224,9 +225,9 @@
             $(row).removeAttr('id').hide().insertAfter(".item:last").slideDown(300);
             
             // Add an event handler for the delete item/form link 
-            $(row).append('<button style="position:inherit;top:10px;left:100px;" type="button"         class="btn btn-link delete_formset">'+
+            $(row).append('<span class="delete_formset">'+
                 '<i class="icon-trash"></i>'+
-                '</button>').find(".delete_formset").click(function () {
+                '</span>').find(".delete_formset").click(function () {
                 return deleteForm(this, prefix);
             });
 

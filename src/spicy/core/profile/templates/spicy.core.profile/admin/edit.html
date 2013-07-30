@@ -1,0 +1,115 @@
+{% extends current_admin_base %}{% load spicy_admin staticfiles %}{% load url from future %}
+
+{#<link rel="stylesheet" type="text/css" href="{% static '' %}">#}
+{# <script type="text/javascript" src="{% static 'admin/js/SelectFilter2.js' %}"></script> #}
+{# <script type="text/javascript" src="{% static 'admin/js/SelectBox.js' %}"></script> #}
+
+
+
+{% block title %}{% trans "Profile" %}{% endblock %}
+{% block status_title %}<i class="icon-user"></i> {{ profile.username }}{% endblock status_title %}
+{% block status_subtitle %}{{ profile.fullname }}{% endblock status_subtitle %}
+{% block status_stats %}
+<a class="pull-right" href="{{ profile.get_absolute_url }}" target="_blank"><i class="icon-eye-open icon-2x"></i></a>
+{% endblock status_stats %}
+
+{% block content %}
+{% if perms.profile.change_profile %}
+
+<div id="passwd" class="modal hide fade">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h6 id="modal-formLabel">{% trans "Change password" %}</h6>
+  </div>
+  <div class="modal-body">
+    <form action="{% url 'profile:admin:passwd' profile.id %}"
+	  class="form-horizontal fill-up separate-sections" method="post" id="passwd-form">{% csrf_token %}      
+      <div class="row-fluid">
+	<ul class="padded separate-sections">
+	  {% formfield "" passwd_form "password1" "li-password" %}
+	  {% formfield "" passwd_form "password2" "li-password" %}
+	  {% formfield "" passwd_form "email_new_password" "li-checkbox" %}
+	</ul>
+      </div>
+
+      <div class="modal-footer">
+	<span class="btn btn-blue pull-right" onclick="post_form('#passwd-form'); return true;">{% trans "Save changes" %}</span>	
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<div class="container-fluid hpadded">
+  <div class="row-fluid">
+    <div class="span12">
+      <div class="box">
+        <div class="box-header">
+          <span class="title"></span>	  		  
+	  <ul class="nav nav-tabs nav-tabs-right">
+            <li class="active"><a href=""><i class="icon-file-alt"></i> <span>{% trans "Edit profile" %}</span></a></li>
+	    <li class=""><a href="{#% url profile:admin:edit-media' form.instance.pk %#}" ><i class="icon-camera"></i> <span>{% trans "Social accounts" %}</span></a></li>
+            <li class=""><a href="{#% url profile:admin:edit-media' form.instance.pk %#}" ><i class="icon-camera"></i> <span>{% trans "Media files" %}</span></a></li>
+          </ul>
+        </div>
+	
+        <div class="box-content">
+          <form class="form-horizontal fill-up validatable" method="post"
+                action="." autocomplete="off">{% csrf_token %}
+	    
+	    <div class="row-fluid">
+	      <div class="span6">
+		<ul class="padded separate-sections">
+		  {% formfield "" form "username" "li-text" %}
+		  {% formfield "" form "email" "li-text" %}
+		  <hr/>		  
+		  <li><strong>{% trans "Date joined" %}</strong>: {{ profile.date_joined|date:"d-m-Y H:i" }}</li>
+		  <li><strong>{% trans "Last login" %}</strong>: {{ profile.last_login|date:"d-m-Y H:i" }}</li>
+		  <li>
+		    <a data-toggle="modal" href="#passwd" class="btn btn-gray">{% trans "Change password" %}</a>
+		    <a class="btn btn-green" onclick="call_method('{% url 'profile:admin:resend-activation' profile.id %}');">{% trans "Resend activation key" %}</a>
+		    <hr/>
+		  </li>
+		  {% formfield "" form "is_staff" "li-checkbox" %}		
+		  {% formfield "" form "is_superuser" "li-checkbox" %}		
+		  {% formfield "" form "is_active" "li-checkbox" %}		
+		  {% formfield "" form "is_banned" "li-checkbox" %}		
+		  <li><hr/></li>
+		  {% formfield "" form "sites" "li-multiple-select" %}
+		  {% formfield "" form "groups" "li-multiple-select" %}
+		  {% formfield "" form "user_permissions" "li-multiple-select" %}
+		</ul>
+	      </div>
+	      <div class="span6">
+		<ul class="padded separate-sections">
+		  {% formfield "" form "first_name" "li-text" %}
+		  {% formfield "" form "last_name" "li-text" %}
+		  {% formfield "" form "second_name" "li-text" %}		 
+		  <hr/>
+		  {% formfield "" form "accept_agreement" "li-checkbox" %}		
+		  {% formfield "" form "subscribe_me" "li-checkbox" %}		
+		  {% formfield "" form "hide_email" "li-checkbox" %}				  
+		  <hr/>
+		  {% formfield "" form "phone" "li-text" %}
+		  {% formfield "" form "timezone" "li-text" %}
+		</ul>
+	      </div>
+	    </div>	    
+
+	    <div class="form-actions">
+	      <a class="btn btn-red" href="{% url 'profile:admin:delete' form.instance.id %}">{% trans "Delete" %}</a>
+	      <div class="pull-right">
+		<button type="submit" class="btn btn-blue pull-right">{% trans "Save changes" %}</button>	      
+	      </div>
+            </div>	    
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endblock content %}
+
+{% block extra_js %}{{ form.media }}{% endblock %}

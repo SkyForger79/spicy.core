@@ -1,0 +1,55 @@
+{% extends current_admin_base %}{% load navigator pagination %}{% load url from future %}
+
+{% block title %}{% trans "Find pages" %}{% endblock %}
+{% block status_title %}<i class="icon-user"></i> {% trans "Update results" %}{% endblock status_title %}
+
+{% block content %}
+<div class="container-fluid padded">
+  <div class="row-fluid">
+    <div class="span12 row-fluid">
+      <div class="span6">
+	{% if found %}
+	<h3>{% trans "Found new simple pages" %}</h3>
+	<ul class="unstyled">
+	  {% for page in found %}
+	  <li>
+	    <div class="row-fluid">
+	      <div class="span4">
+		<a href="{% url "simplepages:admin:edit" page.pk %}">{{ page.url }}</a>
+	      </div>
+	      <div class="span8">
+		{{ page.title }}
+	      </div>
+	    </div>
+	  </li>
+	  {% endfor %}
+	</ul>
+	{% else %}
+	<h3>{% trans "No new simple pages" %}</h3>
+	{% endif %}
+      </div>
+      <div class="span6">
+	{% if existing %}
+	<h3>{% trans "Existing simple pages" %}</h3>
+	<ul class="unstyled">	  	  
+	  {% for page in existing %}
+	  <li>
+	    <div class="row-fluid">
+	      <div class="span4">
+		<a href="{% url "simplepages:admin:edit" page.pk %}">{{ page.url }}</a>
+	      </div>
+	      <div class="span8">
+		{{ page.title }}
+	      </div>
+	    </div>
+	  </li>
+	  {% endfor %}
+	</ul>
+	{% else %}
+	<h3>{% trans "No existing simple pages" %}</h3>
+	{% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

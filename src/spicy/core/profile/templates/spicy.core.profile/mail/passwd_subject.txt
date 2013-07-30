@@ -1,0 +1,1 @@
+{% blocktrans with domain=site.domain %}Your password on {{ domain }} has been changed{% endblocktrans %}

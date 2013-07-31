@@ -62,6 +62,9 @@ def print_info(message):
 def print_success(message):
     sys.stdout.write(paint_text(prefix_message(message), 'green') + '\n')
 
+def print_todo(message):
+    sys.stdout.write(paint_text(prefix_message(message), 'magenta') + '\n')
+
 
 def print_text(message):
     """

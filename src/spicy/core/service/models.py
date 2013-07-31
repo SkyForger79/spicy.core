@@ -17,8 +17,6 @@ class CustomAbstractModel(models.Model):
         abstract = True
 
 
-
-
 class ServiceManager(models.Manager):
     def get_by_natural_key(self, name):
         return self.get(name=name)
@@ -35,7 +33,7 @@ class Service(models.Model):
     site = models.ManyToManyField(Site)
     is_enabled = models.BooleanField('Is enabled', default=True)
 
-    #default = generic.GenericRelation(_('Default settings'), blank=True)                                                                                                                               
+    #default = generic.GenericRelation(_('Default settings'), blank=True)
 
     objects = ServiceManager()
 
@@ -58,12 +56,13 @@ class Service(models.Model):
 class ProviderModel(models.Model):
     #service = models.ForeignKey(Service)
 
-    consumer_type = models.ForeignKey(ContentType, blank=True)    
+    consumer_type = models.ForeignKey(ContentType, blank=True)
     consumer_id = models.PositiveIntegerField()
     consumer = generic.GenericForeignKey(
         ct_field='consumer_type', fk_field='consumer_id')
 
-    date_joined = models.DateTimeField(_('Date joined'), blank=True, auto_now_add=True)
+    date_joined = models.DateTimeField(
+        _('Date joined'), blank=True, auto_now_add=True)
 
     class Meta:
         ordering = ('-date_joined',)
@@ -112,7 +111,7 @@ class BillingProviderModel(models.Model):
         _('Activated till'), blank=True, auto_now_add=False, null=True)
 
     expiration_period = models.PositiveIntegerField(
-        _('Expiration time in seconds'), default=60*60*24*7,
+        _('Expiration time in seconds'), default=(60 * 60 * 24 * 7),
         blank=False, null=False)
 
     is_activated = models.BooleanField(_('Is activated'), default=False)

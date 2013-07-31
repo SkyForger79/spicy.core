@@ -31,3 +31,9 @@ def find_templates(base_dir, name_tuples=True):
 
     templates.sort()
     return templates
+
+
+def mk_style(name):
+    if name:
+        return 'class="%s"' % name
+    return ''

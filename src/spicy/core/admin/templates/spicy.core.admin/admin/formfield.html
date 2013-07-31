@@ -1,4 +1,5 @@
 {% spaceless %}
+{% load url from future %}
 {# new admin #}
 
 {% if type == 'li-file' %}
@@ -105,11 +106,47 @@
 {% if type == 'li-select2' %}
 <li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
   {{ label }}  
+  {% if ajax_url %}
+  <input type="hidden" name="{{ field.html_name }}" id="id_{{ field.html_name }}" value="{{ field.value|default:'' }}"/>
+<script type="text/javascript">
+$(function(){
+  $('#id_{{ field.html_name }}').select2({
+    multiple: true,
+    initSelection: function (element, callback){
+      var val = element.val();
+      if (val) {
+        $.get(
+          '{% url "service:admin:xtag-get_tags_data" %}',
+          {tags: val},
+          callback
+        )
+      }
+    },
+    ajax: {
+      url: '{{ ajax_url }}',
+      data: function (term, page) {
+        return {search: term}
+      },
+      results: function (data, page) {
+        return {
+          results: $.map(data, function (val) { return {id: val.id, text: val.title}})}
+      }
+  }});
+  $("#id_{{ field.html_name }}").select2("container").find("ul.select2-choices").sortable({
+    containment: 'parent',
+    start: function() { $("#id_{{ field.html_name }}").select2("onSortStart"); },
+    update: function() { $("#id_{{ field.html_name }}").select2("onSortEnd"); }
+  });
+$('#id_{{ field.html_name }}').on("select2-removed", function(e) { log ("removed val="+ e.val+" choice="+ JSON.stringify(e.choice));})
+})
+</script>
+  {% else %}
   <select name="{{ field.html_name }}" id="id_{{ field.html_name }}" class="chzn-select select2-offscreen" tabindex="-1">
     {% for id, name in field.field.choices %}
     <option value="{{ id }}" {% if field.value == id %}selected="on"{% endif %}>{{ name }}</option>
     {% endfor %}
   </select>
+  {% endif %}
   {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
   {% if field.help_text %}
   <div class="note pull-right">{{ field.help_text }}</div>

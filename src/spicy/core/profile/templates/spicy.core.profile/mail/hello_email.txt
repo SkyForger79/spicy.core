@@ -1,0 +1,9 @@
+{% blocktrans with username=user.username email=user.email %}{{ username }}, congratilations on your account's registration!
+
+Your account will be manually activated by our customers relations department.
+
+We're sure that you'll enjoy working with our system and client support specialists!
+
+Your email: {{ email }},
+password: {{ password }}
+{% endblocktrans %}

@@ -1,0 +1,8 @@
+{% load url from future %}{% blocktrans with sitename=site.name %}Confirmation email for your account on {{ sitename }}{% endblocktrans %}
+
+http://{{ site.domain }}{% url 'profile:public:set_email' %}?email={{ email }}&hash={{ hash }}
+
+{% trans "Email" %}: {{ email }}
+{% trans "Username" %}: {{ user.username }}
+
+{% trans "Thank you for being with us" %}

@@ -1,0 +1,11 @@
+{% load staticfiles %}{% load url from future %}
+{# TODO available social networks #}
+
+          <a href="{% url profile:public:signin_social "vkontakte-oauth2" %}"><img src="{{ MEDIA_URL }}{{ SITESKIN }}/img/vkb.gif" title="VKontakte"/></a>
+          <a href="{% url profile:public:signin_social "facebook" %}"><img src="{{ MEDIA_URL }}{{ SITESKIN }}/img/fbb.gif" title="Facebook"/></a>
+          <a href="{% url profile:public:signin_social "yandex" %}"><img src="{{ MEDIA_URL }}{{ SITESKIN }}/img/yab.gif" title="Yandex"/></a>
+          <a href="{% url profile:public:signin_social "google-oauth" %}"><img src="{{ MEDIA_URL }}{{ SITESKIN }}/img/ggb.gif" title="Google"/></a>
+          {# <a href="{% url profile:public:signin_social "twitter" %}"><img src="{{ MEDIA_URL }}{{ SITESKIN }}/img/twb.gif" title="Twitter"/></a> #}
+          {# <a href="{% url profile:public:signin_social "mailru-oauth2" %}"><img src="{{ MEDIA_URL }}{{ SITESKIN }}/img/mrb.png" title="Mail.ru"/></a> #}
+          {# <a href="{% url profile:public:signin_social "odnoklassniki" %}"><img src="{{ MEDIA_URL }}{{ SITESKIN }}/img/okb.gif" title="Odnoklassniki.ru"/></a> #}
+          {# <a href="{% url profile:public:signin_social "odnoklassniki" %}"><img src="{{ MEDIA_URL }}{{ SITESKIN }}/img/ljb.gif" title="livejournal.ru"/></a> #}

@@ -1,0 +1,412 @@
+{% spaceless %}
+{# new admin #}
+
+{% if type == 'li-file' %}
+<li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
+  {{ label }}
+  {{ field }}
+  {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+{% endif %}
+
+{% if type == 'li-checkbox' %}
+<li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
+  <input type="checkbox" id="id_{{ field.html_name }}" class="icheck" name="{{ field.html_name }}" {% if field.value %}checked="on"{% endif %}/>
+  {{ label }}
+  {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+{% endif %}
+
+{% if type == 'li-text' %}
+<li class="input">
+  {{ label }} {#{ default_value}#}
+  <input type="text" name="{{ field.html_name }}" placeholder="{{ title }}" value="{{ field.value|default_if_none:'' }}" id="id_{{ field.html_name }}"/>
+  {% if preview_link %}<a href="{{ form.instance.get_absolute_url }}" target="blank"><i class="icon-eye-open icon-2x"></i></a>{% endif %}
+  {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+{% endif %}
+
+{% if type == 'li-password' %}
+<li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
+  {{ label }}
+  <input type="password" name="{{ field.html_name }}" placeholder="{{ title }}" id="id_{{ field.html_name }}"/>
+  {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+{% endif %}
+
+{% if type == 'li-chat-editor' %}
+<li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
+  {{ label }}
+  <div class="closable-chat-box">
+    <div class="chat-message-box">
+      <textarea name="{{ field.html_name }}" placeholder="{{ title }}" rows="6" id="id_{{ field.html_name }}">{{ field.value|default_if_none:'' }}</textarea>
+    </div>
+  </div>
+  {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+{% endif %}
+
+{% if type == 'li-editor' %}
+<li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
+  {{ label }}
+  
+  <div class="">
+  <textarea name="{{ field.html_name }}" placeholder="{{ title }}" rows="6" id="id_{{ field.html_name }}"
+	    style="width: 99%; height: 400px;">{{ field.value|default_if_none:'' }}</textarea>
+  </div>
+  {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+{% endif %}
+
+{% if type == 'li-date' %}
+<li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
+  {{ label }}
+  <input class="datetime fill-up"  type="text" name="{{ field.html_name }}" value="{% if field.value %}{{ field.value|date:"Y-m-d H:i"|default:field.value }}{% endif %}" id="id_{{ field.html_name }}"/>
+  {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+{% endif %}
+
+{% if type == 'li-select' %}
+<li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
+  {{ label }}
+  <select name="{{ field.html_name }}" class="uniform" id="id_{{ field.html_name }}">
+    {% for id, name in field.field.choices %}
+    <option value="{{ id }}" {% ifequal field.value|stringformat:"s" id|stringformat:"s" %}selected="on"{% endifequal %}>{{ name }}</option>
+    {% endfor %}
+  </select>  
+  {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+{% endif %}
+
+{% if type == 'li-select2' %}
+<li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
+  {{ label }}  
+  <select name="{{ field.html_name }}" id="id_{{ field.html_name }}" class="chzn-select select2-offscreen" tabindex="-1">
+    {% for id, name in field.field.choices %}
+    <option value="{{ id }}" {% if field.value == id %}selected="on"{% endif %}>{{ name }}</option>
+    {% endfor %}
+  </select>
+  {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+{% endif %}
+
+{% if type == 'li-multiple-select' %}
+<li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
+  {{ label }}  
+  <select name="{{ field.html_name }}" multiple="multiple" id="id_{{ field.html_name }}" class="chzn-select" tabindex="-1">
+    {% for id, name in field.field.choices %}
+    <option value="{{ id }}" {% if field.value == id %}selected="on"{% endif %}>{{ name }}</option>
+    {% endfor %}
+  </select>
+  {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+{% endif %}
+
+{% if type == 'li-simple-tags' %}
+<li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
+  {{ label }}
+  
+  <div class="">
+    <textarea class="tags" name="{{ field.html_name }}" placeholder="{{ title }}" rows="2" id="id_{{ field.html_name }}">{{ field.value|default_if_none:'' }}</textarea>
+  </div>
+  {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+{% endif %}
+{% if type == 'table-formset'%}
+<thead>
+    <tr>
+        {% for field in form.forms.0 %}
+            {% if not field.is_hidden %}
+                <td>{{ field.label }}</td>
+            {% endif %}
+        {% endfor %}
+    </tr>
+    </thead>
+    <tbody>
+        {% for f in form.management_form %}
+            {# Hidden input #}
+            {{ f }}
+        {% endfor %}
+
+        {% for form in form.forms %}
+           <tr class="item">
+           {% for field in form %}
+               {% if not field.is_hidden %}
+               <td>
+                   {{ field.errors }}
+                   {{ field }}
+               </td>
+               {% else %}
+                   {{ field }}
+               {% endif %}
+           {% endfor %}
+           </tr>
+        {% endfor %}
+    </tbody>
+    <tr>
+        <td colspan="2">
+            <button type="button" class="add_formset" class="btn btn-link">
+            <i class="icon-plus-sign"></i> Добавить поле</button>
+        </td>
+    </tr>
+<script>
+    $(document).ready(function () {
+    function updateElementIndex(el, prefix, ndx) {
+        var id_regex = new RegExp('(' + prefix + '-\\d+-)');
+        var replacement = prefix + '-' + ndx + '-';
+        if ($(el).attr("for")) $(el).attr("for", $(el).attr("for").replace(id_regex,
+        replacement));
+        if (el.id) el.id = el.id.replace(id_regex, replacement);
+        if (el.name) el.name = el.name.replace(id_regex, replacement);
+    }
+    function deleteForm(btn, prefix) {
+        var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+        if (formCount > 1) {
+            // Delete the item/form
+            $(btn).parents('.item').remove();
+            var forms = $('.item'); // Get all the forms  
+            // Update the total number of forms (1 less than before)
+            $('#id_' + prefix + '-TOTAL_FORMS').val(forms.length);
+            var i = 0;
+            // Go through the forms and set their indices, names and IDs
+            for (formCount = forms.length; i < formCount; i++) {
+                $(forms.get(i)).children().children().each(function () {
+                    if ($(this).attr('type') == 'text') updateElementIndex(this, prefix, i);
+                });
+            }
+        } // End if
+        else {
+            alert("You have to enter at least one todo item!");
+        }
+        return false;
+    }
+    function addForm(btn, prefix) {
+        var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+        // You can only submit a maximum of 10 todo items 
+        if (formCount < 100) {
+            // Clone a form (without event handlers) from the first form
+            var row = $(".item:first").clone(false).get(0);
+
+            // Insert it after the last form
+            $(row).removeAttr('id').hide().insertAfter(".item:last").slideDown(300);
+            
+            // Add an event handler for the delete item/form link 
+            $(row).append('<button style="position:inherit;top:10px;left:100px;" type="button"         class="btn btn-link delete_formset">'+
+                '<i class="icon-trash"></i>'+
+                '</button>').find(".delete_formset").click(function () {
+                return deleteForm(this, prefix);
+            });
+
+
+            // Remove the bits we don't want in the new row/form
+            // e.g. error messages
+            $(".errorlist", row).remove();
+            $(row).children().removeClass("error");
+            $("input[type='hidden']", row).remove();
+
+            // Relabel or rename all the relevant bits
+            $(row).children().children().each(function () {
+                updateElementIndex(this, prefix, formCount);
+                $(this).val("");
+            });
+            // Update the total form count
+            $("#id_" + prefix + "-TOTAL_FORMS").val(formCount + 1);
+        } // End if
+        else {
+            alert("Sorry, you can only enter a maximum of ten items.");
+        }
+        return false;
+    }
+    // Register the click event handlers
+    $(".add_formset").click(function () {
+        return addForm(this, "{{default_value}}");
+    });
+    $(".delete_formset").click(function () {
+        return deleteForm(this, "{{default_value}}");
+    });
+});
+</script>
+{% endif %}
+
+
+
+{# new admin end #}
+
+{% if type == 'td' %}
+    <td class="half">
+      {{ label }}{{ field }}
+      <div>
+	{{ field.errors }}
+	{% if field.help_text %}<div><em>{{ field.help_text }}</em></div>{% endif %}
+      </div>
+    </td>
+{% endif %}
+
+{% if type == 'td-span2' %}
+    <td colspan="2">
+      {{ label }}{{ field }}
+      <div class="right-column">
+	{{ field.errors }}
+	{% if field.help_text %}<div><em>{{ field.help_text }}</em></div>{% endif %}
+      </div>
+    </td>
+{% endif %}
+
+{% if type == 'td-person-info' %} <!-- Для редактирования профайов -->
+    <td>
+      {{ label }}{{ field }}
+      <div>{{ field.errors }}</div>
+    </td>
+{% endif %}
+
+{% if type == 'td-person-info-span2' %} <!-- Для редактирования профайов -->
+    <td colspan="2">
+      {{ label }}{{ field }}
+      <div>{{ field.errors }}</div>
+<!--       <div class="clr"></div>-->
+    </td>
+{% endif %}
+
+
+{# OLD TYPES #}
+
+{% if type == "collapsable" %}
+    <div class="collapsed-block"> 
+      <div class="collapsed-header">{{ label }}
+	<div class="collapsed_box_button">&ndash;</div>
+      </div>
+      <div class="collapsed-content">{{ field }}{{ field.errors }}</div>
+    </div> 	
+{% endif %}
+{% if type == "collapsable-none" %}
+    <div class="collapsed-block"> 
+      <div class="collapsed-header">{{ label }}
+	<div class="collapsed_box_button">&ndash;</div>
+      </div>
+      <div class="collapsed-content" style="display:none;">{{ field }}{{ field.errors }}</div>
+    </div> 	
+{% endif %}
+{% if type == 'inline' %}
+    {{ label }} {{ field }}{{ field.errors }}
+{% endif %}
+{% if type == 'li' %}
+    <li class="form-row clearfix">
+      {{ label }}
+      <div class="right-column">
+	{{ field.errors }}{{ field }}
+	{% if field.help_text %}<div>{{ field.help_text }}</div>{% endif %}
+      </div>
+    <!--   !!! Если сломается вернуть вместа clearfix <div class="clr"></div>-->
+    </li>
+{% endif %}
+{% if type == 'li-short' %}
+    <li class="form-row clearfix">
+      {{ label }}
+      <div class="right-column short-field">{{ field.errors }}{{ field }}</div>
+<!--       <div class="clr"></div>-->
+    </li>
+ {% endif %}
+
+{% if type == 'li-full-size' %}
+    <li class="form-row clearfix">
+      {{ label }}
+      <div class="right-column full-size">{{ field.errors }}{{ field }}</div>      
+      {% if field.help_text %}
+      <div class="clr"></div>
+      <div>{{ field.help_text|safe }}</div>
+      {% endif %}
+      
+    </li>
+{% endif %}
+
+{% if type == 'li-vlarge-size' %}
+    <li class="form-row clearfix">
+      {{ label }}
+      <div class="right-column full-size vl-tarea">{{ field.errors }}{{ field }}</div>
+<!--       <div class="clr"></div>-->
+    </li>
+{% endif %}
+
+{% if type == 'li-person-info' %} <!-- Для редактирования профайов -->
+    <li class="form-row clearfix">
+      {{ label }}
+      <div class="person-info">{{ field.errors }}{{ field }}</div>
+<!--       <div class="clr"></div>-->
+    </li>
+{% endif %}
+
+{% if type == 'li-tags' %}
+{% if form.errors %}<li>{% for ftag in form.forms %}{{ ftag.errors }}{% endfor %}</li>{% endif %}
+<li class="form-row">
+  <label>{{ label }}</label>
+  <div id="{% if form.vocabulary %}{{ form.vocabulary }}{% else %}tag{% endif %}_hidden_data">
+    {{ form.management_form }}
+
+    {% for ftag in form.forms %}
+    {{ ftag.id }}
+    {{ ftag.tag }}
+    {{ ftag.position }}
+    {{ ftag.text }}
+    {{ ftag.service }}
+    {{ ftag.DELETE }}
+    {% endfor %}
+  </div>
+
+  <div id="{% if form.vocabulary %}{{ form.vocabulary }}{% else %}tag{% endif %}_input"></div>
+  <div class="clr"></div>
+</li>
+{% endif %}
+
+{% if type == 'li-sub' %}
+<li id="id_{{ field.html_name }}">
+{{ label }}
+{% if field.field.required %}
+<span class="required">*</span>
+{% endif %}
+{{ field }}
+{{ field.errors }}
+</li>
+{% endif %}
+
+{% if type == 'pd-row' %}
+<li class="pd-row form-230" id="id_{{ field.html_name }}">
+    <label for="">{{ field.label }} {% if field.field.required %}<span class="required">*</span>{% endif %}</label>
+    {{ field }}
+    {% if field.help_text %}<div>{{ field.help_text|safe }}</div>{% endif %}
+    {{ field.errors }}
+</li>
+{% endif %}
+{% endspaceless %}

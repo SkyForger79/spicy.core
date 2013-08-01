@@ -113,7 +113,7 @@ $(function(){
   $('#id_{{ field.html_name }}').select2({
     multiple: true,
     initSelection: function (element, callback){
-      var val = element.val();
+      var val = element.val(); console.log(val)
       if (val) {
         $.get(
           '{% url "service:admin:xtag-get_tags_data" %}',
@@ -131,13 +131,12 @@ $(function(){
         return {
           results: $.map(data, function (val) { return {id: val.id, text: val.title}})}
       }
-  }});
+  }})
   $("#id_{{ field.html_name }}").select2("container").find("ul.select2-choices").sortable({
     containment: 'parent',
     start: function() { $("#id_{{ field.html_name }}").select2("onSortStart"); },
     update: function() { $("#id_{{ field.html_name }}").select2("onSortEnd"); }
   });
-$('#id_{{ field.html_name }}').on("select2-removed", function(e) { log ("removed val="+ e.val+" choice="+ JSON.stringify(e.choice));})
 })
 </script>
   {% else %}

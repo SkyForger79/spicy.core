@@ -13,6 +13,6 @@ class Loader(BaseLoader):
     def load_template_source(self, template_name, template_dirs=None):
         try:
             simplepage = SimplePage.objects.get(template_name=template_name)
-            return simplepage.content
+            return simplepage.content, template_name
         except SimplePage.DoesNotExist:
             raise TemplateDoesNotExist(template_name)

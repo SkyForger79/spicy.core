@@ -392,7 +392,11 @@ class Application(object):
         # Do not forget enable ENV in the deployer before call this function
         if self.is_django:
             with cd(self.remote_path):                
-                sudo('./manage.py collectstatic --link --noinput')        
+                try:
+                    sudo('./manage.py collectstatic --link --noinput')        
+                except:
+                    print_err('Check settings.STATIC_ROOT variable for app: {}'.format(self.name))
+
                 print_done('Collect static in the STATIC_ROOT directory.')
     
     def has_cron_tasks(self):
@@ -699,10 +703,13 @@ class ProjectDeployer(object):
         # create `remote_SERVER_PATHS` for current project
         for path_attr in self.server.req_dirs:
             attr_name = 'remote_' + path_attr
-            if not hasattr(self, attr_name):
-                setattr(self, attr_name,
-                        os.path.join(
-                        getattr(self.server, path_attr), self.version_label))
+            if not hasattr(self, attr_name):                
+                path_value = os.path.join(
+                    getattr(self.server, path_attr), self.version_label)
+                setattr(self, attr_name, path_value)
+                print_info('[{0}] Create deploy path Deployer.{1} -> {2}'.format(
+                        self.version_label, attr_name, path_value))
+
         print_ok('[done] Create variables for remote server dirs. {0}'.format(
                 ', '.join(self.server.req_dirs)))
         
@@ -939,13 +946,16 @@ class ProjectDeployer(object):
                     print_info('Change mode for executable files.: {0}/manage.py'.format(app.remote_path))
 
                 sudo('/etc/init.d/nginx reload', user='root')
-            
+            else:
+                print_warn('[Notice] Application has no nginx.conf.spicy and uwsgi.conf.spicy files: {0}'.format(app.name))
+
             if app.has_cron_tasks():
                 print_err('[done] Configure crontab for app: {0}'.format(app.name))
                 # todo cron config
                 pass
             
             if app.is_daemon():
+                print_warn('[Notice] Daemon application {0}'.format(app.name))
                 with cd(app.remote_path):
                     sudo('chmod 755 restart.sh')
                     print_info('Change mode for executable files.: {0}/restart.sh'.format(app.remote_path))

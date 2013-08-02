@@ -101,8 +101,8 @@ def create(request):
     if request.method == 'POST':
         form = forms.SimplePageForm(request.POST)
         if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('simplepages:admin:index'))
+            page = form.save()
+            return HttpResponseRedirect(reverse('simplepages:admin:edit', args=[page.pk]))
         else:
             message = settings.MESSAGES['error']
     else:
@@ -121,8 +121,7 @@ def edit(request, simplepage_id):
     if request.method == 'POST':
         form = forms.SimplePageForm(request.POST, instance=page)
         if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('simplepages:admin:index'))
+            page = form.save()
         else:
             message = settings.MESSAGES['error']
     else:

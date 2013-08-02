@@ -141,8 +141,8 @@ $(function(){
 </script>
   {% else %}
   <select name="{{ field.html_name }}" id="id_{{ field.html_name }}" class="chzn-select select2-offscreen" tabindex="-1">
-    {% for id, name in field.field.choices %}
-    <option value="{{ id }}" {% if field.value == id %}selected="on"{% endif %}>{{ name }}</option>
+    {% for option_id, name in field.field.choices %}
+    <option value="{{ option_id }}" {% if field.value == option_id %}selected="on"{% endif %}>{{ name }}</option>
     {% endfor %}
   </select>
   {% endif %}
@@ -157,8 +157,8 @@ $(function(){
 <li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
   {{ label }}  
   <select name="{{ field.html_name }}" multiple="multiple" id="id_{{ field.html_name }}" class="chzn-select" tabindex="-1">
-    {% for id, name in field.field.choices %}
-    <option value="{{ id }}" {% if field.value == id %}selected="on"{% endif %}>{{ name }}</option>
+    {% for option_id, name in field.field.choices %}
+    <option value="{{ option_id }}" {% if option_id in field.value %}selected="on"{% endif %}>{{ name }}</option>
     {% endfor %}
   </select>
   {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}

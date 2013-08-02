@@ -4,6 +4,8 @@
 {% block status_title %}<i class="icon-plus-sign-alt"></i> {{ app.create.label }}{% endblock status_title %}
 {% block status_stats %}{% endblock status_stats %}
 
+{% block extra_js %}{{ form.media }}{% endblock %}
+
 {% block content %}
 <div class="container-fluid hpadded">
   <div class="row-fluid">
@@ -17,18 +19,7 @@
           <form class="form-horizontal fill-up validatable" method="post" action="." autocomplete="off"
 		enctype="multipart/form-data">{% csrf_token %}
 
-	    {% comment %}
-	    TODO: does not work properly with spicy.core applications.
-	    {% captureas create_form_component %}spicy.{{ app.name }}/admin/component/create_form.html{% endcaptureas %}
-	    {% include create_form_component %}
-	    {#% include "spicy.core.admin/admin/app/component/create_form.html" %#}
-            {% endcomment %}
-
-	    <div class="row-fluid">
-	      <ul class="padded separate-sections">
-		{{ form.as_ul }}
-	      </ul>           
-	    </div>
+	    {% include "spicy.core.simplepages/admin/component/create_form.html" %}
 
 	    <div class="form-actions">
 	      <button type="submit" class="btn btn-green pull-right">{% trans "Create" %}</button>
@@ -42,4 +33,3 @@
 </div>
 {% endblock content %}
 
-{% block extra_js %}{{ form.media }}{% endblock %}

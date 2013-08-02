@@ -1,0 +1,44 @@
+{% extends current_admin_base %}{% load spicy_admin sk navigator %}{% load url from future %}
+
+{% block title %}{% trans "Edit" %} {{ form.instance }}{% endblock %}
+{% block status_title %}<i class="icon-pencil"></i> {% trans "Edit" %} - {{ current_site.domain }}{{ form.instance.url }}{% endblock status_title %}
+{% block status_subtitle %}{% if form.instance.template_name %}{% trans "This page uses template:" %} <b>{{ form.instance.template_name }}</b>{% else %}{% trans "You can edit page content manually." %}{% endif %}{% endblock status_subtitle %}
+
+{% block status_stats %}
+<a class="pull-right" href="{{ form.instance.get_absolute_url }}" target="_blank"><i class="icon-eye-open icon-2x"></i></a>
+{% endblock status_stats %}
+
+{% block extra_js %}{{ form.media }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid hpadded">
+  <div class="row-fluid">
+    <div class="span12">
+      <div class="box">
+        <div class="box-header">
+          <span class="title">{% trans "Edit simplepage attributes" %}</span>
+        </div>
+	
+        <div class="box-content">
+          <form name="edit_{{ app.name }}" class="form-horizontal fill-up validatable" method="post" action="." autocomplete="off"
+		enctype="multipart/form-data">{% csrf_token %}
+
+	    {% include "spicy.core.simplepages/admin/component/edit_form.html" %}
+            
+	    <div class="form-actions">
+	      {% if not delete_url %}{% captureas delete_url %}{{ app.name }}:admin:delete{% endcaptureas %}{% endif %}
+	      <a class="btn btn-red" href="{% url delete_url form.instance.pk %}">{% trans "Delete" %}</a>
+
+	      <div class="pull-right">
+		<button type="submit" class="btn btn-blue" name="save" onclick="document.edit_{{ app.name }}.submit(); return true;">{% trans "Save changes" %}</button>
+	      </div>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+

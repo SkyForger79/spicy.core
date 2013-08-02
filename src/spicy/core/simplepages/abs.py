@@ -9,6 +9,7 @@ class AbstractBasePage(models.Model):
     content = models.TextField(
         _('content'), blank=True,
         default=(
+            '{% extends current_base %}\n'
             '{% block content %}\n<!-- Page content here-->\n'
             '{% endblock %}'))
     template_name = models.CharField(

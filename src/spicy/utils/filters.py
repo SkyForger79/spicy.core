@@ -91,3 +91,16 @@ class NavigationFilter:
         paginator.base_url = base_url
 
         return paginator
+
+    def get_dict_with_paginator(self, dicts, obj_per_page=OBJECTS_PER_PAGE):
+        paginator = Paginator(
+            dicts, obj_per_page)
+        try:
+
+            page = paginator.page(self.page)
+        except InvalidPage:
+            raise Http404(_('Page %s does not exist.') % self.page)
+            # Django that can't throw exceptions other than 404.
+
+        paginator.current_page = page
+        return paginator

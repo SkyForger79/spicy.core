@@ -38,15 +38,11 @@ class NavigationFilter:
     def get_queryset_with_paginator(
             self, model, base_url=None, search_query=None,
             obj_per_page=OBJECTS_PER_PAGE, manager='objects',
-            result_manager='objects', distinct=False):
+            result_manager='objects', distinct=False, r_model=None):
 
         base_url = base_url or self.request.path
 
-        try:
-            model_manager = getattr(model, manager)
-        except AttributeError:
-            model_manager = model
-
+        model_manager = getattr(model, manager)
         model_qset = model_manager.values_list('id', flat=True)
 
         # XXX: check usage
@@ -60,8 +56,10 @@ class NavigationFilter:
             queryset = search_query(model_qset)
 
         elif search_query is not None:
-            queryset = model_qset.filter(search_query)
-
+            try:
+                queryset = model_qset.filter(search_query)
+            except ValueError:
+                queryset = search_query.values_list('id', flat=True)
         else:
             queryset = model_qset.all()
 
@@ -79,12 +77,10 @@ class NavigationFilter:
         except InvalidPage:
             raise Http404(_('Page %s does not exist.') % self.page)
             # Django that can't throw exceptions other than 404.
-        try:
-            result_qset = getattr(
-                model, result_manager).filter(
-                    id__in=tuple(page.object_list))
-        except:
-            result_qset = model
+
+        result_qset = getattr(
+            model, result_manager).filter(
+                id__in=tuple(page.object_list))
 
         if self.order:
             result_qset = result_qset.order_by(*self.order)  # 1082

@@ -58,7 +58,7 @@ class NavigationFilter:
         elif search_query is not None:
             try:
                 queryset = model_qset.filter(search_query)
-            except ValueError:
+            except:
                 queryset = search_query.values_list('id', flat=True)
         else:
             queryset = model_qset.all()

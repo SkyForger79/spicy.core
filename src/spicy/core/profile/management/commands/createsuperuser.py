@@ -106,9 +106,7 @@ class Command(BaseCommand):
             except KeyboardInterrupt:
                 sys.stderr.write("\nOperation cancelled.\n")
                 sys.exit(1)
-        
-        profile = Profile.objects.create_inactive_user(email, password=password, 
-                                            is_staff=True, send_email=False)
+
         sites = Site.objects.all()
         if not sites:
             site_url = getattr(settings, 'SITE_URL', 'example.com')
@@ -117,7 +115,10 @@ class Command(BaseCommand):
             site = Site(domain=site_url, name=site_name)
             site.save()
             sites = Site.objects.all()
-
+        
+        profile = Profile.objects.create_inactive_user(email, password=password, 
+                                            is_staff=True, send_email=False)
+    
         profile.sites.add(*sites)
         profile.activate()
         profile.is_superuser = True

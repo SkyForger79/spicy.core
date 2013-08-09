@@ -5,6 +5,7 @@ import getpass
 import os
 import re
 import sys
+from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core import exceptions
 from django.core.management.base import BaseCommand, CommandError

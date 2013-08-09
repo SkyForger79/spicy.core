@@ -22,7 +22,6 @@ from .models import BlacklistedIP
 Profile = get_custom_model_class(defaults.CUSTOM_USER_MODEL)
 
 admin.site.register(Profile)
-admin.site.unregister(User)
 
 
 class AdminApp(AdminAppBase):

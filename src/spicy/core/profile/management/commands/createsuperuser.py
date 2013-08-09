@@ -109,8 +109,16 @@ class Command(BaseCommand):
         
         profile = Profile.objects.create_inactive_user(email, password=password, 
                                             is_staff=True, send_email=False)
-        
-        profile.sites.add(*Site.objects.all())
+        sites = Site.objects.all()
+        if not sites:
+            site_url = getattr(settings, 'SITE_URL', 'example.com')
+            site_name = getattr(settings, 'SITE_NAME', site_url)
+            
+            site = Site(domain=site_url, name=site_name)
+            site.save()
+            sites = Site.objects.all()
+
+        profile.sites.add(*sites)
         profile.activate()
         profile.is_superuser = True
         profile.save()

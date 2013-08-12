@@ -208,7 +208,7 @@ class AbstractProfile(User):
         return self.activation_key == self.IS_ACTIVATED or (
             self.date_joined + expiration_date <= dt.datetime.now())
     activation_key_expired.boolean = True
-    
+
     def get_hash(self, email=None):
         if email is None:
             email = self.email

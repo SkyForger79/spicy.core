@@ -135,8 +135,7 @@ def delete_group(request, group_id):
     return {'group': group}
 
 
-@is_staff(required_perms=(('profile.change_profile',),
-                          ('profile.view_profile',)))
+@is_staff(required_perms='profile.change_profile')
 @render_to('spicy.core.profile/admin/edit.html', use_admin=True)
 def edit(request, profile_id):
     """Handles edit requests, renders template according `action`
@@ -164,13 +163,17 @@ def edit(request, profile_id):
     passwd_form = forms.AdminPasswdForm(profile)
 
     return {
-        'action': action,
-        'profile': profile,
-        'form': form,
-        'passwd_form': passwd_form,
-        'message': message,
-        'services': api.register.get_list(consumer=profile)
-    }
+        'action': action, 'instance': profile, 'form': form,
+        'passwd_form': passwd_form, 'message': message,
+        'services': api.register.get_list(consumer=profile), 'tab': 'edit'}
+
+
+@is_staff(required_perms='profile.change_profile')
+@render_to('spicy.core.profile/admin/edit_media.html', use_admin=True)
+def edit_media(request, profile_id):
+    profile = get_object_or_404(Profile, id=profile_id)
+    model = defaults.CUSTOM_USER_MODEL.split('.')[1].lower()
+    return {'instance': profile, 'tab': 'media', 'model': model}
 
 
 @is_staff(required_perms='profile.delete_profile')

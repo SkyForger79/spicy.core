@@ -55,3 +55,4 @@ AJAX_API_VERSION = getattr(settings, 'AJAX_API_VERSION', '0.1-default')
 DEFAULT_FILTERS = [
     ('search_text', ''),
 ]
+ENABLE_INDEXATION = getattr(settings, 'ENABLE_INDEXATION', True)

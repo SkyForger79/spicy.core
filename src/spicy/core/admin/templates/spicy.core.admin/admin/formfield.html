@@ -113,7 +113,7 @@ $(function(){
   $('#id_{{ field.html_name }}').select2({
     multiple: true,
     initSelection: function (element, callback){
-      var val = element.val(); console.log(val)
+      var val = element.val();
       if (val) {
         $.get(
           '{% url "service:admin:xtag-get_tags_data" %}',

@@ -63,10 +63,14 @@ def server_error(request, template_name='500.html'):
     return http.HttpResponseServerError(t.render(RequestContext(request)))
 
 
-def render(request, template, **kwargs):
+def render(
+        request, template_name, context_intstance=None, mimetype=None,
+        **kwargs):
     """
     Example of universal rubric rendering
     """
+    # XXX mimetype is renamed to content_type in django 1.5!
     context = RequestContext(request)
-    context['page_slug'] = kwargs.pop('page_slug', None)
-    return render_to_response(template, context, **kwargs)
+    return render_to_response(
+        template_name, kwargs, context_instance=RequestContext(request),
+        mimetype=mimetype)

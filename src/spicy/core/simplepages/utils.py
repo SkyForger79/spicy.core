@@ -19,6 +19,7 @@ def find_simplepages():
             continue
 
         filename = filepath.rsplit('/simplepages/', 1)[-1]
+        original_filename = filename
         if filename.endswith('.html'):
             filename = filename[:-5]
 
@@ -31,7 +32,7 @@ def find_simplepages():
         content = file(filepath).read()
         page, is_created = SimplePage.objects.get_or_create(
             title=basename, url=url,
-            template_name=os.path.join(base_dir, filename),
+            template_name=os.path.join(base_dir, original_filename),
             defaults={'content': content})
         if is_created:
             page.sites = [site]

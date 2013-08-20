@@ -296,7 +296,6 @@ class SignupForm(forms.Form, ValidateEmailMixin):
     password2 = forms.CharField(label=_('Password (again)'),
         widget=forms.PasswordInput(), min_length=6)
 
-
     subscribe_me = forms.BooleanField(
         label=_('I want to subscribe for the news digest'), initial=True,
         required=False)
@@ -317,37 +316,22 @@ class SignupForm(forms.Form, ValidateEmailMixin):
 
     @transaction.commit_manually
     def save(self, request=None, realhost=None, next_url=None):
-        from spicy.core.service import api
-
         try:
-            email = self.cleaned_data['email']
+            data = self.cleaned_data.copy()
+            email = data.pop('email')
+            
+            data.pop('password')             
+            password = data.pop('password2')
+            
             profile = Profile.objects.create_inactive_user(
-                email,
-                password=self.cleaned_data['password2'],
-                first_name=self.cleaned_data['first_name'],
-                last_name=self.cleaned_data['last_name'],
+                email, password=password,
                 send_email=defaults.MANUAL_ACTIVATION,
                 next_url=next_url,
-                realhost=realhost)
-            # TODO add additional form fields while creating user with real form data post
-            # first_name and last_name for example, phone, address may be...
+                realhost=realhost, 
+                **data)
             
             profile.sites.add(*Site.objects.all())
-
-            profile.accept_agreement = self.cleaned_data['accept_agreement']
-            profile.subscribe_me = self.cleaned_data['subscribe_me']
-
             profile.save()
-
-            #auth_login(
-            #    request,
-            #    authenticate(
-            #        username=profile.username,
-            #        password=self.cleaned_data['password2']))
-
-            #tag, exists = api.register['xtag'].get_or_create_by_term_name(
-            #    profile.screenname, vocabulary='persons', user=profile)
-            #tag.save()
 
             if 'mediacenter' in settings.INSTALLED_APPS:
                 from mediacenter.models import Library
@@ -358,18 +342,6 @@ class SignupForm(forms.Form, ValidateEmailMixin):
                 library.profile = profile
                 library.save()
 
-            # TODO send message notification. about authorization confirm emal =))) kalmik
-            #msg = Message.objects.create(
-            #    receiver=profile, is_important=True, title=unicode(_('Welcome! Profile activation is required.')),
-            #    msg=unicode(_(
-            #            'Hello, %s. \n Email with activation link was sent to your registered email address (%s).'
-            #            'You must activate you account in 1 day. Afted 1 day account will be locked. If you don\'t'
-            #            'activate account after 14 days, your account will be deleted.\n'
-            #            'Thank you for registration. You are welcome.' %(profile.screenname, profile.email)))
-            #    )
-            #msg.save()
-
-            profile.save()
         except Exception, error_msg:
             transaction.rollback()
             raise Exception(error_msg)
@@ -380,12 +352,10 @@ class SignupForm(forms.Form, ValidateEmailMixin):
 
 class CreateProfileForm(forms.ModelForm, ValidateEmailMixin):
     password1 = forms.CharField(
-        label=_('Password'),
-        widget=forms.PasswordInput(attrs={'class': 'required password'}))
+        label=_('Password'), widget=forms.PasswordInput(), required=False)
 
     password2 = forms.CharField(
-        label=_('Password (again)'),
-        widget=forms.PasswordInput(attrs={'class': 'required password'}))
+        label=_('Password (again)'), widget=forms.PasswordInput(), required=False)
 
     username = forms.RegexField(
         label=_('Username'), max_length=30, regex=r'^[\w\-_]+$',
@@ -424,9 +394,6 @@ class CreateProfileForm(forms.ModelForm, ValidateEmailMixin):
         widget=forms.SelectMultiple(attrs={'class': 'SelectMultiple nosearch '}),
         queryset=Site.objects.all())
 
-    email_activation_key = forms.BooleanField(
-        label=_('Email activation key'), required=False,)
-
     def clean_username(self):
         username = self.cleaned_data.get('username', '').strip()
         if Profile.objects.filter(username=username).exists():
@@ -448,28 +415,36 @@ class CreateProfileForm(forms.ModelForm, ValidateEmailMixin):
 
     class Meta:
         model = Profile
-        exclude = ('password', 'last_login', 'date_joined', 'activation_key')
-        # TODO required = ('first_name', 'last_name', 'sites', 'groups')
-        #widgets = {
-        #    'sites': jquery.FilteredSelectMultiple(_('Sites'), True),
-        #    'groups': jquery.FilteredSelectMultiple(_('Groups'), True)
-        #    }
+        fields = ('username', 'first_name', 'second_name', 'last_name', 'email',
+                  'groups', 'sites', 'is_staff', 'is_superuser',
+                  'is_active', 'is_banned', 'user_permissions', 'phone', 'timezone', 
+                  'hide_email', 'subscribe_me', 'accept_agreement')
+        # exclude doesn't work with custom model fields
+        #exclude = ('password', 'last_login', 'date_joined', 'activation_key')
 
     @transaction.commit_on_success
     def save(self, realhost=None):
+        email = self.cleaned_data['email']
+        data = self.cleaned_data.copy()
+        data.pop('email')
+
+        data.pop('password1')             
+        sites = data.pop('sites')             
+        groups = data.pop('groups')             
+        user_permissions = data.pop('user_permissions')             
+
+        password = data.pop('password2')                     
+
         profile = Profile.objects.create_inactive_user(
             self.cleaned_data['email'],
-            username=self.cleaned_data['username'],
-            password=self.cleaned_data['password2'],
-            first_name=self.cleaned_data['first_name'],
-            last_name=self.cleaned_data['last_name'],
-            is_staff=self.cleaned_data['is_staff'],
-            send_email=self.cleaned_data['email_activation_key'],
-            realhost=realhost)
+            password=password,
+            realhost=realhost, 
+            **data)
 
+        profile.sites.add(*sites)
+        profile.groups.add(*groups)
+        profile.user_permissions.add(*user_permissions)
 
-        profile.sites.add(*self.cleaned_data['sites'])
-        profile.groups.add(*self.cleaned_data['groups'])
         profile.save()
         return profile
 

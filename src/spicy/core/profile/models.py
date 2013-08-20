@@ -37,21 +37,26 @@ class ProfileManager(UserManager):
 
     @transaction.commit_on_success
     def create_inactive_user(
-            self, email, password=None, is_staff=False, first_name='',
-            last_name='', username='', send_email=True, next_url=None,
-            realhost=None):
+            self, email, password=None, send_email=True, next_url=None,
+            realhost=None, **kwargs):
         now = dt.datetime.now()
-        if username == '':
+        if not 'username' in kwargs.keys():
             username = self.get_available_username(email.split('@')[0])
+        else:
+            username = kwargs.pop('username')
 
         try:
             profile = self.get(email=email)
-        except self.model.DoesNotExist:
-
+        except self.model.DoesNotExist:      
+            is_active = False
+            if 'is_active' in kwargs.keys():
+                profile.is_active = kwargs.pop('is_active')
+                
             profile = self.model(
-                username=username, email=email, first_name=first_name,
-                last_name=last_name, is_staff=is_staff, is_active=False,
-                is_superuser=False, last_login=now, date_joined=now)
+                username=username, is_active=is_active,
+                email=email, last_login=now, date_joined=now, **kwargs)
+            profile.save()
+
             if password is None:
                 password = self.make_random_password()
             profile.set_password(password)
@@ -60,6 +65,10 @@ class ProfileManager(UserManager):
                 self.model.email_hello(profile, password=password)
                 profile.is_banned = defaults.MANUAL_ACTIVATION
                 profile.activate()
+                
+                if 'is_banned' in kwargs.keys():
+                    profile.is_banned = kwargs.pop('is_banned')
+
                 profile.save()
 
             else:

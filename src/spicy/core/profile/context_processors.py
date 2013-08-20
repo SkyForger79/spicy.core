@@ -14,6 +14,8 @@ def auth(request):
     return {
         'next_url': request.GET.get(REDIRECT_FIELD_NAME, ''),
         'ACCESS_RELOAD_PERIOD': defaults.ACCESS_RELOAD_PERIOD,
+        'MANUAL_ACTIVATION': defaults.MANUAL_ACTIVATION,
+        
         #'user': SimpleLazyObject(get_user), use request.user ONLY !!!!
         'messages': messages.get_messages(request),
         'perms': lazy(lambda: PermWrapper(get_user()), PermWrapper)(),

@@ -49,10 +49,9 @@ setup(
 
         # ?? siteskin deps.
         'pytils==0.2.3',
-        'pytz',
+        'pytz==2013b',
         'html5lib==0.95',
 
-        #'django-crispy-forms==1.2.6', ??? for admin forms customization. Think about it later.
         #'django-simple-captcha', # spicy.core.profile
         #'django-social-auth==0.6.1',# spicy.core.profile
 

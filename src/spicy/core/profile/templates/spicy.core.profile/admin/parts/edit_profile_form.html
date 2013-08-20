@@ -13,6 +13,13 @@
 	<a class="btn btn-green" onclick="call_method('{% url 'profile:admin:resend-activation' form.instance.pk %}');">{% trans "Resend activation key" %}</a>
       </li>
       <li><hr/></li>
+      {% if MANUAL_ACTIVATION %}
+      <li>
+	<div class="alert alert-success">
+	  <button type="button" class="close" data-dismiss="alert">×</button>
+	  <strong>{% trans "Manual activation mode is enabled is_active = ON is_banned = ON|OFF" %}</strong>
+	</div>	
+      </li>{% endif %}
       {% formfield "" form "is_staff" "li-checkbox" %}		
       {% formfield "" form "is_superuser" "li-checkbox" %}		
       {% formfield "" form "is_active" "li-checkbox" %}		

@@ -62,6 +62,10 @@
 </li>
 {% endif %}
 
+{% if type == 'li-hidden' %}
+<input type="hidden" name="{{ field.html_name }}" value="{{ field.value|default_if_none:'' }}" id="id_{{ field.html_name }}"/>
+{% endif %}
+
 {% if type == 'li-editor' %}
 <li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
   {{ label }}
@@ -155,10 +159,10 @@ $(function(){
 
 {% if type == 'li-multiple-select' %}
 <li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
-  {{ label }}  
+  {{ label }}
   <select name="{{ field.html_name }}" multiple="multiple" id="id_{{ field.html_name }}" class="chzn-select" tabindex="-1">
     {% for option_id, name in field.field.choices %}
-    <option value="{{ option_id }}" {% if option_id in field.value %}selected="on"{% endif %}>{{ name }}</option>
+    <option value="{{ option_id }}" {% if option_id|stringformat:'r' in field.value %}selected="on"{% endif %}>{{ name }}</option>
     {% endfor %}
   </select>
   {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}

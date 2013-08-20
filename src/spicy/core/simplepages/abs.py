@@ -3,6 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.template import loader, Template
 from spicy.utils import cached_property
 
+
 class AbstractBasePage(models.Model):
     url = models.CharField(_('URL'), max_length=100, db_index=True)
     title = models.CharField(_('title'), max_length=200)
@@ -13,12 +14,10 @@ class AbstractBasePage(models.Model):
             '{% block content %}\n<!-- Page content here-->\n'
             '{% endblock %}'))
     template_name = models.CharField(
-        _('template name'), max_length=255, blank=True,
-        default='spicy.core.simplepages/default.html',
+        _('template name'), max_length=255, blank=True, default='',
         help_text=_(
-            "Example: 'contact_page.html'. If this isn't "
-            "provided, the system will use "
-            "'spicy.core.simplepages/default.html'."))
+            "Example: 'spicy.core.simplepages/simplepages/default.html'. "
+            "If this isn't provided, content can be edited by hand."))
     sites = models.ManyToManyField('sites.Site')
 
     #@cached_property

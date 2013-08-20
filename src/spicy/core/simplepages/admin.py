@@ -66,16 +66,22 @@ def find(request):
     found = []
     existing = []
     site = Site.objects.get_current()
+    extensions = 'html', 'txt'
     for filepath in templates:
-        if not filepath.endswith('.html'):
+        ext = filepath.rsplit('.', 1)[-1]
+        if ext not in extensions:
             continue
 
         filename = filepath.rsplit('/simplepages/', 1)[-1]
+        if filename.endswith('.html'):
+            filename = filename[:-5]
 
-        splitted = filename.split('.')
-        basename = '.'.join(splitted[:-1])
-        baseurl = '/'.join(splitted[:-1])
-        url = '/{0}/'.format(baseurl)
+        splitted = filename.rsplit('.')
+        if ext != 'html':
+            splitted = splitted[:-2] + ['.'.join(splitted[-2:])]
+        basename = '.'.join(splitted)
+        baseurl = '/'.join(splitted)
+        url = ('/{0}/' if ext == 'html' else '/{0}').format(baseurl)
         content = file(filepath).read()
         page, is_created = SimplePage.objects.get_or_create(
             title=basename, url=url,
@@ -102,7 +108,8 @@ def create(request):
         form = forms.SimplePageForm(request.POST)
         if form.is_valid():
             page = form.save()
-            return HttpResponseRedirect(reverse('simplepages:admin:edit', args=[page.pk]))
+            return HttpResponseRedirect(
+                reverse('simplepages:admin:edit', args=[page.pk]))
         else:
             message = settings.MESSAGES['error']
     else:

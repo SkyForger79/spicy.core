@@ -26,8 +26,10 @@
             </div>
             
 	    <div class="form-actions">
+	      {% if not no_delete_url %}
 	      {% if not delete_url %}{% captureas delete_url %}{{ app.name }}:admin:delete{% endcaptureas %}{% endif %}
 	      <a class="btn btn-red" href="{% url delete_url form.instance.pk %}">{% trans "Delete" %}</a>
+	      {% endif %}
 
 	      <div class="pull-right">
 		<button type="submit" class="btn btn-blue" name="save" onclick="document.edit_{{ app.name }}.submit(); return true;">{% trans "Save changes" %}</button>

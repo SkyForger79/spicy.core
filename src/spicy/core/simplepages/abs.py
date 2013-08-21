@@ -32,6 +32,7 @@ class AbstractBasePage(models.Model):
         verbose_name = _('simple page')
         verbose_name_plural = _('simple pages')
         ordering = ('url',)
+        permissions = [('change_robots_txt', 'Robots.txt')]
 
     def __unicode__(self):
         return u"%s -- %s" % (self.url, self.title)

@@ -9,7 +9,7 @@ from spicy.core.profile.decorators import is_staff
 from spicy.core.siteskin.decorators import render_to
 from spicy import utils
 from . import defaults, forms
-from .utils import find_simplepages
+from .utils import find_simplepages, edit_simple_page
 
 
 SimplePage = utils.get_custom_model_class(defaults.SIMPLE_PAGE_MODEL)
@@ -83,23 +83,14 @@ def create(request):
     return {'form': form, 'message': message}
 
 
-@is_staff(required_perms='simplepages.add_defaultsimplepage')
+@is_staff(required_perms='simplepages.change_defaultsimplepage')
 @render_to('edit.html', use_admin=True)
 def edit(request, simplepage_id):
     """
     Create a new simple page.
     """
     page = get_object_or_404(SimplePage, pk=simplepage_id)
-    message = None
-    if request.method == 'POST':
-        form = forms.SimplePageForm(request.POST, instance=page)
-        if form.is_valid():
-            page = form.save()
-        else:
-            message = settings.MESSAGES['error']
-    else:
-        form = forms.SimplePageForm(instance=page)
-    return {'form': form, 'message': message}
+    return edit_simple_page(request, page)
 
 
 @is_staff(required_perms='simplepages.delete_defaultsimplepage')

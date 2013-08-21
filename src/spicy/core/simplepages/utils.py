@@ -1,5 +1,6 @@
 import os
-from . import defaults
+from . import defaults, forms
+from django.conf import settings
 from django.contrib.sites.models import Site
 from spicy import utils
 
@@ -42,3 +43,15 @@ def find_simplepages():
             page.content = content
             page.save()
     return {'found': found, 'existing': existing}
+
+def edit_simple_page(request, page):
+    message = None
+    if request.method == 'POST':
+        form = forms.SimplePageForm(request.POST, instance=page)
+        if form.is_valid():
+            page = form.save()
+        else:
+            message = settings.MESSAGES['error']
+    else:
+        form = forms.SimplePageForm(instance=page)
+    return {'form': form, 'message': message}

@@ -31,10 +31,10 @@ def find_simplepages():
         baseurl = '/'.join(splitted)
         url = ('/{0}/' if ext == 'html' else '/{0}').format(baseurl)
         content = file(filepath).read()
+        template_name = os.path.join(base_dir, original_filename)
         page, is_created = SimplePage.objects.get_or_create(
             title=basename, url=url,
-            template_name=os.path.join(base_dir, original_filename),
-            defaults={'content': content})
+            defaults={'content': content, 'template_name': template_name})
         if is_created:
             page.sites = [site]
             found.append(page)
@@ -43,6 +43,7 @@ def find_simplepages():
             page.content = content
             page.save()
     return {'found': found, 'existing': existing}
+
 
 def edit_simple_page(request, page):
     message = None

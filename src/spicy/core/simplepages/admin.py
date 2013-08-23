@@ -87,7 +87,7 @@ def create(request):
 @render_to('edit.html', use_admin=True)
 def edit(request, simplepage_id):
     """
-    Create a new simple page.
+    Edit a simple page.
     """
     page = get_object_or_404(SimplePage, pk=simplepage_id)
     return edit_simple_page(request, page)

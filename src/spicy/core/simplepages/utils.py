@@ -55,4 +55,6 @@ def edit_simple_page(request, page):
             message = settings.MESSAGES['error']
     else:
         form = forms.SimplePageForm(instance=page)
-    return {'form': form, 'message': message}
+    return {
+        'form': form, 'message': message, 'instance': form.instance,
+        'tab': 'page'}

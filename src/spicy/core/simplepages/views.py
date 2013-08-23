@@ -15,5 +15,5 @@ def render_simplepage(request, page, **kwargs):
         page = SimplePage.objects.get(url=page)
     context = {'page_slug': page.title, 'page': page}
     context.update(**kwargs)
-
-    return http.HttpResponse(page.get_template().render(RequestContext(request, context)))
+    return http.HttpResponse(
+        page.get_template().render(RequestContext(request, context)))

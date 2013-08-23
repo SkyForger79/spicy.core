@@ -18,7 +18,6 @@ def base(request):
         (srv.name, unicode(srv.label))
         for srv in api.register.get_list(stype='content')]
 
-
     return {
         'current_site': current,
         'sites': sites,
@@ -29,7 +28,7 @@ def base(request):
         'REDIRECT_FIELD_NAME': REDIRECT_FIELD_NAME,
         'SITESKIN': defaults.SITESKIN,
         'DEBUG': settings.DEBUG,
-        }
+    }
 
 
 def boolean(request):

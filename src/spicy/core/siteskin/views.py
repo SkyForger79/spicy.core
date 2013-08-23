@@ -2,37 +2,25 @@ from datetime import datetime as dt
 from django import http
 from django.shortcuts import render_to_response
 from django.template import RequestContext, loader
+from spicy.core.simplepages.views import render_simplepage
 from spicy.utils.printing import print_error
 from . import defaults
 
 
-def page_not_found(request, template_name='404.html'):
+def page_not_found(request):
     """
     Default 404 handler.
-
-    Templates: `404.html`
-    Context:
-        request_path
-            The path of the requested URL (e.g., '/app/pages/bad_page/')
     """
     if defaults.DEBUG_ERROR_PAGES:
         print_error('handler404: %s %s %s %s\n' % (
             dt.now(), request.GET, request.POST, request.get_full_path()))
 
-    t = loader.get_template(template_name)
-    # You need to create a 404.html template.
-    return http.HttpResponseNotFound(
-        t.render(RequestContext(request, {'request_path': request.path})))
+    return render_simplepage(request, '/errors/404/')
 
 
-def forbidden(request, template_name='403.html'):
+def forbidden(request):
     """
-    Default 404 handler.
-
-    Templates: `404.html`
-    Context:
-        request_path
-            The path of the requested URL (e.g., '/app/pages/bad_page/')
+    Default 403 handler.
     """
 
     if defaults.DEBUG_ERROR_PAGES:
@@ -40,27 +28,19 @@ def forbidden(request, template_name='403.html'):
             'handler403: %s %s %s %s\n' % (
                 dt.now(), request.GET, request.POST, request.get_full_path()))
 
-    t = loader.get_template(template_name)
-    # You need to create a 403.html template.
-    return http.HttpResponseNotFound(t.render(RequestContext(
-        request, {'request_path': request.path})))
+    return render_simplepage(request, '/errors/403/')
 
 
-def server_error(request, template_name='500.html'):
+def server_error(request):
     """
     500 error handler.
-
-    Templates: `500.html`
-    Context: None
     """
     if defaults.DEBUG_ERROR_PAGES:
         print_error(
             'handler505: %s %s %s %s\n' % (
                 dt.now(), request.GET, request.POST, request.get_full_path()))
 
-    t = loader.get_template(template_name)
-    # You need to create a 500.html template.
-    return http.HttpResponseServerError(t.render(RequestContext(request)))
+    return render_simplepage(request, '/errors/500/')
 
 
 def render(

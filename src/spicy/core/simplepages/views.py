@@ -15,5 +15,7 @@ def render_simplepage(request, page, **kwargs):
         page = SimplePage.objects.get(url=page)
     context = {'page_slug': page.title, 'page': page}
     context.update(**kwargs)
+    content_type = 'text/plain' if page.url.endswith('.txt') else 'text/html'
     return http.HttpResponse(
-        page.get_template().render(RequestContext(request, context)))
+        page.get_template().render(RequestContext(request, context)),
+        content_type=content_type)

@@ -120,8 +120,8 @@ $(function(){
       var val = element.val();
       if (val) {
         $.get(
-          '{% url "service:admin:xtag-get_tags_data" %}',
-          {tags: val},
+          '{{ data_url }}',
+          {ids: val},
           callback
         )
       }
@@ -172,19 +172,6 @@ $(function(){
 </li>
 {% endif %}
 
-{% if type == 'li-simple-tags' %}
-<li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
-  {{ label }}
-  
-  <div class="">
-    <textarea class="tags" name="{{ field.html_name }}" placeholder="{{ title }}" rows="2" id="id_{{ field.html_name }}">{{ field.value|default_if_none:'' }}</textarea>
-  </div>
-  {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
-  {% if field.help_text %}
-  <div class="note pull-right">{{ field.help_text }}</div>
-  {% endif %}
-</li>
-{% endif %}
 {% if type == 'table-formset'%}
 <div class="row-fluid item">
     <table class="table table-normal">
@@ -220,177 +207,6 @@ $(function(){
      {% endfor %}
 </div>
 <script>
-/**
- * jQuery Formset 1.2
- * @author Stanislaus Madueke (stan DOT madueke AT gmail DOT com)
- * @requires jQuery 1.2.6 or later
- *
- * Copyright (c) 2009, Stanislaus Madueke
- * All rights reserved.
- *
- * Licensed under the New BSD License
- * See: http://www.opensource.org/licenses/bsd-license.php
- */
-;(function($) {
-    $.fn.formset = function(opts)
-    {
-        var options = $.extend({}, $.fn.formset.defaults, opts),
-            flatExtraClasses = options.extraClasses.join(' '),
-            $$ = $(this),
-            applyExtraClasses = function(row, ndx) {
-                if (options.extraClasses) {
-                    row.removeClass(flatExtraClasses);
-                    row.addClass(options.extraClasses[ndx % options.extraClasses.length]);
-                }
-            },
-            updateElementIndex = function(elem, prefix, ndx) {
-                var idRegex = new RegExp('(' + prefix + '-\\d+-)|(^)'),
-                    replacement = prefix + '-' + ndx + '-';
-                if (elem.attr("for")) elem.attr("for", elem.attr("for").replace(idRegex, replacement));
-                if (elem.attr('id')) elem.attr('id', elem.attr('id').replace(idRegex, replacement));
-                if (elem.attr('name')) elem.attr('name', elem.attr('name').replace(idRegex, replacement));
-            },
-
-            hasChildElements = function(row) {
-                return row.find('input,select,textarea,label').length > 0;
-            },
-
-            insertDeleteLink = function(row) {
-                if (row.is('TR')) {
-                    // If the forms are laid out in table rows, insert
-                    // the remove button into the last table cell:
-                    row.children(':last').append('<a class="' + options.deleteCssClass +'" href="javascript:void(0)">' + options.deleteText + '</a>');
-                } else if (row.is('UL') || row.is('OL')) {
-                    // If they're laid out as an ordered/unordered list,
-                    // insert an <li> after the last list item:
-                    row.append('<li><a class="' + options.deleteCssClass + '" href="javascript:void(0)">' + options.deleteText +'</a></li>');
-                } else {
-                    // Otherwise, just insert the remove button as the
-                    // last child element of the form's container:
-                    row.append('<a class="' + options.deleteCssClass + '" href="javascript:void(0)">' + options.deleteText +'</a>');
-                }
-                row.find('a.' + options.deleteCssClass).click(function() {
-                    var row = $(this).parents('.' + options.formCssClass),
-                        del = row.find('input:hidden[id $= "-DELETE"]');
-                    if (del.length) {
-                        // We're dealing with an inline formset; rather than remove
-                        // this form from the DOM, we'll mark it as deleted and hide
-                        // it, then let Django handle the deleting:
-                        del.val('on');
-                        row.hide();
-                    } else {
-                        row.remove();
-                        // Update the TOTAL_FORMS form count.
-                        // Also update names and IDs for all remaining form controls so they remain in sequence:
-                        var forms = $('.' + options.formCssClass).not('.formset-custom-template');
-                        $('#id_' + options.prefix + '-TOTAL_FORMS').val(forms.length);
-                        for (var i=0, formCount=forms.length; i<formCount; i++) {
-                            applyExtraClasses(forms.eq(i), i);
-                            forms.eq(i).find('input,select,textarea,label').each(function() {
-                                updateElementIndex($(this), options.prefix, i);
-                            });
-                        }
-                    }
-                    // If a post-delete callback was provided, call it with the deleted form:
-                    if (options.removed) options.removed(row);
-                    return false;
-                });
-            };
-
-        $$.each(function(i) {
-            var row = $(this),
-                del = row.find('input:checkbox[id $= "-DELETE"]');
-            if (del.length) {
-                // If you specify "can_delete = True" when creating an inline formset,
-                // Django adds a checkbox to each form in the formset.
-                // Replace the default checkbox with a hidden field:
-                del.before('<input type="hidden" name="' + del.attr('name') +'" id="' + del.attr('id') +'" />');
-                del.remove();
-            }
-            if (hasChildElements(row)) {
-                insertDeleteLink(row);
-                row.addClass(options.formCssClass);
-                applyExtraClasses(row, i);
-            }
-        });
-
-        if ($$.length) {
-            var addButton, template;
-            if (options.formTemplate) {
-                // If a form template was specified, we'll clone it to generate new form instances:
-                template = (options.formTemplate instanceof $) ? options.formTemplate : $(options.formTemplate);
-                template.removeAttr('id').addClass(options.formCssClass).addClass('formset-custom-template');
-                template.find('input,select,textarea,label').each(function() {
-                    updateElementIndex($(this), options.prefix, 2012);
-                });
-                insertDeleteLink(template);
-            } else {
-                // Otherwise, use the last form in the formset; this works much better if you've got
-                // extra (>= 1) forms (thnaks to justhamade for pointing this out):
-                template = $('.' + options.formCssClass + ':last').clone(true).removeAttr('id');
-                template.find('input:hidden[id $= "-DELETE"]').remove();
-                template.find('input,select,textarea,label').each(function() {
-                    var elem = $(this);
-                    // If this is a checkbox or radiobutton, uncheck it.
-                    // This fixes Issue 1, reported by Wilson.Andrew.J:
-                    if (elem.is('input:checkbox') || elem.is('input:radio')) {
-                        elem.attr('checked', false);
-                    } else {
-                        elem.val('');
-                    }
-                });
-            }
-            // FIXME: Perhaps using $.data would be a better idea?
-            options.formTemplate = template;
-
-            if ($$.attr('tagName') == 'TR') {
-                // If forms are laid out as table rows, insert the
-                // "add" button in a new table row:
-                var numCols = $$.eq(0).children().length;
-                $$.parent().append('<tr><td colspan="' + numCols + '"><a class="' + options.addCssClass + '" href="javascript:void(0)">' + options.addText + '</a></tr>');
-                addButton = $$.parent().find('tr:last a');
-                addButton.parents('tr').addClass(options.formCssClass + '-add');
-            } else {
-                // Otherwise, insert it immediately after the last form:
-                $$.filter(':last').after('<a class="' + options.addCssClass + '" href="javascript:void(0)">' + options.addText + '</a>');
-                addButton = $$.filter(':last').next();
-            }
-            addButton.click(function() {
-                var formCount = parseInt($('#id_' + options.prefix + '-TOTAL_FORMS').val()),
-                    row = options.formTemplate.clone(true).removeClass('formset-custom-template'),
-                    buttonRow = $(this).parents('tr.' + options.formCssClass + '-add').get(0) || this;
-                applyExtraClasses(row, formCount);
-                row.insertBefore($(buttonRow)).show();
-                row.find('input,select,textarea,label').each(function() {
-                    updateElementIndex($(this), options.prefix, formCount);
-                });
-                $('#id_' + options.prefix + '-TOTAL_FORMS').val(formCount + 1);
-                // If a post-add callback was supplied, call it with the added form:
-                if (options.added) options.added(row);
-                return false;
-            });
-        }
-
-        return $$;
-    }
-
-    /* Setup plugin defaults */
-    $.fn.formset.defaults = {
-        prefix: 'form',                  // The form prefix for your django formset
-        formTemplate: null,              // The jQuery selection cloned to generate new form instances
-        addText: 'add another',          // Text for the add link
-        deleteText: 'remove',            // Text for the delete link
-        addCssClass: 'add-row',          // CSS class applied to the add link
-        deleteCssClass: 'delete-row',    // CSS class applied to the delete link
-        formCssClass: 'dynamic-form',    // CSS class applied to each form in a formset
-        extraClasses: [],                // Additional CSS classes, which will be applied to each form in turn
-        added: null,                     // Function called each time a new form is added
-        removed: null                    // Function called each time a form is deleted
-    };
-
-})(jQuery)
-</script>
-<script>
 $(document).ready(function(){
   $('.item tbody tr').formset({
     addText: '<button class="btn btn-green">'+
@@ -408,63 +224,8 @@ $(document).ready(function(){
 
 {# new admin end #}
 
-{% if type == 'td' %}
-    <td class="half">
-      {{ label }}{{ field }}
-      <div>
-	{{ field.errors }}
-	{% if field.help_text %}<div><em>{{ field.help_text }}</em></div>{% endif %}
-      </div>
-    </td>
-{% endif %}
-
-{% if type == 'td-span2' %}
-    <td colspan="2">
-      {{ label }}{{ field }}
-      <div class="right-column">
-	{{ field.errors }}
-	{% if field.help_text %}<div><em>{{ field.help_text }}</em></div>{% endif %}
-      </div>
-    </td>
-{% endif %}
-
-{% if type == 'td-person-info' %} <!-- Для редактирования профайов -->
-    <td>
-      {{ label }}{{ field }}
-      <div>{{ field.errors }}</div>
-    </td>
-{% endif %}
-
-{% if type == 'td-person-info-span2' %} <!-- Для редактирования профайов -->
-    <td colspan="2">
-      {{ label }}{{ field }}
-      <div>{{ field.errors }}</div>
-<!--       <div class="clr"></div>-->
-    </td>
-{% endif %}
-
-
 {# OLD TYPES #}
 
-{% if type == "collapsable" %}
-    <div class="collapsed-block"> 
-      <div class="collapsed-header">{{ label }}
-	<div class="collapsed_box_button">&ndash;</div>
-      </div>
-      <div class="collapsed-content">{{ field }}{{ field.errors }}</div>
-    </div> 	
-{% endif %}
-{% if type == "collapsable-none" %}
-    <div class="collapsed-block"> 
-      <div class="collapsed-header">{{ label }}
-	<div class="collapsed_box_button">&ndash;</div>
-      </div>
-      <div class="collapsed-content" style="display:none;">{{ field }}{{ field.errors }}</div>
-    </div> 	
-{% endif %}
-{% if type == 'inline' %}
-    {{ label }} {{ field }}{{ field.errors }}
-{% endif %}
 {% if type == 'li' %}
     <li class="form-row clearfix">
       {{ label }}
@@ -503,53 +264,4 @@ $(document).ready(function(){
     </li>
 {% endif %}
 
-{% if type == 'li-person-info' %} <!-- Для редактирования профайов -->
-    <li class="form-row clearfix">
-      {{ label }}
-      <div class="person-info">{{ field.errors }}{{ field }}</div>
-<!--       <div class="clr"></div>-->
-    </li>
-{% endif %}
-
-{% if type == 'li-tags' %}
-{% if form.errors %}<li>{% for ftag in form.forms %}{{ ftag.errors }}{% endfor %}</li>{% endif %}
-<li class="form-row">
-  <label>{{ label }}</label>
-  <div id="{% if form.vocabulary %}{{ form.vocabulary }}{% else %}tag{% endif %}_hidden_data">
-    {{ form.management_form }}
-
-    {% for ftag in form.forms %}
-    {{ ftag.id }}
-    {{ ftag.tag }}
-    {{ ftag.position }}
-    {{ ftag.text }}
-    {{ ftag.service }}
-    {{ ftag.DELETE }}
-    {% endfor %}
-  </div>
-
-  <div id="{% if form.vocabulary %}{{ form.vocabulary }}{% else %}tag{% endif %}_input"></div>
-  <div class="clr"></div>
-</li>
-{% endif %}
-
-{% if type == 'li-sub' %}
-<li id="id_{{ field.html_name }}">
-{{ label }}
-{% if field.field.required %}
-<span class="required">*</span>
-{% endif %}
-{{ field }}
-{{ field.errors }}
-</li>
-{% endif %}
-
-{% if type == 'pd-row' %}
-<li class="pd-row form-230" id="id_{{ field.html_name }}">
-    <label for="">{{ field.label }} {% if field.field.required %}<span class="required">*</span>{% endif %}</label>
-    {{ field }}
-    {% if field.help_text %}<div>{{ field.help_text|safe }}</div>{% endif %}
-    {{ field.errors }}
-</li>
-{% endif %}
 {% endspaceless %}

@@ -106,7 +106,8 @@ def menu(
     'spicy.core.admin/admin/formfield.html', takes_context=True)
 def formfield(
         context, title, form, field_name='', type='li-text',
-        preview_link=False, default_value='', classes='', id='', ajax_url=''):
+        preview_link=False, default_value='', classes='', id='', ajax_url='',
+        data_url=''):
     label = title
     field = None
     if field_name:
@@ -116,4 +117,4 @@ def formfield(
     return dict(
         title=title, form=form, type=type, field=field, label=label,
         preview_link=preview_link, default_value=default_value,
-        classes=classes, id=id, ajax_url=ajax_url)
+        classes=classes, id=id, ajax_url=ajax_url, data_url=data_url)

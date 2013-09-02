@@ -47,14 +47,13 @@ class ProfileManager(UserManager):
 
         try:
             profile = self.get(email=email)
-        except self.model.DoesNotExist:      
-            is_active = False
-            if 'is_active' in kwargs.keys():
-                profile.is_active = kwargs.pop('is_active')
-                
+        except self.model.DoesNotExist:
+            is_active = kwargs.pop('is_active', False)
+
             profile = self.model(
                 username=username, is_active=is_active,
                 email=email, last_login=now, date_joined=now, **kwargs)
+
             profile.save()
 
             if password is None:
@@ -65,7 +64,7 @@ class ProfileManager(UserManager):
                 self.model.email_hello(profile, password=password)
                 profile.is_banned = defaults.MANUAL_ACTIVATION
                 profile.activate()
-                
+
                 if 'is_banned' in kwargs.keys():
                     profile.is_banned = kwargs.pop('is_banned')
 

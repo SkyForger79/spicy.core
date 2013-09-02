@@ -36,6 +36,29 @@
 </li>
 {% endif %}
 
+{% if type == 'li-slug' %}
+{% if from_field %}
+<script type="text/javascript">
+$(function(){
+ if($('#id_{{ field.html_name }}').value == undefined)
+    {
+        $('#id_{{ from_field.html_name }}').syncTranslit({destination: 'id_{{ field.html_name }}'});
+    }   
+})
+</script>
+{% endif %}
+
+<li class="input">
+  {{ label }} 
+  <input type="text" name="{{ field.html_name }}" placeholder="{{ title }}" value="{{ field.value|default_if_none:'' }}" id="id_{{ field.html_name }}"/>
+  {% if preview_link %}<a href="{{ form.instance.get_absolute_url }}" target="blank"><i class="icon-eye-open icon-2x"></i></a>{% endif %}
+  {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+{% endif %}
+
 {% if type == 'li-password' %}
 <li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
   {{ label }}
@@ -112,6 +135,7 @@
   {{ label }}  
   {% if ajax_url %}
   <input type="hidden" name="{{ field.html_name }}" id="id_{{ field.html_name }}" value="{{ field.value|default:'' }}"/>
+
 <script type="text/javascript">
 $(function(){
   $('#id_{{ field.html_name }}').select2({
@@ -218,50 +242,6 @@ $(document).ready(function(){
   });
 });
 </script>
-{% endif %}
-
-
-
-{# new admin end #}
-
-{# OLD TYPES #}
-
-{% if type == 'li' %}
-    <li class="form-row clearfix">
-      {{ label }}
-      <div class="right-column">
-	{{ field.errors }}{{ field }}
-	{% if field.help_text %}<div>{{ field.help_text }}</div>{% endif %}
-      </div>
-    <!--   !!! Если сломается вернуть вместа clearfix <div class="clr"></div>-->
-    </li>
-{% endif %}
-{% if type == 'li-short' %}
-    <li class="form-row clearfix">
-      {{ label }}
-      <div class="right-column short-field">{{ field.errors }}{{ field }}</div>
-<!--       <div class="clr"></div>-->
-    </li>
- {% endif %}
-
-{% if type == 'li-full-size' %}
-    <li class="form-row clearfix">
-      {{ label }}
-      <div class="right-column full-size">{{ field.errors }}{{ field }}</div>      
-      {% if field.help_text %}
-      <div class="clr"></div>
-      <div>{{ field.help_text|safe }}</div>
-      {% endif %}
-      
-    </li>
-{% endif %}
-
-{% if type == 'li-vlarge-size' %}
-    <li class="form-row clearfix">
-      {{ label }}
-      <div class="right-column full-size vl-tarea">{{ field.errors }}{{ field }}</div>
-<!--       <div class="clr"></div>-->
-    </li>
 {% endif %}
 
 {% endspaceless %}

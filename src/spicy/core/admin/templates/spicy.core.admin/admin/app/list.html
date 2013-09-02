@@ -43,7 +43,7 @@
                   <td class="icon">
                     <input type="checkbox" name="select"  class="icheck" id="{{ obj.id }}" autocomplete="off" />
                   </td>
-		  <td>{{ obj.id }}</td>
+		  <td>{{ obj.pk }}</td>
                   <td>
 		    {% if not edit_url %}{% captureas edit_url %}{{ app.name }}:admin:edit{% endcaptureas %}{% endif %}
                     <a href="{% url edit_url obj.pk %}"> {{ obj }}</a>

@@ -566,8 +566,8 @@ msgstr "Все пользователи"
 
 #: templates/spicy.core.profile/mail/activation_email.txt:1
 #, python-format
-msgid "Welcome to %(site_name)s!"
-msgstr "Добро пожаловать на %(site_name)s!"
+msgid "Welcome to %(sitename)s!"
+msgstr "Добро пожаловать на %(sitename)s!"
 
 #: templates/spicy.core.profile/mail/activation_email.txt:3
 msgid "Your account is not acivated yet. To activate press the following link:"

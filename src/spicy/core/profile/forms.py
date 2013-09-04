@@ -188,11 +188,14 @@ class ProfileForm(forms.ModelForm):
 
     class Meta:
         model = Profile
-        fields = (
-            'username', 'first_name', 'second_name', 'last_name', 'email',
-            'groups', 'user_permissions', 'sites', 'is_staff', 'is_active',
-            'is_banned', 'accept_agreement', 'is_superuser', 'subscribe_me', 
-            'hide_email', 'phone', 'timezone')
+        # TODO exclude 
+#        fields = (
+#            'username', 'first_name', 'second_name', 'last_name', 'email',
+#            'groups', 'user_permissions', 'sites', 'is_staff', 'is_active',
+#            'is_banned', 'accept_agreement', 'is_superuser', 'subscribe_me', 
+#            'hide_email', 'phone', 'timezone')
+        exclude = ('password','last_login', 'date_joined', 'activation_key')
+        
 
 
 class ModerateProfileForm(forms.ModelForm):
@@ -415,12 +418,13 @@ class CreateProfileForm(forms.ModelForm, ValidateEmailMixin):
 
     class Meta:
         model = Profile
-        fields = ('username', 'first_name', 'second_name', 'last_name', 'email',
-                  'groups', 'sites', 'is_staff', 'is_superuser',
-                  'is_active', 'is_banned', 'user_permissions', 'phone', 'timezone', 
-                  'hide_email', 'subscribe_me', 'accept_agreement')
+    # TODO exclude
+#        fields = ('username', 'first_name', 'second_name', 'last_name', 'email',
+#                  'groups', 'sites', 'is_staff', 'is_superuser',
+#                  'is_active', 'is_banned', 'user_permissions', 'phone', 'timezone', 
+#                  'hide_email', 'subscribe_me', 'accept_agreement')
         # exclude doesn't work with custom model fields
-        #exclude = ('password', 'last_login', 'date_joined', 'activation_key')
+        exclude = ('password', 'last_login', 'date_joined', 'activation_key')
 
     @transaction.commit_on_success
     def save(self, realhost=None):

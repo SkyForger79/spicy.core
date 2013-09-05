@@ -28,6 +28,8 @@ class FilesystemLoader(filesystem.Loader, SpicyLoaderMixin):
         template_names = self.add_siteskin(template_name)
         for template_name in template_names:
             for template_dir in template_dirs:
+                if not os.path.isabs(template_dir):
+                    template_dir = safe_join(settings.PROJECT_ROOT, template_dir)
                 try:
                     yield safe_join(template_dir, template_name)
                 except UnicodeDecodeError:
@@ -54,6 +56,8 @@ class AppLoader(app_directories.Loader, SpicyLoaderMixin):
         template_names = self.add_siteskin(template_name)
         for template_name in template_names:
             for template_dir in template_dirs:
+                if not os.path.isabs(template_dir):
+                    template_dir = safe_join(settings.PROJECT_ROOT, template_dir)
                 try:
                     yield safe_join(template_dir, template_name)
                 except UnicodeDecodeError:

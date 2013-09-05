@@ -201,34 +201,31 @@ $(function(){
     <table class="table table-normal">
         <thead>
             <tr>
-                {% for field in form.forms.0 %}
-                    {% if not field.is_hidden %}
-                    <td>{{ field.label }}</td>
+                {% for form_field in form.forms.0 %}
+                    {% if not form_field.is_hidden %}
+                    <td>{{ form_field.label }}</td>
                     {% endif %}
                 {% endfor %}
             </tr>
         </thead>
         <tbody>
-        {% for form in form.forms %}
+        {% for formset_form in form.forms %}
            <tr>
-           {% for field in form %}
-               {% if not field.is_hidden %}
+           {% for form_field in formset_form %}
+               {% if not form_field.is_hidden %}
                <td>
-                   {{ field.errors }}
-                   {{ field }}
+                   {{ form_field.errors }}
+                   {{ form_field }}
                </td>
                {% else %}
-                  {{ field }}
+                  {{ form_field }}
                {% endif %}
            {% endfor %}
            </tr>
         {% endfor %}
         </tbody>
-    <table>
-     {% for f in form.management_form %}
-         {# Hidden input #}
-         {{ f }}
-     {% endfor %}
+    </table>
+    {{ form.management_form }}
 </div>
 <script>
 $(document).ready(function(){
@@ -238,7 +235,7 @@ $(document).ready(function(){
 
     deleteText: '<button class="btn btn-red">'+
       '<i class="icon-trash"></i></button></div>',
-    prefix: '{{default_value}}'
+    prefix: '{{ form.prefix }}'
   });
 });
 </script>

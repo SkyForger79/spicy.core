@@ -27,9 +27,9 @@ SITEMAP = [
         'gen': {
             'loc': lambda x: x.get_absolute_url(),
             'changefreq': 'daily',
-            'priority':'0.8'
+            'priority':'0.8',
+            'has_media': True
         },
-        'has_media': True,
     },
     {
         'model': SIMPLE_PAGE_MODEL,
@@ -48,6 +48,10 @@ OBJECTS_LIMIT = 20000
 class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
         make_option('--limit', default=None, help='Limit number of objects'),
+        make_option(
+            '--nomedia', action='store_true', default=False,
+            help='Disable media data generation'),
+        make_option('--prefix', default='', help='Sitemap name prefix'),
     )
 
     sub_dir = ''
@@ -69,7 +73,7 @@ class Command(BaseCommand):
 
     def __init__(self):
         self.file_obj = None
-        self.sitemap_dir = os.path.join(MEDIACENTER_ROOT, 'sitemaps')
+        self.sitemap_dir = os.path.join(MEDIACENTER_ROOT, 'sitemaps/')
 
         if not os.path.exists(self.sitemap_dir):
             try:
@@ -82,19 +86,18 @@ class Command(BaseCommand):
 
         self.sitemap_sub_dir = os.path.join(self.sitemap_dir, self.sub_dir)
         self.domain = Site.objects.get_current().domain
-        self.main_sitemap_file_name = '%s/sitemap.xml' % self.sitemap_dir
 
     def gen_url(self, obj, gen):
         result_gen = {}
         for key, value in gen.iteritems():
-            if isinstance(value, basestring):
-                result_gen[key] = value
-            else:
+            if callable(value):
                 try:
                     result_gen[key] = value(obj)
                 except Exception, e:
                     print e
                     pass
+            else:
+                result_gen[key] = value
 
         locs = result_gen['loc']
         if isinstance(locs, basestring):
@@ -138,7 +141,8 @@ class Command(BaseCommand):
         self.file_obj.write(self.text_end)
 
         # Compress with gzip.
-        name = '%ssitemap_%s.xml.gz' % (self.sitemap_sub_dir, self.file_i)
+        name = '%s%ssitemap_%s.xml.gz' % (
+            self.sitemap_sub_dir, self.prefix, self.file_i)
         gzip_file = gzip.GzipFile(
             name, 'wb', defaults.SITEMAP_GZIP_COMPRESSION)
         self.file_obj.seek(0)
@@ -146,9 +150,10 @@ class Command(BaseCommand):
             gzip_file.write(line)
         gzip_file.close()
         self.main_sitemap_file.write(
-            u'<sitemap><loc>http://%s/%ssitemap_%i.xml.gz</loc>'
+            u'<sitemap><loc>http://%s/%s%ssitemap_%i.xml.gz</loc>'
             '</sitemap>' % (
-                self.domain, defaults.SITEMAP_URL.lstrip('/'), self.file_i))
+                self.domain, defaults.SITEMAP_URL.lstrip('/'), self.prefix,
+                self.file_i))
 
     def file_create(self):
         self.file_obj = StringIO()
@@ -161,9 +166,14 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         verbosity = int(options.get('verbosity', 1))
+        self.nomedia = options['nomedia']
+        self.prefix = options['prefix']
+        self.main_sitemap_file_name = '%s%ssitemap.xml' % (
+            self.sitemap_dir, self.prefix)
 
         for f in os.listdir(self.sitemap_sub_dir):
-            if f.endswith('.xml.gz') and f.startswith('sitemap'):
+            if f.endswith('.xml.gz') and f.startswith(
+                    '%ssitemap' % self.prefix):
                 os.remove('%s%s' % (self.sitemap_sub_dir, f,))
 
         self.main_sitemap_file = open(self.main_sitemap_file_name, 'w+')
@@ -228,7 +238,7 @@ class Command(BaseCommand):
             #for q in connection.queries[:100]:
             #    print q
             print 'Total queries made: %i' % len(connection.queries)
-        ping_google(defaults.SITEMAP_URL + 'sitemap.xml')
+        ping_google(defaults.SITEMAP_URL + '%ssitemap.xml' % self.prefix)
 
     def handle_normal(self, query, gen, content_type, object_model, verbosity):
         thumb_width, thumb_height = DOC_THUMB_SIZE
@@ -237,61 +247,62 @@ class Command(BaseCommand):
                 print i, '...'
             extras = []
             for url in self.gen_url(data, gen):
-                for prov in api.register['media'][data].get_instances(
-                        data, view_type__in=('photo', 'video')):
-                    title = prov.title or prov.media.title or unicode(prov)
-                    desc = prov.desc or prov.media.desc or unicode(prov)
+                if not self.nomedia:
+                    for prov in api.register['media'][data].get_instances(
+                            data, view_type__in=('photo', 'video')):
+                        title = prov.title or prov.media.title or unicode(prov)
+                        desc = prov.desc or prov.media.desc or unicode(prov)
 
-                    if prov.view_type == 'photo':
-                        # Image media.
-                        extra = (
-                            u'<image:loc>http://%s%s</image:loc>' % (
-                                self.domain, prov.get_absolute_url()))
-                        extra += (
-                            u'<image:title>%s</image:title>' % cdata(title))
-                        extra += (
-                            u'<image:caption>%s</image:caption>' % cdata(desc))
+                        if prov.view_type == 'photo':
+                            # Image media.
+                            extra = (
+                                u'<image:loc>http://%s%s</image:loc>' % (
+                                    self.domain, prov.get_absolute_url()))
+                            extra += (
+                                u'<image:title>%s</image:title>' % cdata(title))
+                            extra += (
+                                u'<image:caption>%s</image:caption>' % cdata(desc))
 
-                        extras.append(
-                            u'<image:image>%s</image:image>' % extra)
-                    elif prov.view_type == 'video':
-                        preview = getattr(prov.media, 'preview')
-                        preview = preview or prov.consumer.preview
-                        thumbnail_url = (
-                            preview.get_absolute_url() if preview else None)
-                        #thumbnail_url = THUMBNAILS.get_thumbnail(
-                        #    thumb_width, thumb_height, data, 'preview', False)
-                        # Thumbnails are required by google's standard.
-                        if not thumbnail_url:
-                            if verbosity > 1:
-                                print (
-                                    u'Unable to generate video without '
-                                    'preview for %s (%s: %s)' %
-                                    (data, object_model, data.pk))
-                            continue
+                            extras.append(
+                                u'<image:image>%s</image:image>' % extra)
+                        elif prov.view_type == 'video':
+                            preview = getattr(prov.media, 'preview')
+                            preview = preview or prov.consumer.preview
+                            thumbnail_url = (
+                                preview.get_absolute_url() if preview else None)
+                            #thumbnail_url = THUMBNAILS.get_thumbnail(
+                            #    thumb_width, thumb_height, data, 'preview', False)
+                            # Thumbnails are required by google's standard.
+                            if not thumbnail_url:
+                                if verbosity > 1:
+                                    print (
+                                        u'Unable to generate video without '
+                                        'preview for %s (%s: %s)' %
+                                        (data, object_model, data.pk))
+                                continue
 
-                        # Video media.
-                        extra = (
-                            u'<video:thumbnail_loc>http://%s%s'
-                            '</video:thumbnail_loc>' % (
-                                self.domain, thumbnail_url))
+                            # Video media.
+                            extra = (
+                                u'<video:thumbnail_loc>http://%s%s'
+                                '</video:thumbnail_loc>' % (
+                                    self.domain, thumbnail_url))
 
-                        extra += u'<video:title>%s</video:title>' % cdata(
-                            title or unicode(prov))
+                            extra += u'<video:title>%s</video:title>' % cdata(
+                                title or unicode(prov))
 
-                        extra += (
-                            u'<video:description>%s</video:description>' %
-                            cdata(desc or unicode(prov)))
+                            extra += (
+                                u'<video:description>%s</video:description>' %
+                                cdata(desc or unicode(prov)))
 
-                        extra += (
-                            u'<video:content_loc>http://%s%s'
-                            '</video:content_loc>'
-                            % (self.domain, prov.get_absolute_url()))
+                            extra += (
+                                u'<video:content_loc>http://%s%s'
+                                '</video:content_loc>'
+                                % (self.domain, prov.get_absolute_url()))
 
-                        extra += (
-                            u'<video:publication_date>%s'
-                            '</video:publication_date>'
-                            % prov.date_joined.strftime(DATETIME_FORMAT))
-                        extras.append(u'<video:video>%s</video:video>' % extra)
+                            extra += (
+                                u'<video:publication_date>%s'
+                                '</video:publication_date>'
+                                % prov.date_joined.strftime(DATETIME_FORMAT))
+                            extras.append(u'<video:video>%s</video:video>' % extra)
 
                 self.write(url, u''.join(extras))

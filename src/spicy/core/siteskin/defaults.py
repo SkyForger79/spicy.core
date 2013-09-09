@@ -37,7 +37,7 @@ DEBUG_ERROR_PAGES = getattr(settings, 'DEBUG_ERROR_PAGES', False)
 USE_RENDER_FROM_RESPONSE_LIKE_SSI = getattr(
     settings, 'USE_RENDER_FROM_RESPONSE_LIKE_SSI', True)
 DEFAULT_TEMPLATE = getattr(settings, 'DEFAULT_TEMPLATE', 'default.html')
-SITEMAP_URL = getattr(settings, 'SITEMAP_URL', '/')
+SITEMAP_URL = getattr(settings, 'SITEMAP_URL', '')
 SITEMAP_GZIP_COMPRESSION = 6  # Must be in 1-9 interval, 1 is fastest.
 #MAX_MESSAGE_STRING_LENGTH = 1000
 

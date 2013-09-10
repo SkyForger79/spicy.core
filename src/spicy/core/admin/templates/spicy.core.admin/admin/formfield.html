@@ -138,6 +138,76 @@ $(function(){
 
 <script type="text/javascript">
 $(function(){
+    var labels = []
+    // add/remove in array labels
+    $('#id_{{ field.html_name }}').on('change', function(e){
+        if (e.added){
+            if($.type(e.added.id) == 'string'){
+                labels.push(e.added.id); 
+            }
+        }
+        else {
+           if($.type(e.removed.id) == 'string'){
+                labels = $.grep(labels, function(value) {
+                    return value != e.removed.id;
+                });
+           }
+        }
+    });
+    // add label form for save
+    $('form').submit(function(){
+        var h_i = $('#id_{{ field.html_name }}').val().split(',');
+        var l_len = labels.length;
+        if(labels.length){
+            labels = labels.join(',').replace('new_','');
+            $.get('/admin/labels/add-label/',{consumer:{{ form.instance.id }},text:labels}, function(data){
+                for (i=0;i<l_len;i++){
+                    h_i = $.grep(h_i, function(value){
+                       return value != 'new_'+data[i].text
+                    });
+                    h_i.push(data[i].id);
+                }
+                $('#id_{{ field.html_name }}').attr('value', h_i);
+                labels = [];
+                start();
+            });
+        return false;
+        }
+    });
+    function start(){
+        $('form').submit();
+    }
+    
+    if ('{{data_url}}' != '/admin/xtag-get_tags_data/'){
+      $('#id_{{ field.html_name }}').select2({
+          createSearchChoice:function(term, data) {
+             if ($(data).filter(function() { 
+               return this.text.localeCompare(term)===0; }).length===0)
+             {return {id:'new_'+term, text:term};} },
+          tokenSeparators: [",",],
+          multiple: true,
+    initSelection: function (element, callback){
+      var val = element.val();
+      if (val) {
+        $.get( 
+          '{{ data_url }}',
+          {ids: val},
+          callback
+        )
+      }
+    },
+    ajax: {
+      url: '{{ ajax_url }}',
+      data: function (term, page) {
+        return {search: term}
+      },
+      results: function (data, page) {
+        return {
+          results: $.map(data, function (val) { return {id: val.id, text: val.title}})}
+      }
+  }});
+  }
+  else {
   $('#id_{{ field.html_name }}').select2({
     multiple: true,
     initSelection: function (element, callback){
@@ -159,7 +229,9 @@ $(function(){
         return {
           results: $.map(data, function (val) { return {id: val.id, text: val.title}})}
       }
-  }})
+  }});
+  }
+
   $("#id_{{ field.html_name }}").select2("container").find("ul.select2-choices").sortable({
     containment: 'parent',
     start: function() { $("#id_{{ field.html_name }}").select2("onSortStart"); },

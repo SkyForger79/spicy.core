@@ -12,14 +12,13 @@ from spicy.core.admin.conf import AdminAppBase, AdminLink, Perms
 from spicy.core.service import api
 from spicy.core.siteskin.decorators import render_to, ajax_request
 from spicy.core.siteskin.decorators import APIResponse, APIResponseFail
-from spicy.utils import NavigationFilter
-from spicy.utils.models import get_custom_model_class
+from spicy import utils
 from . import defaults, forms
 from .decorators import is_staff
 from .models import BlacklistedIP
 
 
-Profile = get_custom_model_class(defaults.CUSTOM_USER_MODEL)
+Profile = utils.get_custom_model_class(defaults.CUSTOM_USER_MODEL)
 
 admin.site.register(Profile)
 
@@ -32,8 +31,8 @@ class AdminApp(AdminAppBase):
     menu_items = (
         AdminLink('profile:admin:create', _('Create profile')),
         AdminLink('profile:admin:index', _('All profiles')),
-        AdminLink('profile:admin:groups', _('Groups & Permissions')),
         AdminLink('profile:admin:create-group', _('Create group')),
+        AdminLink('profile:admin:groups', _('Groups & Permissions')),
     )
 
     create = AdminLink('profile:admin:create', _('Create profile'),)
@@ -70,8 +69,9 @@ def passwd(request, profile_id):
 @render_to('create.html', use_admin=True)
 def create(request):
     message = None
+    CreateProfileForm = utils.load_module(defaults.ADMIN_CREATE_PROFILE_FORM)
     if request.method == 'POST':
-        form = forms.CreateProfileForm(request.POST)
+        form = CreateProfileForm(request.POST)
         if form.is_valid():
             profile = form.save(realhost=request.get_host())
             return HttpResponseRedirect(
@@ -79,7 +79,7 @@ def create(request):
         else:
             message = settings.MESSAGES['error']
     else:
-        form = forms.CreateProfileForm(
+        form = CreateProfileForm(
             initial={'email_activation_key': True})
     return {
         'form': form,
@@ -145,20 +145,21 @@ def edit(request, profile_id):
     message = None
     action = request.GET.get('action')
     profile = get_object_or_404(Profile, id=profile_id)
+    ProfileForm = utils.load_module(defaults.ADMIN_EDIT_PROFILE_FORM)
 
     if action == 'new':
         message = _('New account created, welcome to editing.')
 
     if (request.method == 'POST' and request.user.has_perm(
             'profile.change_profile')):
-        form = forms.ProfileForm(request.POST, instance=profile)
+        form = ProfileForm(request.POST, instance=profile)
         if form.is_valid():
             form.save()
             message = settings.MESSAGES['success']
         else:
             message = settings.MESSAGES['error']
     else:
-        form = forms.ProfileForm(instance=profile)
+        form = ProfileForm(instance=profile)
 
     passwd_form = forms.AdminPasswdForm(profile)
 
@@ -208,7 +209,7 @@ def moderate(request, profile_id):
 @is_staff()
 @render_to('spicy.core.profile/admin/list.html', use_admin=True)
 def profiles_list(request):
-    nav = NavigationFilter(request, accepting_filters=[
+    nav = utils.NavigationFilter(request, accepting_filters=[
         ('group', None), ('search_text', ''), ('is_staff', None),
         ('last_login', None)])
     search_args, search_kwargs = [], {}
@@ -309,7 +310,7 @@ def last_created(request, form_input_name, staff_only=False):
 @is_staff(required_perms='profile')
 @render_to('spicy.core.profile/blacklisted_ips.html', use_admin=True)
 def blacklisted_ips(request):
-    nav = NavigationFilter(request)
+    nav = utils.NavigationFilter(request)
     paginator = nav.get_queryset_with_paginator(
         BlacklistedIP, reverse('profile:admin:blacklisted-ips'),
         obj_per_page=admin_defaults.ADMIN_OBJECTS_PER_PAGE)

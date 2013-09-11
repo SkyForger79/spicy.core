@@ -62,3 +62,10 @@ CUSTOM_ROLE_MODEL = getattr(settings, 'CUSTOM_ROLE_MODEL', 'auth.Group')
 RESTORE_PASSWORD_FORM = getattr(
     settings, 'RESTORE_PASSWORD_FORM',
     'spicy.core.profile.forms.RestorePasswordForm')
+
+ADMIN_CREATE_PROFILE_FORM = getattr(
+    settings, 'ADMIN_CREATE_PROFILE_FORM',
+    'spicy.core.profile.forms.CreateProfileForm')
+ADMIN_EDIT_PROFILE_FORM = getattr(
+    settings, 'ADMIN_EDIT_PROFILE_FORM',
+    'spicy.core.profile.forms.ProfileForm')

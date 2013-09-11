@@ -25,18 +25,18 @@
     </li>
     {% endif %}
 
-    {% if perms.auth.change_group %}
-    <li>
-      <a href="{% url 'profile:admin:groups' %}">
-        <i class="icon-cogs"></i> {% trans "Groups & Permissions" %}
-      </a>
-    </li>
-    {% endif %}
-
     {% if perms.auth.add_group %}
     <li>      
       <a href="{% url 'profile:admin:create-group' %}">
 	<i class="icon-plus-sign-alt"></i> {% trans "Create group" %}
+      </a>
+    </li>
+    {% endif %}
+
+    {% if perms.auth.change_group %}
+    <li>
+      <a href="{% url 'profile:admin:groups' %}">
+        <i class="icon-cogs"></i> {% trans "Groups & Permissions" %}
       </a>
     </li>
     {% endif %}

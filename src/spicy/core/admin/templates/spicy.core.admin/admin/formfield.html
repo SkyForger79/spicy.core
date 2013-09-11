@@ -138,46 +138,6 @@ $(function(){
 
 <script type="text/javascript">
 $(function(){
-    var labels = []
-    // add/remove in array labels
-    $('#id_{{ field.html_name }}').on('change', function(e){
-        if (e.added){
-            if($.type(e.added.id) == 'string'){
-                labels.push(e.added.id); 
-            }
-        }
-        else {
-           if($.type(e.removed.id) == 'string'){
-                labels = $.grep(labels, function(value) {
-                    return value != e.removed.id;
-                });
-           }
-        }
-    });
-    // add label form for save
-    $('form').submit(function(){
-        var h_i = $('#id_{{ field.html_name }}').val().split(',');
-        var l_len = labels.length;
-        if(labels.length){
-            labels = labels.join(',').replace('new_','');
-            $.get('/admin/labels/add-label/',{consumer:{{ form.instance.id }},text:labels}, function(data){
-                for (i=0;i<l_len;i++){
-                    h_i = $.grep(h_i, function(value){
-                       return value != 'new_'+data[i].text
-                    });
-                    h_i.push(data[i].id);
-                }
-                $('#id_{{ field.html_name }}').attr('value', h_i);
-                labels = [];
-                start();
-            });
-        return false;
-        }
-    });
-    function start(){
-        $('form').submit();
-    }
-    
     if ('{{data_url}}' != '/admin/xtag-get_tags_data/'){
       $('#id_{{ field.html_name }}').select2({
           createSearchChoice:function(term, data) {

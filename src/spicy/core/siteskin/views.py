@@ -15,7 +15,9 @@ def page_not_found(request):
         print_error('handler404: %s %s %s %s\n' % (
             dt.now(), request.GET, request.POST, request.get_full_path()))
 
-    return render_simplepage(request, '/errors/404/')
+    response = render_simplepage(request, '/errors/404/')
+    response.status_code = 404
+    return response
 
 
 def forbidden(request):
@@ -28,7 +30,9 @@ def forbidden(request):
             'handler403: %s %s %s %s\n' % (
                 dt.now(), request.GET, request.POST, request.get_full_path()))
 
-    return render_simplepage(request, '/errors/403/')
+    response = render_simplepage(request, '/errors/403/')
+    response.status_code = 403
+    return response
 
 
 def server_error(request):
@@ -40,7 +44,9 @@ def server_error(request):
             'handler505: %s %s %s %s\n' % (
                 dt.now(), request.GET, request.POST, request.get_full_path()))
 
-    return render_simplepage(request, '/errors/500/')
+    response = render_simplepage(request, '/errors/500/')
+    response.status_code = 500
+    return response
 
 
 def render(

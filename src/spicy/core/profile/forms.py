@@ -281,11 +281,12 @@ class SignupForm(forms.Form, ValidateEmailMixin):
         captcha = CaptchaField(widget=CaptchaWithId)
 
     email = forms.EmailField(label=_('Email'), required=True, initial='')
-    password = forms.CharField(
-        label=_('Password'), widget=forms.PasswordInput(), min_length=6)
-    password2 = forms.CharField(
-        label=_('Password (again)'), widget=forms.PasswordInput(),
-        min_length=6)
+
+    password = forms.CharField(label=_('Password'),
+        widget=forms.PasswordInput(), min_length=6, required=False)
+    password2 = forms.CharField(label=_('Password (again)'),
+        widget=forms.PasswordInput(), min_length=6, required=False)
+
     subscribe_me = forms.BooleanField(
         label=_('I want to subscribe for the news digest'), initial=True,
         required=False)
@@ -317,8 +318,9 @@ class SignupForm(forms.Form, ValidateEmailMixin):
 
             profile = Profile.objects.create_inactive_user(
                 email, password=password,
-                send_email=defaults.MANUAL_ACTIVATION,
-                next_url=next_url, realhost=realhost, **data)
+                next_url=next_url,
+                realhost=realhost, 
+                **data)
 
             profile.sites.add(*Site.objects.all())
             profile.save()

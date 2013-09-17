@@ -56,7 +56,7 @@ class ProfileManager(UserManager):
 
             profile.save()
 
-            if password is None:
+            if password in (None, '', ' '):
                 password = self.make_random_password()
             profile.set_password(password)
 
@@ -74,6 +74,7 @@ class ProfileManager(UserManager):
                 profile.generate_activation_key(
                     send_email=send_email, password=password,
                     realhost=realhost, next_url=next_url)
+                
 
             if defaults.NOTIFY_MANAGERS:
                 self.model.notify_managers(profile)
@@ -292,6 +293,7 @@ class AbstractProfile(User):
             # No email - do nothing.
             return
 
+        print '@@@@', password
         site = Site.objects.get_current()
         context = {
             'expiration_days': defaults.ACCOUNT_ACTIVATION_DAYS,

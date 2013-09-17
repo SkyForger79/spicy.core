@@ -293,7 +293,6 @@ class AbstractProfile(User):
             # No email - do nothing.
             return
 
-        print '@@@@', password
         site = Site.objects.get_current()
         context = {
             'expiration_days': defaults.ACCOUNT_ACTIVATION_DAYS,

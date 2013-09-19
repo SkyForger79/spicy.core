@@ -1,0 +1,27 @@
+{% extends current_base %}{% load url from future %}{% load staticfiles sk %}
+
+{% block content %}
+ <h3>Авторизация</h3>
+    <form name="login_form" action="{% if next %}?next={{ next }}{% endif %}" method="POST">{% csrf_token %}
+
+          <input class="text-input" type="text" name="{{ form.username.html_name }}" value="{{ form.username.value|default:'' }}"/>
+
+        {{ form.username.errors }}
+
+
+
+
+          <input class="text-input" type="password" name="{{ form.password.html_name }}" value=""/>
+
+        {{ form.password.errors }}
+
+        <a href="{% url 'profile:public:restorepass' %}">Забыли пароль?</a><br/>
+        <a href="{% url 'profile:public:signup' %}">Хочу зарегистрироваться!</a>
+
+
+        {{ form.is_remember }}<label >Запомнить меня</label>
+        <span onclick="document.login_form.submit(); return true;">Войти</span>
+
+      </form>
+
+{% endblock content %}

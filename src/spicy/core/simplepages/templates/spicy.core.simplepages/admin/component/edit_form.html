@@ -1,0 +1,27 @@
+{% load spicy_admin %}
+<div class="row-fluid">
+  <div class="span6">
+    <ul class="padded separate-sections">
+      {% formfield "" form "title" "li-text" %}
+      {% formfield "" form "url" "li-text" %}
+      {% formfield "" form "template_name" "li-text" %}
+    </ul>
+  </div>
+  <div class="span6">
+    <ul class="padded separate-sections">
+      {% formfield "" form "enable_comments" "li-checkbox" %}
+      {% formfield "" form "registration_required" "li-checkbox" %}
+      {% formfield "" form "sites" "li-multiple-select" %}
+    </ul>
+  </div>      
+</div>
+<div class="row-fluid">
+  <ul class="padded separate-sections">
+{% if not form.instance.template_name %}
+    {% formfield "" form "content" "li-editor" %}
+{% else %}
+    {% formfield "" form "content" "li-hidden" %}
+{% endif %}
+  </ul>
+</div>
+

@@ -1,0 +1,46 @@
+{% extends current_base %}{% load url from future %}{% load staticfiles sk %}
+
+{% block content %}
+
+<h1>{% trans "Login with social network account" %}</h1>
+
+{% if msg %}
+  <p >{{ msg }}</p>
+{% else %}
+
+  {% if form.errors %}
+  <p>
+    {% trans "You've entered invalid username and password combination. Please make sure that you're entering valid data." %}
+  </p>
+  {% endif %}
+
+  <form method="POST" action="" enctype="multipart/form-data">{% csrf_token %}
+    <input type="hidden" name="next" value="{{ next }}" />
+
+        <p>{% trans "If you already have an account on site:" %}</p>
+        <ul>
+          <li><i>*</i>{{ login_form.username }}
+            {{ login_form.username.errors }}</li>
+          <li><i>*</i><label>{% trans "Password" %}</label>{{ login_form.password }}
+            {{ login_form.password.errors }}</li>
+        </ul>
+        {{ login_form.is_remember }} <label>{% trans "Remember me" %}</label>
+        <a href="{% url 'profile:public:restorepass' %}">{% trans "Forgot password?" %}</a>
+        <input type="submit" name="signin" value="{% trans "Login" %}"/>
+
+        <p>{% trans "Registering for the first time:" %}</p>
+        <ul>
+          <li><i>*</i><label>{% trans "Username" %}</label>{{ update_form.username }}
+            {{ update_form.username.errors }}</li>
+          <li><i>*</i><label>{% trans "Email" %}</label>{{ update_form.email }}
+            {{ update_form.email.errors }}</li>
+        </ul>
+        <label>{{ update_form.accept_agreement }} {% url 'profile:public:user-agreement' as user_agreement_url %}{% blocktrans %}I have read and accepted <a href="{{ user_agreement_url }}">user agreement</a>{% endblocktrans %}</label>
+        {{ update_form.accept_agreement.errors }}
+        <input type="submit" name="create" value="{% trans "Create" %}"/>
+
+  </form>
+
+
+
+{% endblock content %}

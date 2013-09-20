@@ -167,6 +167,9 @@ class AbstractProfile(User):
             if old.is_banned != self.is_banned:
                 self.email_banned()
 
+        elif not self.sites.all():
+            self.sites = [Site.objects.get_current()]
+
         return result
 
     @property

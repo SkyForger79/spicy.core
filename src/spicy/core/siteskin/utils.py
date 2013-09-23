@@ -1,6 +1,7 @@
 from django import http
 from django.test.client import Client, FakePayload
 from spicy.core.siteskin import defaults
+import urllib
 from . import defaults
 
 
@@ -13,8 +14,7 @@ def get_render_from_response(request, url, get_forwarding=False):
     if request and request.GET:
         if query:
             query += '&'
-        query += '&'.join([
-            '%s=%s' % (key, values) for key, values in request.GET.items()])
+        query += urllib.urlencode(request.GET)
 
     if request:
         meta = dict(request.META, PATH_INFO=path, QUERY_STRING=query)
@@ -61,9 +61,7 @@ def choose_render_method(request, url, get_forwarding=False):
             params_dict[key] = value
 
     params_dict.update(request.GET.iteritems())
-    params = params_dict.items()
-    params.sort()
-    params_str = '&'.join('='.join(item) for item in params)
+    params_str = urllib.urlencode(params_dict)
 
     if get_forwarding and params_str:
         return u'<!--#include virtual="%s?%s" -->' % (path, params_str)

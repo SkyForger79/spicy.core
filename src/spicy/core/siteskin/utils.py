@@ -14,7 +14,9 @@ def get_render_from_response(request, url, get_forwarding=False):
     if request and request.GET:
         if query:
             query += '&'
-        query += urllib.urlencode(request.GET)
+        query += urllib.urlencode([
+            (k.encode('utf-8'), v.encode('utf-8')) for (k, v) in
+            request.GET.iteritems()])
 
     if request:
         meta = dict(request.META, PATH_INFO=path, QUERY_STRING=query)
@@ -60,7 +62,9 @@ def choose_render_method(request, url, get_forwarding=False):
             key, value = item.split('=', 1)
             params_dict[key] = value
 
-    params_dict.update(request.GET.iteritems())
+    params_dict.update([
+        (k.encode('utf-8'), v.encode('utf-8')) for (k, v) in
+        request.GET.iteritems()])
     params_str = urllib.urlencode(params_dict)
 
     if get_forwarding and params_str:

@@ -229,6 +229,10 @@ def profiles_list(request):
 
     if is_staff is not False and nav.group:
         search_args.append(Q(groups=nav.group))
+    
+    if nav.group:
+         search_args.append(
+            Q(groups=nav.group))
 
     if nav.last_login == 'month':
         search_kwargs['last_login__gte'] = datetime.today() - timedelta(30)

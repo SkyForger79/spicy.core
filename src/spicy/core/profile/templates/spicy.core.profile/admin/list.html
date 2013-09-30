@@ -25,30 +25,34 @@
 	  </span>
 	</div>
 	
-        <div class="box-content">
-	  
-	  <div class="padded">
-	    <div class="span2">
-	      <div class="selector">
-		<span>{{ form.group.label }}</span> 
-		{{ form.group }}
-              </div>
-            </div>
-	    
-	    <div class="span6">
-	      <form class="form form-inline">
-		{{ form.search_text }}
-		<button type="submit" class="btn btn-blue">{% trans 'Search' %}</button>
-              </form>
-            </div>	  
-	  </div>
+            <div class="box-content">
+                  <div class="row-fluid">
 
-          <div class="table table-normal">            
-            <div class="hpadded">
-              <div class="pagination pagination-small" style="margin-top: 0">
-                {% pagination %}
+                    <div class="span8">
+                    <form class="fill-up">
+                      <div class="padded separate-sections">
+                        <div class="span3">
+                        {{ form.search_text }}
+                        </div>
+                        <div class="span3">
+                        {{ form.group }}
+                        </div>
+                        <div class="span2">
+                        <button type="submit" class="btn btn-blue">{% trans 'Search' %}</button>
+                        </div>
+                      </div>
+                    </form>
+                    </div>
+                    <div class="span4 padded">
+                        <div class="hpadded">
+                        <div class="pagination pagination-centered pagination-small" style="margin-  top: 0">
+                        {% pagination %}
+                        </div>
+                        </div>
+                    </div>
+                  </div>
               </div>
-            </div>
+	  
 
             <table class="table table-normal" style="border-top: 1px solid #CDCDCD;">
               <thead>

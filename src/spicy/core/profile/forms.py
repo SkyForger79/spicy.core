@@ -603,4 +603,5 @@ class SigninForm(AuthenticationForm):
 class ProfileFiltersForm(forms.Form):
     group = forms.ModelChoiceField(
         label=_('Group'), queryset=Group.objects.all(), required=False)
+    group.widget.attrs['class'] = 'uniform'
     search_text = forms.CharField(max_length=100, required=False)

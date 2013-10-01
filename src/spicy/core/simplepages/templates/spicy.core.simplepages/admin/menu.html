@@ -1,5 +1,5 @@
 {% load url from future %}
-{% if perms.simplepage %}
+{% if perms.simplepages %}
 <li class="dark-nav{% if '/admin/simplepages/' in request.path %} active{% endif %}">
   <span class="glow"></span>
   <a class="accordion-toggle collapsed" data-toggle="collapse" href="#menu_{{ app.name }}">

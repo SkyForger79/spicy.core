@@ -207,3 +207,5 @@ class MultiQueryset(object):
         else:
             i, q, l = self._get_queryset_position(key)
             return q[l]
+
+__all__ = 'NavigationFilter', 'MultiModelNavigationFilter'

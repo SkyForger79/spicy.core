@@ -19,3 +19,6 @@ def load_module(path, config='SERVICE'):
         raise ImproperlyConfigured(
             'Error importing module. Is %s a correctly defined list or tuple?'
             % config)
+
+
+__all__ = 'load_module',

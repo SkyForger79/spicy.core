@@ -9,7 +9,7 @@
   </a>
 
   <ul id="profile" class="collapse {% if "/admin/profile" in request.path %} in{% endif %}">
-    {% if pm.add_profile %}
+    {% if pm.add_testprofile %}
     <li>
       <a href="{% url 'profile:admin:create' %}">
         <i class="icon-plus-sign-alt"></i> {% trans "Create profile" %}
@@ -17,7 +17,7 @@
     </li>
     {% endif %}
 
-    {% if pm.change_profile or pm.view_profile %}
+    {% if pm.change_testprofile or pm.view_testprofile %}
     <li>
       <a href="{% url 'profile:admin:index' %}">
         <i class="icon-list-alt"></i> {% trans "All profiles" %}
@@ -43,7 +43,7 @@
 
     {% comment %}TODO
     {% menu request "profile:admin:blacklisted-ips" _("Blacklisted IPs") %}
-    {% if perms.extprofile.change_profile or perms.extprofile.view_profile %}
+    {% if perms.extprofile.change_testprofile or perms.extprofile.view_testprofile %}
     <li class="helper">{% trans "Account types" %}:</li>
     {% menu request "profile:admin:index" _("Staff") "" "" "is_staff=true" %}
     {% menu request "profile:admin:index" _("Users") "" "" "is_staff=false" %}

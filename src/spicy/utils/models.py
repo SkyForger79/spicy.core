@@ -13,3 +13,6 @@ def get_custom_model_class(custom_model_name):
         custom_model_name (str): Custom model name in format 'appName.UserModel'
     '''
     return cache.get_model(*custom_model_name.split('.'))
+
+
+__all__ = 'get_custom_model_class',

@@ -13,6 +13,7 @@ from spicy.core.service import api
 from spicy.core.siteskin.decorators import render_to, ajax_request
 from spicy.core.siteskin.decorators import APIResponse, APIResponseFail
 from spicy import utils
+from spicy.utils.permissions import *
 from . import defaults, forms
 from .decorators import is_staff
 from .models import BlacklistedIP
@@ -48,7 +49,7 @@ class AdminApp(AdminAppBase):
         return dict(app=self, *args, **kwargs)
 
 
-@is_staff(required_perms='profile.change_profile')
+@is_staff(required_perms=change_perm(defaults.CUSTOM_USER_MODEL))
 @ajax_request
 def passwd(request, profile_id):
     message = ''
@@ -65,7 +66,7 @@ def passwd(request, profile_id):
             _('Not enough parametes has been passed. Use POST request.')])
 
 
-@is_staff(required_perms='profile.add_profile')
+@is_staff(required_perms=add_perm(defaults.CUSTOM_USER_MODEL))
 @render_to('create.html', use_admin=True)
 def create(request):
     message = None
@@ -135,7 +136,7 @@ def delete_group(request, group_id):
     return {'group': group}
 
 
-@is_staff(required_perms='profile.change_profile')
+@is_staff(required_perms=change_perm(defaults.CUSTOM_USER_MODEL))
 @render_to('spicy.core.profile/admin/edit.html', use_admin=True)
 def edit(request, profile_id):
     """Handles edit requests, renders template according `action`
@@ -169,7 +170,7 @@ def edit(request, profile_id):
         'services': api.register.get_list(consumer=profile), 'tab': 'edit'}
 
 
-@is_staff(required_perms='profile.change_profile')
+@is_staff(required_perms=change_perm(defaults.CUSTOM_USER_MODEL))
 @render_to('spicy.core.profile/admin/edit_media.html', use_admin=True)
 def edit_media(request, profile_id):
     profile = get_object_or_404(Profile, id=profile_id)
@@ -177,7 +178,7 @@ def edit_media(request, profile_id):
     return {'instance': profile, 'tab': 'media', 'model': model}
 
 
-@is_staff(required_perms='profile.delete_profile')
+@is_staff(required_perms=delete_perm(defaults.CUSTOM_USER_MODEL))
 @render_to('delete.html', use_admin=True)
 def delete(request, profile_id):
     message = ''
@@ -189,7 +190,7 @@ def delete(request, profile_id):
         'message': message, 'instance': profile}
 
 
-@is_staff(required_perms='profile.moderate_profile')
+@is_staff(required_perms=perm(defaults.CUSTOM_USER_MODEL, 'moderate'))
 @render_to('spicy.core.profile/admin/moderate.html', use_admin=True)
 def moderate(request, profile_id):
     message = None
@@ -206,7 +207,7 @@ def moderate(request, profile_id):
     return {'profile': profile, 'form': form, 'message': message}
 
 
-@is_staff()
+@is_staff(required_perms='profile')
 @render_to('spicy.core.profile/admin/list.html', use_admin=True)
 def profiles_list(request):
     nav = utils.NavigationFilter(request, accepting_filters=[
@@ -249,7 +250,7 @@ def profiles_list(request):
         'is_staff': is_staff, 'form': form}
 
 
-@is_staff(required_perms='profile.delete_profile')
+@is_staff(required_perms=delete_perm(defaults.CUSTOM_USER_MODEL))
 @ajax_request
 def delete_profile_list(request):
     message = ''
@@ -265,7 +266,7 @@ def delete_profile_list(request):
     return dict(message=unicode(message), status=status)
 
 
-@is_staff(required_perms="profile.change_profile")
+@is_staff(required_perms=change_perm(defaults.CUSTOM_USER_MODEL))
 @ajax_request
 def resend_activation(request, profile_id):
     try:

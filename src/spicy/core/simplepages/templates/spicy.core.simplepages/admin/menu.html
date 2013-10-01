@@ -1,6 +1,6 @@
 {% load url from future %}
-{% if app.perms.view %}
-<li class="dark-nav{% if app.name in request.path %} active{% endif %}">
+{% if perms.simplepage %}
+<li class="dark-nav{% if '/admin/simplepages/' in request.path %} active{% endif %}">
   <span class="glow"></span>
   <a class="accordion-toggle collapsed" data-toggle="collapse" href="#menu_{{ app.name }}">
     <i class="icon-sitemap icon-2x"></i>
@@ -9,7 +9,7 @@
     </span>
   </a>
 
-  <ul id="menu_{{ app.name }}" class="collapse{% if app.name in request.path %} in{% endif %}">
+  <ul id="menu_{{ app.name }}" class="collapse{% if '/admin/simplepages/' in request.path %} in{% endif %}">
     {% for link in app.menu_items %}
     <li>
       <a href="{{ link.url }}">

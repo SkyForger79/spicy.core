@@ -194,6 +194,8 @@ class MultiQueryset(object):
                 for k in ks:
                     results.append(self[k])
             else:
+                if key.start == key.stop:
+                    return []
                 i1, q1, l1 = self._get_queryset_position(key.start)
                 i2, q2, l2 = self._get_queryset_position(key.stop)
                 while i1 != i2:

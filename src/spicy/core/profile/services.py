@@ -140,10 +140,7 @@ class ProfileService(api.Interface):
 
     schema = dict(GENERIC_CONSUMER=ProfileProvider)
 
-    def login(self, request):
-        status = 'error'
-        message = ''
-
+    def _get_redirect(self, request):
         redirect = request.GET.get(
             REDIRECT_FIELD_NAME,
             request.session.get(
@@ -154,7 +151,20 @@ class ProfileService(api.Interface):
         except KeyError:
             pass
 
+        if callable(defaults.DEFAULT_PROFILE_URL):
+            user_redirect_uri = defaults.DEFAULT_PROFILE_URL(request.user)
+        else:
+            user_redirect_uri = defaults.DEFAULT_PROFILE_URL
+        redirect = redirect or user_redirect_uri
+        return redirect
+
+    def login(self, request):
+        status = 'error'
+        message = ''
+        redirect = None
+
         if request.user.is_authenticated():
+            redirect = self._get_redirect(request)
             return dict(
                 status='ok',
                 message=unicode(_('User is signed in already')),
@@ -196,6 +206,7 @@ class ProfileService(api.Interface):
                     item for item in request.session.iteritems()
                     if not item[0].startswith('_'))
                 auth_login(request, form.get_user())
+                redirect = self._get_redirect(request)
 
                 for key, value in session_copy.iteritems():
                     request.session[key] = value
@@ -229,7 +240,21 @@ class ProfileService(api.Interface):
         is_blacklisted = real_ip and models.BlacklistedIP.objects.filter(
             ip=real_ip).exists()
 
-        if request.method == "POST":
+        if request.user.is_authenticated():
+            redirect = request.REQUEST.get(
+                REDIRECT_FIELD_NAME, request.session.get(REDIRECT_FIELD_NAME))
+            try:
+                del request.session[REDIRECT_FIELD_NAME]
+            except KeyError:
+                pass
+
+            if callable(defaults.DEFAULT_PROFILE_URL):
+                user_redirect_uri = defaults.DEFAULT_PROFILE_URL(request.user)
+            else:
+                user_redirect_uri = defaults.DEFAULT_PROFILE_URL
+            redirect = redirect or user_redirect_uri
+
+        elif request.method == "POST":
             form = load_module(CUSTOM_USER_SIGNUP_FORM)(request.POST)
             redirect = reverse('profile:public:success-signup')
             if not is_blacklisted and form.is_valid():

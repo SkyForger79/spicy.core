@@ -161,36 +161,16 @@ def set_email(request):
 @never_cache
 @render_to('spicy.core.profile/signin.html')
 def signin(request):
-    if request.user.is_authenticated():
-        redirect_to = request.REQUEST.get(
-            REDIRECT_FIELD_NAME, request.session.get(REDIRECT_FIELD_NAME))
-
-        import types
-        if isinstance(defaults.DEFAULT_PROFILE_URL, types.FunctionType):
-            user_redirect_uri = defaults.DEFAULT_PROFILE_URL(request.user)
-        else:
-            user_redirect_uri = defaults.DEFAULT_PROFILE_URL
-
-        return HttpResponseRedirect(
-            redirect_to or user_redirect_uri)
-
     result = api.register['profile'].login(request)
     if result['status'] == 'ok':
         return HttpResponseRedirect(
-            result.get('redirect') or
-            reverse("profile:public:index", args=[request.user.username]))
+            result.get('redirect') or user_redirect_uri)
     return result
 
 
 @never_cache
 @render_to('spicy.core.profile/signup.html')
 def signup(request):
-    if request.user.is_authenticated():
-        redirect_to = request.REQUEST.get(
-            REDIRECT_FIELD_NAME, request.session.get(REDIRECT_FIELD_NAME))
-        return HttpResponseRedirect(
-            redirect_to or defaults.DEFAULT_PROFILE_URL(request.user))
-
     result = api.register['profile'].register(request)
     if result['status'] == 'ok':
         return HttpResponseRedirect(
@@ -202,15 +182,6 @@ def signup(request):
 
 @render_to('spicy.core.profile/widgets/signin_form.html')
 def login_widget(request):
-    if request.user.is_authenticated():
-        redirect_to = request.REQUEST.get(
-            REDIRECT_FIELD_NAME, request.session.get(REDIRECT_FIELD_NAME))
-
-        return {
-            'redirect_now': True,
-            'redirect': (
-                redirect_to or defaults.DEFAULT_PROFILE_URL(request.user))}
-
     result = api.register['profile'].login(request)
     if result['status'] == 'ok':
         result['redirect_now'] = True
@@ -219,14 +190,6 @@ def login_widget(request):
 
 @render_to('spicy.core.profile/widgets/signup_form.html')
 def registration_widget(request):
-    if request.user.is_authenticated():
-        redirect_to = request.REQUEST.get(
-            REDIRECT_FIELD_NAME, request.session.get(REDIRECT_FIELD_NAME))
-        return {
-            'redirect_now': True,
-            'redirect': (
-                redirect_to or defaults.DEFAULT_PROFILE_URL(request.user))}
-
     result = api.register['profile'].register(request)
     if result['status'] == 'ok':
         result['redirect_now'] = True

@@ -1,13 +1,13 @@
 from importlib import import_module
 from setuptools import setup, find_packages
-from setuptools.package_index import declare_namespace
+import pkg_resources
 
 spicy_pkg = import_module('src.spicy')
 version = import_module('src.spicy.version').__version__
 
 long_description = """spicy core package"""
 
-declare_namespace('spicy')
+pkg_resources.declare_namespace('spicy')
 
 
 def long_description():

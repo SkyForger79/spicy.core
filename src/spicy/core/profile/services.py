@@ -241,6 +241,7 @@ class ProfileService(api.Interface):
             ip=real_ip).exists()
 
         if request.user.is_authenticated():
+            form = None
             redirect = request.REQUEST.get(
                 REDIRECT_FIELD_NAME, request.session.get(REDIRECT_FIELD_NAME))
             try:

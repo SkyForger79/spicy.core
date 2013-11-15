@@ -1,0 +1,281 @@
+{% spaceless %}
+{% load url from future %}
+{# new admin #}
+
+{% if type == 'li-file' %}
+<li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
+  {{ label }}
+  {{ field }}
+  {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+{% endif %}
+
+{% if type == 'li-checkbox' %}
+<li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
+  <input type="checkbox" id="id_{{ field.html_name }}" class="icheck" name="{{ field.html_name }}" {% if field.value %}checked="on"{% endif %}/>
+  {{ label }}
+  {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+{% endif %}
+
+{% if type == 'li-text' %}
+<li class="input">
+  {{ label }} {#{ default_value}#}
+  <input type="text" name="{{ field.html_name }}" placeholder="{{ title }}" value="{{ field.value|default_if_none:'' }}" id="id_{{ field.html_name }}"/>
+  {% if preview_link %}<a href="{{ form.instance.get_absolute_url }}" target="blank"><i class="icon-eye-open icon-2x"></i></a>{% endif %}
+  {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+{% endif %}
+
+{% if type == 'li-slug' %}
+{% if from_field %}
+<script type="text/javascript">
+$(function(){
+ if($('#id_{{ field.html_name }}').value == undefined)
+    {
+        $('#id_{{ from_field.html_name }}').syncTranslit({destination: 'id_{{ field.html_name }}'});
+    }   
+})
+</script>
+{% endif %}
+
+<li class="input">
+  {{ label }} 
+  <input type="text" name="{{ field.html_name }}" placeholder="{{ title }}" value="{{ field.value|default_if_none:'' }}" id="id_{{ field.html_name }}"/>
+  {% if preview_link %}<a href="{{ form.instance.get_absolute_url }}" target="blank"><i class="icon-eye-open icon-2x"></i></a>{% endif %}
+  {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+{% endif %}
+
+{% if type == 'li-password' %}
+<li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
+  {{ label }}
+  <input type="password" name="{{ field.html_name }}" placeholder="{{ title }}" id="id_{{ field.html_name }}"/>
+  {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+{% endif %}
+
+{% if type == 'li-chat-editor' %}
+<li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
+  {{ label }}
+  <div class="closable-chat-box">
+    <div class="chat-message-box">
+      <textarea name="{{ field.html_name }}" placeholder="{{ title }}" rows="6" id="id_{{ field.html_name }}">{{ field.value|default_if_none:'' }}</textarea>
+    </div>
+  </div>
+  {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+{% endif %}
+
+{% if type == 'li-hidden' %}
+<input type="hidden" name="{{ field.html_name }}" value="{{ field.value|default_if_none:'' }}" id="id_{{ field.html_name }}"/>
+{% endif %}
+
+{% if type == 'li-editor' %}
+<li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
+  {{ label }}
+  
+  <div class="">
+  <textarea name="{{ field.html_name }}" placeholder="{{ title }}" rows="6" id="id_{{ field.html_name }}"
+	    style="width: 99%; height: 400px;">{{ field.value|default_if_none:'' }}</textarea>
+  </div>
+  {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+{% endif %}
+
+{% if type == 'li-date' %}
+<li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
+  {{ label }}
+  <input class="datetime fill-up"  type="text" name="{{ field.html_name }}" value="{% if field.value %}{{ field.value|date:"Y-m-d H:i"|default:field.value }}{% endif %}" id="id_{{ field.html_name }}"/>
+  {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+<script type="text/javascript">
+$(function(){
+  $('*[name="{{ field.html_name }}"]').datetimepicker({lang:'ru',format:'Y-m-d H:i',});
+});
+</script>
+{% endif %}
+
+{% if type == 'li-select' %}
+<li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
+  {{ label }}
+  <select name="{{ field.html_name }}" class="uniform" id="id_{{ field.html_name }}">
+    {% for id, name in field.field.choices %}
+    <option value="{{ id }}" {% ifequal field.value|stringformat:"s" id|stringformat:"s" %}selected="on"{% endifequal %}>{{ name }}</option>
+    {% endfor %}
+  </select>  
+  {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+{% endif %}
+
+{% if type == 'li-select2' %}
+<li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
+  {{ label }}  
+  {% if ajax_url %}
+  <input type="hidden" name="{{ field.html_name }}" id="id_{{ field.html_name }}" value="{{ field.value|default:'' }}"/>
+
+<script type="text/javascript">
+$(function(){
+    if ('{{data_url}}' != '/admin/xtag-get_tags_data/'){
+      $('#id_{{ field.html_name }}').select2({
+          createSearchChoice:function(term, data) {
+             if ($(data).filter(function() { 
+               return this.text.localeCompare(term)===0; }).length===0)
+             {return {id:'new_'+term, text:term};} },
+          tokenSeparators: [",",],
+          multiple: true,
+    initSelection: function (element, callback){
+      var val = element.val();
+      if (val) {
+        $.get( 
+          '{{ data_url }}',
+          {ids: val},
+          callback
+        )
+      }
+    },
+    ajax: {
+      url: '{{ ajax_url }}',
+      data: function (term, page) {
+        return {search: term}
+      },
+      results: function (data, page) {
+        return {
+          results: $.map(data, function (val) { return {id: val.id, text: val.title}})}
+      }
+  }});
+  }
+  else {
+  $('#id_{{ field.html_name }}').select2({
+    multiple: true,
+    initSelection: function (element, callback){
+      var val = element.val();
+      if (val) {
+        $.get(
+          '{{ data_url }}',
+          {ids: val},
+          callback
+        )
+      }
+    },
+    ajax: {
+      url: '{{ ajax_url }}',
+      data: function (term, page) {
+        return {search: term}
+      },
+      results: function (data, page) {
+        return {
+          results: $.map(data, function (val) { return {id: val.id, text: val.title}})}
+      }
+  }});
+  }
+
+  $("#id_{{ field.html_name }}").select2("container").find("ul.select2-choices").sortable({
+    containment: 'parent',
+    start: function() { $("#id_{{ field.html_name }}").select2("onSortStart"); },
+    update: function() { $("#id_{{ field.html_name }}").select2("onSortEnd"); }
+  });
+})
+</script>
+  {% else %}
+  <select name="{{ field.html_name }}" id="id_{{ field.html_name }}" class="chzn-select select2-offscreen" tabindex="-1">
+    {% for option_id, name in field.field.choices %}
+    <option value="{{ option_id }}" {% if field.value == option_id %}selected="on"{% endif %}>{{ name }}</option>
+    {% endfor %}
+  </select>
+  {% endif %}
+  {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+{% endif %}
+
+{% if type == 'li-multiple-select' %}
+<li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
+  {{ label }}
+  <select name="{{ field.html_name }}" multiple="multiple" id="id_{{ field.html_name }}" class="chzn-select" tabindex="-1">
+    {% for option_id, name in field.field.choices %}
+    <option value="{{ option_id }}" {% if option_id|stringformat:'r' in field.value or option_id in field.value %}selected="on"{% endif %}>{{ name }}</option>
+    {% endfor %}
+  </select>
+  {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+{% endif %}
+
+{% if type == 'table-formset'%}
+<div class="row-fluid item">
+    <table class="table table-normal">
+        <thead>
+            <tr>
+                {% for form_field in form.forms.0 %}
+                    {% if not form_field.is_hidden %}
+                    <td>{{ form_field.label }}</td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+        {% for formset_form in form.forms %}
+           <tr>
+           {% for form_field in formset_form %}
+               {% if not form_field.is_hidden %}
+               <td>
+                   {{ form_field.errors }}
+                   {{ form_field }}
+               </td>
+               {% else %}
+                  {{ form_field }}
+               {% endif %}
+           {% endfor %}
+           </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {{ form.management_form }}
+</div>
+<script>
+$(document).ready(function(){
+  $('.item tbody tr').formset({
+    addText: '<button class="btn btn-green">'+
+      '<i class="icon-plus-sign"></i> Добавить</button>',
+
+    deleteText: '<button class="btn btn-red">'+
+      '<i class="icon-trash"></i></button></div>',
+    prefix: '{{ form.prefix }}'
+  });
+});
+</script>
+{% endif %}
+
+{% endspaceless %}

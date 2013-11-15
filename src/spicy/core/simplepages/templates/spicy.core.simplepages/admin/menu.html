@@ -1,0 +1,22 @@
+{% load url from future %}
+{% if perms.simplepages %}
+<li class="dark-nav{% if '/admin/simplepages/' in request.path %} active{% endif %}">
+  <span class="glow"></span>
+  <a class="accordion-toggle collapsed" data-toggle="collapse" href="#menu_{{ app.name }}">
+    <i class="icon-sitemap icon-2x"></i>
+    <span>{{ app.label }}
+      <i class="icon-caret-down"></i>
+    </span>
+  </a>
+
+  <ul id="menu_{{ app.name }}" class="collapse{% if '/admin/simplepages/' in request.path %} in{% endif %}">
+    {% for link in app.menu_items %}
+    <li>
+      <a href="{{ link.url }}">
+         {{ link.label }}
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+</li>
+{% endif %}

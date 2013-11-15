@@ -1,0 +1,6 @@
+{% trans "Username" %}: {{ user.username }}
+{% trans "New password" %}: {{ password }}
+
+--
+{% trans "Support team" %},
+{{ site.domain }}

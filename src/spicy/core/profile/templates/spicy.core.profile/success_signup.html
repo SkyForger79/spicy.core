@@ -1,0 +1,19 @@
+{% extends current_base %}{% load url from future %}{% load staticfiles sk %}
+
+{% block content %}
+
+<h3>Аккаунт успешно создан!</h3>
+<h1>{% trans "Account successfully created! You must activate your profile. Activation link has been sent by email." %}</h1>
+
+
+{% if MANUAL_ACTIVATION %}
+Ваша учетная запись будет активирована нашим отделом по работе с клиентами вручную.
+Данные о учетной записи отправлены на почту {{ email }}.
+{% else %}
+  <p>{% blocktrans %}Please check your email <b>{{ email }}</b>. You have been sent a letter containing profile activation link. <br/><b>Attention!</b> The letter could have arrived in your Spam fo\
+lder, make sure to check it.{% endblocktrans %}</p>
+{% endif %}
+
+{% endblock content %}
+
+

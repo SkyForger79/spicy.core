@@ -10,7 +10,7 @@ def get_custom_model_class(custom_model_name):
     Returns class for abstract model
 
     Args:
-        custom_model_name (str): Custom model name in format 'appName.UserModel'
+        custom_model_name (str): Custom model name in format 'app_name.CustomModel'
     '''
     return cache.get_model(*custom_model_name.split('.'))
 

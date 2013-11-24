@@ -1,69 +1,57 @@
 import os
 from django.conf import settings
+from django.core.files.storage import default_storage, Storage, FileSystemStorage
 from django.template.loaders import filesystem, app_directories
 from django.utils._os import safe_join
+from django.utils.datastructures import SortedDict
+from django.contrib.staticfiles import finders
+
+from . import defaults, utils
 
 
-class SpicyLoaderMixin(object):
-    def add_siteskin(self, template_name):
-        template_names = [template_name]
-        if (
-                settings.SITESKIN and
-                not template_name.startswith(settings.SITESKIN + '/')):
-            template_names.append(
-                os.path.join(settings.SITESKIN, template_name))
-        return template_names
+class ThemeStaticFinder(finders.FileSystemFinder):
+    def __init__(self, apps=None, *args, **kwargs):
+        # List of locations with static files
+        self.locations = []
+        # Maps dir paths to an appropriate storage instance
+        self.storages = SortedDict()        
+        
+        prefix = None 
+        root = safe_join(defaults.THEMES_PATH, utils.get_siteskin_settings().theme, 'static')
+
+        if os.path.abspath(settings.STATIC_ROOT) == os.path.abspath(root):
+            raise ImproperlyConfigured(
+                "The STATICFILES_DIRS setting should "
+                "not contain the STATIC_ROOT setting")
+        if (prefix, root) not in self.locations:
+            self.locations.append((prefix, root))
+
+        for prefix, root in self.locations:
+            filesystem_storage = FileSystemStorage(location=root)
+            filesystem_storage.prefix = prefix
+            self.storages[root] = filesystem_storage
 
 
-class FilesystemLoader(filesystem.Loader, SpicyLoaderMixin):
+class ThemeTemplateLoader(filesystem.Loader):
+    # TODO
+    # load tempalte_dir from Database in the __init__
+
     def get_template_sources(self, template_name, template_dirs=None):
-        """
-        Returns the absolute paths to "template_name", when appended to each
-        directory in "template_dirs". Any paths that don't lie inside one of
-        the template dirs are excluded from the result set, for security
-        reasons.
-        """
-        if not template_dirs:
-            template_dirs = settings.TEMPLATE_DIRS
-        template_names = self.add_siteskin(template_name)
-        for template_name in template_names:
-            for template_dir in template_dirs:
-                if not os.path.isabs(template_dir):
-                    template_dir = safe_join(settings.PROJECT_ROOT, template_dir)
-                try:
-                    yield safe_join(template_dir, template_name)
-                except UnicodeDecodeError:
-                    # The template dir name was a bytestring that wasn't
-                    # valid UTF-8.
-                    raise
-                except ValueError:
-                    # The joined path was located outside of this particular
-                    # template_dir (it might be inside another one, so this
-                    # isn't fatal).
-                    pass
 
+        #template_dir = safe_join(defaults.THEMES_PATH, admin_defaults.DEFAULT_THEME)
+        #if admin_settings.current_theme:
+        template_dir = safe_join(defaults.THEMES_PATH, utils.get_siteskin_settings().theme, 'templates')
+        
+        try:
+            yield safe_join(template_dir, template_name)
+        except UnicodeDecodeError:
+            # The template dir name was a bytestring that wasn't
+            # valid UTF-8.
+            raise
+        except ValueError:
+            # The joined path was located outside of this particular
+            # template_dir (it might be inside another one, so this
+            # isn't fatal).
+            pass
+        
 
-class AppLoader(app_directories.Loader, SpicyLoaderMixin):
-    def get_template_sources(self, template_name, template_dirs=None):
-        """
-        Returns the absolute paths to "template_name", when appended to each
-        directory in "template_dirs". Any paths that don't lie inside one of
-        the template dirs are excluded from the result set, for security
-        reasons.
-        """
-        if not template_dirs:
-            template_dirs = app_directories.app_template_dirs
-        template_names = self.add_siteskin(template_name)
-        for template_name in template_names:
-            for template_dir in template_dirs:
-                if not os.path.isabs(template_dir):
-                    template_dir = safe_join(settings.PROJECT_ROOT, template_dir)
-                try:
-                    yield safe_join(template_dir, template_name)
-                except UnicodeDecodeError:
-                    # The template dir name was a bytestring that wasn't valid
-                    # UTF-8.
-                    raise
-                except ValueError:
-                    # The joined path was located outside of template_dir.
-                    pass

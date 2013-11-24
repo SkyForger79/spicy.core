@@ -23,6 +23,9 @@ class ServiceManager(models.Manager):
 
 
 class Service(models.Model):
+    # deprecated
+    # see spicy.core.admin.models.Apps
+
     name = models.CharField(_('Name'), max_length=255)
     description = models.TextField(_('Description'), blank=True)
 

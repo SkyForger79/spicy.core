@@ -11,11 +11,25 @@
 
   <ul id="admin" class="collapse {% if "/admin/settings" in request.path %} in{% endif %}">
     <li>
-      <a href="{#% url 'spicyadmin:admin:theme' %#}">
-        <i class="icon-list-alt"></i> {% trans "Theme" %}
+      <a href="{% url 'spicyadmin:admin:settings' %}">
+        <i class="icon-list-alt"></i> {% trans "Emails & Metrics" %}
       </a>
     </li>
-
+    <li>
+      <a href="{% url 'spicyadmin:admin:application' %}">
+        <i class="icon-list-alt"></i> {% trans "Application" %}
+      </a>
+    </li>
+    <li>
+      <a href="{% url 'spicyadmin:admin:developer' %}">
+        <i class="icon-list-alt"></i> {% trans "Developer" %}
+      </a>
+    </li>
+    <li>
+      <a href="{% url 'spicyadmin:admin:settings' %}">
+        <i class="icon-list-alt"></i> {% trans "HTML & custom vars" %}
+      </a>
+    </li>
   </ul>
 </li>
 {% endif %}

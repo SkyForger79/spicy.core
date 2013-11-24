@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
 from spicy.core.service import api
@@ -10,10 +9,10 @@ from spicy.utils.models import get_custom_model_class
 from spicy.core.profile.decorators import is_staff
 
 from .conf import AdminAppBase, AdminLink, Perms
-from . import defaults, forms
+from . import defaults, forms, utils
 
 
-SettingsModel = get_custom_model_class(defaults.ADMIN_CUSTOM_SETTINGS_MODEL)
+SettingsModel = get_custom_model_class(defaults.ADMIN_SETTINGS_MODEL)
 
 
 class AdminApp(AdminAppBase):
@@ -22,9 +21,9 @@ class AdminApp(AdminAppBase):
     order_number = 10
 
     menu_items = (
-        AdminLink('spicyadmin:admin:edit', _('Settings')),
+        AdminLink('spicyadmin:admin:index', _('Dashboard')),
+        AdminLink('spicyadmin:admin:settings', _('Settings')),
     )
-
     perms = Perms(view=[],  write=[], manage=[])
 
     @render_to('menu.html', use_admin=True)
@@ -36,40 +35,83 @@ class AdminApp(AdminAppBase):
         return dict(app=self, *args, **kwargs)
 
 
+@is_staff
+@render_to('spicy.core.admin/admin/dashboard.html')
+def dashboard(request):
+    return {'services': api.register.get_list()}
+
 
 @is_staff(required_perms=('admin.edit_settings',))
-@render_to('edit.html', use_admin=True)
-def edit(request):
+@render_to('spicy.core.admin/admin/settings.html', use_admin=True)
+def edit_settings(request):
     """Handles edit requests, renders template according `action`
     get parameter
 
     """
-    message = None
-    action = request.GET.get('action')
-    profile = get_object_or_404(Profile, id=profile_id)
-
-    if action == 'new':
-        message = _('New account created, welcome to editing.')
-
-    if (request.method == 'POST' and request.user.has_perm(
-            'extprofile.change_profile')):
-        form = forms.ProfileForm(request.POST, instance=profile)
+    messages = []
+    instance = utils.get_admin_settings()
+    
+    if request.method == 'POST':        
+        form = forms.SettingsForm(request.POST, instance=instance)
         if form.is_valid():
             form.save()
-            message = settings.MESSAGES['success']
         else:
-            message = settings.MESSAGES['error']
+            messages.append(form.errors.as_text())
     else:
-        form = forms.ProfileForm(instance=profile)
-
-    passwd_form = forms.AdminPasswdForm(profile)
+        form = forms.SettingsForm(instance=instance)
 
     return {
-        'action': action,
-        'profile': profile,
         'form': form,
-        'passwd_form': passwd_form,
-        'message': message,
-        'services': api.register.get_list(consumer=profile)
+        'messages': messages,
+    }
+
+
+@is_staff(required_perms=('admin.edit_settings',))
+@render_to('spicy.core.admin/admin/application.html', use_admin=True)
+def application(request):
+    """Handles edit requests, renders template according `action`
+    get parameter
+
+    """
+    messages = []
+    instance = utils.get_admin_settings()
+    
+    if request.method == 'POST':        
+        form = forms.SettingsForm(request.POST, instance=instance)
+        if form.is_valid():
+            form.save()
+        else:
+            messages.append(form.errors.as_text())
+    else:
+        form = forms.SettingsForm(instance=instance)
+
+    return {
+        'form': form,
+        'messages': messages,
+    }
+
+
+@is_staff(required_perms=('admin.edit_settings',))
+@render_to('spicy.core.admin/admin/developer.html', use_admin=True)
+def developer(request):
+    """Handles edit requests, renders template according `action`
+    get parameter
+
+    """
+    messages = []
+    instance = utils.get_admin_settings()
+    
+    if request.method == 'POST':        
+        form = forms.SettingsForm(request.POST, instance=instance)
+        if form.is_valid():
+            form.save()
+        else:
+            messages.append(form.errors.as_text())
+    else:
+        form = forms.SettingsForm(instance=instance)
+
+    return {
+        'form': form,
+        'messages': messages,
     }
 

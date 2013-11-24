@@ -45,7 +45,7 @@
   </head>
 
   <body>
-    {% captureas admin_index %}{% url 'spicyadmin:public:index' %}{% endcaptureas %}
+    {% captureas admin_index %}{% url 'spicyadmin:admin:index' %}{% endcaptureas %}
     {% block top_navbar %}{% include 'spicy.core.admin/admin/top_navbar.html' %}{% endblock top_navbar %}
 	
     {% block menu %}

@@ -4,12 +4,6 @@ from spicy.core.service import api
 from spicy.core.siteskin.decorators import render_to
 
 
-@is_staff
-@render_to('spicy.core.admin/admin/dashboard.html')
-def dashboard(request):
-    return {'services': api.register.get_list()}
-
-
 def login(request):
     return views.login(
         request, template_name='spicy.core.admin/admin/login.html')

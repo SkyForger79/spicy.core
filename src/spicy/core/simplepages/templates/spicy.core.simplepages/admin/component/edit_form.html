@@ -4,7 +4,9 @@
     <ul class="padded separate-sections">
       {% formfield "" form "title" "li-text" %}
       {% formfield "" form "url" "li-text" %}
-      {% formfield "" form "template_name" "li-text" %}
+      {#{% formfield "" form "template_name" "li-text" %}#}
+      <input type="hidden" name="{{ form.template_name.html_name }}" value="{{ form.template_name.value }}">
+      <button type="button" class="btn btn-blue custom">{% trans "Enable customization" %}</button>
     </ul>
   </div>
   <div class="span6">

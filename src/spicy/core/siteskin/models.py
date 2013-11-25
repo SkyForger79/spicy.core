@@ -14,6 +14,9 @@ class Siteskin(models.Model):
         choices=get_siteskin_themes(),
         default=defaults.DEFAULT_THEME,
         max_length=255)
+
+    admin_obj_per_page = models.PositiveSmallIntegerField(_('Admin obj per page'), default=50)
+    site_obj_per_page = models.PositiveSmallIntegerField(_('Site obj per page'), default=20)
     
     site = models.ForeignKey(Site)
 

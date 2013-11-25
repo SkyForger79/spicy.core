@@ -77,16 +77,18 @@ def application(request):
     instance = utils.get_admin_settings()
     
     if request.method == 'POST':        
-        form = forms.SettingsForm(request.POST, instance=instance)
+        form = forms.ApplicationForm(request.POST, instance=instance)
         if form.is_valid():
             form.save()
         else:
             messages.append(form.errors.as_text())
     else:
-        form = forms.SettingsForm(instance=instance)
+        form = forms.ApplicationForm(instance=instance)
 
+    apps = []
     return {
         'form': form,
+        'apps': apps,
         'messages': messages,
     }
 
@@ -102,13 +104,13 @@ def developer(request):
     instance = utils.get_admin_settings()
     
     if request.method == 'POST':        
-        form = forms.SettingsForm(request.POST, instance=instance)
+        form = forms.DeveloperForm(request.POST, instance=instance)
         if form.is_valid():
             form.save()
         else:
             messages.append(form.errors.as_text())
     else:
-        form = forms.SettingsForm(instance=instance)
+        form = forms.DeveloperForm(instance=instance)
 
     return {
         'form': form,

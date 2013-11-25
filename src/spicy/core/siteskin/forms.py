@@ -27,7 +27,8 @@ class ThemeForm(forms.ModelForm):
         label=_('Theme'), 
         widget=forms.Select(choices=utils.get_siteskin_themes()), 
         required=True)
-    #category.widget.attrs['class'] = 'uniform'
+    theme.widget.attrs['class'] = 'uniform'
+
     class Meta:
         model = SiteskinModel
         exclude = ('site', )

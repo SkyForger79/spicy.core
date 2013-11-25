@@ -1,6 +1,6 @@
 {% extends current_admin_base %}{% load spicy_admin sk navigator %}{% load url from future %}
 
-{% block title %}{% trans "Edit settings" %}{% endblock %}
+{% block title %}{% trans "Developer" %}{% endblock %}
 {% block status_title %}<i class="icon-pencil"></i>{% endblock status_title %}
 {% block status_stats %}
 
@@ -11,21 +11,39 @@
   <div class="row-fluid">
     <div class="span12">
       <div class="box">
+	{% comment %}
         <div class="box-header">
           <span class="title">{{ form.instance }}</span>
         </div>
+	{% endcomment %}
 	
         <div class="box-content">
-          <form name="edit_admin_settings" class="form-horizontal fill-up validatable" method="post" action="." autocomplete="off"
+
+	  <form name="edit_admin_settings" class="form-horizontal fill-up validatable" method="post" action="." autocomplete="off"
 		enctype="multipart/form-data">{% csrf_token %}
 
-            <div class="row-fluid">
-              <ul class="padded separate-sections">
-		
-		{{ form.as_ul }}
-	      </ul>           
-            </div>
-            
+	  
+	  <div class="row-fluid">
+            <ul class="padded separate-sections">
+	      
+	      {{ form.as_ul }}
+	    </ul>           
+          </div>
+          
+	  
+	  <pre>
+	  TODO
+
+	  FTP access
+	  Issue tracker request from - create new Issue here and redirect. - widget ??
+	  Show current Application version using Issue Tracker roadmap
+	  Show all spent time
+	  Show current month spent time	 
+
+	  Memcached status
+	  Database status
+	  </pre>
+          
 	    <div class="form-actions">	      
 	      <div class="pull-right">
 		<button type="submit" class="btn btn-blue" name="save" onclick="document.edit_settings.submit(); return true;">{% trans "Save changes" %}</button>

@@ -4,7 +4,6 @@ Stuff utils for abstract models
 """
 from django.db.models.loading import cache
 
-
 def get_custom_model_class(custom_model_name):
     '''
     Returns class for abstract model

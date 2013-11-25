@@ -5,9 +5,9 @@ from django.conf import settings
 admin_urls = patterns(
     'spicy.core.admin.admin',
     url(r'^$', 'dashboard', name='index'),
-    url(r'^settings/$', 'edit_settings', name='settings'),
-    url(r'^developer/$', 'developer', name='developer'),
-    url(r'^application/$', 'application', name='application'),
+    url(r'^settings/edit/$', 'edit_settings', name='settings'),
+    url(r'^settings/developer/$', 'developer', name='developer'),
+    url(r'^settings/application/$', 'application', name='application'),
 )
 
 public_urls = patterns(

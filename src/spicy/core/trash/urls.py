@@ -6,7 +6,7 @@ public_urls = patterns(
 
 admin_urls = patterns(
     'spicy.core.trash.admin',
-    url(r'^$', 'index', name='index'),
+    url(r'^list/$', 'trash_list', name='index'),
     url(r'^restore/(?P<provider_id>\d+)/$', 'restore', name='restore'),
     )
 

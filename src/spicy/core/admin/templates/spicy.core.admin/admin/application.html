@@ -1,0 +1,86 @@
+{% extends current_admin_base %}{% load spicy_admin sk navigator %}{% load url from future %}
+
+{% block title %}{% trans "Applications" %}{% endblock %}
+{% block status_title %}<i class="icon-pencil"></i>{% endblock status_title %}
+{% block status_stats %}
+
+{% endblock status_stats %}
+
+{% block content %}
+<div class="container-fluid hpadded">
+  <div class="row-fluid">
+    <div class="span12">
+      <div class="box">
+	{% comment %}
+        <div class="box-header">
+          <span class="title">{{ form.instance }}</span>
+        </div>
+	{% endcomment %}
+	
+        <div class="box-content">
+	  <form name="edit_admin_settings" class="form-horizontal fill-up validatable" method="post" action="." autocomplete="off"
+		enctype="multipart/form-data">{% csrf_token %}
+	    
+	    <div class="row-fluid">
+              <ul class="padded separate-sections">
+		
+		{{ form.as_ul }}
+	      </ul>           
+            </div>
+            
+
+	  <table class="table table-normal" style="border-top: 1px solid #CDCDCD;">
+              <thead>
+                <tr role="row">
+		  <td>{% trans "Menu ordering" %}</td>		  
+		  <td>{% trans "Dashboard" %}</td>		  
+		  <td>{% trans "Quick Add" %}</td>		  
+		  <td>{% trans "Application" %}</td>
+		  <td>{% trans "Description" %}</td>
+		  <td>{% trans "Homepage" %}</td>
+                  <td>{% trans "last_update" %}</td>
+		  <td>{% trans "Version"  %}</td>
+		  <td>{% trans "Update request" %}</td>
+                </tr>
+              </thead>
+
+              <tbody>
+                {% for app in ADMIN_APPS %}
+                <tr class="{% cycle 'odd' 'even' %}">
+		  <td class="icon"><input type="text" style="width:20px;" name=""/></td>
+		  <td class="icon"><input type="text" style="width:20px;" name=""/></td>
+		  <td class="icon"><input type="text" style="width:20px;" name=""/></td>
+                  <td>{{ app.name }}</td>
+		  <td>{{ app.description }}</td>
+		  <td>{{ app.homepage }}</td>
+                  <td>{{ app.last_update }}</td>
+                  <td>{{ app.version }}</td>
+                  <td>
+		    {# TODO button with status UPDATE/OK inside #}
+		    {% if app.already_updated %}
+		    OK
+		    {% else %}
+		    <a href="{{ app.update_url }}">{{ app.price }}</a>
+		    {% endif %}
+                  </td>
+		</tr>
+		{% endfor %}
+	      </tbody>
+
+	    </table>
+
+	    <div class="form-actions">	      
+	      <div class="pull-right">
+		<button type="submit" class="btn btn-blue" name="save" onclick="document.edit_settings.submit(); return true;">{% trans "Save changes" %}</button>
+	      </div>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}{{ form.media }}{% endblock %}

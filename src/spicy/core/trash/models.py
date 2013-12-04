@@ -1,3 +1,4 @@
+from django.contrib.sites.managers import CurrentSiteManager
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from spicy.core.service import api
@@ -12,10 +13,18 @@ class NonTrashManager(models.Manager):
         return query_set.filter(is_deleted=False)
 
 
+class SiteNonTrashManager(NonTrashManager):
+    pass
+
+
 class TrashManager(models.Manager):
     def get_query_set(self):
         query_set = super(TrashManager, self).get_query_set()
         return query_set.filter(is_deleted=True)
+
+
+class SiteTrashManager(TrashManager):
+    pass
 
 
 class TrashModel(models.Model):
@@ -48,6 +57,15 @@ class TrashModel(models.Model):
                     e, self)
         else:
             super(TrashModel, self).delete()
+
+
+class SiteTrashModel(TrashModel):
+    objects = SiteNonTrashManager()
+    deleted_objects = SiteTrashManager()
+    all_objects = CurrentSiteManager()
+
+    class Meta:
+        abstract = True
 
 
 class TrashProviderModel(ProviderModel):

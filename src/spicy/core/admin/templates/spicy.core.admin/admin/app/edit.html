@@ -1,7 +1,7 @@
 {% extends current_admin_base %}{% load spicy_admin sk navigator %}{% load url from future %}
 
-{% block title %}{% trans "Edit" %} {{ form.instance }}{% endblock %}
-{% block status_title %}<i class="icon-pencil"></i> {{ form.instance }}{% endblock status_title %}
+{% block title %}{% if title %}{{ title }}{% else %}{% trans "Edit" %} {{ form.instance }}{% endif %}{% endblock %}
+{% block status_title %}<i class="icon-pencil"></i> {{ title|default:form.instance }}{% endblock status_title %}
 {% block status_stats %}
 <a class="pull-right" href="{{ form.instance.get_absolute_url }}" target="_blank"><i class="icon-eye-open icon-2x"></i></a>
 {% endblock status_stats %}

@@ -263,15 +263,23 @@ $(function(){
         </tbody>
     </table>
     {{ form.management_form }}
+    <div>
+      <ul>
+	{% for formset_form in form.forms %}
+	{% for error in formset_form.non_field_errors %}
+	<li class="error">{{ error }}</li>
+	{% endfor %}
+	{% endfor %}
+      </ul>
+    </div>
+      
 </div>
 <script>
 $(document).ready(function(){
   $('.item tbody tr').formset({
-    addText: '<button class="btn btn-green">'+
-      '<i class="icon-plus-sign"></i> Добавить</button>',
+    addText: '<div class="padded"><button class="btn btn-green"><i class="icon-plus-sign"></i> Добавить</button></div>',
 
-    deleteText: '<button class="btn btn-red">'+
-      '<i class="icon-trash"></i></button></div>',
+    deleteText: '<button class="btn btn-red"><i class="icon-trash"></i></button>',
     prefix: '{{ form.prefix }}'
   });
 });

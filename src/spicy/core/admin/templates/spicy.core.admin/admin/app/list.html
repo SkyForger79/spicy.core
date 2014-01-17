@@ -2,8 +2,8 @@
 {% load navigator sk pagination %}
 {% load url from future %}
 
-{% block title %}{% trans "List of" %} {{ app.label }}{% endblock %}
-{% block status_title %}{% trans "List of" %} {{ app.label }}{% endblock status_title %}
+{% block title %}{% if title %}{{ title }}{% else %}{% trans "List of" %} {{ app.label }}{% endif %}{% endblock %}
+{% block status_title %}{% if title %}{{ title }}{% else %}{% trans "List of" %} {{ app.label }}{% endif %}{% endblock status_title %}
 {% block status_stats %}{% endblock status_stats %}
 
 {% block content %}

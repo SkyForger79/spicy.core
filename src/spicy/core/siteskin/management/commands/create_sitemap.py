@@ -14,7 +14,7 @@ from spicy.presscenter.defaults import DOC_THUMB_SIZE, CUSTOM_DOCUMENT_MODEL
 from spicy.core.service import api
 from spicy.core.simplepages.defaults import SIMPLE_PAGE_MODEL
 from spicy.core.siteskin import defaults
-from spicy.core.siteskin.common import cdata
+from spicy.utils import cdata
 from cStringIO import StringIO
 
 

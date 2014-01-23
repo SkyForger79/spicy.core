@@ -153,6 +153,9 @@ class ProfileService(api.Interface):
 
         if callable(defaults.DEFAULT_PROFILE_URL):
             user_redirect_uri = defaults.DEFAULT_PROFILE_URL(request.user)
+	elif isinstance(defaults.DEFAULT_PROFILE_URL, basestring):
+            user_redirect_uri = load_module(defaults.DEFAULT_PROFILE_URL)(
+                request.user)
         else:
             user_redirect_uri = defaults.DEFAULT_PROFILE_URL
         redirect = redirect or user_redirect_uri

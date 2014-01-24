@@ -147,7 +147,13 @@ def strip_invalid_chars(data, extra=u'', verbose=False):
     return data
 
 
+def chunks(data, num_cols):
+    col_length = int(ceil(len(data) / float(num_cols)))
+    for i in xrange(0, num_cols):
+        yield data[i * col_length : (i + 1) * col_length]
+
+
 __all__ = (
     'get_templates', 'make_cache_key', 'RU_ALPHABET', 'EN_ALPHABET',
     'KNOWN_CHARS', 'MONTHS', 'make_slug', 'cached_property', 'CDATA_RE',
-    'cdata', 'strip_invalid_chars')
+    'cdata', 'strip_invalid_chars', 'chunks')

@@ -4,6 +4,7 @@ import pytils
 import re
 import sys
 from django.utils.translation import ugettext_lazy as _
+from math import ceil
 
 
 # XXX title_func unused
@@ -150,7 +151,7 @@ def strip_invalid_chars(data, extra=u'', verbose=False):
 def chunks(data, num_cols):
     col_length = int(ceil(len(data) / float(num_cols)))
     for i in xrange(0, num_cols):
-        yield data[i * col_length : (i + 1) * col_length]
+        yield data[i * col_length: (i + 1) * col_length]
 
 
 __all__ = (

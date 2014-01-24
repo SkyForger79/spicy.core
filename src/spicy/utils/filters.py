@@ -8,9 +8,9 @@ DEFAULT_FILTERS = getattr(
     settings, 'DEFAULT_FILTERS', [('search_text', '')])
 
 
-class NavigationFilter:
+class NavigationFilter(object):
     def __init__(self, request, accepting_filters=DEFAULT_FILTERS,
-                 default_order=None, force_filter=None):
+                 default_order=None, force_filter=None, extra=None):
         self.request = request
         self.querydict = request.GET
 
@@ -31,6 +31,7 @@ class NavigationFilter:
         self.field = request.GET.get('field', default_order)
         fields = self.field.split(' ') if self.field else None
         self.order_q = request.GET.get('order', 'asc')
+        self.extra = None
         if fields and self.order_q:
             direction = '-' if self.order_q.lower() == 'desc' else ''
             self.order = [direction + field for field in fields]
@@ -81,6 +82,9 @@ class NavigationFilter:
         result_qset = getattr(
             model, result_manager).filter(
                 id__in=tuple(page.object_list))
+
+        if self.extra:
+            result_qset = result_qset.extra(**self.extra)
 
         if self.order:
             result_qset = result_qset.order_by(*self.order)  # 1082

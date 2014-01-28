@@ -7,9 +7,11 @@ if defaults.USE_DEFAULT_SIMPLE_PAGE_MODEL:
         class Meta(abs.AbstractSimplePage.Meta):
             abstract = False
 
-    post_save.connect(
-        listeners.reload_server, sender=DefaultSimplePage,
-        dispatch_uid='post-save-simple-page')
-    post_delete.connect(
-        listeners.reload_server, sender=DefaultSimplePage,
-        dispatch_uid='post-save-simple-page')
+
+post_delete.connect(
+    listeners.reload_server, sender=abs.AbstractSimplePage,
+    dispatch_uid='post-save-simple-page')
+
+post_save.connect(
+    listeners.reload_server, sender=abs.AbstractSimplePage,
+    dispatch_uid='post-save-simple-page')

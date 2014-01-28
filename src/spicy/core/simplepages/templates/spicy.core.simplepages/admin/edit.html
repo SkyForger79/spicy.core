@@ -1,7 +1,7 @@
 {% extends current_admin_base %}{% load spicy_admin sk navigator %}{% load url from future %}
 
-{% block title %}{% trans "Edit" %} {{ form.instance }}{% endblock %}
-{% block status_title %}<i class="icon-pencil"></i> {% trans "Edit" %} - {{ current_site.domain }}{{ form.instance.url }}{% endblock status_title %}
+{% block title %}{% trans "Edit" %} {{ form.instance.get_absolute_url }}{% endblock %}
+{% block status_title %}<i class="icon-pencil"></i> {{ current_site.domain }}{{ form.instance.get_absolute_url }}{% endblock status_title %}
 {% block status_subtitle %}{% if form.instance.template_name %}{% trans "This page uses template:" %} <b>{{ form.instance.template_name }}</b>{% else %}{% trans "You can edit page content manually." %}{% endif %}{% endblock status_subtitle %}
 
 {% block status_stats %}

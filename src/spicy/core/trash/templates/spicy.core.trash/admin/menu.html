@@ -10,13 +10,11 @@
   </a>
 
   <ul id="menu_{{ app.name }}" class="collapse{% if app.name in request.path %} in{% endif %}">
-    {% for link in app.menu_items %}
     <li>
-      <a href="{{ link.url }}">
-         {{ link.label }}
+      <a href="{% url 'trash:admin:index' %}">
+        <i class="icon-trash"></i> {% trans "View archived items" %}
       </a>
     </li>
-    {% endfor %}
   </ul>
 </li>
 {% endif %}

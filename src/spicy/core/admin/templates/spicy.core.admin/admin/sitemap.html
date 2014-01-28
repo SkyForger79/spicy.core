@@ -1,6 +1,6 @@
 {% extends current_admin_base %}{% load spicy_admin sk navigator %}{% load url from future %}
 
-{% block title %}{% trans "Edit settings" %}{% endblock %}
+{% block title %}{% trans "Sitemap" %}{% endblock %}
 {% block status_title %}<i class="icon-pencil"></i>{% endblock status_title %}
 {% block status_stats %}
 
@@ -22,6 +22,11 @@
             <div class="row-fluid">
               <ul class="padded separate-sections">
 		
+		вывод даты последнего обновления карты сайта. Вероятно нужно сделать таблицу бозовую насртоек и статистики проекта для таких данных.
+		
+
+		ссылка на карту сайта и инструкция по регистрации карты сайта в поисковых системах
+
 		{{ form.as_ul }}
 	      </ul>           
             </div>

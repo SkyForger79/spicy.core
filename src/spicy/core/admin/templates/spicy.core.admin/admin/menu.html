@@ -12,24 +12,47 @@
   <ul id="admin" class="collapse {% if "/admin/settings" in request.path %} in{% endif %}">
     <li>
       <a href="{% url 'spicyadmin:admin:settings' %}">
-        <i class="icon-list-alt"></i> {% trans "Emails & Metrics" %}
+        <i class="icon-cogs"></i> {% trans "Metrics, meta & Extra JS" %}
       </a>
     </li>
+
+    <li>
+      <a href="{% url 'spicyadmin:admin:robots' %}">
+        <i class="icon-asterisk"></i> {% trans "robots.txt" %}
+      </a>
+    </li>
+
+    <li>
+      <a href="{% url 'spicyadmin:admin:sitemap' %}">
+        <i class="icon-sitemap"></i> {% trans "Sitemap.xml" %}
+      </a>
+    </li>
+
+    <li>
+      <a href="{% url 'spicyadmin:admin:managers' %}">
+        <i class="icon-envelope"></i> {% trans "Manager's emails" %}
+      </a>
+    </li>
+
     <li>
       <a href="{% url 'spicyadmin:admin:application' %}">
-        <i class="icon-list-alt"></i> {% trans "Application" %}
+        <i class="icon-cloud-download"></i> {% trans "Applications" %}
       </a>
     </li>
+
     <li>
       <a href="{% url 'spicyadmin:admin:developer' %}">
-        <i class="icon-list-alt"></i> {% trans "Developer" %}
+        <i class="icon-user-md"></i> {% trans "Developer tools" %}
       </a>
     </li>
+
+    {# TODO another component with custom HTML blocks #}
     <li>
       <a href="{% url 'spicyadmin:admin:settings' %}">
-        <i class="icon-list-alt"></i> {% trans "HTML & custom vars" %}
+        <i class="icon-list-alt"></i> {% trans "???? Simple HTML blocks ?? (another applications instead this)" %}
       </a>
     </li>
+
   </ul>
 </li>
 {% endif %}

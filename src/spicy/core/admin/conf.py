@@ -128,7 +128,6 @@ class BackportedSimpleLazyObject(SimpleLazyObject):
     def __delitem__(self, key):
         del self[key]
 
-
 admin_apps_register = BackportedSimpleLazyObject(_find_modules)
 app_modules_register = BackportedSimpleLazyObject(
     functools.partial(_find_modules, admin_apps=False))

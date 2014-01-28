@@ -93,6 +93,13 @@ def edit(request, simplepage_id):
     return edit_simple_page(request, page)
 
 
+@is_staff(required_perms='simplepages.change_defaultsimplepage')
+@render_to('edit_seo.html', use_admin=True)
+def edit_seo(request, simplepage_id):
+    page = get_object_or_404(SimplePage, pk=simplepage_id)
+    return {'instance': page, 'tab': 'seo'}
+
+
 @is_staff(required_perms='simplepages.delete_defaultsimplepage')
 @render_to('delete.html', use_admin=True)
 def delete(request, simplepage_id):

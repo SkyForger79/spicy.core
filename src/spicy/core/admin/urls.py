@@ -5,7 +5,11 @@ from django.conf import settings
 admin_urls = patterns(
     'spicy.core.admin.admin',
     url(r'^$', 'dashboard', name='index'),
-    url(r'^settings/edit/$', 'edit_settings', name='settings'),
+    url(r'^settings/settings/$', 'main_settings', name='settings'),
+    url(r'^settings/robots/$', 'robots_txt', name='robots'),
+    url(r'^settings/sitemap/$', 'sitemap', name='sitemap'),
+
+    url(r'^settings/managers/$', 'managers', name='managers'),
     url(r'^settings/developer/$', 'developer', name='developer'),
     url(r'^settings/application/$', 'application', name='application'),
 )

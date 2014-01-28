@@ -36,14 +36,29 @@ class AdminApp(AdminAppBase):
 
 
 @is_staff
-@render_to('spicy.core.admin/admin/dashboard.html')
+@render_to('spicy.core.admin/admin/dashboard.html', use_admin=True)
 def dashboard(request):
+    return {'services': api.register.get_list()}
+
+@is_staff
+@render_to('spicy.core.admin/admin/robots_txt.html', use_admin=True)
+def robots_txt(request):
+    return {'services': api.register.get_list()}
+
+@is_staff
+@render_to('spicy.core.admin/admin/main_settings.html', use_admin=True)
+def main_settings(request):
+    return {'services': api.register.get_list()}
+
+@is_staff
+@render_to('spicy.core.admin/admin/sitemap.html', use_admin=True)
+def sitemap(request):
     return {'services': api.register.get_list()}
 
 
 @is_staff(required_perms=('admin.edit_settings',))
-@render_to('spicy.core.admin/admin/settings.html', use_admin=True)
-def edit_settings(request):
+@render_to('spicy.core.admin/admin/managers.html', use_admin=True)
+def managers(request):
     """Handles edit requests, renders template according `action`
     get parameter
 

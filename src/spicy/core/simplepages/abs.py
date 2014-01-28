@@ -35,10 +35,10 @@ class AbstractBasePage(models.Model):
         permissions = [('change_robots_txt', 'Robots.txt')]
 
     def __unicode__(self):
-        return u"%s -- %s" % (self.url, self.title)
+        return u"{0} -- {1}".format(self.url, self.title)
 
     def get_absolute_url(self):
-        return self.url
+        return u'/{0}'.format(self.url)
 
 
 class AbstractSimplePage(AbstractBasePage):

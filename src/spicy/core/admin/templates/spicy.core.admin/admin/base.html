@@ -3,8 +3,9 @@
   <head>
     <meta name="viewport" content="width=device-width, maximum-scale=1, initial-scale=1, user-scalable=0">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,800">
-    <meta charset="utf-8">
-    
+    <link rel="shortcut icon" href="{% static 'spicy.core.admin/favicon.ico' %}" type="image/x-icon"/>
+
+    <meta charset="utf-8">    
     <!-- Always force latest IE rendering engine or request Chrome Frame -->
     <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
     
@@ -43,11 +44,11 @@
     {% block extra_js %}{% endblock extra_js %}
 
     
-    <title>{% block title %}{% trans "Administrator interface" %}{% endblock %} - SpicyCMS light</title>
+    <title>{% block title %}{% trans "Administrator interface" %}{% endblock %} - SpicyCMS</title>
   </head>
 
   <body>
-    {% captureas admin_index %}{% url 'spicyadmin:public:index' %}{% endcaptureas %}
+    {% captureas admin_index %}{% url 'spicyadmin:admin:index' %}{% endcaptureas %}
     {% block top_navbar %}{% include 'spicy.core.admin/admin/top_navbar.html' %}{% endblock top_navbar %}
 	
     {% block menu %}
@@ -105,6 +106,7 @@
 
 	  </div>
 	</div>
+
       </div>
       
       {% endblock status_board %}
@@ -121,6 +123,7 @@
       {% endif %}      
 
       {% block content %}{% endblock content %}
+
     </div>
     
   </body>

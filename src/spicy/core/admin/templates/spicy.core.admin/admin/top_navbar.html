@@ -1,10 +1,10 @@
-{% load i18n spicy_admin %}{% load url from future %}
+{% load i18n staticfiles spicy_admin %}{% load url from future %}
 
 <div class="navbar navbar-top navbar-inverse">
   <div class="navbar-inner">
     <div class="container-fluid">
 
-      <a class="brand" href="/">{{ current_site.domain }} - SpicyCMS Admin</a>
+      <a class="brand" target="blank" href="http://spicycms.com"><img title="SpicyCMS - flexible content management system powered by django framework" src="{% static 'spicy.core.admin/images/spicycms_full.png' %}" /></a>
 
       <!-- the new toggle buttons -->
 
@@ -13,6 +13,11 @@
         <li class="collapsed hidden-desktop" data-toggle="collapse" data-target=".nav-collapse-top"><a><i class="icon-align-justify"></i></a></li>
       </ul>
       
+      <ul class="nav pull-left">
+	<li>+7 (495) 988 00 79 <br/> help@bramabrama.com</li>
+	<li><a href="http://dev.bramabrama.com" title="Create issue"><i class="icon-tasks"></i> {% trans "Create issue" %}</a></li>	
+      </ul>
+
       <div class="nav-collapse nav-collapse-top">
 
 	<ul class="nav full pull-right">
@@ -59,10 +64,9 @@
 
         <ul class="nav pull-right">
 
-	  {% comment %}
-          <li class="active"><a href="#" title="Go home"><i class="icon-home"></i> Home</a></li>
-          <li><a href="#" title="Manage users"><i class="icon-user"></i> Users</a></li>
-	  {% endcomment %}
+          <li class="active"><a href="/" title="Go home"><i class="icon-home"></i> {{ current_site.domain }}</a></li>
+
+          {# <li><a href="#" title="Manage users"><i class="icon-user"></i> Users</a></li> #}
 
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class=" icon-plus-sign-alt"></i> {% trans "Create" %} <b class="caret"></b></a>

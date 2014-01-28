@@ -1,11 +1,12 @@
 from django.conf.urls.defaults import *
 
 public_urls = patterns(
-    'trash.views',
+    'spicy.core.trash.views',
     )
 
-admin_urls = patterns('trash.admin',
-    url(r'^$', 'index', name='index'),
+admin_urls = patterns(
+    'spicy.core.trash.admin',
+    url(r'^list/$', 'trash_list', name='index'),
     url(r'^restore/(?P<provider_id>\d+)/$', 'restore', name='restore'),
     )
 

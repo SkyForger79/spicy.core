@@ -87,10 +87,15 @@ class AdminAppBase(object):
         return dict(app=self, *args, **kwargs)
 
 
-def _find_modules(admin_apps=True):
+def _find_modules(admin_apps=True, spicy_app=False):
     _register = {}
     for app_name in settings.INSTALLED_APPS:
         app_import_name = app_name
+        
+        #if spicy_app:
+        #    if not 'spicy.' in app_name:                
+        #        continue
+
         if admin_apps:
             app_import_name += '.admin'
         try:
@@ -122,7 +127,6 @@ class BackportedSimpleLazyObject(SimpleLazyObject):
     @new_method_proxy
     def __delitem__(self, key):
         del self[key]
-
 
 admin_apps_register = BackportedSimpleLazyObject(_find_modules)
 app_modules_register = BackportedSimpleLazyObject(

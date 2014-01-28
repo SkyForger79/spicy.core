@@ -10,13 +10,24 @@
   </a>
 
   <ul id="menu_{{ app.name }}" class="collapse{% if '/admin/simplepages/' in request.path %} in{% endif %}">
-    {% for link in app.menu_items %}
     <li>
-      <a href="{{ link.url }}">
-         {{ link.label }}
+      <a href="{% url 'simplepages:admin:create' %}">
+        <i class="icon-plus-sign-alt"></i> {% trans "Create simple page" %}
       </a>
     </li>
-    {% endfor %}
+
+    <li>
+      <a href="{% url 'simplepages:admin:index' %}">
+        <i class="icon-list-alt"></i> {% trans "All simple pages" %}
+      </a>
+    </li>
+
+    <li>
+      <a href="{% url 'simplepages:admin:find' %}">
+        <i class="icon-refresh"></i> {% trans "Update from templates" %}
+      </a>
+    </li>
+
   </ul>
 </li>
 {% endif %}

@@ -116,7 +116,7 @@ class Command(BaseCommand):
             site = Site(domain=site_url, name=site_name)
             site.save()
             sites = Site.objects.all()
-        
+
         profile = Profile.objects.create_inactive_user(email, password=password, 
                                             is_staff=True, send_email=False)
     

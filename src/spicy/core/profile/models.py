@@ -275,9 +275,9 @@ class AbstractProfile(User):
             'spicy.core.profile/mail/banned_email.txt', context)
         self.email_user(subject, message)
 
-    def notify_managers(self):
+    def notify_managers(self, user_password=None):
         context = {
-            'user': self, 'site': Site.objects.get_current()}
+            'user': self, 'site': Site.objects.get_current(), 'user_password': user_password}
         subject = render_to_string(
             'spicy.core.profile/mail/notify_managers_subject.txt', context)
         subject = ''.join(subject.splitlines())

@@ -257,7 +257,7 @@ class Provider(object):
 
     # TODO Use decorator render_to and ajax_request for tests.
     #@is_staffx
-    @render_to('service/admin/service_preview.html', url_pattern='/$')
+    @render_to('spicy.core.service/admin/service_preview.html', url_pattern='/$')
     def __call__(self, request):
         return {'provider': self}
 

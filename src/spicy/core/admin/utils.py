@@ -1,31 +1,10 @@
-import os
-import sys
-import codecs
-
+from django.conf import settings
+from spicy.utils.models import get_custom_model_class
 from . import defaults
 
-def get_themes_from_path(path, version=None):
-    """
+def get_admin_settings():
+    # TODO make cache wrapper
+    SettingsModel = get_custom_model_class(defaults.ADMIN_SETTINGS_MODEL)
+    instance, _ = SettingsModel.objects.get_or_create(site_id=settings.SITE_ID)
 
-    look in for ``spicy.theme`` file inside all subdirectories in the defined ``path``
-
-    param path: abs path with spicy.* themes 
-    param version: hash key (revision key for product)
-
-    spicy.ecom>=asdaLKJD823123kjsadSDaslkasd
-    spicy.light==asdkasdlkj1231lkh23jkhadasd
-    spicy.media<=asdkjalhskd1239123lkjadssda
-    """
-
-    try:
-        #for theme in os.path.walk(path, get_theme_dir, None):
-
-        for theme in os.listdir(path):
-           if os.path.isdir(theme):
-               if defaults.SPICY_THEME_FILE in os.listdir(theme):
-                   # TODO
-                   # check theme version compatibility
-                   
-                   return (theme, os.path.join(defaults.THEMES_PATH, theme))
-    except OSError:
-        return []
+    return instance

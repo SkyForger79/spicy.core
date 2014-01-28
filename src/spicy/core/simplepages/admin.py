@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -79,7 +80,8 @@ def create(request):
         else:
             message = settings.MESSAGES['error']
     else:
-        form = forms.SimplePageForm()
+        form = forms.SimplePageForm(
+            initial={'sites': [Site.objects.get_current()]})
     return {'form': form, 'message': message}
 
 

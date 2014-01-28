@@ -1,5 +1,4 @@
-import sys
-from django.conf import settings
+import os
 
 
 def reload_server(sender, instance, signal, **kwargs):
@@ -7,7 +6,7 @@ def reload_server(sender, instance, signal, **kwargs):
         import uwsgi
         uwsgi.reload()
     except ImportError:
-        urlconf = settings.ROOT_URLCONF
-
-        if urlconf in sys.modules:
-            reload(sys.modules[urlconf])
+        try:
+            os.utime(__file__, None)
+        except:
+            pass

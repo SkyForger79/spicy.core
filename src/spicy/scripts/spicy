@@ -247,7 +247,7 @@ def is_package(pkg_path):
 
 
 def sscp(appname, user, args):
-    """I don't wont to initialize Fabric environment at all.
+    """I don't want to initialize Fabric environment at all.
 
     And it's So, just wrap `scp` system command. Feel da unixway
 
@@ -267,7 +267,7 @@ def sscp(appname, user, args):
         '{0}@{1}:{2}/{3}'.format(user, args.host, args.path, appname)
     ]
 
-    print_info('scp would be runned with dat line:')
+    print_info('scp will run the following commands:')
     print_info(cmd_list)
 
     """Suppress terminal output from `scp`.

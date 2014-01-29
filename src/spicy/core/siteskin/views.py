@@ -1,7 +1,6 @@
 from datetime import datetime as dt
-from django import http
 from django.shortcuts import render_to_response
-from django.template import RequestContext, loader
+from django.template import RequestContext
 from spicy.core.simplepages.views import render_simplepage
 from spicy.utils.printing import print_error
 from . import defaults
@@ -56,7 +55,6 @@ def render(
     Example of universal rubric rendering
     """
     # XXX mimetype is renamed to content_type in django 1.5!
-    context = RequestContext(request)
     return render_to_response(
         template_name, kwargs, context_instance=RequestContext(request),
         mimetype=mimetype)

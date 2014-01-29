@@ -14,31 +14,26 @@ SPICY_SERVER_STATIC_PATH = '/var/ftp/static'
 
 
 """
-import string
-import errno
-import shutil
-from spicy import version as spicy_version
-
-import os
-import sys
 import argparse
-import subprocess
-import traceback
-import configparser
-import getpass
 import codecs
+import configparser
+import errno
+import os
 import re
-
-from datetime import datetime as dt
-
-from fabric.colors import *
+import shutil
+import subprocess
+import string
+import sys
+import traceback
+from fabric.colors import green, yellow, red, magenta, cyan, blue
 from fabric.context_managers import lcd, cd, settings, prefix, shell_env, hide
-from fabric.api import local, env, sudo, put, run
+from fabric.api import local, env, sudo, put
 from fabric.decorators import with_settings
 from fabric.contrib.files import exists
-
 from jinja2 import Template
 from jinja2.exceptions import UndefinedError
+from spicy import version as spicy_version
+
 
 # some in place helpers definitions
 write_err = sys.stderr.write
@@ -73,14 +68,16 @@ SPICY_SERVER_REQUIREMENTS = {
     }
 
 SPICY_SERVER_TMP_PATH = os.environ.get('SPICY_SERVER_TMP_PATH', '/tmp')
-SPICY_SERVER_APPS_ENV_PATH = os.environ.get('SPICY_SERVER_APPS_ENV_PATH', '/var/www/envs')
-SPICY_SERVER_APPS_PATH = os.environ.get('SPICY_SERVER_APPS_PATH', '/var/www/apps')
-
-SPICY_SERVER_SITES_PATH = os.environ.get('SPICY_SERVER_SITES_PATH', '/var/www/sites')
-
-SPICY_SERVER_STATIC_PATH = os.environ.get('SPICY_SERVER_STATIC_PATH', '/var/ftp/static')
-SPICY_SERVER_MEDIA_PATH = os.environ.get('SPICY_SERVER_MEDIA_PATH', '/var/www/media')
-
+SPICY_SERVER_APPS_ENV_PATH = os.environ.get(
+    'SPICY_SERVER_APPS_ENV_PATH', '/var/www/envs')
+SPICY_SERVER_APPS_PATH = os.environ.get(
+    'SPICY_SERVER_APPS_PATH', '/var/www/apps')
+SPICY_SERVER_SITES_PATH = os.environ.get(
+    'SPICY_SERVER_SITES_PATH', '/var/www/sites')
+SPICY_SERVER_STATIC_PATH = os.environ.get(
+    'SPICY_SERVER_STATIC_PATH', '/var/ftp/static')
+SPICY_SERVER_MEDIA_PATH = os.environ.get(
+    'SPICY_SERVER_MEDIA_PATH', '/var/www/media')
 SPICY_SERVER_RUN_PATH = os.environ.get('SPICY_SERVER_RUN_PATH', '/var/run/www')
 SPICY_SERVER_LOG_PATH = os.environ.get('SPICY_SERVER_LOG_PATH', '/var/log/www')
 
@@ -96,7 +93,8 @@ def is_package(pkg_path):
     * TODO: i think, now dir `src` is more nested than it could
 
     TODO: add check for package is being exactly `spicy`
-    subpackage (most common way is `setup.py --name` call combining `startswith`)
+    subpackage (most common way is `setup.py --name` call combining
+    `startswith`)
 
     Parameters
     ----------
@@ -123,7 +121,8 @@ def is_package(pkg_path):
         check_path = os.path.join(packdir, pth)
         print_info('{0}> {1} checking'.format('-' * 4, check_path))
         if not os.path.exists(check_path):
-            print_err('{0}> {1} failed to check if exists.'.format('-' * 8, pth))
+            print_err(
+                '{0}> {1} failed to check if exists.'.format('-' * 8, pth))
             return False
 
     # it seems we have passed all checks and won. HATERS GONNA HATE ^^
@@ -136,13 +135,6 @@ def sscp(appname, user, args):
     And it's So, just wrap `scp` system command. Feel da unixway
 
     """
-    # cmd_str = 'scp -P {port} {app}/docs/_build/html {user}@{host}:{path}'.format(
-    #     port=args.port if args.port else 22,
-    #     app=appname,
-    #     user=user,
-    #     host=args.host,
-    #     path=args.path)
-
     cmd_list = [
         'scp',
         '-r',
@@ -154,13 +146,6 @@ def sscp(appname, user, args):
     print_info('scp would be runned with dat line:')
     print_info(cmd_list)
 
-    """Suppress terminal output from `scp`.
-
-    Using subprocess.PIPE, if you're not reading from the pipe,
-    could cause your program to block if it generates a lot of output.
-    via. http://stackoverflow.com/questions/10251391/suppressing-output-in-python-subprocess-call"""
-    devnull = codecs.open('/dev/null', 'w', encoding='utf-8')
-    # result = subprocess.call(cmd_list, stdout=devnull, stderr=devnull)
     result = subprocess.call(cmd_list)
 
     if result != 0:
@@ -171,7 +156,8 @@ def sscp(appname, user, args):
 
 
 def handle_build_docs(args):
-    """`build-docs` command handler.
+    """
+    `build-docs` command handler.
 
     Returns
     -------
@@ -183,7 +169,9 @@ def handle_build_docs(args):
 
     if not args.user:
         user = os.getlogin()
-        print_info('option --user ommited, so using system user ({})'.format(green(user)))
+        print_info(
+            'option --user ommited, so using system user ({})'.format(
+                green(user)))
     else:
         user = args.user
 
@@ -198,7 +186,8 @@ def handle_build_docs(args):
             return print_err('{} is not a package'.format(green(app)))
 
         if not os.path.exists('{}/docs'.format(app)):
-            return print_err('Application {} does not exist'.format(green(app)))
+            return print_err(
+                'Application {} does not exist'.format(green(app)))
 
         else:
             # in docs subdir
@@ -214,13 +203,13 @@ def handle_create_project(ns):
 
 def handle_create_app(ns):
     spicy_pkg_root_dir = os.path.dirname(__file__)
-    spicy_app_tpl_root = os.path.join(spicy_pkg_root_dir)
+    #spicy_app_tpl_root = os.path.join(spicy_pkg_root_dir)
     source_app_dir = os.path.join(spicy_pkg_root_dir, 'app')
 
     #: provide more context vars here
-    template_ctx=dict(
-        APPNAME=ns.appname.lower(), #: would be 'appname' in templates
-        APPNAME_CLASS=ns.appname.capitalize(), #: would be 'Appname'
+    template_ctx = dict(
+        APPNAME=ns.appname.lower(),  #: would be 'appname' in templates
+        APPNAME_CLASS=ns.appname.capitalize(),  #: would be 'Appname'
         APP_DESCRIPTION=ns.description
     )
 
@@ -238,36 +227,36 @@ def handle_create_app(ns):
         if exc.errno == errno.EEXIST and os.path.isdir(dest_app_dir):
 
             while True:
-                proceed = raw_input('Overwrite existing app catalog ({})? y\\n: '.format(
-                    ns.appname))
-                if proceed in ['n','N']:
+                proceed = raw_input(
+                    'Overwrite existing app catalog ({})? y\\n: '.format(
+                        ns.appname))
+                if proceed in 'nN':
                     print_info('Cancel')
                     return
-
-                if proceed not in ['y','Y']:
-                    print_warn('Press y, Y, n or N')
-                    continue
-
-                if proceed in ['y', 'Y']:
+                elif proceed in 'yY':
                     print_warn('Overwriting')
                     shutil.rmtree(dest_app_dir)
                     shutil.copytree(source_app_dir, dest_app_dir)
                     break
+                else:
+                    print_warn('Press y, Y, n or N')
+                    continue
 
     print_info('Processing new app')
     for path, subdirs, files in os.walk(dest_app_dir):
         for name in files:
             file_with_path = os.path.join(path, name)
-            file_dir = os.path.dirname(file_with_path)
-
+            #file_dir = os.path.dirname(file_with_path)
             if file_with_path.endswith(('.py',)):
-                """Post-copying processing (template rendering)"""
-                template_str = codecs.open(file_with_path, 'r', encoding='utf-8').read()
+                # Post-copying processing (template rendering)
+                template_str = codecs.open(
+                    file_with_path, 'r', encoding='utf-8').read()
                 if template_str:
-                    print_info('Processing now: {}'.format(green(file_with_path)))
+                    print_info(
+                        'Processing now: {}'.format(green(file_with_path)))
 
                 template = string.Template(template_str)
-                #: using safe substituting, it's not throwing exceptions
+                # using safe substituting, it's not throwing exceptions
                 result_str = template.safe_substitute(template_ctx)
                 fh = codecs.open(file_with_path, 'w+', encoding='utf-8')
                 fh.write(result_str)
@@ -308,26 +297,28 @@ class Application(object):
 
     def __init__(self, app_str, deployer):
         """
-        :param app_str: Application string example: `foo=version-tag-label` equal to `bar=3.0.3`
-        :param deployer: 
-
-
-        """                    
-        
+        :param app_str: Application string example: `foo=version-tag-label
+        equal to `bar=3.0.3`
+        :param deployer:
+        """
         try:
             self.name, self.version_label, self.revision_id =\
                 deployer._vc.get_app_version(app_str)
-        except TypeError, e:
+        except TypeError:
             print(traceback.format_exc())
-            print_err('Check applications direcories. You current PWD is: {0}'.format(
+            print_err(
+                'Check applications direcories. You current PWD is: '
+                '{0}'.format(
                     os.path.abspath('.')))
 
         self.abspath = os.path.join(os.path.abspath('.'), self.name)
 
-        self.build_path = os.path.join(os.path.abspath(SPICY_BUILD_DIR), self.name)
+        self.build_path = os.path.join(
+            os.path.abspath(SPICY_BUILD_DIR), self.name)
         self.req_file = os.path.join(self.build_path, SPICY_REQ_FILE)
         
-        self.remote_path = os.path.join(os.path.abspath(deployer.remote_apps_path), self.name)        
+        self.remote_path = os.path.join(
+            os.path.abspath(deployer.remote_apps_path), self.name)
 
         for attr in ('uwsgi_conf', 'uwsgi_initd', 'nginx_conf'):
             setattr(self, attr, getattr(self, attr).format(
@@ -344,10 +335,12 @@ class Application(object):
         if exists(self.nginx_conf):
             sudo('rm {0}'.format(self.nginx_conf))
 
-        sudo('ln -s {0} {1}'.format(
-                os.path.join(self.remote_path, 'nginx.conf'), self.nginx_conf))
+        sudo(
+            'ln -s {0} {1}'.format(
+                os.path.join(self.remote_path, 'nginx.conf'),
+                self.nginx_conf))
         print_ok('[done] Create Nginx vhost for app: {0}'.format(self.name))
-            
+
     @with_settings(sudo_user='root')
     def update_uwsgi(self):
         if exists(self.uwsgi_conf):
@@ -357,9 +350,9 @@ class Application(object):
             sudo('rm {0}'.format(self.uwsgi_initd))
 
         sudo('ln -s {0} {1}'.format(
-                os.path.join(self.remote_path, 'uwsgi.conf'), self.uwsgi_conf))
+            os.path.join(self.remote_path, 'uwsgi.conf'), self.uwsgi_conf))
         sudo('ln -s {0} {1}'.format(
-                '/etc/init.d/uwsgi', self.uwsgi_initd))
+            '/etc/init.d/uwsgi', self.uwsgi_initd))
         print_ok('[done] Create uwsgi configs for app: {0}'.format(self.name))
 
     def restart(self):
@@ -385,20 +378,22 @@ class Application(object):
         # Do not forget enable ENV in the deployer before call this function
         if self.is_django:
             with cd(self.remote_path):
-                sudo('./manage.py syncdb')        
+                sudo('./manage.py syncdb')
                 print_done('Sync database completed.')
     
     def collectstatic(self):
         # Do not forget enable ENV in the deployer before call this function
         if self.is_django:
-            with cd(self.remote_path):                
+            with cd(self.remote_path):
                 try:
-                    sudo('./manage.py collectstatic --link --noinput')        
+                    sudo('./manage.py collectstatic --link --noinput')
                 except:
-                    print_err('Check settings.STATIC_ROOT variable for app: {}'.format(self.name))
+                    print_err(
+                        'Check settings.STATIC_ROOT variable for app: '
+                        '{}'.format(self.name))
 
                 print_done('Collect static in the STATIC_ROOT directory.')
-    
+
     def has_cron_tasks(self):
         if exists(os.path.join(self.remote_path, SPICY_APP_CRON_CONFIG)):
             return True
@@ -416,10 +411,9 @@ class VersionControlBase(object):
     cmd_revision_by_branch = None
     cmd_branch_by_revision = None
 
-    
     def create_build(self, app):
         """Creating application ``build copy`` using defined revision label.
-        
+
         :param app:
         :type class ``Application``
 
@@ -427,12 +421,12 @@ class VersionControlBase(object):
         """
         with lcd(app.abspath):
             local(self.cmd_build_archive % dict(
-                    revision_id=app.revision_id, app_build_path=app.build_path))        
+                revision_id=app.revision_id, app_build_path=app.build_path))
 
     def get_app_version(
-        self, app_str, app_path=os.path.abspath('.')):
+            self, app_str, app_path=os.path.abspath('.')):
         """
-        :param app_str: Application string and version code  example: 
+        :param app_str: Application string and version code  example:
 
         1) Using tag label
          foo=version-tag-label
@@ -447,9 +441,8 @@ class VersionControlBase(object):
 
         4) Concrete revision hash
         foo#42079195ebd5f8134e47c71b9d7d97575fa7b416
-        
         """
-        if '=' in app_str:                        
+        if '=' in app_str:
             app_name, version_label = app_str.split('=')
             revision_id = self.get_revision_by_tag(
                 app_name, version_label, app_path)
@@ -477,56 +470,69 @@ class VersionControlBase(object):
 
     def get_branch_by_revision_id(self, app_name, revision_id, app_path):
         with lcd(os.path.join(os.path.abspath('.'), app_name)):
-            branch_name = local(self.cmd_branch_by_revision % dict(revision_id=revision_id), capture=True)
+            branch_name = local(
+                self.cmd_branch_by_revision % dict(revision_id=revision_id),
+                capture=True)
             if not branch_name:
-                print_err('Can not find revision data for application [{0}].\n' \
-                              'Try to run deployer from dirrectory above current. $cd .. '.format(app_name))
+                print_err(
+                    'Can not find revision data for application [{0}].\n'
+                    'Try to run deployer from dirrectory above current. '
+                    '$cd .. '.format(app_name))
                 raise VersionError
             return branch_name
 
-    def get_revision_by_branch(self, app_name, branch_name, app_path):              
+    def get_revision_by_branch(self, app_name, branch_name, app_path):
         with lcd(os.path.join(os.path.abspath('.'), app_name)):
-            revision_id = local(self.cmd_revision_by_branch % dict(branch_name=branch_name), capture=True)
+            revision_id = local(self.cmd_revision_by_branch % dict(
+                branch_name=branch_name), capture=True)
             if not revision_id:
-                print_err('Can not find revision data for application [{0}].\n' \
-                              'Try to run deployer from dirrectory above current. $cd .. '.format(app_name))
+                print_err(
+                    'Can not find revision data for application [{0}].\n'
+                    'Try to run deployer from dirrectory above current. $cd '
+                    '.. '.format(app_name))
                 raise VersionError
             return revision_id
 
-    def get_revision_by_tag(self, app_name, tag_name, app_path):              
-        """Parse revision id from version control utility using  defined version label/tag.
+    def get_revision_by_tag(self, app_name, tag_name, app_path):
+        """
+        Parse revision id from version control utility using  defined version
+        label/tag.
 
         :param app_name:
         :param tag_name:
         :type class ``Application``
 
-        return: revision id hash code 
+        return: revision id hash code
         """
-        raise NotImplementerError
+        raise NotImplementedError
 
 
 class HgVersionControl(VersionControlBase):
     cmd_tags = 'hg tags'
     cmd_build_archive = 'hg archive -r %(revision_id)s %(app_build_path)s'
 
-    cmd_revision_by_branch = "hg heads --template '{branch}:{node}\n' | sed -n 's/^%(branch_name)s:\(.*\)$/\\1/pg'"
-    # cmd_revision_by_branch = "hg head -r %(branch_name)s --template '{node}'"  # <- ОШИБКА: может вернуть 2 ревизии
+    cmd_revision_by_branch = (
+        "hg heads --template '{branch}:{node}\n' | sed -n "
+        "'s/^%(branch_name)s:\(.*\)$/\\1/pg'")
     cmd_branch_by_revision = "hg head -r %(revision_id)s --template '{branch}'"
 
     default_branch = 'default'
 
-    def get_revision_by_tag(self, app_name, tag_name):                  
+    def get_revision_by_tag(self, app_name, tag_name):
         with lcd(os.path.join(os.path.abspath('.'), app_name)):
             tags = local(self.cmd_tags, capture=True)
             if not tags:
-                print_err('Can not find revision data for application [{0}].\n' \
-                              'Try to run deployer from dirrectory above current. $cd .. '.format(app_name))
+                print_err(
+                    'Can not find revision data for application [{0}].\n'
+                    'Try to run deployer from dirrectory above current. $cd '
+                    '.. '.format(app_name))
                 raise VersionError
 
             for tagline in tags.splitlines():
                 if tagline.startswith(tag_name):
                     return tagline.strip(tag_name).strip().split(':')[1]
-            raise VersionError('Can not find defined tag label: {}'.format(tag_name))
+            raise VersionError(
+                'Can not find defined tag label: {}'.format(tag_name))
 
 
 VERSION_CONTROL_MAP = {
@@ -534,17 +540,19 @@ VERSION_CONTROL_MAP = {
     #'git'
 }
 
+
 class Server(object):
     """Server configuration data Informer
-    
-    :ivar project_dirs: Directories on the remote server for project directories
-    :ivar server_dirs: Directories on the server for the applicatooins files:
-        PID files, log files etc. Directories where you can find a lot of files 
-        from differend applications.
+
+    :ivar project_dirs: Project directories on the remote server.
+    :ivar server_dirs: Directories on the server for the applications files:
+        PID files, log files etc. Directories where you can find files
+        from different applications.
 
     """
-    project_dirs = ('tmp', 'env_path', 'apps_path', 'sites_path',
-                           'media_path', 'static_path')
+    project_dirs = (
+        'tmp', 'env_path', 'apps_path', 'sites_path', 'media_path',
+        'static_path')
     server_dirs = ('run_path', 'log_path',)
 
     host = None
@@ -567,14 +575,14 @@ class Server(object):
 
     requirements = SPICY_SERVER_REQUIREMENTS
 
-    def __init__(self, host, config=None):        
-        host_info = local('host {0}'.format(str(host.strip())), capture=True)        
+    def __init__(self, host, config=None):
+        host_info = local('host {0}'.format(str(host.strip())), capture=True)
         try:
             for line in host_info.splitlines():
                 if 'has address' in line:
                     self.ip = line.split('has address')[1].strip()
-        except Exception, e:
-            print_err('Can not get server ip address')            
+        except Exception:
+            print_err('Can not get server ip address')
             print(traceback.format_exc())
             raise ServerError
         
@@ -582,7 +590,7 @@ class Server(object):
         self.host = host
         self.config = config
                             
-        self.req_dirs = list(set(self.project_dirs)|set(self.server_dirs))
+        self.req_dirs = list(set(self.project_dirs) | set(self.server_dirs))
 
         # init required attributes and overwrite values using config
         self._required_dirs = map(self.get_option, self.req_dirs)
@@ -605,19 +613,22 @@ class Server(object):
         create dirs if does not exists.
         """
         with settings(
-            hide('warnings', 'running', 'stdout', 'stderr'), warn_only=True):
+                hide('warnings', 'running', 'stdout', 'stderr'),
+                warn_only=True):
             
             for path in self._required_dirs:
                 if exists(path):
                     print_info('[{0}] Path exists: {1}'.format(
-                            self.host, path))
+                        self.host, path))
                 else:
                     sudo('mkdir -m ug=rwx,o= {0}'.format(path))
                     print_ok('[{0}] Creating remote directory: {1}'.format(
-                            self.host, path))
-                
-        print_done('[done] {0}:{1} server configuration completed.'.format(self.host, self.ip))
-        
+                        self.host, path))
+
+        print_done(
+            '[done] {0}:{1} server configuration completed.'.format(
+                self.host, self.ip))
+
 
 class Database(object):
     name = ''
@@ -627,20 +638,21 @@ class Database(object):
     fixture = None
 
     def __init__(self, config=None):
-        self.config = config 
+        self.config = config
 
         if self.config is not None:
             try:
-                self.name=config['database']
-                self.user=config['database_user']                
-                self.password=config['database_password']
-                self.fixture=self.get_fixture()
+                self.name = config['database']
+                self.user = config['database_user']
+                self.password = config['database_password']
+                self.fixture = self.get_fixture()
 
             except KeyError:
-                print_err('Can not configure database settings. Check spicy.conf file.')
+                print_err(
+                    'Can not configure database settings. Check spicy.conf.')
 
             try:
-                self.host=config['database_host']
+                self.host = config['database_host']
             except KeyError:
                 pass
 
@@ -653,15 +665,16 @@ class Database(object):
     @with_settings(sudo_user='postgres')
     def create(self):
         try:
-            sudo('createdb --encoding=utf8 -O {0} {1}'.format(self.user, self.name))
+            sudo('createdb --encoding=utf8 -O {0} {1}'.format(
+                self.user, self.name))
             print_done('Create new database')
         except:
             pass
 
     def restore_from_fixture(self):
         raise NotImplementedError
-        
-        
+
+
 class ProjectDeployer(object):
     # TODO version label from 'deploy version_label_param + host'
     # its not flexible but more usefull
@@ -672,8 +685,9 @@ class ProjectDeployer(object):
     apps = []
     static_apps = []
 
-    def __init__(self, server, version_label, apps_string, 
-                 static_string=None, version_control_util='hg', config=None, force=False):
+    def __init__(
+            self, server, version_label, apps_string, static_string=None,
+            version_control_util='hg', config=None, force=False):
         """
         :param server: remote server instance
         :type class ``Server``
@@ -685,8 +699,7 @@ class ProjectDeployer(object):
         :
         :param version_control_util: Default `hg`
         :type version_control_util str
-
-        """        
+        """
         self.version_label = version_label
         self.server = server
         self.config = config
@@ -697,48 +710,56 @@ class ProjectDeployer(object):
         self.local_req_file = os.path.join(self._local_tmp, SPICY_REQ_FILE)
 
         self.server.configure()
-        self.remote_tmp = os.path.join(self.server.tmp, SPICY_BUILD_DIR, self.version_label)
+        self.remote_tmp = os.path.join(
+            self.server.tmp, SPICY_BUILD_DIR, self.version_label)
         self.remote_req_file = os.path.join(self.remote_tmp, SPICY_REQ_FILE)
-        
+
         # create `remote_SERVER_PATHS` for current project
         for path_attr in self.server.req_dirs:
             attr_name = 'remote_' + path_attr
-            if not hasattr(self, attr_name):                
+            if not hasattr(self, attr_name):
                 path_value = os.path.join(
                     getattr(self.server, path_attr), self.version_label)
                 setattr(self, attr_name, path_value)
-                print_info('[{0}] Create deploy path Deployer.{1} -> {2}'.format(
+                print_info(
+                    '[{0}] Create deploy path Deployer.{1} -> {2}'.format(
                         self.version_label, attr_name, path_value))
 
-        print_ok('[done] Create variables for remote server dirs. {0}'.format(
+        print_ok(
+            '[done] Create variables for remote server dirs. {0}'.format(
                 ', '.join(self.server.req_dirs)))
-        
+
         if config is not None:
             if 'use_custom_env' in config:
                 self.remote_env_path = config['env_path']
-                print_info('Overwire ENV_PATH, using custom env path from config: {0}'.format(self.remote_env_path))
-            
+                print_info(
+                    'Overwire ENV_PATH, using custom env path from config: '
+                    '{0}'.format(self.remote_env_path))
+
         #print_err('# TODO create remote dirs.')
         if not exists(self.remote_tmp):
             sudo('mkdir -p -m ug=rwx,o= {0}'.format(self.remote_tmp))
-            print_ok('Creating remote temporary directory: {0}'.format(self.remote_tmp))
+            print_ok(
+                'Creating remote temporary directory: {0}'.format(
+                    self.remote_tmp))
 
-        
         with settings(
-            hide('warnings', 'running', 'stdout', 'stderr'), warn_only=True):
+                hide('warnings', 'running', 'stdout', 'stderr'),
+                warn_only=True):
             self._vc = VERSION_CONTROL_MAP[version_control_util]()
             self.apps = self._get_apps(apps_string)
 
             if static_string is not None:
                 self.static_apps = self._get_apps(static_string)
-    
+
             if os.path.exists(self._local_tmp):
                 local('rm -rf %s' % self._local_tmp)
             local('mkdir -m ug=rwx,o= %s' % self._local_tmp)
             print_ok('[done] Make local build directory: %s' % self._local_tmp)
 
-            # creating application ``build copy`` using defined revision label.
-        # and use this ``build copy`` for requirements.txt generation, configure app. templates etc...
+        # creating application ``build copy`` using defined revision label.
+        # and use this ``build copy`` for requirements.txt generation,
+        # configure app. templates etc...
         for app in self.apps:
             self._vc.create_build(app)
 
@@ -751,8 +772,9 @@ class ProjectDeployer(object):
         """
         Parse app string to dict with app, revision number items.
         
-        foo=3.0.1 or bar=any_label used to define version of application to build.
-        Depend of version control utility retrun Revision useng label or tag `3.0.1`, `any label`
+        foo=3.0.1 or bar=any_label used to define version of application to
+        # build. Depend of version control utility retrun Revision using label
+        # or tag `3.0.1`, `any label`
         If version not defined using `tip` or current revision.
         
         :param apps_string: = foo=3.0.1,bar,zoo=2.1.3a
@@ -760,14 +782,14 @@ class ProjectDeployer(object):
                 
         :return: list of objects ``Application``
         """
-        return map(lambda app_str: Application(
-                app_str, self), apps_string.split(','))
+        return map(
+            lambda app_str: Application(app_str, self), apps_string.split(','))
 
     def _generate_common_reqfile(self):
         """Project requirements file generator using all applications
 
         return: local agregated requirements.txt file from all applications.
-        """        
+        """
         data = []
         for app_index, app in enumerate(self.apps):
             if not os.path.exists(app.build_path):
@@ -776,7 +798,9 @@ class ProjectDeployer(object):
 
             if os.path.exists(app.req_file):
                 req_app_fd = codecs.open(app.req_file, encoding='utf-8')
-                print_info('[in progress] %s -> %s' % (app.req_file, self.local_req_file))
+                print_info(
+                    '[in progress] %s -> %s' % (
+                        app.req_file, self.local_req_file))
 
                 app_reqs = []
                 for req in req_app_fd.readlines():
@@ -790,70 +814,95 @@ class ProjectDeployer(object):
                     elif len(tmp) == 1:
                         rmod = tmp[0]
                     else:
-                        print_err('Can not parse %s version error: %s' % (app.req_file, req))
+                        print_err(
+                            'Can not parse %s version error: %s' % (
+                                app.req_file, req))
                         raise VersionError
 
                     for module in data:
                         module = module.strip()
                         if module.startswith(rmod) and module != req:
                             print_err(
-                                '[warning] While prepare requirements sequence mistmach version detected: '
-                                '[%s] %s != [%s] %s' % (
-                                    ','.join([str(a_) for a_ in self.apps[:app_index]]), module, app, req))
-                            print_info('Don\'t forget commit changes before next deployment build.')
+                                '[warning] While prepare requirements sequence'
+                                ' mistmaching version detected: [%s] %s != '
+                                '[%s] %s' % (
+                                    ','.join([
+                                        str(a_) for a_ in
+                                        self.apps[:app_index]]),
+                                    module, app, req))
+                            print_info(
+                                'Don\'t forget commit changes before next '
+                                'deployment build.')
                             raise VersionError
 
                         elif module.startswith(rmod) and module == req:
                             print_info('Equal requirements [%s]: %s' % (
-                            ','.join([str(a_) for a_ in self.apps[:app_index + 1]]), module))
+                                ','.join([str(a_) for a_ in
+                                          self.apps[:app_index + 1]]),
+                                module))
                             break
                     else:
                         app_reqs.append(req)
 
                 data.extend(app_reqs)
-                print_ok('[done] %s in the application [%s] has been prepared.' % (SPICY_REQ_FILE, app))
+                print_ok(
+                    '[done] %s in the application [%s] has been prepared.' % (
+                        SPICY_REQ_FILE, app))
             else:
-                print_info('Application [%s] hasn\'t %s file.' % (app, SPICY_REQ_FILE))
+                print_info(
+                    'Application [%s] hasn\'t %s file.' % (
+                        app, SPICY_REQ_FILE))
 
         req_file_fd = codecs.open(self.local_req_file, 'w', encoding='utf-8')
         req_file_fd.writelines('\n'.join(data))
         req_file_fd.close()
-        print_done('[done] Common %s file generation completed.' % (SPICY_REQ_FILE))
+        print_done(
+            '[done] Common %s file generation completed.' % (SPICY_REQ_FILE))
 
         return self.local_req_file
 
     def build_remote_env(self):
-        """Build remote enviroment using common for all applications requirements.
+        """
+        Build remote enviroment using common for all applications requirements.
 
-        Builder use native `virtualenv` utility. 
+        Builder use native `virtualenv` utility.
         """
         def make_env():
             # TODO use native virtualenv or wrapper
 
             sudo('virtualenv --no-site-packages -p python{0} {1}'.format(
-                    SPICY_SERVER_REQUIREMENTS['python'], self.remote_env_path))            
-            with cd(self.remote_env_path):        
+                SPICY_SERVER_REQUIREMENTS['python'], self.remote_env_path))
+            with cd(self.remote_env_path):
                 sudo('./bin/easy_install pip')
             
             # env wrapper
-            #sudo('mkvirtualenv -r %s %s'%(self.remote_req_file, self.version_label))
+            #sudo(
+            #    'mkvirtualenv -r %s %s' % (
+            #        self.remote_req_file, self.version_label))
 
         if exists(self.remote_req_file):
             sudo('rm {}'.format(self.remote_req_file))
             
         # TODO: put(self.local_req_file, self.remote_req_file, user_sudo=True)
         # error while copy file  using `put` call.
-        local('scp {0} {1}:{2}'.format(self.local_req_file, self.server.host, self.remote_req_file))
+        local(
+            'scp {0} {1}:{2}'.format(
+                self.local_req_file, self.server.host, self.remote_req_file))
         
-        print_info('[in progress] Upgrade remote enviroment: {0}'.format(self.remote_env_path))        
+        print_info(
+            '[in progress] Upgrade remote enviroment: {0}'.format(
+                self.remote_env_path))
 
-        with shell_env(HOME=self.server.env_path, WORKON_HOME=self.server.env_path):        
+        with shell_env(
+                HOME=self.server.env_path, WORKON_HOME=self.server.env_path):
             if not exists(self.remote_env_path):
                 make_env()
             else:
                 overwrite = self.force
                 while not self.force:
-                    proceed = raw_input_cyan('Overwrite existing ENV catalog: {0}? y\\n: '.format(self.remote_env_path))
+                    proceed = raw_input_cyan(
+                        'Overwrite existing ENV catalog: {0}? y\\n: '.format(
+                            self.remote_env_path))
                     if proceed in ['n', 'N']:
                         print_info('Cancel')
                         return
@@ -872,31 +921,34 @@ class ProjectDeployer(object):
                     sudo('rm -rf {}'.format(self.remote_env_path))
                     make_env()
 
-            with cd(self.remote_env_path):        
-                with prefix('source {0}/bin/activate'.format(self.remote_env_path)):               
-                    sudo('./bin/pip install -r {0} --upgrade'.format(self.remote_req_file))
+            with cd(self.remote_env_path):
+                with prefix(
+                        'source {0}/bin/activate'.format(
+                            self.remote_env_path)):
+                    sudo(
+                        './bin/pip install -r {0} --upgrade'.format(
+                            self.remote_req_file))
     
             # wrapper
             #with prefix('workon %s'%self.version_label):
-            #    sudo('pip install -r %s --upgrade'%self.remote_req_file)        
+            #    sudo('pip install -r %s --upgrade'%self.remote_req_file)
 
     def _copy_archive(self, path, apps):
         if exists(path):
             overwrite = self.force
             while not self.force:
-                proceed = raw_input_cyan('Overwrite existing project catalog: {0}:{1}? y\\n: '.format(
-                    self.server.host, path))
-                if proceed in ['n', 'N']:
+                proceed = raw_input_cyan(
+                    'Overwrite existing project catalog: {0}:{1}? '
+                    'y\\n: '.format(
+                        self.server.host, path))
+                if proceed in 'nN':
                     print_info('Cancel')
                     return
-
-                if proceed not in ['y', 'Y']:
-                    print_warn('Press y, Y, n or N')
-                    continue
-
-                if proceed in ['y', 'Y']:
+                elif proceed in 'yY':
                     overwrite = True
                     break
+                else:
+                    print_warn('Press y, Y, n or N')
 
             if overwrite:
                 print_info('Overwriting: {0}'.format(path))
@@ -905,52 +957,61 @@ class ProjectDeployer(object):
         sudo('mkdir -m ug=rwx,o= {0}'.format(path))
 
         arch_name = '{0}-{1}.tar.bz2'.format(
-            self.version_label, '-'.join(['{0}.{1}'.format(a_, a_.rev_id) for a_ in apps]))
+            self.version_label, '-'.join([
+                '{0}.{1}'.format(a_, a_.rev_id) for a_ in apps]))
         with lcd(self._local_tmp):
-            local('tar cfj {0} {1}'.format(arch_name, ' '.join([str(a_) for a_ in apps])))
+            local(
+                'tar cfj {0} {1}'.format(
+                    arch_name, ' '.join([str(a_) for a_ in apps])))
             put(arch_name, path)
             local('rm {0}'.format(arch_name))
             
-        with cd(path): # and settings(hide('warnings', 'running', 'stdout', 'stderr'), warn_only=True)
+        with cd(path):
             sudo('tar -xmpf {0}/{1}'.format(path, arch_name))
 
     def install_server_static(self):
-        self._copy_archive(self.remote_static_path, self.static_apps)          
+        self._copy_archive(self.remote_static_path, self.static_apps)
         print_done('Static files has been uploaded.')
 
     def install_server_apps(self):
         """
-        Copy project to the remote server. Create web applications, 
-        application and all default config files from templates if original files doesnot exists.
-        
-        If application already installed, check diference between oroginal config files and current
-        templates from ``build`` directory.
+        Copy project to the remote server. Create web applications,
+        application and all default config files from templates if original
+        files doesnot exists.
+
+        If application already installed, check diference between oroginal
+        config files and current templates from ``build`` directory.
 
         Create LOG_DIRS, RUN_DIR, /etc/init.d/ symlinks
 
-        # TODO configure remote nginx server for /var/www/apps/*/nginx.conf -!!!
+        # TODO configure remote nginx server for /var/www/apps/*/nginx.conf
         """
-                  
-        self._copy_archive(self.remote_apps_path, self.apps)          
+        self._copy_archive(self.remote_apps_path, self.apps)
 
         for app in self.apps:
-            if app.is_webapp():                                
-                app.update_nginx()                    
+            if app.is_webapp():
+                app.update_nginx()
                 app.update_uwsgi()
-                
+
                 with cd(app.remote_path):
                     if exists('manage.py'):
                         sudo('chmod 755 manage.py')
                         app.is_django = True
 
-                    print_info('Change mode for executable files.: {0}/manage.py'.format(app.remote_path))
+                    print_info(
+                        'Change mode for executable files.: '
+                        '{0}/manage.py'.format(app.remote_path))
 
                 sudo('/etc/init.d/nginx reload', user='root')
             else:
-                print_warn('[Notice] Application has no nginx.conf.spicy and uwsgi.conf.spicy files: {0}'.format(app.name))
+                print_warn(
+                    '[Notice] Application has no nginx.conf.spicy and '
+                    'uwsgi.conf.spicy files: {0}'.format(
+                        app.name))
 
             if app.has_cron_tasks():
-                print_err('[done] Configure crontab for app: {0}'.format(app.name))
+                print_err(
+                    '[done] Configure crontab for app: {0}'.format(app.name))
                 # todo cron config
                 pass
             
@@ -958,34 +1019,40 @@ class ProjectDeployer(object):
                 print_warn('[Notice] Daemon application {0}'.format(app.name))
                 with cd(app.remote_path):
                     sudo('chmod 755 restart.sh')
-                    print_info('Change mode for executable files.: {0}/restart.sh'.format(app.remote_path))
+                    print_info(
+                        'Change mode for executable files.: '
+                        '{0}/restart.sh'.format(app.remote_path))
 
         print_done('[done] Project has been installed successful.')
 
     def configure_templates(self):
-        """Look in for `*.spicy` template files in the application directory recursively using subdirs.        
-        Config templates use Janja2 template syntax.        
-        """        
+        """
+        Look for `*.spicy` template files in the application directory
+        recursively using subdirs. Config templates use Jinja2 template syntax.
+        """
         for app in self.apps + self.static_apps:
             for path, subdirs, files in os.walk(app.build_path):
                 for file in files:
                     if file.endswith(SPICY_CONFIG_TEMPLATE_POSTFIX):
                         file_path = os.path.join(path, file)
 
-                        fd = codecs.open(file_path, encoding='utf-8')                        
+                        fd = codecs.open(file_path, encoding='utf-8')
                         template = Template(fd.read())
                         fd.close()
                         
                         # BUG with 'ini.spicy'.rstrip('.spicy')
-                        config = file_path.rstrip('spicy').rstrip('.') 
+                        config = file_path.rstrip('spicy').rstrip('.')
 
                         try:
                             data = template.render(spicy=self, app=app)
                         except UndefinedError, e:
-                            print_err('Invalid template syntax in the config: {0}'.format(
+                            print_err(
+                                'Invalid template syntax in the config: '
+                                '{0}'.format(
                                     os.path.join(
-                                        app.abspath, 
-                                        file_path.split(app.build_path + '/')[1]
+                                        app.abspath,
+                                        file_path.split(
+                                            app.build_path + '/')[1]
                                         ),
                                     ))
                             print(traceback.format_exc())
@@ -996,34 +1063,40 @@ class ProjectDeployer(object):
                         fd.close()
 
                         with settings(
-                                hide('warnings', 'running', 'stdout', 'stderr'), warn_only=True):
+                                hide(
+                                    'warnings', 'running', 'stdout', 'stderr'),
+                                warn_only=True):
                             local('rm {0}'.format(file_path))
-                        print_ok('[done] Config has been rendered: {0}'.format(config))
+                        print_ok(
+                            '[done] Config has been rendered: {0}'.format(
+                                config))
         print_done('[done] All config files has been configured successful.')
     
-    def restart_apps(self):        
+    def restart_apps(self):
         for app in self.apps:
-            app.restart()            
+            app.restart()
             print_info('restart app: {0}'.format(app))
 
-    def sync_database(self):        
-        with prefix('source {0}/bin/activate'.format(self.remote_env_path)):               
+    def sync_database(self):
+        with prefix('source {0}/bin/activate'.format(self.remote_env_path)):
             for app in self.apps:
-                app.sync_database()            
+                app.sync_database()
                 print_info('Sync database app: {0}'.format(app))
 
-    def collectstatic(self):        
-        with prefix('source {0}/bin/activate'.format(self.remote_env_path)):               
+    def collectstatic(self):
+        with prefix('source {0}/bin/activate'.format(self.remote_env_path)):
             for app in self.apps:
-                app.collectstatic()            
+                app.collectstatic()
                 print_info('Collect static files for: {0}'.format(app))
 
-    def __call__(self, env_path=None, buildenv=False, 
-                 createdb=False, syncdb=False):
+    def __call__(
+            self, env_path=None, buildenv=False, createdb=False, syncdb=False):
         """Main deploy alg.
         """
         if env_path is not None:
-            print_info('Overwire ENV_PATH, using custom env path from command line: {0}'.format(env_path))
+            print_info(
+                'Overload ENV_PATH, using custom env path from command line: '
+                '{0}'.format(env_path))
             self.remote_env_path = env_path
             self.server.env_path = env_path
             self.server.configure()
@@ -1031,9 +1104,9 @@ class ProjectDeployer(object):
         self.configure_templates()
 
         if bool(buildenv):
-            self.build_remote_env()        
+            self.build_remote_env()
 
-        self.install_server_apps()        
+        self.install_server_apps()
         self.install_server_static()
                     
         if createdb:
@@ -1053,7 +1126,7 @@ def handle_deploy(ns):
         env.port = ns.port
 
     if ns.user:
-        env.user = ns.user    
+        env.user = ns.user
     env.sudo_user = ns.sudo_user
 
     config = configparser.ConfigParser()
@@ -1067,47 +1140,50 @@ def handle_deploy(ns):
         try:
             project_config = config[ns.versionlabel]
         except KeyError:
-            print_err('Check for spicy.conf file. Cannot find ``{}`` configuration.'.format(ns.versionlabel))
+            print_err(
+                'Check for spicy.conf file. Cannot find ``{}`` '
+                'configuration.'.format(ns.versionlabel))
             sys.exit(-1)
-            
+
         # overwrite server config using project values if exists
         for opt in project_config:
             server_config[opt] = project_config.get(opt, raw=True)
 
         server = Server(project_config['host'], config=server_config)
-        
+
         deployer = ProjectDeployer(
-            server, project_config['version_label'], 
-            
-            # TODO ?? overwrite or exception
-            project_config['apps'],
-            static_string=project_config['static'], 
-            config=project_config,
+            server, project_config['version_label'], project_config['apps'],
+            static_string=project_config['static'], config=project_config,
             force=ns.force)
 
-        deployer(env_path=ns.envpath, buildenv=ns.buildenv, 
-                 createdb=ns.createdb, syncdb=ns.syncdb)
+        deployer(
+            env_path=ns.envpath, buildenv=ns.buildenv, createdb=ns.createdb,
+            syncdb=ns.syncdb)
 
         sys.exit(0)
-    
+
     hosts = []
     if ns.hosts is not None:
         hosts = ns.hosts.split(',')
 
-    for host in hosts:        
+    for host in hosts:
         server = Server(host, config=server_config)
         deployer = ProjectDeployer(
             server, ns.versionlabel, ns.apps, static_string=ns.static)
 
-        deployer(env_path=ns.envpath, buildenv=ns.buildenv, 
-                 createdb=ns.createdb, syncdb=ns.syncdb)
+        deployer(
+            env_path=ns.envpath, buildenv=ns.buildenv, createdb=ns.createdb,
+            syncdb=ns.syncdb)
     else:
-        print_info('Use spicy.conf and -x option or define deployment args manually, see --help for details.')
+        print_info(
+            'Use spicy.conf and -x option or define deployment args manually, '
+            'see --help for details.')
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--version', action='version',
-                    version=spicy_version.__version__, default=False)
+parser.add_argument(
+    '--version', action='version', version=spicy_version.__version__,
+    default=False)
 
 subparsers = parser.add_subparsers(
     title='SpicyTool commands',
@@ -1116,7 +1192,8 @@ subparsers = parser.add_subparsers(
  and parameters description""",
     help='List of script commands')
 
-build_docs_parser = subparsers.add_parser('build-docs', help="""TODO: write help""")
+build_docs_parser = subparsers.add_parser(
+    'build-docs', help="TODO: write help")
 build_docs_parser.add_argument('-a', '--apps', action='store')
 build_docs_parser.add_argument('-H', '--host', action='store', required=True)
 build_docs_parser.add_argument('-P', '--port', action='store', required=False)
@@ -1124,39 +1201,75 @@ build_docs_parser.add_argument('-u', '--user', action='store')
 build_docs_parser.add_argument('-p', '--path', action='store', required=True)
 build_docs_parser.set_defaults(func=handle_build_docs)
 
-create_app_parser = subparsers.add_parser('create-app', help="""Create Django/Spicy application with abstract models and services using common template.
+create_app_parser = subparsers.add_parser(
+    'create-app', help="""Create Django/Spicy application with abstract
+models and services using common template.
 Do not forget declare youe services and applistion in the settings file.""")
 create_app_parser.add_argument('appname', action='store')
-create_app_parser.add_argument('-w', '--webapp', action='store', required=True, default='webapp', help="Define Web application name.")
+create_app_parser.add_argument(
+    '-w', '--webapp', action='store', required=True, default='webapp',
+    help="Define Web application name.")
 create_app_parser.set_defaults(func=handle_create_app)
 
-create_project_parser = subparsers.add_parser('create-project', help="""Create Spicy project from template.""")
+create_project_parser = subparsers.add_parser(
+    'create-project', help="""Create Spicy project from template.""")
 create_project_parser.add_argument('projectname', action='store')
 create_project_parser.set_defaults(func=handle_create_project)
 
 deploy_parser = subparsers.add_parser(
-    'deploy', help="""Advanced deployer build remote enviroment and application""")
+    'deploy',
+    help="""Advanced deployer build remote enviroment and application""")
 deploy_parser.add_argument('versionlabel', action='store')
-deploy_parser.add_argument('-H', '--hosts', action='store', default=None, help="remote hosts")
-deploy_parser.add_argument('-P', '--port', action='store', default=None, help='SSH port')
+deploy_parser.add_argument(
+    '-H', '--hosts', action='store', default=None, help="remote hosts")
+deploy_parser.add_argument(
+    '-P', '--port', action='store', default=None, help='SSH port')
 
-deploy_parser.add_argument('-su', '--sudo_user', action='store', default=SPICY_APPS_SERVER_USER, help='Remote server user with access for APPS and ENV. ``nginx`` for example.')
-deploy_parser.add_argument('-sg', '--sudo_group', action='store', default=SPICY_APPS_SERVER_GROUP, help='Group for deploy: ``nginx`` for example.')
+deploy_parser.add_argument(
+    '-su', '--sudo_user', action='store', default=SPICY_APPS_SERVER_USER,
+    help=(
+        'Remote server user with access for APPS and ENV. ``nginx`` for '
+        'example.'))
+deploy_parser.add_argument(
+    '-sg', '--sudo_group', action='store', default=SPICY_APPS_SERVER_GROUP,
+    help='Group for deploy: ``nginx`` for example.')
 
-deploy_parser.add_argument('-a', '--apps', action='store', default=None, help="List fo apps or current app(current directory by default './' )")
-deploy_parser.add_argument('-s', '--static', action='store', default=None, help='Static APPS templates and JS/CSS/HTML web apps.')
+deploy_parser.add_argument(
+    '-a', '--apps', action='store', default=None,
+    help="List fo apps or current app(current directory by default './' )")
+deploy_parser.add_argument(
+    '-s', '--static', action='store', default=None,
+    help='Static APPS templates and JS/CSS/HTML web apps.')
 
-deploy_parser.add_argument('-e', '--envpath', action='store', default=None, help='Define custom remote virtual enviroment path.')
-deploy_parser.add_argument('-b', '--buildenv', action='store_true', default=False, help='Build custom enviroment using {0} insise each app.'.format(SPICY_REQ_FILE))
+deploy_parser.add_argument(
+    '-e', '--envpath', action='store', default=None,
+    help='Define custom remote virtual enviroment path.')
+deploy_parser.add_argument(
+    '-b', '--buildenv', action='store_true', default=False,
+    help='Build custom enviroment using {0} insise each app.'.format(
+        SPICY_REQ_FILE))
 
 # TODO
-deploy_parser.add_argument('-d', '--createdb', action='store_true', default=False, help='Create database. Use fixture for initial database sheme if defined in the config file.')
-deploy_parser.add_argument('-D', '--syncdb', action='store_true', default=False, help='Syncdb in the django projects.')
+deploy_parser.add_argument(
+    '-d', '--createdb', action='store_true', default=False,
+    help=(
+        'Create database. Use fixture for initial database sheme if defined in'
+        ' the config file.'))
+deploy_parser.add_argument(
+    '-D', '--syncdb', action='store_true', default=False,
+    help='Syncdb in the django projects.')
 
-deploy_parser.add_argument('-x', '--xconfiglabel', action='store_true', default=False, help='Use configuration file and defined project label. {0}'.format(SPICY_PROJECT_CONFIG_FILE))
+deploy_parser.add_argument(
+    '-x', '--xconfiglabel', action='store_true', default=False,
+    help='Use configuration file and defined project label. {0}'.format(
+        SPICY_PROJECT_CONFIG_FILE))
 
-deploy_parser.add_argument('-u', '--user', action='store', default=os.getlogin(), help='Server SSH user with sudo access.')
-deploy_parser.add_argument('-f', '--force', action='store_true', default=False, help='Force overwriting all existing apps.')
+deploy_parser.add_argument(
+    '-u', '--user', action='store', default=os.getlogin(),
+    help='Server SSH user with sudo access.')
+deploy_parser.add_argument(
+    '-f', '--force', action='store_true', default=False,
+    help='Force overwriting all existing apps.')
 
 deploy_parser.set_defaults(func=handle_deploy)
 

@@ -1,7 +1,8 @@
 import os
 from django.conf import settings
-from django.core.files.storage import default_storage, Storage, FileSystemStorage
-from django.template.loaders import filesystem, app_directories
+from django.core.exceptions import ImproperlyConfigured
+from django.core.files.storage import FileSystemStorage
+from django.template.loaders import filesystem
 from django.utils._os import safe_join
 from django.utils.datastructures import SortedDict
 from django.contrib.staticfiles import finders
@@ -14,10 +15,12 @@ class ThemeStaticFinder(finders.FileSystemFinder):
         # List of locations with static files
         self.locations = []
         # Maps dir paths to an appropriate storage instance
-        self.storages = SortedDict()        
-        
-        prefix = None 
-        root = safe_join(defaults.THEMES_PATH, utils.get_siteskin_settings().theme, 'static')
+        self.storages = SortedDict()
+
+        prefix = None
+        root = safe_join(
+            defaults.THEMES_PATH, utils.get_siteskin_settings().theme,
+            'static')
 
         if os.path.abspath(settings.STATIC_ROOT) == os.path.abspath(root):
             raise ImproperlyConfigured(
@@ -37,10 +40,12 @@ class ThemeTemplateLoader(filesystem.Loader):
     # load tempalte_dir from Database in the __init__
 
     def get_template_sources(self, template_name, template_dirs=None):
-
-        #template_dir = safe_join(defaults.THEMES_PATH, admin_defaults.DEFAULT_THEME)
+        #template_dir = safe_join(
+        #    defaults.THEMES_PATH, admin_defaults.DEFAULT_THEME)
         #if admin_settings.current_theme:
-        template_dir = safe_join(defaults.THEMES_PATH, utils.get_siteskin_settings().theme, 'templates')
+        template_dir = safe_join(
+            defaults.THEMES_PATH, utils.get_siteskin_settings().theme,
+            'templates')
         
         try:
             yield safe_join(template_dir, template_name)

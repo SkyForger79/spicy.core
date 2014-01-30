@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.core.urlresolvers import reverse
+from django.db.models.signals import post_save, post_delete
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
@@ -8,11 +9,19 @@ from spicy.core.admin.conf import AdminAppBase, AdminLink, Perms
 from spicy.core.profile.decorators import is_staff
 from spicy.core.siteskin.decorators import render_to
 from spicy import utils
-from . import defaults, forms
+from . import defaults, forms, listeners
 from .utils import find_simplepages, edit_simple_page
 
 
 SimplePage = utils.get_custom_model_class(defaults.SIMPLE_PAGE_MODEL)
+
+post_delete.connect(
+    listeners.reload_server, sender=SimplePage,
+    dispatch_uid='post-save-simple-page')
+
+post_save.connect(
+    listeners.reload_server, sender=SimplePage,
+    dispatch_uid='post-save-simple-page')
 
 
 class AdminApp(AdminAppBase):

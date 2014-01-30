@@ -67,7 +67,8 @@ class ThemeStaticFilesStorage(storage.StaticFilesStorage):
     def __init__(self, *args, **kwargs):
         current_theme = utils.get_siteskin_settings().theme
         theme_name = os.path.basename(current_theme)
+        print os.path.join(settings.STATIC_ROOT, theme_name)
         super(ThemeStaticFilesStorage, self).__init__(
-            location=current_theme,
+            location=os.path.join(settings.STATIC_ROOT, theme_name),
             base_url=os.path.join(settings.STATIC_URL, theme_name, ''), *args,
             **kwargs)

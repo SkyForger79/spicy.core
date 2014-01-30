@@ -57,4 +57,3 @@ def edit(request):
         'form': form,
         'messages': messages,
     }
-

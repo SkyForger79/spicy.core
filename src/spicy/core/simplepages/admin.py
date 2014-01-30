@@ -17,7 +17,7 @@ SimplePage = utils.get_custom_model_class(defaults.SIMPLE_PAGE_MODEL)
 
 post_delete.connect(
     listeners.reload_server, sender=SimplePage,
-    dispatch_uid='post-save-simple-page')
+    dispatch_uid='post-delete-simple-page')
 
 post_save.connect(
     listeners.reload_server, sender=SimplePage,

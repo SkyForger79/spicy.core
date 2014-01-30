@@ -1,7 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.template import loader, Template
-from spicy.utils import cached_property
 
 
 class AbstractBasePage(models.Model):

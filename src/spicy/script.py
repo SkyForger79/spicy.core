@@ -936,7 +936,7 @@ class ProjectDeployer(object):
     def _copy_archive(self, path, apps):
         if exists(path):
             overwrite = self.force
-            while not self.force:
+            while not overwrite:
                 proceed = raw_input_cyan(
                     'Overwrite existing project catalog: {0}:{1}? '
                     'y\\n: '.format(
@@ -946,7 +946,6 @@ class ProjectDeployer(object):
                     return
                 elif proceed in 'yY':
                     overwrite = True
-                    break
                 else:
                     print_warn('Press y, Y, n or N')
 
@@ -965,13 +964,13 @@ class ProjectDeployer(object):
                     arch_name, ' '.join([str(a_) for a_ in apps])))
             put(arch_name, path)
             local('rm {0}'.format(arch_name))
-            
+
         with cd(path):
             sudo('tar -xmpf {0}/{1}'.format(path, arch_name))
 
     def install_server_static(self):
         self._copy_archive(self.remote_static_path, self.static_apps)
-        print_done('Static files has been uploaded.')
+        print_done('Static files have been uploaded.')
 
     def install_server_apps(self):
         """
@@ -1070,7 +1069,7 @@ class ProjectDeployer(object):
                         print_ok(
                             '[done] Config has been rendered: {0}'.format(
                                 config))
-        print_done('[done] All config files has been configured successful.')
+        print_done('[done] All config files have been configured successful.')
     
     def restart_apps(self):
         for app in self.apps:

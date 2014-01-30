@@ -1,4 +1,4 @@
-from dlango.db.models.signals import post_save
+from django.db.models.signals import post_save
 from django.utils.translation import ugettext as _
 from spicy.utils.models import get_custom_model_class
 from spicy.core.profile.decorators import is_staff

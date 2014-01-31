@@ -37,7 +37,7 @@ class AbstractBasePage(models.Model):
         return u"{0} -- {1}".format(self.url, self.title)
 
     def get_absolute_url(self):
-        return u'/{0}'.format(self.url)
+        return self.url
 
 
 class AbstractSimplePage(AbstractBasePage):

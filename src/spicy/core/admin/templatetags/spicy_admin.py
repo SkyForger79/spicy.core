@@ -114,7 +114,13 @@ def formfield(
         field = form[field_name]
         label = field.label_tag(title or field.label)
 
+    try:
+        consumer_type = (
+            getattr(form, '__class__') or form.form).Meta.model.__name__.lower()
+    except AttributeError:
+        consumer_type = None
+
     return dict(
         title=title, form=form, type=type, field=field, label=label,
         preview_link=preview_link, classes=classes, id=id, ajax_url=ajax_url,
-        data_url=data_url, from_field=from_field)
+        data_url=data_url, from_field=from_field, consumer_type=consumer_type)

@@ -68,7 +68,7 @@ class AdminAppBase(object):
     def __init__(self):
         pass
 
-    def edit_url(self, args=[0,]):        
+    def edit_url(self, args=[0,]):
         try:
             return reverse(self.name + ':admin:edit', args=args)
         except NoReverseMatch:

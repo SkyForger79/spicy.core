@@ -3,7 +3,7 @@ from django.conf import settings
 from spicy.core.admin.conf import app_modules_register
 
 
-def find_templates(base_dir, name_tuples=True):
+def find_templates(base_dir, name_tuples=True, from_dict=None):
     templates = []
 
     # load app tempaltes
@@ -21,7 +21,8 @@ def find_templates(base_dir, name_tuples=True):
         try:
             if name_tuples:
                 templates.extend(
-                    [(tmpl, tmpl) for tmpl in os.listdir(path)])
+                    [(tmpl, from_dict.get(tmpl, tmpl) if from_dict else tmpl)
+                     for tmpl in os.listdir(path)])
             else:
                 templates.extend(
                     [os.path.join(path, template)

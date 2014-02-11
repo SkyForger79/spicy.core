@@ -2,7 +2,8 @@ import os
 from django.conf import settings
 
 
-SITESKIN_SETTINGS_MODEL = getattr(settings, 'SITESKIN_SETTINGS_MODEL', 'siteskin.Siteskin')
+SITESKIN_SETTINGS_MODEL = getattr(
+    settings, 'SITESKIN_SETTINGS_MODEL', 'siteskin.Siteskin')
 
 
 ADMIN_THEME = getattr(settings, 'ADMIN_THEME', None)
@@ -11,7 +12,7 @@ THEMES_PATH = getattr(settings, 'THEMES_PATH', os.path.abspath('../siteskins'))
 SPICY_THEME_FILE = getattr(settings, 'SPICY_THEME_FILE', 'spicy.theme')
 
 SPICY_THEME_PRODUCT_KEYS = getattr(
-    settings, 'SPICY_THEME_PRODUCT_KEYS', 
+    settings, 'SPICY_THEME_PRODUCT_KEYS',
     ['spicy.light', 'spicy.business', 'spicy.media', 'spicy.ecom']
     )
 
@@ -50,3 +51,18 @@ DEFAULT_FILTERS = [
     ('search_text', ''),
 ]
 ENABLE_INDEXATION = getattr(settings, 'ENABLE_INDEXATION', True)
+
+# Sanitizer settings
+USE_SANITIZER = getattr(settings, 'USE_SANITIZER', False)
+ALLOWED_HTML_ELEMENTS = [
+    'a', 'A', 'p', 'P', 'br', 'BR', 'LI', 'li', 'ul', 'UL', 'ol', 'OL',
+    'hr', 'HR', 'u', 'U', 'i', 'I', 'b', 'B', 'STRONG', 'strong', 'em', 'EM',
+    'div', 'DIV', 'BLOCKQUOTE', 'blockquote', 'sub', 'SUB', 'sup', 'SUP',
+    'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'img', 'h1', 'h2', 'h3', 'h5',
+    'iframe', 'IFRAME']
+ALLOWED_HTML_ATTRIBUTES = [
+    'title', 'alt', 'href', 'src', 'class', 'id', 'target', 'width',
+    'height', 'src', 'frameborder', 'allowfullscreen']
+# iframe video embeds from youtube
+ALLOWED_HTML_CLASSES = getattr(settings, 'ALLOWED_HTML_CLASSES', {})
+ESCAPE_INVALID_TAGS = True

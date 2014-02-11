@@ -1,9 +1,9 @@
 from django import forms
-from .. import defaults
+from . import defaults
 from .html import Sanitizer
 
 
-if defaults.SANITIZE_DOCUMENTS:
+if defaults.USE_SANITIZER:
     sanitizer = Sanitizer(
         allowed_elements=defaults.ALLOWED_HTML_ELEMENTS,
         allowed_attributes=defaults.ALLOWED_HTML_ATTRIBUTES,

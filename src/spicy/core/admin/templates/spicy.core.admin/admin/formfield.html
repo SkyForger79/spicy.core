@@ -81,10 +81,15 @@ $(function(){
 
 {% elif type == 'li-hidden' %}
 <input type="hidden" name="{{ field.html_name }}" value="{{ field.value|default_if_none:'' }}" id="id_{{ field.html_name }}"/>
-{% endif %}
 
-{% if type == 'li-editor' %}
+{% elif type == 'li-editor' %}
 {% include "spicy.core.admin/admin/wysiwyg.html" %}
+
+{% elif type == 'li-textarea' %}
+<li class="input {{ classes }}"{% if id %}id="{{ id }}"{% endif %}>
+  {{ label }}
+      <textarea name="{{ field.html_name }}" placeholder="{{ title }}" rows="6" id="id_{{ field.html_name }}">{{ field.value|default_if_none:'' }}</textarea>
+</li>  
 
 {% elif type == 'li-date' %}
 <li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>

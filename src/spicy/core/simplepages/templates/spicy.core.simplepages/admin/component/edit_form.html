@@ -20,7 +20,7 @@
 <div class="row-fluid">
   <ul class="padded separate-sections">
 {% if not form.instance.template_name %}
-    {% formfield "" form "content" "li-editor" %}
+    {% formfield "" form "content" "li-textarea" %}
 {% else %}
     {% formfield "" form "content" "li-hidden" %}
 {% endif %}

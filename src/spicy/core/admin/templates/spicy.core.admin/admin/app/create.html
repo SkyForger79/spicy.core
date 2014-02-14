@@ -14,7 +14,7 @@
         </div>
 	
         <div class="box-content">
-          <form class="form-horizontal fill-up validatable" method="post" action="." autocomplete="off"
+          <form class="form-horizontal fill-up validatable" method="post" action="{{ reguest.get_full_path }}" autocomplete="off"
 		enctype="multipart/form-data">{% csrf_token %}
 
 	    {% comment %}

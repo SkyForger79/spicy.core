@@ -1,3 +1,4 @@
+import os
 import sys
 import traceback
 from django.utils.importlib import import_module
@@ -21,4 +22,15 @@ def load_module(path, config='SERVICE'):
             % config)
 
 
-__all__ = 'load_module',
+def reload_server():
+    try:
+        import uwsgi
+        uwsgi.reload()
+    except ImportError:
+        try:
+            os.utime(__file__, None)
+        except:
+            pass
+
+
+__all__ = 'load_module', 'reload_server'

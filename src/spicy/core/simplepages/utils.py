@@ -51,6 +51,7 @@ def edit_simple_page(request, page):
         form = forms.SimplePageForm(request.POST, instance=page)
         if form.is_valid():
             page = form.save()
+            form = forms.SimplePageForm(instance=page)
         else:
             message = settings.MESSAGES['error']
     else:

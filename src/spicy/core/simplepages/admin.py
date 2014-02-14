@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
 from django.db.models.signals import post_save, post_delete
 from django.http import HttpResponseRedirect
@@ -27,7 +28,7 @@ post_save.connect(
 class AdminApp(AdminAppBase):
     name = 'simplepages'
     label = _('Simple Pages')
-    order_number = 10
+    order_number = 90
 
     menu_items = (
         AdminLink('simplepages:admin:create', _('Create simple page')),
@@ -88,7 +89,8 @@ def create(request):
         else:
             message = settings.MESSAGES['error']
     else:
-        form = forms.SimplePageForm()
+        form = forms.SimplePageForm(
+            initial={'sites': [Site.objects.get_current()]})
     return {'form': form, 'message': message}
 
 

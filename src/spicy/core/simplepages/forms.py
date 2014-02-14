@@ -13,5 +13,6 @@ class SimplePageForm(forms.ModelForm):
     class Meta:
         model = utils.get_custom_model_class(defaults.SIMPLE_PAGE_MODEL)
         fields = (
-            'title', 'url', 'content', 'enable_comments',
+            'title', 'url', 'content', 'enable_comments', 'is_custom',
             'registration_required', 'sites', 'template_name')
+        widgets = {'is_custom': forms.HiddenInput()}

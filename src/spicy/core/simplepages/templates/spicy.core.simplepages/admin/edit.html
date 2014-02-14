@@ -17,7 +17,7 @@
 	  {% include "spicy.core.simplepages/admin/component/edit_tabs.html" %}
         </div>
         <div class="box-content">
-          <form name="edit_{{ app.name }}" class="form-horizontal fill-up validatable" method="post" action="." autocomplete="off"
+          <form id="edit_{{ app.name }}" class="form-horizontal fill-up validatable" method="post" action="." autocomplete="off"
 		enctype="multipart/form-data">{% csrf_token %}
 
 	    {% include "spicy.core.simplepages/admin/component/edit_form.html" %}
@@ -46,24 +46,10 @@
 {{ form.media }}
 <script>
 $(function(){
-    if($('input[name="template_name"]').val()){
-        $('.custom').html("{% trans 'Enable customization' %}");
-    }
-    else {
-        $('.custom').html("{% trans 'Disable customization' %}");
-    }
-    $('.custom').click(function(){
-        if($('input[name="template_name"]').val()) {
-            $('input[name="template_name"]').val('');
-            $('.form-horizontal').submit();
-        }
-        else{
-            var name = "spicy.core.simplepages/simplepages/";
-            name += $('input[name="url"]').val().replace('/','').replace('/','.').replace('/','.')+'html';
-            $('input[name="template_name"]').val(name);
-            $('.form-horizontal').submit();
-        }
-    });
+  $('.custom').click(function(){
+    $('#id_is_custom').val({% if form.instance.is_custom %}''{% else %}'on'{% endif %})
+    $('#edit_{{ app.name }}').submit()
+  });
 });
 </script>
 {% endblock %}

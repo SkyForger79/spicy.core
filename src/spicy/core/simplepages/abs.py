@@ -13,15 +13,13 @@ class AbstractBasePage(models.Model):
             '{% block content %}\n<!-- Page content here-->\n'
             '{% endblock %}'))
     template_name = models.CharField(
-        _('template name'), max_length=255, blank=True, default='',
-        help_text=_(
-            "Example: 'spicy.core.simplepages/simplepages/default.html'. "
-            "If this isn't provided, content can be edited by hand."))
+        _('template name'), max_length=255, blank=True, default='')
+    is_custom = models.BooleanField(_('Is custom'))
     sites = models.ManyToManyField('sites.Site')
 
     #@cached_property
     def get_template(self):
-        if self.template_name:
+        if not self.is_custom:
             return loader.get_template(self.template_name)
         return Template(self.content)
 

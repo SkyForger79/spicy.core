@@ -1,18 +1,15 @@
-from django.db.models.signals import post_save
+from django import http
+from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext as _
 from spicy.utils.models import get_custom_model_class
 from spicy.core.profile.decorators import is_staff
 from spicy.core.admin.conf import AdminAppBase, AdminLink, Perms
-from spicy.core.simplepages.listeners import reload_server
+from spicy.utils import reload_server
 from spicy.core.siteskin.decorators import render_to
 from . import defaults, forms, utils
 
 
 SiteskinModel = get_custom_model_class(defaults.SITESKIN_SETTINGS_MODEL)
-
-post_save.connect(
-    reload_server, sender=SiteskinModel,
-    dispatch_uid='post-save-siteskin')
 
 
 class AdminApp(AdminAppBase):
@@ -48,6 +45,8 @@ def edit(request):
         form = forms.ThemeForm(request.POST, instance=instance)
         if form.is_valid():
             form.save()
+            reload_server()
+            return http.HttpResponseRedirect(reverse('siteskin:admin:edit'))
         else:
             messages.append(form.errors.as_text())
     else:

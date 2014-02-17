@@ -1,3 +1,4 @@
+import inspect
 import os
 import sys
 import traceback
@@ -28,8 +29,9 @@ def reload_server():
         uwsgi.reload()
     except ImportError:
         try:
-            os.utime(__file__, None)
-        except:
+            path = inspect.getsourcefile(reload_server)
+            os.utime(path, None)
+        except Exception:
             pass
 
 

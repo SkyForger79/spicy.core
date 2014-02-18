@@ -10,7 +10,7 @@ from spicy.core.profile.decorators import is_staff
 
 from .conf import AdminAppBase, AdminLink, Perms
 from . import defaults, forms, utils
-
+from django.contrib.sites.models import Site
 
 SettingsModel = get_custom_model_class(defaults.ADMIN_SETTINGS_MODEL)
 
@@ -44,15 +44,19 @@ def dashboard(request):
 @render_to('spicy.core.admin/admin/robots_txt.html', use_admin=True)
 def robots_txt(request):
     robots, _created = SettingsModel.on_site.get_or_create(pk__isnull=False)
+    site = Site.objects.get(pk__isnull=False)
     message = ''
     if request.method == 'POST':
         form = forms.RobotsForm(request.POST, instance=robots)
-        if form.is_valid():
+        sform = forms.SiteForm(request.POST, instance=site)
+        if form.is_valid() and sform.is_valid():
             form.save()
+            sform.save()
             message = 'Success'
     else:
         form = forms.RobotsForm(instance=robots)
-    return {'services': api.register.get_list(), 'form':form}
+        sform = forms.SiteForm(instance=site)
+    return {'services': api.register.get_list(), 'form': form, 'sform': sform}
 
 @is_staff
 @render_to('spicy.core.admin/admin/main_settings.html', use_admin=True)

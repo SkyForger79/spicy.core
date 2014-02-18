@@ -22,4 +22,5 @@ urlpatterns = patterns(
     '',
     url(r'^admin/', include(admin_urls, namespace='admin')),
     url(r'^admin/', include(public_urls, namespace='public')),
+    url(r'^robots.txt$', 'spicy.core.admin.views.robots'),
 )

@@ -27,3 +27,8 @@ class ApplicationForm(forms.ModelForm):
     class Meta:
         model = SettingsModel
         fields = ('license_pub_key', )
+
+class RobotsForm(forms.ModelForm):
+    class Meta:
+        model = SettingsModel
+        fields = ('robots',)

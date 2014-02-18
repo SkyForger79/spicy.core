@@ -5,6 +5,7 @@ from django.db import models
 from django.contrib.sites.models import Site
 from spicy.core.siteskin.utils import get_siteskin_themes
 from spicy.core.siteskin.defaults import DEFAULT_THEME
+from django.contrib.sites.managers import CurrentSiteManager
 
 from . import defaults, conf
 
@@ -57,6 +58,20 @@ class AdminApp(models.Model):
 
 
 class Settings(models.Model):
+    @staticmethod
+    def get_robots_default():
+        site = Site.objects.get_current()
+        return (
+            "# robots.txt for http://" + site.domain + "\n"
+            "User-agent: *\n"
+            "Host: " + site.domain + "\n"
+            "Sitemap: http://" + site.domain + "/sitemap.xml")
+
+    robots = models.TextField(
+        max_length=3000, blank=True,
+        verbose_name=_('robots.txt'),
+        default=lambda: Settings.get_robots_default())
+
     license_pub_key = models.CharField(_('User license public key'), max_length=255, blank=True)
     sentry_key = models.CharField(_('Sentry key'), max_length=255, blank=True)    
 
@@ -78,7 +93,12 @@ class Settings(models.Model):
     #notify_50x
     #notify_404
     
-    site = models.ForeignKey(Site)
+    site = models.ForeignKey(
+        Site, verbose_name=_('Site'), default=Site.objects.get_current,
+        unique = True)
+
+    objects = models.Manager()
+    on_site = CurrentSiteManager()
 
     class Meta:
         permissions = (

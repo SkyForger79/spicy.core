@@ -17,16 +17,6 @@ public_urls = patterns(
     (r'^jsi18n/$', 'django.views.i18n.javascript_catalog'),
 )
 
-public_urls += patterns(
-    'spicy.core.siteskin.views',
-
-    url(
-        r'^robots.txt$', 'render',
-        {'template_name': 'robots.txt', 'mimetype': 'text/plain',
-         'noindex': not defaults.ENABLE_INDEXATION},
-        name='robots.txt'),
-)
-
 if settings.DEBUG:
     current_theme = os.path.basename(
         utils.get_siteskin_settings().theme)

@@ -43,7 +43,16 @@ def dashboard(request):
 @is_staff
 @render_to('spicy.core.admin/admin/robots_txt.html', use_admin=True)
 def robots_txt(request):
-    return {'services': api.register.get_list()}
+    robots, _created = SettingsModel.on_site.get_or_create(pk__isnull=False)
+    message = ''
+    if request.method == 'POST':
+        form = forms.RobotsForm(request.POST, instance=robots)
+        if form.is_valid():
+            form.save()
+            message = 'Success'
+    else:
+        form = forms.RobotsForm(instance=robots)
+    return {'services': api.register.get_list(), 'form':form}
 
 @is_staff
 @render_to('spicy.core.admin/admin/main_settings.html', use_admin=True)

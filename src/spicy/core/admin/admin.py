@@ -44,7 +44,7 @@ def dashboard(request):
 @render_to('spicy.core.admin/admin/robots_txt.html', use_admin=True)
 def robots_txt(request):
     robots, _created = SettingsModel.on_site.get_or_create(pk__isnull=False)
-    site = Site.objects.get(pk__isnull=False)
+    site = Site.objects.get_current()
     message = ''
     if request.method == 'POST':
         form = forms.RobotsForm(request.POST, instance=robots)

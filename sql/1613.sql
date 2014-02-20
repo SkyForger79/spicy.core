@@ -1,5 +1,6 @@
 begin;
 set constraints all immediate;
+DELETE FROM spicy_settings WHERE site_id = 1;
 alter table spicy_settings add column robots text;
 insert into spicy_settings (license_pub_key,sentry_key,redmine_key,redmine_project,enable_debug_toolbar,debug_mode,admins_emails,managers_emails,site_id,robots) values ('','','','','f','f','','',1,(select robots  from seo_chunks where site_id = 1));
 insert into spicy_settings (license_pub_key,sentry_key,redmine_key,redmine_project,enable_debug_toolbar,debug_mode,admins_emails,managers_emails,site_id,robots) values ('','','','','f','f','','',3,(select robots from seo_chunks where site_id = 3));

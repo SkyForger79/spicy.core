@@ -116,7 +116,8 @@ def formfield(
 
     try:
         consumer_type = (
-            getattr(form, '__class__') or form.form).Meta.model.__name__.lower()
+            getattr(form, '__class__') or form.form
+        ).Meta.model.__name__.lower()
     except AttributeError:
         consumer_type = None
 

@@ -28,7 +28,7 @@ def find_templates(
                     [(
                         os.path.join(path, template) if abs_path else (
                             os.path.join(
-                                base_dir, template) if rel_path else path),
+                                base_dir, template) if rel_path else template),
                         from_dict.get(
                             template, template) if from_dict else template)
                      for template in os.listdir(path)])

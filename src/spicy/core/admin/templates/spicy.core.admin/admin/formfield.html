@@ -89,6 +89,9 @@ $(function(){
 <li class="input {{ classes }}"{% if id %}id="{{ id }}"{% endif %}>
   {{ label }}
       <textarea name="{{ field.html_name }}" placeholder="{{ title }}" rows="6" id="id_{{ field.html_name }}">{{ field.value|default_if_none:'' }}</textarea>
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
 </li>  
 
 {% elif type == 'li-date' %}

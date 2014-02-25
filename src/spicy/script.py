@@ -332,26 +332,17 @@ class Application(object):
 
     @with_settings(sudo_user='root')
     def update_nginx(self):
-        if exists(self.nginx_conf):
-            sudo('rm {0}'.format(self.nginx_conf))
-
         sudo(
-            'ln -s {0} {1}'.format(
+            'ln -sf {0} {1}'.format(
                 os.path.join(self.remote_path, 'nginx.conf'),
                 self.nginx_conf))
         print_ok('[done] Create Nginx vhost for app: {0}'.format(self.name))
 
     @with_settings(sudo_user='root')
     def update_uwsgi(self):
-        if exists(self.uwsgi_conf):
-            sudo('rm {0}'.format(self.uwsgi_conf))
-
-        if exists(self.uwsgi_initd):
-            sudo('rm {0}'.format(self.uwsgi_initd))
-
-        sudo('ln -s {0} {1}'.format(
+        sudo('ln -sf {0} {1}'.format(
             os.path.join(self.remote_path, 'uwsgi.conf'), self.uwsgi_conf))
-        sudo('ln -s {0} {1}'.format(
+        sudo('ln -sf {0} {1}'.format(
             '/etc/init.d/uwsgi', self.uwsgi_initd))
         print_ok('[done] Create uwsgi configs for app: {0}'.format(self.name))
 

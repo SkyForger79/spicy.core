@@ -10,18 +10,22 @@ def find_templates(
         abs_path = not name_tuples
     templates = []
 
+    from spicy.core.siteskin.utils import get_siteskin_settings
+    paths = [
+        os.path.join(get_siteskin_settings().theme, 'templates', base_dir)]
+
     # load app tempaltes
-    path = [
+    paths.extend([
         os.path.join(
             os.path.dirname(app.__file__), 'templates',
             base_dir)
-        for app in app_modules_register.values()]
+        for app in app_modules_register.values()])
 
-    path.extend([
+    paths.extend([
         os.path.join(template_dir, base_dir)
         for template_dir in settings.TEMPLATE_DIRS])
 
-    for path in path:
+    for path in paths:
         try:
             if name_tuples:
                 templates.extend(

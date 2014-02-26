@@ -8,18 +8,12 @@ from spicy.utils.models import get_custom_model_class
 from . import defaults
 
 
-@transaction.commit_manually
+@transaction.commit_on_success
 def get_siteskin_settings():
     # TODO make cache wrapper
-    try:
-        SiteskinModel = get_custom_model_class(defaults.SITESKIN_SETTINGS_MODEL)
-        instance, _ = SiteskinModel.objects.get_or_create(site_id=settings.SITE_ID)
-    except:
-        transaction.rollback()
-        return None
-    else:
-        transaction.commit()
-        return instance
+    SiteskinModel = get_custom_model_class(defaults.SITESKIN_SETTINGS_MODEL)
+    instance, _ = SiteskinModel.objects.get_or_create(site_id=settings.SITE_ID)
+    return instance
 
 
 def get_themes_from_path(path, version=None):

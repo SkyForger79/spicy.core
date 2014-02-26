@@ -11,8 +11,13 @@ def find_templates(
     templates = []
 
     from spicy.core.siteskin.utils import get_siteskin_settings
-    paths = [
-        os.path.join(get_siteskin_settings().theme, 'templates', base_dir)]
+    try:
+        paths = [
+           os.path.join(
+               get_siteskin_settings().theme, 'templates', base_dir)]
+    except:
+        # No themes configured.
+        paths = []
 
     # load app tempaltes
     paths.extend([

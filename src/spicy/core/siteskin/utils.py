@@ -2,17 +2,24 @@ import os
 import urllib
 from django import http
 from django.conf import settings
+from django.db import transaction
 from django.test.client import Client, FakePayload
 from spicy.utils.models import get_custom_model_class
 from . import defaults
 
 
+@transaction.commit_manually
 def get_siteskin_settings():
     # TODO make cache wrapper
-    SiteskinModel = get_custom_model_class(defaults.SITESKIN_SETTINGS_MODEL)
-    instance, _ = SiteskinModel.objects.get_or_create(site_id=settings.SITE_ID)
-
-    return instance
+    try:
+        SiteskinModel = get_custom_model_class(defaults.SITESKIN_SETTINGS_MODEL)
+        instance, _ = SiteskinModel.objects.get_or_create(site_id=settings.SITE_ID)
+    except:
+        transaction.rollback()
+        return None
+    else:
+        transaction.commit()
+        return instance
 
 
 def get_themes_from_path(path, version=None):

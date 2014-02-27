@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.template import loader, Template
+from django.contrib.sites.managers import CurrentSiteManager
 
 
 class AbstractBasePage(models.Model):
@@ -16,6 +17,9 @@ class AbstractBasePage(models.Model):
         _('template name'), max_length=255, blank=True, default='')
     is_custom = models.BooleanField(_('Is custom'))
     sites = models.ManyToManyField('sites.Site')
+
+    on_site = CurrentSiteManager(field_name='sites')
+    objects = models.Manager()
 
     #@cached_property
     def get_template(self):

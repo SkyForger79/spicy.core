@@ -11,9 +11,16 @@ from spicy.core.profile.decorators import is_staff
 from .conf import AdminAppBase, AdminLink, Perms
 from . import defaults, forms, utils
 from django.contrib.sites.models import Site
+from spicy.presscenter import defaults as d_defaults
+from spicy.core.profile import defaults as p_defaults
+from spicy.core.simplepages import defaults as sp_defaults
+
+
 
 SettingsModel = get_custom_model_class(defaults.ADMIN_SETTINGS_MODEL)
-
+DocumentModel = get_custom_model_class(d_defaults.CUSTOM_DOCUMENT_MODEL)
+Profile = get_custom_model_class(p_defaults.CUSTOM_USER_MODEL)
+SimplePage = get_custom_model_class(sp_defaults.SIMPLE_PAGE_MODEL)
 
 class AdminApp(AdminAppBase):
     name = 'spicyadmin'
@@ -38,7 +45,12 @@ class AdminApp(AdminAppBase):
 @is_staff
 @render_to('spicy.core.admin/admin/dashboard.html', use_admin=True)
 def dashboard(request):
-    return {'services': api.register.get_list()}
+    sites = Site.objects.all()
+    articles = DocumentModel.on_site.select_related().order_by('-id','-pub_date')
+    profiles = Profile.on_site.select_related().order_by('-id','-date_joined')
+    simple_pages = SimplePage.on_site.select_related().order_by('-id')
+    return {'services': api.register.get_list(),'sites': sites, 'articles': articles,
+        'profiles': profiles, 'simple_pages': simple_pages}
 
 @is_staff
 @render_to('spicy.core.admin/admin/robots_txt.html', use_admin=True)

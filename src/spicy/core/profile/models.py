@@ -17,6 +17,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.management.color import color_style
 from spicy.utils.printing import print_error
 from spicy.core.service.models import ProviderModel
+from django.contrib.sites.managers import CurrentSiteManager
 from uuid import uuid4
 from . import cache, defaults
 
@@ -147,6 +148,7 @@ class AbstractProfile(User):
     sites = models.ManyToManyField(Site, blank=True)
 
     objects = ProfileManager()
+    on_site = CurrentSiteManager(field_name='sites')
 
     class Meta:
         abstract = True

@@ -263,9 +263,9 @@ $(function(){
 <script>
 $(document).ready(function(){
   $('.item tbody tr').formset({
-    addText: '<div class="padded"><button class="btn btn-green"><i class="icon-plus-sign"></i> Добавить</button></div>',
+    addText: '{% if not form.no_add %}<div class="padded"><button class="btn btn-green"><i class="icon-plus-sign"></i> Добавить</button></div>{% endif %}',
 
-    deleteText: '{% if formfield.can_delete %}<button class="btn btn-red"><i class="icon-trash"></i></button>{% endif %}',
+    deleteText: '{% if form.can_delete %}<button class="btn btn-red"><i class="icon-trash"></i></button>{% endif %}',
     prefix: '{{ form.prefix }}'
   });
 });

@@ -33,8 +33,10 @@ def find_simplepages():
         content = file(filepath).read()
         template_name = os.path.join(base_dir, original_filename)
         page, is_created = SimplePage.objects.get_or_create(
-            title=basename, url=url,
-            defaults={'content': content, 'template_name': template_name})
+            url=url,
+            defaults={
+                'content': content, 'template_name': template_name,
+                'title': basename})
         if is_created:
             page.sites = [site]
             found.append(page)

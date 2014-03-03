@@ -26,11 +26,12 @@
                     &nbsp;
                   </td>
                   <td>{% nav_order_url nav 'url' _('URL') "icon-sort" "icon-sort-down" "icon-sort-up" %}</td>
-                  <td>{% nav_order_url nav 'title' _('title') "icon-sort" "icon-sort-down" "icon-sort-up" %}</td>
-                  <td>{% nav_order_url nav 'template_name' _('template name') "icon-sort" "icon-sort-down" "icon-sort-up" %}</td>
+                  <td>{% nav_order_url nav 'title' _('Title') "icon-sort" "icon-sort-down" "icon-sort-up" %}</td>
+                  <td>{% nav_order_url nav 'template_name' _('Template name') "icon-sort" "icon-sort-down" "icon-sort-up" %}</td>
                   <td>{% trans 'Sites' %}</td>
-                  <td>{% nav_order_url nav 'enable_comments' _('enable comments') "icon-sort" "icon-sort-down" "icon-sort-up" %}</td>
-                  <td>{% nav_order_url nav 'registration_required' _('registration required') "icon-sort" "icon-sort-down" "icon-sort-up" %}</td>
+                  <td>{% nav_order_url nav 'is_custom' _('Is custom') "icon-sort" "icon-sort-down" "icon-sort-up" %}</td>
+                  <td>{% nav_order_url nav 'enable_comments' _('Enable comments') "icon-sort" "icon-sort-down" "icon-sort-up" %}</td>
+                  <td>{% nav_order_url nav 'registration_required' _('Registration required') "icon-sort" "icon-sort-down" "icon-sort-up" %}</td>
                 </tr>
               </thead>
 
@@ -54,6 +55,9 @@
                     <a href="http://{{ site.domain }}">{{ site.name }}</a>
                     {% if not forloop.last %}, {% endif %}{% empty %}{% trans "No site" %}{% endfor %}
                   </td>
+                  <td style="text-align: center;">
+                    <i class="{{ simplepage.is_custom|yesno:'green icon-ok,icon-remove red' }}"></i>
+		  </td>
                   <td style="text-align: center;">
                     <i class="{{ simplepage.enable_comments|yesno:'green icon-ok,icon-remove red' }}"></i>
 		  </td>

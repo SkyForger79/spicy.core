@@ -5,7 +5,11 @@
     <ul class="padded separate-sections">
       {% formfield "" form "title" "li-text" %}
       {% formfield "" form "url" "li-text" %}
+      {% if form.instance.is_custom %}
+      {% formfield "" form "template_name" "li-hidden" %}
+      {% else %}
       {% formfield "" form "template_name" "li-text" %}
+      {% endif %}
       <button type="button" class="btn btn-blue custom">{% if form.instance.is_custom %}{% trans "Disable customization" %}{% else %}{% trans "Enable customization" %}{% endif %}</button>
     </ul>
   </div>

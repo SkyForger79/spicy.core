@@ -1,19 +1,18 @@
 from datetime import datetime, timedelta
 from django.conf import settings
 from django.contrib import admin
-from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
-from spicy.core.admin import defaults as admin_defaults
-from spicy.core.admin.conf import AdminAppBase, AdminLink, Perms
+from spicy.core.admin import conf, defaults as admin_defaults
 from spicy.core.service import api
 from spicy.core.siteskin.decorators import render_to, ajax_request
 from spicy.core.siteskin.decorators import APIResponse, APIResponseFail
 from spicy import utils
-from spicy.utils.permissions import *
+from spicy.utils.permissions import perm, change_perm, add_perm, delete_perm
 from . import defaults, forms
 from .decorators import is_staff
 from .models import BlacklistedIP
@@ -24,21 +23,21 @@ Profile = utils.get_custom_model_class(defaults.CUSTOM_USER_MODEL)
 admin.site.register(Profile)
 
 
-class AdminApp(AdminAppBase):
+class AdminApp(conf.AdminAppBase):
     name = 'profile'
     label = _('Profile')
     order_number = 10
 
     menu_items = (
-        AdminLink('profile:admin:create', _('Create profile')),
-        AdminLink('profile:admin:index', _('All profiles')),
-        AdminLink('profile:admin:create-group', _('Create group')),
-        AdminLink('profile:admin:groups', _('Groups & Permissions')),
+        conf.AdminLink('profile:admin:create', _('Create profile')),
+        conf.AdminLink('profile:admin:index', _('All profiles')),
+        conf.AdminLink('profile:admin:create-group', _('Create group')),
+        conf.AdminLink('profile:admin:groups', _('Groups & Permissions')),
     )
 
-    create = AdminLink('profile:admin:create', _('Create profile'),)
+    create = conf.AdminLink('profile:admin:create', _('Create profile'),)
 
-    perms = Perms(view=[],  write=[], manage=[])
+    perms = conf.Perms(view=[],  write=[], manage=[])
 
     @render_to('menu.html', use_admin=True)
     def menu(self, request, *args, **kwargs):
@@ -48,11 +47,19 @@ class AdminApp(AdminAppBase):
     def dashboard(self, request, *args, **kwargs):
         return dict(app=self, *args, **kwargs)
 
+    dashboard_links = [
+        conf.AdminLink(
+            'presscenter:admin:create', _('Create user'),
+            Profile.on_site.count(), 'icon-group')]
+    dashboard_lists = [
+        conf.DashboardList(
+            _('New users'), 'presscenter:admin:edit',
+            Profile.on_site.order_by('-id'), 'date_joined')]
+
 
 @is_staff(required_perms=change_perm(defaults.CUSTOM_USER_MODEL))
 @ajax_request
 def passwd(request, profile_id):
-    message = ''
     profile = get_object_or_404(Profile, id=profile_id)
     if request.method == 'POST':
         form = forms.AdminPasswdForm(profile, request.POST)

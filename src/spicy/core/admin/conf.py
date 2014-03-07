@@ -12,9 +12,11 @@ class AdminLink(object):
     url_ns = None
     label = None
 
-    def __init__(self, url_ns, label):
+    def __init__(self, url_ns, label, counter=None, icon_class='icon-edit'):
         self.url_ns = url_ns
         self.label = label
+        self.counter = counter
+        self.icon_class = icon_class
 
     @property
     def url(self):
@@ -26,6 +28,22 @@ class AdminLink(object):
         elif isinstance(self.url_ns, basestring):
             return reverse(self.url_ns, args=[])
         raise TypeError
+
+
+class DashboardList(object):
+    def __init__(self, title, edit_url, queryset, date_field=None):
+        self.title = title
+        self.edit_url = edit_url
+        self.queryset = queryset
+        self.date_field = date_field
+
+    def get_data(self):
+        for obj in self.queryset[:defaults.DASHBOARD_LISTS_LENGTH]:
+            yield {
+                'object': obj,
+                'date': getattr(
+                    obj, self.date_field) if self.date_field else None,
+                'edit_url': reverse(self.edit_url, args=[obj.pk])}
 
 
 class Perms(object):
@@ -64,17 +82,19 @@ class AdminAppBase(object):
 
     create = None
     perms = Perms(view=[], write=[], manage=[])
+    dashboard_links = None
+    dashboard_lists = None
 
     def __init__(self):
         pass
 
-    def edit_url(self, args=[0,]):
+    def edit_url(self, args=[0]):
         try:
             return reverse(self.name + ':admin:edit', args=args)
         except NoReverseMatch:
             if settings.DEBUG:
-                print_info('AppAdmin [{0}] has no admin:edit url'.format(self.name))
-        
+                print_info(
+                    'AppAdmin [{0}] has no admin:edit url'.format(self.name))
 
     # uncomment only in the working admin app module
     #@render_to('menu.html', use_admin=True)
@@ -93,7 +113,7 @@ def _find_modules(admin_apps=True, spicy_app=False):
         app_import_name = app_name
         
         #if spicy_app:
-        #    if not 'spicy.' in app_name:                
+        #    if not 'spicy.' in app_name:
         #        continue
 
         if admin_apps:

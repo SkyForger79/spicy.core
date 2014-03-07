@@ -5,8 +5,7 @@ from django.db.models.signals import post_save, post_delete
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
-from spicy.core.admin import defaults as admin_defaults
-from spicy.core.admin.conf import AdminAppBase, AdminLink, Perms
+from spicy.core.admin import conf, defaults as admin_defaults
 from spicy.core.profile.decorators import is_staff
 from spicy.core.siteskin.decorators import render_to
 from spicy import utils
@@ -25,20 +24,21 @@ post_save.connect(
     dispatch_uid='post-save-simple-page')
 
 
-class AdminApp(AdminAppBase):
+class AdminApp(conf.AdminAppBase):
     name = 'simplepages'
     label = _('Simple Pages')
     order_number = 90
 
     menu_items = (
-        AdminLink('simplepages:admin:create', _('Create simple page')),
-        AdminLink('simplepages:admin:index', _('All simple pages')),
-        AdminLink('simplepages:admin:find', _('Update from templates')),
+        conf.AdminLink('simplepages:admin:create', _('Create simple page')),
+        conf.AdminLink('simplepages:admin:index', _('All simple pages')),
+        conf.AdminLink('simplepages:admin:find', _('Update from templates')),
     )
 
-    create = AdminLink('simplepages:admin:create', _('Create simple page'),)
+    create = conf.AdminLink(
+        'simplepages:admin:create', _('Create simple page'))
 
-    perms = Perms(view=[],  write=[], manage=[])
+    perms = conf.Perms(view=[],  write=[], manage=[])
 
     @render_to('menu.html', use_admin=True)
     def menu(self, request, *args, **kwargs):
@@ -47,6 +47,15 @@ class AdminApp(AdminAppBase):
     @render_to('dashboard.html', use_admin=True)
     def dashboard(self, request, *args, **kwargs):
         return dict(app=self, *args, **kwargs)
+
+    dashboard_links = [
+        conf.AdminLink(
+            'simplepages:admin:create', _('Create simple page'),
+            SimplePage.on_site.count())]
+    dashboard_lists = [
+        conf.DashboardList(
+            _('New simple pages'), 'presscenter:admin:edit',
+            SimplePage.on_site.order_by('-id'))]
 
 
 @is_staff(required_perms='simplepages')

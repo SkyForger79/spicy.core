@@ -1,20 +1,13 @@
-from django.conf import settings
-from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
-from django.utils.translation import ugettext as _
-
-from spicy.core.service import api
-from spicy.core.siteskin.decorators import render_to, ajax_request
-from spicy.utils.models import get_custom_model_class
-from spicy.core.profile.decorators import is_staff
-
-from .conf import AdminAppBase, AdminLink, Perms
-from . import defaults, forms, utils
 from django.contrib.sites.models import Site
-from spicy.presscenter import defaults as d_defaults
+from django.utils.translation import ugettext as _
 from spicy.core.profile import defaults as p_defaults
+from spicy.core.profile.decorators import is_staff
+from spicy.core.service import api
 from spicy.core.simplepages import defaults as sp_defaults
-
+from spicy.core.siteskin.decorators import render_to
+from spicy.presscenter import defaults as d_defaults
+from spicy.utils.models import get_custom_model_class
+from . import conf, defaults, forms, utils
 
 
 SettingsModel = get_custom_model_class(defaults.ADMIN_SETTINGS_MODEL)
@@ -22,16 +15,17 @@ DocumentModel = get_custom_model_class(d_defaults.CUSTOM_DOCUMENT_MODEL)
 Profile = get_custom_model_class(p_defaults.CUSTOM_USER_MODEL)
 SimplePage = get_custom_model_class(sp_defaults.SIMPLE_PAGE_MODEL)
 
-class AdminApp(AdminAppBase):
+
+class AdminApp(conf.AdminAppBase):
     name = 'spicyadmin'
     label = _('Admin')
     order_number = 10
 
     menu_items = (
-        AdminLink('spicyadmin:admin:index', _('Dashboard')),
-        AdminLink('spicyadmin:admin:settings', _('Settings')),
+        conf.AdminLink('spicyadmin:admin:index', _('Dashboard')),
+        conf.AdminLink('spicyadmin:admin:settings', _('Settings')),
     )
-    perms = Perms(view=[],  write=[], manage=[])
+    perms = conf.Perms(view=[],  write=[], manage=[])
 
     @render_to('menu.html', use_admin=True)
     def menu(self, request, *args, **kwargs):
@@ -46,34 +40,43 @@ class AdminApp(AdminAppBase):
 @render_to('spicy.core.admin/admin/dashboard.html', use_admin=True)
 def dashboard(request):
     sites = Site.objects.all()
-    articles = DocumentModel.on_site.select_related().order_by('-id','-pub_date')
-    profiles = Profile.on_site.select_related().order_by('-id','-date_joined')
-    simple_pages = SimplePage.on_site.select_related().order_by('-id')
-    return {'services': api.register.get_list(),'sites': sites, 'articles': articles,
-        'profiles': profiles, 'simple_pages': simple_pages}
+    dashboard_links = []
+    dashboard_lists = []
+    for admin_app in conf.admin_apps_register.values():
+        if admin_app.dashboard_links:
+            dashboard_links.extend(admin_app.dashboard_links)
+        if admin_app.dashboard_lists:
+            dashboard_lists.extend(admin_app.dashboard_lists)
+    #profiles = Profile.on_site.select_related().order_by(
+    #    '-id','-date_joined')
+    #simple_pages = SimplePage.on_site.select_related().order_by('-id')
+    return {
+        'dashboard_links': dashboard_links, 'dashboard_lists': dashboard_lists,
+        'sites': sites}
+
 
 @is_staff
 @render_to('spicy.core.admin/admin/robots_txt.html', use_admin=True)
 def robots_txt(request):
     robots, _created = SettingsModel.on_site.get_or_create(pk__isnull=False)
     site = Site.objects.get_current()
-    message = ''
     if request.method == 'POST':
         form = forms.RobotsForm(request.POST, instance=robots)
         sform = forms.SiteForm(request.POST, instance=site)
         if form.is_valid() and sform.is_valid():
             form.save()
             sform.save()
-            message = 'Success'
     else:
         form = forms.RobotsForm(instance=robots)
         sform = forms.SiteForm(instance=site)
-    return {'services': api.register.get_list(), 'form': form, 'sform': sform}
+    return {'form': form, 'sform': sform}
+
 
 @is_staff
 @render_to('spicy.core.admin/admin/main_settings.html', use_admin=True)
 def main_settings(request):
     return {'services': api.register.get_list()}
+
 
 @is_staff
 @render_to('spicy.core.admin/admin/sitemap.html', use_admin=True)
@@ -91,7 +94,7 @@ def managers(request):
     messages = []
     instance = utils.get_admin_settings()
     
-    if request.method == 'POST':        
+    if request.method == 'POST':
         form = forms.SettingsForm(request.POST, instance=instance)
         if form.is_valid():
             form.save()
@@ -100,10 +103,7 @@ def managers(request):
     else:
         form = forms.SettingsForm(instance=instance)
 
-    return {
-        'form': form,
-        'messages': messages,
-    }
+    return {'form': form, 'messages': messages}
 
 
 @is_staff(required_perms=('admin.edit_settings',))
@@ -115,8 +115,8 @@ def application(request):
     """
     messages = []
     instance = utils.get_admin_settings()
-    
-    if request.method == 'POST':        
+
+    if request.method == 'POST':
         form = forms.ApplicationForm(request.POST, instance=instance)
         if form.is_valid():
             form.save()
@@ -126,11 +126,7 @@ def application(request):
         form = forms.ApplicationForm(instance=instance)
 
     apps = []
-    return {
-        'form': form,
-        'apps': apps,
-        'messages': messages,
-    }
+    return {'form': form, 'apps': apps, 'messages': messages}
 
 
 @is_staff(required_perms=('admin.edit_settings',))
@@ -143,7 +139,7 @@ def developer(request):
     messages = []
     instance = utils.get_admin_settings()
     
-    if request.method == 'POST':        
+    if request.method == 'POST':
         form = forms.DeveloperForm(request.POST, instance=instance)
         if form.is_valid():
             form.save()
@@ -152,8 +148,4 @@ def developer(request):
     else:
         form = forms.DeveloperForm(instance=instance)
 
-    return {
-        'form': form,
-        'messages': messages,
-    }
-
+    return {'form': form, 'messages': messages}

@@ -51,10 +51,10 @@ class AdminApp(conf.AdminAppBase):
     dashboard_links = [
         conf.AdminLink(
             'simplepages:admin:create', _('Create simple page'),
-            SimplePage.on_site.count())]
+            SimplePage.on_site.count(), 'icon-sitemap')]
     dashboard_lists = [
         conf.DashboardList(
-            _('New simple pages'), 'presscenter:admin:edit',
+            _('New simple pages'), 'simplepages:admin:edit',
             SimplePage.on_site.order_by('-id'))]
 
 

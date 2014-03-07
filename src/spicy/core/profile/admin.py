@@ -49,11 +49,11 @@ class AdminApp(conf.AdminAppBase):
 
     dashboard_links = [
         conf.AdminLink(
-            'presscenter:admin:create', _('Create user'),
+            'profile:admin:create', _('Create user'),
             Profile.on_site.count(), 'icon-group')]
     dashboard_lists = [
         conf.DashboardList(
-            _('New users'), 'presscenter:admin:edit',
+            _('New users'), 'profile:admin:edit',
             Profile.on_site.order_by('-id'), 'date_joined')]
 
 

@@ -1,13 +1,14 @@
 from django import forms
+from django.utils.translation import ugettext_lazy as _
 from spicy import utils
-from . import defaults
 from spicy.core.admin.conf import admin_apps_register
+from . import defaults
 
 
 class SimplePageForm(forms.ModelForm):
     def save(self, *args, **kwargs):
         seo = super(SimplePageForm, self).save(*args, **kwargs)
-        if 'spicy.seo' in admin_apps_register.keys():            
+        if 'spicy.seo' in admin_apps_register.keys():
             if not seo.og_title:
                 seo.og_title = seo.title
             if not seo.seo_title:
@@ -21,6 +22,13 @@ class SimplePageForm(forms.ModelForm):
         value = self.cleaned_data['url']
         if value and not value.startswith('/'):
             value = '/' + value
+        return value
+
+    def clean_template_name(self):
+        value = self.cleaned_data['template_name']
+        if not self.cleaned_data['is_custom'] and not value:
+            raise forms.ValidationError(
+                _("Can't save a page without template"))
         return value
 
     class Meta:

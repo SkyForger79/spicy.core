@@ -7,3 +7,11 @@ float: left;
 margin-bottom: 0px;
 margin-left: 0px;
 }
+
+.modal-backdrop {
+    z-index: 10000;
+ }
+
+.modal {
+    z-index: 10050;
+}

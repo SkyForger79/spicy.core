@@ -1,33 +1,28 @@
-from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
-from django.db import models
-
-from django.contrib.sites.models import Site
-from spicy.core.siteskin.utils import get_siteskin_themes
-from spicy.core.siteskin.defaults import DEFAULT_THEME
 from django.contrib.sites.managers import CurrentSiteManager
-
-from . import defaults, conf
+from django.contrib.sites.models import Site
+from django.db import models
+from django.utils.translation import ugettext_lazy as _
+from . import conf
 
 
 class AdminApp(models.Model):
-    """                                                                                                                                                                                                  
-    Register all Spicy apps from INSTALLED_APPS and                                                                                                                                                            
+    """
+    Register all Spicy apps from INSTALLED_APPS and
     """
     order_lv = models.PositiveSmallIntegerField(_('Order lv.'), default=100)
-
     name = models.CharField(_('Store key or URL'), max_length=255)
     description = models.TextField(_('Admins emails'), blank=True)
-    homepage =  models.CharField(_('Homepage'), max_length=255)
+    homepage = models.CharField(_('Homepage'), max_length=255)
     version = models.CharField(_('Version'), max_length=30)
-
-    enable_dashboard = models.BooleanField(_('Enable dashboard'), default=False)
-    enable_quick_add = models.BooleanField(_('Enable quick create'), default=False)
-
-    # get `store` param to check new updates throught marketplace.spicycms.com API  
-    license_pub_key = models.CharField(_('User license public key'), max_length=255)    
-
-    download_url =  models.CharField(_('Download URL'), max_length=255)
+    enable_dashboard = models.BooleanField(
+        _('Enable dashboard'), default=False)
+    enable_quick_add = models.BooleanField(
+        _('Enable quick create'), default=False)
+    # get `store` param to check new updates throught marketplace.spicycms.com
+    # API
+    license_pub_key = models.CharField(
+        _('User license public key'), max_length=255)
+    download_url = models.CharField(_('Download URL'), max_length=255)
     last_update = models.DateTimeField(_('Last Update'), auto_now=True)
 
     site = models.ForeignKey(Site)
@@ -68,25 +63,28 @@ class Settings(models.Model):
             "Sitemap: http://" + site.domain + "/sitemap.xml")
 
     robots = models.TextField(
-        max_length=3000, blank=True,
-        verbose_name=_('robots.txt'),
+        max_length=3000, blank=True, verbose_name=_('robots.txt'),
         default=lambda: Settings.get_robots_default())
-
-    license_pub_key = models.CharField(_('User license public key'), max_length=255, blank=True)
-    sentry_key = models.CharField(_('Sentry key'), max_length=255, blank=True)    
-
-    redmine_key = models.CharField(_('Redmine key'), max_length=255, blank=True)
-    redmine_project = models.CharField(_('Redmine project URL'), max_length=255, blank=True)
+    license_pub_key = models.CharField(
+        _('User license public key'), max_length=255, blank=True)
+    sentry_key = models.CharField(
+        _('Sentry key'), max_length=255, blank=True)
+    redmine_key = models.CharField(
+        _('Redmine key'), max_length=255, blank=True)
+    redmine_project = models.CharField(
+        _('Redmine project URL'), max_length=255, blank=True)
+    ga_key = models.CharField(
+        _('Google Analytics API key'), max_length=15, blank=True)
 
     # developer mode
-    # get developer settings from main server using API call and licence_pub_key
+    # get developer settings from main server using API call and
+    # licence_pub_key
     # ftp access data
     # manager_link
-    # 
 
-    enable_debug_toolbar = models.BooleanField(_('Enable DEBUG toolbar'), default=False)
+    enable_debug_toolbar = models.BooleanField(
+        _('Enable DEBUG toolbar'), default=False)
     debug_mode = models.BooleanField(_('DEBUG mode'), default=False)
-
     admins_emails = models.TextField(_('Admins emails'), blank=True)
     managers_emails = models.TextField(_('Managers emails'), blank=True)
 
@@ -95,7 +93,7 @@ class Settings(models.Model):
     
     site = models.ForeignKey(
         Site, verbose_name=_('Site'), default=Site.objects.get_current,
-        unique = True)
+        unique=True)
 
     objects = models.Manager()
     on_site = CurrentSiteManager()

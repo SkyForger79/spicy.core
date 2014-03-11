@@ -98,6 +98,9 @@ class Settings(models.Model):
     objects = models.Manager()
     on_site = CurrentSiteManager()
 
+    def __unicode__(self):
+        return unicode(_(u'Settings for {0}')).format(self.site.name)
+
     class Meta:
         permissions = (
             ('edit_settings', 'Can edit site settings'),

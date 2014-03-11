@@ -75,7 +75,16 @@ def robots_txt(request):
 @is_staff
 @render_to('spicy.core.admin/admin/main_settings.html', use_admin=True)
 def main_settings(request):
-    return {'services': api.register.get_list()}
+    spicy_settings, _created = SettingsModel.on_site.get_or_create(
+        pk__isnull=False)
+    if request.method == 'POST':
+        form = forms.MetricsForm(request.POST, instance=spicy_settings)
+        if form.is_valid():
+            spicy_settings = form.save()
+            form = forms.MetricsForm(instance=spicy_settings)
+    else:
+        form = forms.MetricsForm(instance=spicy_settings)
+    return {'form': form}
 
 
 @is_staff

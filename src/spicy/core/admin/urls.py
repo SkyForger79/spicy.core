@@ -4,7 +4,7 @@ from django.conf.urls import patterns, url, include
 admin_urls = patterns(
     'spicy.core.admin.admin',
     url(r'^$', 'dashboard', name='index'),
-    url(r'^settings/settings/$', 'main_settings', name='settings'),
+    url(r'^settings/main/$', 'main_settings', name='settings'),
     url(r'^settings/robots/$', 'robots_txt', name='robots'),
     url(r'^settings/sitemap/$', 'sitemap', name='sitemap'),
     url(r'^settings/managers/$', 'managers', name='managers'),

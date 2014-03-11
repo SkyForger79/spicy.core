@@ -20,19 +20,21 @@
 		enctype="multipart/form-data">{% csrf_token %}
 
             <div class="row-fluid">
-              <ul class="padded separate-sections">
-
+              <div class="span12">
+		<ul class="padded separate-sections">
+{% comment %}
 		Инструкция и формы для сохранения данных для счетчиков с рекомендациями в какой форме лучше сохранять Google,Yandex, Liveinternet etc...
 		Тут же будет краткие инструкции по счетчикам и ссылки на форум SpicyCMS для обсуждения этого вопроса с другими вебмастерами.
 
 		Кроме этого тут же краткая инструкции с ссылками и формы для сохранния Meta данных = facebook, addthis и подобных сервисов 
 		(скорее всего мы будем делать на будущее плагины с вставками кода в head/body чтобы исключить кривые руки. Тогда такие плагины пользователь сможет устанавливать в пару кликов из раздела Applications, там же искать необходимые ему плагины и покупать или заказывать адаптированные(совместимые) с данными плагинами шаблоны сайтов.)
-
+{% endcomment %}
 		
+              {% formfield "" form "ga_key" "li-text" %}
 		
-		{{ form.as_ul }}
-	      </ul>           
-            </div>
+		</ul>           
+              </div>
+	    </div>
             
 	    <div class="form-actions">	      
 	      <div class="pull-right">

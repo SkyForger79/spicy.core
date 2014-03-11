@@ -1,6 +1,6 @@
 {% load url from future %}
 {% if request.user.is_superuser %}
-<li class="dark-nav{% if "/admin/settings" in request.path %} active{% endif %}">
+<li class="dark-nav{% if "/admin/settings/" in request.path %} active{% endif %}">
   <span class="glow"></span>
   <a class="accordion-toggle collapsed" data-toggle="collapse" href="#admin">
     <i class="icon-wrench icon-2x"></i>
@@ -18,7 +18,7 @@
 
     <li>
       <a href="{% url 'spicyadmin:admin:robots' %}">
-        <i class="icon-asterisk"></i> {% trans "robots.txt" %}
+        <i class="icon-asterisk"></i> {% trans "Setup robots.txt" %}
       </a>
     </li>
 
@@ -39,20 +39,13 @@
         <i class="icon-cloud-download"></i> {% trans "Applications" %}
       </a>
     </li>
-
+{% comment %}
     <li>
       <a href="{% url 'spicyadmin:admin:developer' %}">
         <i class="icon-user-md"></i> {% trans "Developer tools" %}
       </a>
     </li>
-
-    {# TODO another component with custom HTML blocks #}
-    <li>
-      <a href="{% url 'spicyadmin:admin:settings' %}">
-        <i class="icon-list-alt"></i> {% trans "???? Simple HTML blocks ?? (another applications instead this)" %}
-      </a>
-    </li>
-
+{% endcomment %}
   </ul>
 </li>
 {% endif %}

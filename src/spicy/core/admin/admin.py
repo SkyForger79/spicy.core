@@ -47,12 +47,11 @@ def dashboard(request):
             dashboard_links.extend(admin_app.dashboard_links)
         if admin_app.dashboard_lists:
             dashboard_lists.extend(admin_app.dashboard_lists)
-    #profiles = Profile.on_site.select_related().order_by(
-    #    '-id','-date_joined')
-    #simple_pages = SimplePage.on_site.select_related().order_by('-id')
+    spicy_settings, _created = SettingsModel.on_site.get_or_create(
+        pk__isnull=False)
     return {
         'dashboard_links': dashboard_links, 'dashboard_lists': dashboard_lists,
-        'sites': sites}
+        'sites': sites, 'spicy_settings': spicy_settings}
 
 
 @is_staff

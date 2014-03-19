@@ -15,3 +15,7 @@ margin-left: 0px;
 .modal {
     z-index: 10050;
 }
+
+.autocomplete-light-widget, .autocomplete-light-widget input, .autocomplete-light-widget input:focus {
+    width: 100% !important;
+}

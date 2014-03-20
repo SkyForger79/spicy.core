@@ -78,8 +78,10 @@ $(function(){
 
 <li class="input">
   {{ label }} 
-  <input type="text" style="width:70%;margin:0 10px 0 0;" name="{{ field.html_name }}" placeholder="{{ title }}" value="{{ field.value|default_if_none:'' }}" id="id_{{ field.html_name }}"/>
+  <input type="text" name="{{ field.html_name }}" placeholder="{{ title }}" value="{{ field.value|default_if_none:'' }}" id="id_{{ field.html_name }}"/>
+  {% comment %}
   <button type="button" class="btn btn btn-warning" id="auto" />{% trans 'turn off AutoComplete' %}</button>
+  {% endcomment %}
   {% if preview_link %}<a href="{{ form.instance.get_absolute_url }}" target="blank"><i class="icon-eye-open icon-2x"></i></a>{% endif %}
   {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
   {% if field.help_text %}

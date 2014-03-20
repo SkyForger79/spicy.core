@@ -37,11 +37,9 @@
 {% if from_field %}
 <script type="text/javascript">
 $(function(){
- console.log("slug");
  var t_slug = false;
  if(!$('#id_{{ field.html_name }}').val()) {
     t_slug = true;
-//    $('#auto').parent().addClass('checked');
     $('#auto').text("{% trans 'turn off AutoComplete' %}");
  }
  else {
@@ -49,7 +47,6 @@ $(function(){
  }
 
  $('#id_{{ field.html_name }}').bind('keydown', function(){
-//    $('#auto').parent().removeClass('checked');
     $('#auto').text("{% trans 'turn AutoComplete' %}");
     t_slug = false;
     $('#id_{{ from_field.html_name }}').unbind();
@@ -63,18 +60,16 @@ $(function(){
  $('#auto').click(function(){
     
     if(t_slug){
-//        $(this).parent().removeClass('checked');
         $('#auto').text("{% trans 'turn AutoComplete' %}");
         t_slug = false;
         $('#id_{{ from_field.html_name }}').unbind();
-        console.log(t_slug);
     }
     else{
-//        $(this).parent().addClass('checked');
         $('#auto').text("{% trans 'turn off AutoComplete' %}");
         t_slug = true;
-        console.log(t_slug);
         $('#id_{{ from_field.html_name }}').syncTranslit({destination: 'id_{{ field.html_name }}'});
+        var e = $.Event("keyup", { keyCode: 27 });
+        $("#id_{{ from_field.html_name }}").trigger(e);
     }
  });
 })
@@ -83,7 +78,7 @@ $(function(){
 
 <li class="input">
   {{ label }} 
-  <input type="text" style="width:75%;margin:0 10px 0 0;" name="{{ field.html_name }}" placeholder="{{ title }}" value="{{ field.value|default_if_none:'' }}" id="id_{{ field.html_name }}"/>
+  <input type="text" style="width:70%;margin:0 10px 0 0;" name="{{ field.html_name }}" placeholder="{{ title }}" value="{{ field.value|default_if_none:'' }}" id="id_{{ field.html_name }}"/>
   <button type="button" class="btn btn btn-warning" id="auto" />{% trans 'turn off AutoComplete' %}</button>
   {% if preview_link %}<a href="{{ form.instance.get_absolute_url }}" target="blank"><i class="icon-eye-open icon-2x"></i></a>{% endif %}
   {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}

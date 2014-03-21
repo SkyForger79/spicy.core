@@ -14,7 +14,6 @@ public_urls = patterns(
     '',
     url(r'^$', defaults.SITESKIN_INDEX_VIEW,
         {'template_name': 'index.html', 'page_slug': 'index'}, name='index'),
-    (r'^jsi18n/$', 'django.views.i18n.javascript_catalog'),
 )
 
 if settings.DEBUG:
@@ -27,5 +26,4 @@ urlpatterns = patterns(
     '',
     url(r'^admin/siteskin/', include(admin_urls, namespace='admin')),
     url(r'^', include(public_urls, namespace='public')),
-    url(r'^jsi18n/$', 'django.views.i18n.javascript_catalog'),
 )

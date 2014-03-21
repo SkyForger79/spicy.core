@@ -6,7 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ImproperlyConfigured
 from itertools import chain
 from spicy.core.service.utils import MethodDecoratorAdaptor
-from spicy.core.siteskin.decorators import render_to, ViewInterface
+from spicy.core.siteskin.decorators import ViewInterface
 from spicy.utils import cached_property, load_module, find_templates
 from spicy.utils import get_custom_model_class, print_warning
 from spicy.utils import print_error, print_text, print_success
@@ -73,7 +73,7 @@ class ProviderMeta(type):
 
     # TODO make tests for this meta implementation.
     def __new__(mcs, name, bases, attrs):
-        urls = attrs.setdefault('_meta_urls', list())
+        attrs['_meta_urls'] = urls = []
         for attr, inst in attrs.iteritems():
             render_interface = inst
             if isinstance(inst, MethodDecoratorAdaptor):
@@ -254,16 +254,6 @@ class Provider(object):
         if request.method == 'POST':
             instance = self.get_instance(consumer)
             return self.form(request.POST, prefix=prefix, instance=instance)
-
-    # TODO Use decorator render_to and ajax_request for tests.
-    #@is_staffx
-    @render_to('spicy.core.service/admin/service_preview.html', url_pattern='/$')
-    def __call__(self, request):
-        return {'provider': self}
-
-
-class BillingProvider(Provider):
-    model = None  # 'service.BillingProviderModel'
 
 
 class Interface(object):

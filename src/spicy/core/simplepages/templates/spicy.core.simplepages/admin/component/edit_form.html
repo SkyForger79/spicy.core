@@ -10,7 +10,7 @@
       {% else %}
       {% formfield "" form "template_name" "li-text" %}
       {% endif %}
-      <button type="button" class="btn btn-blue custom">{% if form.instance.is_custom %}{% trans "Disable customization" %}{% else %}{% trans "Enable customization" %}{% endif %}</button>
+      <button type="button" class="btn btn-blue custom">{% if form.instance.is_custom %}{% trans "Disable editing HTML code and use the template" %} - {{ form.template_name.value }}{% else %}{% trans "Edit the HTML source code of the page" %}{% endif %}</button>
     </ul>
   </div>
   <div class="span6">

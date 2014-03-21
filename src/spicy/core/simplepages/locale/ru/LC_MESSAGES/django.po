@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-10 14:36+0400\n"
+"POT-Creation-Date: 2014-03-21 11:03+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,7 +16,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Language: ru_RU\n"
 "X-Source-Language: C\n"
 
@@ -29,8 +30,8 @@ msgid "title"
 msgstr "название"
 
 #: abs.py:11
-msgid "content"
-msgstr "контент"
+msgid "Page Source"
+msgstr "Исходный код страницы"
 
 #: abs.py:17
 msgid "template name"
@@ -171,12 +172,12 @@ msgid "No site"
 msgstr "Нет сайтов"
 
 #: templates/spicy.core.simplepages/admin/component/edit_form.html:13
-msgid "Disable customization"
-msgstr "Отключить редактирование"
+msgid "Disable editing HTML code and use the template"
+msgstr "Отключить редактирование HTML кода и использвать шаблон"
 
 #: templates/spicy.core.simplepages/admin/component/edit_form.html:13
-msgid "Enable customization"
-msgstr "Включить редактирование"
+msgid "Edit the HTML source code of the page"
+msgstr "Редактировать исходный HTML код страницы"
 
 #: templates/spicy.core.simplepages/admin/component/edit_tabs.html:3
 msgid "Edit page"
@@ -197,6 +198,15 @@ msgstr "Страница не найдена"
 #: templates/spicy.core.simplepages/simplepages/errors.500.html:4
 msgid "Internal server error"
 msgstr "Внутренняя ошибка сервера"
+
+#~ msgid "content"
+#~ msgstr "контент"
+
+#~ msgid "Disable customization"
+#~ msgstr "Отключить редактирование"
+
+#~ msgid "Enable customization"
+#~ msgstr "Включить редактирование"
 
 #~ msgid ""
 #~ "Example: 'spicy.core.simplepages/simplepages/default.html'. If this isn't "

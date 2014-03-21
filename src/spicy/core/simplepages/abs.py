@@ -8,7 +8,7 @@ class AbstractBasePage(models.Model):
     url = models.CharField(_('URL'), max_length=100, db_index=True, unique=True)
     title = models.CharField(_('title'), max_length=200)
     content = models.TextField(
-        _('content'), blank=True,
+        _('Page Source'), blank=True,
         default=(
             '{% extends current_base %}\n'
             '{% block content %}\n<!-- Page content here-->\n'

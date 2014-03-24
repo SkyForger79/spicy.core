@@ -4,7 +4,13 @@ from django.template import RequestContext
 from spicy.core.simplepages.views import render_simplepage
 from spicy.utils.printing import print_error
 from . import defaults
+from spicy.core.simplepages import defaults as sp_defaults
+from spicy.utils.models import get_custom_model_class
+from django.contrib.sites.models import Site
+from django import http
 
+SimplePage = get_custom_model_class(sp_defaults.SIMPLE_PAGE_MODEL)
+SiteskinModel = get_custom_model_class(defaults.SITESKIN_SETTINGS_MODEL)
 
 def page_not_found(request):
     """
@@ -55,6 +61,17 @@ def render(
     Example of universal rubric rendering
     """
     # XXX mimetype is renamed to content_type in django 1.5!
-    return render_to_response(
-        template_name, kwargs, context_instance=RequestContext(request),
-        mimetype=mimetype)
+    try:
+        home_page = SiteskinModel.objects.get(site=Site.objects.get_current())
+    except SiteskinModel.DoesNotExist:
+        home_page = None
+    if home_page:
+        page = SimplePage.objects.get(pk=home_page.home_page.id)
+        context = {'page_slug': page.title, 'page': page}
+        context.update(**kwargs)
+        content_type = 'text/plain' if page.url.endswith('.txt') else 'text/html'
+        return http.HttpResponse(
+            page.get_template().render(RequestContext(request, context)),
+            content_type=content_type)
+    else:
+        return http.HttpResponse('Templates does not exist')

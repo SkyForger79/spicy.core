@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-21 11:03+0400\n"
+"POT-Creation-Date: 2014-03-21 14:02+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -37,27 +37,31 @@ msgstr "Исходный код страницы"
 msgid "template name"
 msgstr "имя шаблона"
 
-#: abs.py:18 templates/spicy.core.simplepages/admin/index.html:32
+#: abs.py:18
+msgid "Do not add this page to sitemap.xml"
+msgstr "Не добавлять страницу в sitemap.xml"
+
+#: abs.py:19 templates/spicy.core.simplepages/admin/index.html:32
 msgid "Is custom"
 msgstr "Отредактировано"
 
-#: abs.py:33
+#: abs.py:34
 msgid "simple page"
 msgstr "простая страница"
 
-#: abs.py:34
+#: abs.py:35
 msgid "simple pages"
 msgstr "простые страницы"
 
-#: abs.py:46
+#: abs.py:47
 msgid "enable comments"
 msgstr "разрешить комментарии"
 
-#: abs.py:48
+#: abs.py:49
 msgid "registration required"
 msgstr "требуется регистрация"
 
-#: abs.py:50
+#: abs.py:51
 msgid "If this is checked, only logged-in users will be able to view the page."
 msgstr ""
 "Если этот параметр включен, только зарегистрированные пользователи смогут "

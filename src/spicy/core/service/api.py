@@ -80,7 +80,8 @@ class ProviderMeta(type):
                 render_interface = inst.func
 
             if isinstance(render_interface, ViewInterface):
-                url_name = '' if attr == '__call__' else ('-' + attr)
+                url_name = '-service-preview' if attr == '__call__' else (
+                    '-' + attr)
                 url_pattern_base = r'^%(service_name)s' + url_name
                 if inst.url_pattern is None:
                     meta_url = MetaUrl(

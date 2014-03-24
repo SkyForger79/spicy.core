@@ -146,11 +146,6 @@ $(function(){
   <div class="note pull-right">{{ field.help_text }}</div>
   {% endif %}
 </li>
-<script type="text/javascript">
-$(function(){
-  $('*[name="{{ field.html_name }}"]').datetimepicker({lang:'ru',format:'Y-m-d H:i',});
-});
-</script>
 
 {% elif type == 'li-select' %}
 <li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>

@@ -7,6 +7,7 @@ from . import defaults
 from spicy.core.simplepages import defaults as sp_defaults
 from spicy.utils.models import get_custom_model_class
 from django.contrib.sites.models import Site
+from django.shortcuts import get_object_or_404
 from django import http
 
 SimplePage = get_custom_model_class(sp_defaults.SIMPLE_PAGE_MODEL)
@@ -65,13 +66,14 @@ def render(
         home_page = SiteskinModel.objects.get(site=Site.objects.get_current())
     except SiteskinModel.DoesNotExist:
         home_page = None
-    if home_page:
+    try:
         page = SimplePage.objects.get(pk=home_page.home_page.id)
-        context = {'page_slug': page.title, 'page': page}
-        context.update(**kwargs)
-        content_type = 'text/plain' if page.url.endswith('.txt') else 'text/html'
-        return http.HttpResponse(
-            page.get_template().render(RequestContext(request, context)),
-            content_type=content_type)
-    else:
-        return http.HttpResponse('Templates does not exist')
+    except SimplePage.DoesNotExist:
+        page = get_object_or_404(SimplePage, url='/index/')
+    context = {'page_slug': page.title, 'page': page}
+    context.update(**kwargs)
+    content_type = 'text/plain' if page.url.endswith('.txt') else 'text/html'
+    return http.HttpResponse(
+       page.get_template().render(RequestContext(request, context)),
+       content_type=content_type)
+

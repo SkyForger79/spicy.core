@@ -16,6 +16,7 @@ class AbstractBasePage(models.Model):
     template_name = models.CharField(
         _('template name'), max_length=255, blank=True, default='')
     is_sitemap = models.BooleanField(default=False, verbose_name=_('Do not add this page to sitemap.xml'))
+    is_active = models.BooleanField(default=False, verbose_name=_('Do not show page visitors'))
     is_custom = models.BooleanField(_('Is custom'))
     sites = models.ManyToManyField('sites.Site')
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-21 14:02+0400\n"
+"POT-Creation-Date: 2014-03-25 15:28+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -41,27 +41,31 @@ msgstr "имя шаблона"
 msgid "Do not add this page to sitemap.xml"
 msgstr "Не добавлять страницу в sitemap.xml"
 
-#: abs.py:19 templates/spicy.core.simplepages/admin/index.html:32
+#: abs.py:19
+msgid "Do not show page visitors"
+msgstr "Не показывать страницу посетителям"
+
+#: abs.py:20 templates/spicy.core.simplepages/admin/index.html:32
 msgid "Is custom"
 msgstr "Отредактировано"
 
-#: abs.py:34
+#: abs.py:35
 msgid "simple page"
 msgstr "простая страница"
 
-#: abs.py:35
+#: abs.py:36
 msgid "simple pages"
 msgstr "простые страницы"
 
-#: abs.py:47
+#: abs.py:48
 msgid "enable comments"
 msgstr "разрешить комментарии"
 
-#: abs.py:49
+#: abs.py:50
 msgid "registration required"
 msgstr "требуется регистрация"
 
-#: abs.py:51
+#: abs.py:52
 msgid "If this is checked, only logged-in users will be able to view the page."
 msgstr ""
 "Если этот параметр включен, только зарегистрированные пользователи смогут "
@@ -164,14 +168,18 @@ msgid "Sites"
 msgstr "Сайты"
 
 #: templates/spicy.core.simplepages/admin/index.html:33
+msgid "Is sitemap"
+msgstr "Включен в sitemap.xml"
+
+#: templates/spicy.core.simplepages/admin/index.html:34
 msgid "Enable comments"
 msgstr "Разрешить комментарии"
 
-#: templates/spicy.core.simplepages/admin/index.html:34
+#: templates/spicy.core.simplepages/admin/index.html:35
 msgid "Registration required"
 msgstr "Требуется регистрация"
 
-#: templates/spicy.core.simplepages/admin/index.html:56
+#: templates/spicy.core.simplepages/admin/index.html:57
 msgid "No site"
 msgstr "Нет сайтов"
 

@@ -18,7 +18,10 @@ class AdminApp(AdminAppBase):
     order_number = 9
 
     menu_items = (
-        AdminLink('siteskin:admin:index', _('Theme settings')),
+        AdminLink(
+            'siteskin:admin:edit', _('Theme settings'),
+            perms='siteskin.change_siteskin',
+            icon_class='icon-cog'),
     )
     perms = Perms(view=[],  write=[], manage=[])
 
@@ -31,7 +34,7 @@ class AdminApp(AdminAppBase):
         return dict(app=self, *args, **kwargs)
 
 
-@is_staff(required_perms=('admin.edit_siteskin',))
+@is_staff(required_perms='siteskin.change_siteskin')
 @render_to('spicy.core.siteskin/admin/edit.html', use_admin=True)
 def edit(request):
     """Handles edit requests, renders template according `action`

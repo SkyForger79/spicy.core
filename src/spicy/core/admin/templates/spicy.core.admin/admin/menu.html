@@ -1,5 +1,6 @@
 {% load url from future %}
-{% if request.user.is_superuser %}
+{% load spicy_admin %}
+{% if perms.admin.change_settings %}
 <li class="dark-nav{% if "/admin/settings/" in request.path %} active{% endif %}">
   <span class="glow"></span>
   <a class="accordion-toggle collapsed" data-toggle="collapse" href="#admin">
@@ -10,42 +11,15 @@
   </a>
 
   <ul id="admin" class="collapse {% if "/admin/settings" in request.path %} in{% endif %}">
+    {% for link in app.menu_items %}
+    {% if request.user|check_perms:link %}
     <li>
-      <a href="{% url 'spicyadmin:admin:settings' %}">
-        <i class="icon-cogs"></i> {% trans "Metrics, meta & Extra JS" %}
+      <a href="{{ link.url }}">
+        {% if link.icon_class %}<i class="{{ link.icon_class }}"></i> {% endif %}{{ link.label }}
       </a>
     </li>
-
-    <li>
-      <a href="{% url 'spicyadmin:admin:robots' %}">
-        <i class="icon-asterisk"></i> {% trans "Setup robots.txt" %}
-      </a>
-    </li>
-
-    <li>
-      <a href="{% url 'spicyadmin:admin:sitemap' %}">
-        <i class="icon-sitemap"></i> {% trans "Sitemap.xml" %}
-      </a>
-    </li>
-
-    <li>
-      <a href="{% url 'spicyadmin:admin:managers' %}">
-        <i class="icon-envelope"></i> {% trans "Manager's emails" %}
-      </a>
-    </li>
-
-    <li>
-      <a href="{% url 'spicyadmin:admin:application' %}">
-        <i class="icon-cloud-download"></i> {% trans "Applications" %}
-      </a>
-    </li>
-{% comment %}
-    <li>
-      <a href="{% url 'spicyadmin:admin:developer' %}">
-        <i class="icon-user-md"></i> {% trans "Developer tools" %}
-      </a>
-    </li>
-{% endcomment %}
+    {% endif %}
+    {% endfor %}
   </ul>
 </li>
 {% endif %}

@@ -1,7 +1,10 @@
 import functools
 import importlib
+import operator
+import urllib
 from django.conf import settings
 from django.core.urlresolvers import reverse, NoReverseMatch
+from django.db.models import Q
 from django.utils.functional import SimpleLazyObject, new_method_proxy
 from django.utils.translation import ugettext_lazy as _
 from spicy.utils.printing import print_info
@@ -12,22 +15,48 @@ class AdminLink(object):
     url_ns = None
     label = None
 
-    def __init__(self, url_ns, label, counter=None, icon_class='icon-edit'):
+    def __init__(
+            self, url_ns, label, counter=None, icon_class='icon-edit',
+            perms=None, params=None):
         self.url_ns = url_ns
         self.label = label
         self.counter = counter
         self.icon_class = icon_class
+        self.perms = perms
+        self.params = None
 
     @property
     def url(self):
         if isinstance(self.url_ns, tuple):
             if len(self.url_ns) > 1:
-                return reverse(self.url_ns[0], args=self.url_ns[1:])
-            return reverse(self.url_ns[0])
+                return reverse(
+                    self.url_ns[0], args=self.url_ns[1:]) + self.get_params()
+            return reverse(self.url_ns[0]) + self.get_params()
 
         elif isinstance(self.url_ns, basestring):
-            return reverse(self.url_ns, args=[])
+            return reverse(self.url_ns, args=[]) + self.get_params()
         raise TypeError
+
+    def get_params(self):
+        if self.params:
+            return '?' + urllib.urlencode(self.params)
+        else:
+            return ''
+
+
+def check_perms(user, perms=None):
+    if perms is None:
+        return True
+    elif isinstance(perms, bool):
+        return perms
+    elif isinstance(perms, basestring):
+        return user.has_perm(perms)
+    else:
+        return functools.reduce(
+            lambda perm1, perm2: (
+                operator.and_ if perms.connector == Q.AND else operator.or_
+            )(check_perms(user, perm1), check_perms(user, perm2)),
+            perms.children)
 
 
 class DashboardList(object):
@@ -46,6 +75,7 @@ class DashboardList(object):
                 'edit_url': reverse(self.edit_url, args=[obj.pk])}
 
 
+# TODO delete this useless class?
 class Perms(object):
     def __init__(self, view=None, write=None, manage=None):
         self._view = view
@@ -81,12 +111,8 @@ class AdminAppBase(object):
     menu_items = tuple()
 
     create = None
-    perms = Perms(view=[], write=[], manage=[])
     dashboard_links = None
     dashboard_lists = None
-
-    def __init__(self):
-        pass
 
     def edit_url(self, args=[0]):
         try:
@@ -96,15 +122,18 @@ class AdminAppBase(object):
                 print_info(
                     'AppAdmin [{0}] has no admin:edit url'.format(self.name))
 
-    # uncomment only in the working admin app module
-    #@render_to('menu.html', use_admin=True)
     def menu(self, request, *args, **kwargs):
-        return dict(app=self, *args, **kwargs)
+        raise NotImplementedError()
 
-    # uncomment only in the working admin app module
-    #@render_to('dashboard.html', use_admin=True)
     def dashboard(self, request, *args, **kwargs):
-        return dict(app=self, *args, **kwargs)
+        raise NotImplementedError()
+
+    def any_perms(self, user):
+        for link in self.menu_items:
+            if check_perms(user, link.perms):
+                return True
+        else:
+            return False
 
 
 def _find_modules(admin_apps=True, spicy_app=False):

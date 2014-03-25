@@ -103,7 +103,8 @@ class Settings(models.Model):
 
     class Meta:
         permissions = (
-            ('edit_settings', 'Can edit site settings'),
+            ('change_managers_settings', _('Can change managers settings')),
+            ('view_apps', _('View applications'))
         )
         db_table = 'spicy_settings'
         abstract = False

@@ -3,7 +3,7 @@ from django import template
 from django.conf import settings
 from django.template.loader_tags import BlockNode
 from django.core.urlresolvers import reverse
-
+from spicy.core.admin import conf
 
 register = template.Library()
 
@@ -125,3 +125,13 @@ def formfield(
         title=title, form=form, type=type, field=field, label=label,
         preview_link=preview_link, classes=classes, id=id, ajax_url=ajax_url,
         data_url=data_url, from_field=from_field, consumer_type=consumer_type)
+
+
+@register.filter
+def check_perms(user, arg):
+    if isinstance(arg, conf.AdminLink):
+        return conf.check_perms(user, arg.perms)
+    elif isinstance(arg, conf.AdminAppBase):
+        return arg.any_perms(user)
+    else:
+        raise NotImplementedError()

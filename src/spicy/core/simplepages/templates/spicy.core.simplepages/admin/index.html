@@ -4,9 +4,6 @@
 {% block status_title %}<i class="icon-user"></i> {% trans "All pages" %}{% endblock status_title %}
 
 {% block content %}
-{% with perms.simplepages.change_simplepage as change_simplepage %}
-{% with perms.simplepage.delete_simplepage as delete_simplepage %}
-
 {% if objects_list.count > 0 %}
 
 <div class="container-fluid padded">
@@ -43,9 +40,7 @@
                     <input type="checkbox" name="select"  class="groupSelectCheckbox" id="groupSelect_simplepage_{{ simplepage.id }}" autocomplete="off" />
                   </td>
                   <td>
-		    {% if change_simplepage or view_simplepage %}		    
                     <a href="{% url 'simplepages:admin:edit' simplepage.id %}"> {{ simplepage.url }}</a>
-		    {% else %}{{ simplepage.url }}{% endif %}
 		    
 		    <a target="blank" class="pull-right" href="{{ simplepage.get_absolute_url }}"><i class="icon-eye-open"></i></a>
                   </td>
@@ -90,5 +85,4 @@
   </div>
 </div>
 
-{% endwith %}{% endwith %}
 {% endblock %}

@@ -26,7 +26,7 @@ post_save.connect(
 
 class AdminApp(conf.AdminAppBase):
     name = 'simplepages'
-    label = _('Simple Pages')
+    label = _('Pages')
     order_number = 90
 
     menu_items = (

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-25 15:28+0400\n"
+"POT-Creation-Date: 2014-03-25 20:20+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,12 +16,11 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Language: ru_RU\n"
 "X-Source-Language: C\n"
 
-#: abs.py:8 templates/spicy.core.simplepages/admin/index.html:28
+#: abs.py:8 templates/spicy.core.simplepages/admin/index.html:25
 msgid "URL"
 msgstr "URL"
 
@@ -45,7 +44,7 @@ msgstr "Не добавлять страницу в sitemap.xml"
 msgid "Do not show page visitors"
 msgstr "Не показывать страницу посетителям"
 
-#: abs.py:20 templates/spicy.core.simplepages/admin/index.html:32
+#: abs.py:20 templates/spicy.core.simplepages/admin/index.html:29
 msgid "Is custom"
 msgstr "Отредактировано"
 
@@ -72,8 +71,8 @@ msgstr ""
 "просматривать страницу."
 
 #: admin.py:29
-msgid "Simple Pages"
-msgstr "Простые Страницы"
+msgid "Pages"
+msgstr "Страницы"
 
 #: admin.py:33 admin.py:39 admin.py:53
 #: templates/spicy.core.simplepages/admin/menu.html:15
@@ -155,31 +154,31 @@ msgstr "Нет существующих простых страниц"
 msgid "All pages"
 msgstr "Все страницы"
 
-#: templates/spicy.core.simplepages/admin/index.html:29
+#: templates/spicy.core.simplepages/admin/index.html:26
 msgid "Title"
 msgstr "Название"
 
-#: templates/spicy.core.simplepages/admin/index.html:30
+#: templates/spicy.core.simplepages/admin/index.html:27
 msgid "Template name"
 msgstr "Имя шаблона"
 
-#: templates/spicy.core.simplepages/admin/index.html:31
+#: templates/spicy.core.simplepages/admin/index.html:28
 msgid "Sites"
 msgstr "Сайты"
 
-#: templates/spicy.core.simplepages/admin/index.html:33
+#: templates/spicy.core.simplepages/admin/index.html:30
 msgid "Is sitemap"
 msgstr "Включен в sitemap.xml"
 
-#: templates/spicy.core.simplepages/admin/index.html:34
+#: templates/spicy.core.simplepages/admin/index.html:31
 msgid "Enable comments"
 msgstr "Разрешить комментарии"
 
-#: templates/spicy.core.simplepages/admin/index.html:35
+#: templates/spicy.core.simplepages/admin/index.html:32
 msgid "Registration required"
 msgstr "Требуется регистрация"
 
-#: templates/spicy.core.simplepages/admin/index.html:57
+#: templates/spicy.core.simplepages/admin/index.html:52
 msgid "No site"
 msgstr "Нет сайтов"
 
@@ -210,6 +209,9 @@ msgstr "Страница не найдена"
 #: templates/spicy.core.simplepages/simplepages/errors.500.html:4
 msgid "Internal server error"
 msgstr "Внутренняя ошибка сервера"
+
+#~ msgid "Simple Pages"
+#~ msgstr "Простые Страницы"
 
 #~ msgid "content"
 #~ msgstr "контент"

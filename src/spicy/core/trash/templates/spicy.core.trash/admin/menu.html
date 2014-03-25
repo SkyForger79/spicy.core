@@ -1,5 +1,5 @@
 {% load url from future %}
-{% if app.perms.view %}
+{% if perms.trash %}
 <li class="dark-nav{% if app.name in request.path %} active{% endif %}">
   <span class="glow"></span>
   <a class="accordion-toggle collapsed" data-toggle="collapse" href="#menu_{{ app.name }}">

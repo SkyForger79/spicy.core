@@ -22,10 +22,26 @@ class AdminApp(conf.AdminAppBase):
     order_number = 10
 
     menu_items = (
-        conf.AdminLink('spicyadmin:admin:index', _('Dashboard')),
-        conf.AdminLink('spicyadmin:admin:settings', _('Settings')),
+        conf.AdminLink(
+            'spicyadmin:admin:settings', _('Metrics, meta & Extra JS'),
+            icon_class='icon-cogs', perms='admin.change_settings'),
+        conf.AdminLink(
+            'spicyadmin:admin:robots', _('Setup robots.txt'),
+            icon_class='icon-asterisk', perms='admin.change_settings'),
+        conf.AdminLink(
+            'spicyadmin:admin:sitemap', _('Sitemap.xml'),
+            icon_class='icon-sitemap', perms='admin.change_settings'),
+        conf.AdminLink(
+            'spicyadmin:admin:managers', _('Manager\'s emails'),
+            icon_class='icon-envelope',
+            perms='admin.change_manager_settings'),
+        conf.AdminLink(
+            'spicyadmin:admin:application', _('Applications'),
+            icon_class='icon-cloud-download', perms='admin.view_apps'),
+#        conf.AdminLink(
+#            'spicyadmin:admin:developer', _('Developer tools'),
+#            icon_class='icon-user-md'),
     )
-    perms = conf.Perms(view=[],  write=[], manage=[])
 
     @render_to('menu.html', use_admin=True)
     def menu(self, request, *args, **kwargs):
@@ -54,7 +70,7 @@ def dashboard(request):
         'sites': sites, 'spicy_settings': spicy_settings}
 
 
-@is_staff
+@is_staff(required_perms='admin.change_settings')
 @render_to('spicy.core.admin/admin/robots_txt.html', use_admin=True)
 def robots_txt(request):
     robots, _created = SettingsModel.on_site.get_or_create(pk__isnull=False)
@@ -71,7 +87,7 @@ def robots_txt(request):
     return {'form': form, 'sform': sform}
 
 
-@is_staff
+@is_staff(required_perms='admin.change_settings')
 @render_to('spicy.core.admin/admin/main_settings.html', use_admin=True)
 def main_settings(request):
     spicy_settings, _created = SettingsModel.on_site.get_or_create(
@@ -86,13 +102,13 @@ def main_settings(request):
     return {'form': form}
 
 
-@is_staff
+@is_staff(required_perms='admin.change_settings')
 @render_to('spicy.core.admin/admin/sitemap.html', use_admin=True)
 def sitemap(request):
     return {'services': api.register.get_list()}
 
 
-@is_staff(required_perms=('admin.edit_settings',))
+@is_staff(required_perms='admin.chang_managers_settings')
 @render_to('spicy.core.admin/admin/managers.html', use_admin=True)
 def managers(request):
     """Handles edit requests, renders template according `action`
@@ -114,7 +130,7 @@ def managers(request):
     return {'form': form, 'messages': messages}
 
 
-@is_staff(required_perms=('admin.edit_settings',))
+@is_staff(required_perms=('admin.view_apps',))
 @render_to('spicy.core.admin/admin/application.html', use_admin=True)
 def application(request):
     """Handles edit requests, renders template according `action`
@@ -137,7 +153,7 @@ def application(request):
     return {'form': form, 'apps': apps, 'messages': messages}
 
 
-@is_staff(required_perms=('admin.edit_settings',))
+@is_staff(required_perms=('admin.XXX',))
 @render_to('spicy.core.admin/admin/developer.html', use_admin=True)
 def developer(request):
     """Handles edit requests, renders template according `action`

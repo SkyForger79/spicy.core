@@ -145,6 +145,24 @@ $(function(){
   <div class="note pull-right">{{ field.help_text }}</div>
   {% endif %}
 </li>
+<script>
+    var max_sim = 150;
+    var _text = $('textarea[name="{{field.html_name}}"]');
+    sim = max_sim - _text.val().length;
+    {% if field.help_text %}
+        $('textarea[name="{{field.html_name}}"]').next().append(' <span id="count" style="color:red">'+sim+'</span>');
+    {% else %}    
+        $('textarea[name="{{field.html_name}}"]').parent().append('<div class="note pull-right"> <span id="count" style="color:red">'+sim+'</span></div>');
+    {% endif %}
+    _text.keyup(function(){
+        var box= $(this).val();
+        var main = box.length *100;
+        var value = (main / 50);
+        var count = max_sim - box.length;
+        $('#count').html(count);
+        return false;
+    });
+</script>
  
 
 {% elif type == 'li-date' %}

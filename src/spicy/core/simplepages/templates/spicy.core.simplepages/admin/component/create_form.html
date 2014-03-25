@@ -8,8 +8,9 @@
   </div>
   <div class="span6">
     <ul class="padded separate-sections">
-      {% formfield "" form "enable_comments" "li-checkbox" %}
       {% formfield "" form "is_sitemap" "li-checkbox" %}
+      {% formfield "" form "is_active" "li-checkbox" %}
+      {% formfield "" form "enable_comments" "li-checkbox" %}
       {% formfield "" form "registration_required" "li-checkbox" %}
       {% formfield "" form "sites" "li-multiple-select" %}
     </ul>

@@ -33,11 +33,11 @@ class AdminApp(conf.AdminAppBase):
     menu_items = (
         conf.AdminLink(
             'simplepages:admin:create', _('Create simple page'),
-            icon_class='icon-plus-alt',
+            icon_class='icon-plus-sign-alt',
             perms=add_perm(defaults.SIMPLE_PAGE_MODEL)),
         conf.AdminLink(
             'simplepages:admin:index', _('All simple pages'),
-            icon_class='icon-list-all',
+            icon_class='icon-list-alt',
             perms=change_perm(defaults.SIMPLE_PAGE_MODEL)),
         conf.AdminLink(
             'simplepages:admin:find', _('Update from templates'),

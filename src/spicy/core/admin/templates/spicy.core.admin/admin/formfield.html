@@ -135,7 +135,17 @@ $(function(){
   {% if field.help_text %}
   <div class="note pull-right">{{ field.help_text }}</div>
   {% endif %}
-</li>  
+</li> 
+
+{% elif type == 'li-textarea-real' %}
+<li class="input {{ classes }}"{% if id %}id="{{ id }}"{% endif %}>
+  {{ label }}
+  {{ field }}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+ 
 
 {% elif type == 'li-date' %}
 <li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>

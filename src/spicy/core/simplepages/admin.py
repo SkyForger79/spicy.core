@@ -9,6 +9,7 @@ from spicy.core.admin import conf, defaults as admin_defaults
 from spicy.core.profile.decorators import is_staff
 from spicy.core.siteskin.decorators import render_to
 from spicy import utils
+from spicy.utils import add_perm, change_perm, delete_perm
 from . import defaults, forms, listeners
 from .utils import find_simplepages, edit_simple_page
 
@@ -30,9 +31,18 @@ class AdminApp(conf.AdminAppBase):
     order_number = 90
 
     menu_items = (
-        conf.AdminLink('simplepages:admin:create', _('Create simple page')),
-        conf.AdminLink('simplepages:admin:index', _('All simple pages')),
-        conf.AdminLink('simplepages:admin:find', _('Update from templates')),
+        conf.AdminLink(
+            'simplepages:admin:create', _('Create simple page'),
+            icon_class='icon-plus-alt',
+            perms=add_perm(defaults.SIMPLE_PAGE_MODEL)),
+        conf.AdminLink(
+            'simplepages:admin:index', _('All simple pages'),
+            icon_class='icon-list-all',
+            perms=change_perm(defaults.SIMPLE_PAGE_MODEL)),
+        conf.AdminLink(
+            'simplepages:admin:find', _('Update from templates'),
+            icon_class='icon-refresh',
+            perms=add_perm(defaults.SIMPLE_PAGE_MODEL)),
     )
 
     create = conf.AdminLink(
@@ -58,7 +68,7 @@ class AdminApp(conf.AdminAppBase):
             SimplePage.on_site.order_by('-id'))]
 
 
-@is_staff(required_perms='simplepages')
+@is_staff(required_perms=change_perm(defaults.SIMPLE_PAGE_MODEL))
 @render_to('index.html', use_admin=True)
 def index(request):
     """
@@ -73,7 +83,7 @@ def index(request):
     return {'nav': nav, 'objects_list': objects_list, 'paginator': paginator}
 
 
-@is_staff(required_perms='simplepages.add_defaultsimplepage')
+@is_staff(required_perms=add_perm(defaults.SIMPLE_PAGE_MODEL))
 @render_to('find.html', use_admin=True)
 def find(request):
     """
@@ -82,7 +92,7 @@ def find(request):
     return find_simplepages()
 
 
-@is_staff(required_perms='simplepages.add_defaultsimplepage')
+@is_staff(required_perms=add_perm(defaults.SIMPLE_PAGE_MODEL))
 @render_to('create.html', use_admin=True)
 def create(request):
     """
@@ -103,7 +113,7 @@ def create(request):
     return {'form': form, 'message': message}
 
 
-@is_staff(required_perms='simplepages.change_defaultsimplepage')
+@is_staff(required_perms=change_perm(defaults.SIMPLE_PAGE_MODEL))
 @render_to('edit.html', use_admin=True)
 def edit(request, simplepage_id):
     """
@@ -113,14 +123,14 @@ def edit(request, simplepage_id):
     return edit_simple_page(request, page)
 
 
-@is_staff(required_perms='simplepages.change_defaultsimplepage')
+@is_staff(required_perms='seo.change_seo_content')
 @render_to('edit_seo.html', use_admin=True)
 def edit_seo(request, simplepage_id):
     page = get_object_or_404(SimplePage, pk=simplepage_id)
     return {'instance': page, 'tab': 'seo'}
 
 
-@is_staff(required_perms='simplepages.delete_defaultsimplepage')
+@is_staff(required_perms=delete_perm(defaults.SIMPLE_PAGE_MODEL))
 @render_to('delete.html', use_admin=True)
 def delete(request, simplepage_id):
     page = get_object_or_404(SimplePage, pk=simplepage_id)

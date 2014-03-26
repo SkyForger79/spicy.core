@@ -16,7 +16,8 @@ class Siteskin(models.Model):
         _('Site obj per page'), default=20)
     site = models.ForeignKey(Site)
     home_page = models.ForeignKey(
-        sp_defaults.SIMPLE_PAGE_MODEL, verbose_name=_('Home Page'))
+        sp_defaults.SIMPLE_PAGE_MODEL, verbose_name=_('Home Page'),
+        null=True, blank=True)
 
     class Meta:
         db_table = 'spicy_siteskin'

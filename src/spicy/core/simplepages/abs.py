@@ -2,9 +2,10 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.template import loader, Template
 from django.contrib.sites.managers import CurrentSiteManager
+from spicy.core.trash.models import MultiSitesTrashModel
 
 
-class AbstractBasePage(models.Model):
+class AbstractBasePage(MultiSitesTrashModel):
     url = models.CharField(_('URL'), max_length=100, db_index=True, unique=True)
     title = models.CharField(_('title'), max_length=200)
     content = models.TextField(
@@ -19,9 +20,6 @@ class AbstractBasePage(models.Model):
     is_active = models.BooleanField(default=False, verbose_name=_('Do not show page visitors'))
     is_custom = models.BooleanField(_('Is custom'))
     sites = models.ManyToManyField('sites.Site')
-
-    on_site = CurrentSiteManager(field_name='sites')
-    objects = models.Manager()
 
     #@cached_property
     def get_template(self):

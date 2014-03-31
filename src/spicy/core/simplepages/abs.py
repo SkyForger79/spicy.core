@@ -1,12 +1,12 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.template import loader, Template
-from django.contrib.sites.managers import CurrentSiteManager
 from spicy.core.trash.models import MultiSitesTrashModel
 
 
 class AbstractBasePage(MultiSitesTrashModel):
-    url = models.CharField(_('URL'), max_length=100, db_index=True, unique=True)
+    url = models.CharField(
+        _('URL'), max_length=100, db_index=True, unique=True)
     title = models.CharField(_('title'), max_length=200)
     content = models.TextField(
         _('Page Source'), blank=True,
@@ -16,16 +16,18 @@ class AbstractBasePage(MultiSitesTrashModel):
             '{% endblock %}'))
     template_name = models.CharField(
         _('template name'), max_length=255, blank=True, default='')
-    is_sitemap = models.BooleanField(default=False, verbose_name=_('Do not add this page to sitemap.xml'))
-    is_active = models.BooleanField(default=False, verbose_name=_('Do not show page visitors'))
+    is_sitemap = models.BooleanField(
+        default=False, verbose_name=_('Do not add this page to sitemap.xml'))
+    is_active = models.BooleanField(
+        default=False, verbose_name=_('Do not show page visitors'))
     is_custom = models.BooleanField(_('Is custom'))
     sites = models.ManyToManyField('sites.Site')
 
     #@cached_property
     def get_template(self):
-        if not self.is_custom:
-            return loader.get_template(self.template_name)
-        return Template(self.content)
+        return (
+            Template(self.content) if self.is_custom else
+            loader.get_template(self.template_name))
 
     class Meta:
         abstract = True

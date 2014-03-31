@@ -68,6 +68,8 @@ def render(
         home_page = None
     try:
         page = SimplePage.objects.get(pk=home_page.home_page.id)
+    except AttributeError:
+        page = get_object_or_404(SimplePage, url='/index/')
     except SimplePage.DoesNotExist:
         page = get_object_or_404(SimplePage, url='/index/')
     context = {'page_slug': page.title, 'page': page}

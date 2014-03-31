@@ -89,8 +89,8 @@
                     <a href="http://{{ site.domain }}">{{ site.name }}</a>
                     {% if not forloop.last %}, {% endif %}{% empty %}{% trans "No site" %}{% endfor %}
                   </td>
-                  <td>{{ profile.date_joined|date:"j M" }}</td>
-                  <td>{{ profile.last_login|date:"j M" }}</td>
+                  <td>{{ profile.date_joined|date:"j M Y" }}</td>
+                  <td>{{ profile.last_login|date:"j M Y" }}</td>
                   <td>{% if profile.groups.all.count %}
                     {% for group in profile.groups.all %}
                     <div class="state blocked">

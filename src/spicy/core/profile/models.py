@@ -152,7 +152,7 @@ class AbstractProfile(User):
 
     class Meta:
         abstract = True
-        ordering = ['-id']
+        ordering = ['-date_joined','-id']
         #db_table = 'auth_profile'
         permissions = (
             ('view_profile', 'Can view user profiles'),

@@ -13,10 +13,9 @@
         <li class="collapsed hidden-desktop" data-toggle="collapse" data-target=".nav-collapse-top"><a><i class="icon-align-justify"></i></a></li>
       </ul>
       
-      <ul class="nav pull-left">
-	<li class="icon-phone hpadded">+7 (495) 988 00 79 <br/> help@bramabrama.com</li>
-	<li><a href="http://dev.bramabrama.com" title="Create issue"><i class="icon-tasks"></i> {% trans "Create issue" %}</a></li>	
-      </ul>
+      {# if 'spicy.bramabrama' in ADMIN_APPS.keys #}
+      <a data-toggle="modal" href="#support-issue" title="I need help!" class="btn btn-red pull-left"><i class="icon-tasks"></i> {% trans "I need help!" %}</a>          
+      {# endif #}
 
       <div class="nav-collapse nav-collapse-top">
 

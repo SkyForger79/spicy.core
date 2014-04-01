@@ -18,7 +18,7 @@ SPICY_THEME_PRODUCT_KEYS = getattr(
 
 # deprecated
 SITESKIN = getattr(settings, 'SITESKIN', 'example.com')
-SITESKIN_DEBUG = getattr(settings, 'SITESKIN_DEBUG', settings.DEBUG)
+SITESKIN_DEBUG = getattr(settings, 'SITESKIN_DEBUG', False)
 SITESKIN_DEBUG_CODE_LEN = 3
 #
 

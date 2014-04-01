@@ -19,3 +19,7 @@ margin-left: 0px;
 .autocomplete-light-widget, .autocomplete-light-widget input, .autocomplete-light-widget input:focus {
     width: 100% !important;
 }
+
+.triangle-button {
+    cursor: pointer
+}

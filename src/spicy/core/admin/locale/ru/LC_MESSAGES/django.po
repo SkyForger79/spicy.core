@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-19 10:28+0400\n"
+"POT-Creation-Date: 2014-04-02 15:03+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,20 +21,29 @@ msgstr ""
 "X-Language: ru_RU\n"
 "X-Source-Language: C\n"
 
-#: admin.py:21 conf.py:79
+#: admin.py:21 conf.py:109
 msgid "Admin"
 msgstr "Админка"
 
-#: admin.py:25 templates/spicy.core.admin/admin/application.html:37
-#: templates/spicy.core.admin/admin/base.html:67
-#: templates/spicy.core.admin/admin/dashboard.html:3
-#: templates/spicy.core.admin/admin/dashboard.html:5
-msgid "Dashboard"
-msgstr "Панель управления"
+#: admin.py:26
+msgid "Metrics, meta & Extra JS"
+msgstr "Метрика, метатеги и скрипты"
 
-#: admin.py:26 templates/spicy.core.admin/admin/menu.html:7
-msgid "Settings"
-msgstr "Настройки"
+#: admin.py:29
+msgid "Setup robots.txt"
+msgstr "Настройка robots.txt"
+
+#: admin.py:32
+msgid "Sitemap.xml"
+msgstr "Sitemap.xml"
+
+#: admin.py:35
+msgid "Manager's emails"
+msgstr "Адреса менеджеров"
+
+#: admin.py:39 templates/spicy.core.admin/admin/application.html:3
+msgid "Applications"
+msgstr "Приложения"
 
 #: defaults.py:25
 msgid "Account"
@@ -121,19 +130,30 @@ msgstr "Сайт"
 msgid "Settings for {0}"
 msgstr "Настройки для {0}"
 
+#: models.py:106
+msgid "Can change managers settings"
+msgstr ""
+
+#: models.py:107
+#, fuzzy
+msgid "View applications"
+msgstr "Приложения"
+
 #: templates/spicy.core.admin/public.admin.html:44
 #: templates/spicy.core.admin/admin/app/edit.html:3
 msgid "Edit"
 msgstr "Редактировать"
 
-#: templates/spicy.core.admin/admin/application.html:3
-#: templates/spicy.core.admin/admin/menu.html:39
-msgid "Applications"
-msgstr "Приложения"
-
 #: templates/spicy.core.admin/admin/application.html:36
 msgid "Menu ordering"
 msgstr "Порядок в меню"
+
+#: templates/spicy.core.admin/admin/application.html:37
+#: templates/spicy.core.admin/admin/base.html:54
+#: templates/spicy.core.admin/admin/dashboard.html:3
+#: templates/spicy.core.admin/admin/dashboard.html:5
+msgid "Dashboard"
+msgstr "Панель управления"
 
 #: templates/spicy.core.admin/admin/application.html:38
 msgid "Quick Add"
@@ -164,7 +184,7 @@ msgstr "Запрос обновления"
 msgid "Save changes"
 msgstr "Сохранить изменения"
 
-#: templates/spicy.core.admin/admin/base.html:48
+#: templates/spicy.core.admin/admin/base.html:35
 msgid "Administrator interface"
 msgstr "Интерфейс администратора"
 
@@ -244,17 +264,21 @@ msgstr ""
 msgid "Developer"
 msgstr "Разработчик"
 
-#: templates/spicy.core.admin/admin/formfield.html:45
-#: templates/spicy.core.admin/admin/formfield.html:74
-#: templates/spicy.core.admin/admin/formfield.html:88
+#: templates/spicy.core.admin/admin/formfield.html:43
+#: templates/spicy.core.admin/admin/formfield.html:68
 msgid "turn off AutoComplete"
 msgstr "Отключить автозаполнение"
 
-#: templates/spicy.core.admin/admin/formfield.html:48
-#: templates/spicy.core.admin/admin/formfield.html:53
-#: templates/spicy.core.admin/admin/formfield.html:67
+#: templates/spicy.core.admin/admin/formfield.html:46
+#: templates/spicy.core.admin/admin/formfield.html:50
+#: templates/spicy.core.admin/admin/formfield.html:63
 msgid "turn AutoComplete"
 msgstr "Включить атозаполнение"
+
+#: templates/spicy.core.admin/admin/formfield.html:156
+#: templates/spicy.core.admin/admin/formfield.html:158
+msgid "number of characters and words"
+msgstr "кол-во символов и слов"
 
 #: templates/spicy.core.admin/admin/login.html:2
 #: templates/spicy.core.admin/admin/login.html:52
@@ -299,21 +323,9 @@ msgstr "Войти снова"
 msgid "Edit settings"
 msgstr "Редактировать настройки"
 
-#: templates/spicy.core.admin/admin/menu.html:15
-msgid "Metrics, meta & Extra JS"
-msgstr "Метрика, метатеги и скрипты"
-
-#: templates/spicy.core.admin/admin/menu.html:21
-msgid "Setup robots.txt"
-msgstr "Настройка robots.txt"
-
-#: templates/spicy.core.admin/admin/menu.html:27
-msgid "Sitemap.xml"
-msgstr "Sitemap.xml"
-
-#: templates/spicy.core.admin/admin/menu.html:33
-msgid "Manager's emails"
-msgstr "Адреса менеджеров"
+#: templates/spicy.core.admin/admin/menu.html:8
+msgid "Settings"
+msgstr "Настройки"
 
 #: templates/spicy.core.admin/admin/pagination.html:6
 msgid "previous"

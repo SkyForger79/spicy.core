@@ -147,19 +147,21 @@ $(function(){
 </li>
 <script>
     var max_sim = 150;
+    var max_line = 11;
     var _text = $('textarea[name="{{field.html_name}}"]');
     sim = max_sim - _text.val().length;
+    line = max_line - _text.val().split(/\r|\r\n|\n/).length;
     {% if field.help_text %}
-        $('textarea[name="{{field.html_name}}"]').next().append(' <span id="count" style="color:red">'+sim+'</span>');
+        $('textarea[name="{{field.html_name}}"]').next().append('<br />{% trans "number of characters and words" %} <span id="count" style="color:red">'+sim+', '+line+'</span>');
     {% else %}    
-        $('textarea[name="{{field.html_name}}"]').parent().append('<div class="note pull-right"> <span id="count" style="color:red">'+sim+'</span></div>');
+        $('textarea[name="{{field.html_name}}"]').parent().append('<br /><div class="note pull-right">{% trans "number of characters and words" %} <span id="count" style="color:red">'+sim+', '+line+'</span></div>');
     {% endif %}
     _text.keyup(function(){
         var box= $(this).val();
-        var main = box.length *100;
-        var value = (main / 50);
+        var lines = box.split(/\r|\r\n|\n/);
+        var l_count = max_line - lines.length;
         var count = max_sim - box.length;
-        $('#count').html(count);
+        $('#count').html(count+', '+l_count);
         return false;
     });
 </script>

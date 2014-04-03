@@ -151,8 +151,13 @@ $(function(){
     line = _text.val().split(/\r|\r\n|\n/).length;
     $('textarea[name="{{field.html_name}}"]').parent().prepend('<div class="note pull-right">'+
         '{% trans "characters" %}: <span id="sim" style="color:red">'+sim+'</span><br>'+
-        '{% trans "words" %}: <span id="line" style="color:red">'+line+'</span><br>'+
-        '({% trans "A new row is delimited keywords" %})</div>');
+        '{% trans "words" %}: <span id="line" style="color:red">'+line+'</span>');
+    {% if field.help_text %}
+        $('textarea[name="{{field.html_name}}"]').next().append('<div class="note pull-right">({% trans "A new row is delimited keywords" %})</div>');
+    {% else %}
+         $('textarea[name="{{field.html_name}}"]').parent().append('<div class="note pull-right">({% trans "A new row is delimited keywords" %})</div>');
+    {% endif %}
+    
     _text.keyup(function(){
         var box= $(this).val();
         var lines = box.split(/\r|\r\n|\n/);

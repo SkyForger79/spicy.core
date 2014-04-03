@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-02 15:03+0400\n"
+"POT-Creation-Date: 2014-04-03 10:05+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -275,10 +275,17 @@ msgstr "Отключить автозаполнение"
 msgid "turn AutoComplete"
 msgstr "Включить атозаполнение"
 
+#: templates/spicy.core.admin/admin/formfield.html:154
+msgid "characters"
+msgstr "символов"
+
+#: templates/spicy.core.admin/admin/formfield.html:155
+msgid "words"
+msgstr "слов"
+
 #: templates/spicy.core.admin/admin/formfield.html:156
-#: templates/spicy.core.admin/admin/formfield.html:158
-msgid "number of characters and words"
-msgstr "кол-во символов и слов"
+msgid "A new row is delimited keywords"
+msgstr "Новая строка является разделителем ключевых слов"
 
 #: templates/spicy.core.admin/admin/login.html:2
 #: templates/spicy.core.admin/admin/login.html:52
@@ -344,19 +351,19 @@ msgstr "вперед"
 msgid "Sitemap"
 msgstr "Карта сайта"
 
-#: templates/spicy.core.admin/admin/top_navbar.html:18
-msgid "Create issue"
-msgstr "Рассказать о проблеме"
+#: templates/spicy.core.admin/admin/top_navbar.html:17
+msgid "I need help!"
+msgstr ""
 
-#: templates/spicy.core.admin/admin/top_navbar.html:41
+#: templates/spicy.core.admin/admin/top_navbar.html:40
 msgid "Your profile"
 msgstr "Ваша страница"
 
-#: templates/spicy.core.admin/admin/top_navbar.html:50
+#: templates/spicy.core.admin/admin/top_navbar.html:49
 msgid "Logout"
 msgstr "Выйти"
 
-#: templates/spicy.core.admin/admin/top_navbar.html:73
+#: templates/spicy.core.admin/admin/top_navbar.html:72
 #: templates/spicy.core.admin/admin/app/create.html:3
 #: templates/spicy.core.admin/admin/app/create.html:35
 msgid "Create"
@@ -402,3 +409,9 @@ msgstr "Id"
 #: templates/spicy.core.admin/admin/app/list.html:33
 msgid "Object name"
 msgstr "Имя объекта"
+
+#~ msgid "number of characters and words"
+#~ msgstr "кол-во символов и слов"
+
+#~ msgid "Create issue"
+#~ msgstr "Рассказать о проблеме"

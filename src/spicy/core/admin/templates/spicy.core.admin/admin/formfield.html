@@ -146,22 +146,20 @@ $(function(){
   {% endif %}
 </li>
 <script>
-    var max_sim = 150;
-    var max_line = 11;
     var _text = $('textarea[name="{{field.html_name}}"]');
-    sim = max_sim - _text.val().length;
-    line = max_line - _text.val().split(/\r|\r\n|\n/).length;
-    {% if field.help_text %}
-        $('textarea[name="{{field.html_name}}"]').next().append('<br />{% trans "number of characters and words" %} <span id="count" style="color:red">'+sim+', '+line+'</span>');
-    {% else %}    
-        $('textarea[name="{{field.html_name}}"]').parent().append('<br /><div class="note pull-right">{% trans "number of characters and words" %} <span id="count" style="color:red">'+sim+', '+line+'</span></div>');
-    {% endif %}
+    sim = _text.val().length;
+    line = _text.val().split(/\r|\r\n|\n/).length;
+    $('textarea[name="{{field.html_name}}"]').parent().prepend('<div class="note pull-right">'+
+        '{% trans "characters" %}: <span id="sim" style="color:red">'+sim+'</span><br>'+
+        '{% trans "words" %}: <span id="line" style="color:red">'+line+'</span><br>'+
+        '({% trans "A new row is delimited keywords" %})</div>');
     _text.keyup(function(){
         var box= $(this).val();
         var lines = box.split(/\r|\r\n|\n/);
-        var l_count = max_line - lines.length;
-        var count = max_sim - box.length;
-        $('#count').html(count+', '+l_count);
+        var l_line = lines.length;
+        var l_sim = box.length;
+        $('#sim').html(l_sim);
+        $('#line').html(l_line);
         return false;
     });
 </script>

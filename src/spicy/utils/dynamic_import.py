@@ -12,6 +12,9 @@ def load_module(path, config='SERVICE'):
         mod = import_module(module)
         return getattr(mod, attr)
 
+    except AttributeError:
+        return
+
     except ImportError, e:
         sys.stdout.write(traceback.format_exc())
         raise ImproperlyConfigured(

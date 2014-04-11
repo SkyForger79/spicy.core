@@ -182,7 +182,7 @@ class ProfileForm(forms.ModelForm):
             'username', 'first_name', 'second_name', 'last_name', 'email',
             'groups', 'user_permissions', 'sites', 'is_staff', 'is_active',
             'is_banned', 'accept_agreement', 'is_superuser', 'subscribe_me',
-            'hide_email', 'phone', 'timezone')
+            'hide_email', 'phone', 'timezone', 'google_profile_id')
 
 
 class ModerateProfileForm(forms.ModelForm):
@@ -366,7 +366,8 @@ class CreateProfileForm(ProfileForm, ValidateEmailMixin):
             'username', 'first_name', 'second_name', 'last_name', 'email',
             'groups', 'sites', 'is_staff', 'is_superuser', 'is_active',
             'is_banned', 'user_permissions', 'phone', 'timezone',
-            'hide_email', 'subscribe_me', 'accept_agreement')
+            'hide_email', 'subscribe_me', 'accept_agreement',
+            'google_profile_id')
 
     def clean_username(self):
         username = self.cleaned_data.get('username', '').strip()

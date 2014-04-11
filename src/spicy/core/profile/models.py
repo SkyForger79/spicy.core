@@ -76,7 +76,6 @@ class ProfileManager(UserManager):
                     send_email=send_email, password=password,
                     realhost=realhost, next_url=next_url)
                 
-
             if defaults.NOTIFY_MANAGERS:
                 self.model.notify_managers(profile)
 
@@ -123,28 +122,26 @@ class ProfileManager(UserManager):
 
 
 class AbstractProfile(User):
-    user_ptr = models.OneToOneField(User, parent_link=True)
-
     IS_ACTIVATED = 'Already activated'
+    user_ptr = models.OneToOneField(User, parent_link=True)
     activation_key = models.CharField(_('activation key'), max_length=40)
     is_banned = models.BooleanField(
         _('user is banned'), blank=True, default=defaults.MANUAL_ACTIVATION)
-
     accept_agreement = models.BooleanField(
         _('Accept user agreement'), blank=True, default=True)
     subscribe_me = models.BooleanField(
         _('Subscribe me for news update'), blank=True, default=True)
-
     hide_email = models.BooleanField(_('Hide my email'), default=True)
-
     second_name = models.CharField(
         _('Second name'), max_length=255, blank=True)
-
     phone = models.CharField(_('Phone'), max_length=100, blank=True)
-
     timezone = models.CharField(
         max_length=50, default=settings.TIME_ZONE, blank=True)
-
+    google_profile_id = models.CharField(
+        _('Google profile ID'), max_length=100, blank=True,
+        help_text=_(
+            'Visit http://profiles.google.com/me to find out ID from redirect '
+            'URL'))
     sites = models.ManyToManyField(Site, blank=True)
 
     objects = ProfileManager()
@@ -152,7 +149,7 @@ class AbstractProfile(User):
 
     class Meta:
         abstract = True
-        ordering = ['-date_joined','-id']
+        ordering = ['-date_joined', '-id']
         #db_table = 'auth_profile'
         permissions = (
             ('view_profile', 'Can view user profiles'),
@@ -425,3 +422,4 @@ class TestProfile(AbstractProfile):
     class Meta:
         abstract = False
         db_table = 'test_profile'
+        ordering = '-is_staff', '-id'

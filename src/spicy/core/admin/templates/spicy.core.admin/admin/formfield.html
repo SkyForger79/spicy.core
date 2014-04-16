@@ -126,6 +126,7 @@ $(function(){
   {% if field.help_text %}
   <div class="note pull-right">{{ field.help_text }}</div>
   {% endif %}
+  {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
 </li>  
 
 {% elif type == 'li-textarea-large' %}
@@ -135,6 +136,7 @@ $(function(){
   {% if field.help_text %}
   <div class="note pull-right">{{ field.help_text }}</div>
   {% endif %}
+  {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
 </li> 
 
 {% elif type == 'li-textarea-real' %}
@@ -144,6 +146,7 @@ $(function(){
   {% if field.help_text %}
   <div class="note pull-right">{{ field.help_text }}</div>
   {% endif %}
+  {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
 </li>
 <script>
     var _text = $('textarea[name="{{field.html_name}}"]');

@@ -1,4 +1,4 @@
-from django import forms
+from django import forms, http, template
 from django.utils.translation import ugettext_lazy as _
 from spicy import utils
 from spicy.core.admin.conf import admin_apps_register
@@ -31,9 +31,22 @@ class SimplePageForm(forms.ModelForm):
                 _("Can't save a page without template"))
         return value
 
+    def clean_content(self):
+        content = self.cleaned_data['content']
+        context = template.RequestContext(
+            http.HttpRequest(),
+            {'page_slug': self.instance.title, 'page': self.instance})
+        if content:
+            try:
+                template.Template(content).render(context)
+            except Exception:
+                raise forms.ValidationError(_("Template error detected"))
+        return content
+
     class Meta:
         model = utils.get_custom_model_class(defaults.SIMPLE_PAGE_MODEL)
         fields = (
-            'title', 'url', 'content', 'enable_comments', 'is_custom', 'is_active',
-            'registration_required', 'sites', 'template_name', 'is_sitemap')
+            'title', 'url', 'content', 'enable_comments', 'is_custom',
+            'is_active', 'registration_required', 'sites', 'template_name',
+            'is_sitemap')
         widgets = {'is_custom': forms.HiddenInput()}

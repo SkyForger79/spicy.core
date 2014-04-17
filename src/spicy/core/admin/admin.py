@@ -1,19 +1,13 @@
 from django.contrib.sites.models import Site
 from django.utils.translation import ugettext as _
-from spicy.core.profile import defaults as p_defaults
 from spicy.core.profile.decorators import is_staff
 from spicy.core.service import api
-from spicy.core.simplepages import defaults as sp_defaults
 from spicy.core.siteskin.decorators import render_to
-from spicy.presscenter import defaults as d_defaults
 from spicy.utils.models import get_custom_model_class
 from . import conf, defaults, forms, utils
 
 
 SettingsModel = get_custom_model_class(defaults.ADMIN_SETTINGS_MODEL)
-DocumentModel = get_custom_model_class(d_defaults.CUSTOM_DOCUMENT_MODEL)
-Profile = get_custom_model_class(p_defaults.CUSTOM_USER_MODEL)
-SimplePage = get_custom_model_class(sp_defaults.SIMPLE_PAGE_MODEL)
 
 
 class AdminApp(conf.AdminAppBase):
@@ -162,7 +156,7 @@ def developer(request):
     """
     messages = []
     instance = utils.get_admin_settings()
-    
+
     if request.method == 'POST':
         form = forms.DeveloperForm(request.POST, instance=instance)
         if form.is_valid():

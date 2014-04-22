@@ -38,7 +38,7 @@ setup(
     long_description=long_description(),
 
     install_requires=[
-        'Django==1.4.3',
+        'Django==1.4.11',
         'Fabric==1.6',
         'Sphinx==1.2b1',
         'numpydoc==0.4',

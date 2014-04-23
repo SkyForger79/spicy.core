@@ -2,7 +2,7 @@ import os
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.core.files.storage import FileSystemStorage
-from django.template.loaders import filesystem
+from django.template.loaders import app_directories, filesystem
 from django.utils._os import safe_join
 from django.utils.datastructures import SortedDict
 from django.contrib.staticfiles import finders, storage
@@ -42,9 +42,6 @@ class ThemeStaticFinder(finders.FileSystemFinder):
 
 
 class ThemeTemplateLoader(filesystem.Loader):
-    # TODO
-    # load tempalte_dir from Database in the __init__
-
     def get_template_sources(self, template_name, template_dirs=None):
         template_dir = safe_join(
             defaults.THEMES_PATH, utils.get_siteskin_settings().theme,
@@ -61,6 +58,32 @@ class ThemeTemplateLoader(filesystem.Loader):
             # template_dir (it might be inside another one, so this
             # isn't fatal).
             pass
+
+
+class BackendTemplateLoader(app_directories.Loader):
+    def get_template_sources(self, template_name, template_dirs=None):
+        if not template_dirs:
+            template_dirs = app_directories.app_template_dirs
+        for template_dir in template_dirs:
+            app_dir = os.path.dirname(template_dir)
+
+            backends_dir = os.path.join(app_dir, 'backends')
+            if not os.path.exists(backends_dir):
+                continue
+
+            for backend in os.listdir(backends_dir):
+                backend_dir = os.path.join(backends_dir, backend)
+                if os.path.isdir(backend_dir):
+                    try:
+                        yield safe_join(
+                            backend_dir, 'templates', template_name)
+                    except UnicodeDecodeError:
+                        # The template dir name was a bytestring that wasn't
+                        # valid UTF-8.
+                        raise
+                    except ValueError:
+                        # The joined path was located outside of template_dir.
+                        pass
 
 
 class ThemeStaticFilesStorage(storage.StaticFilesStorage):

@@ -80,8 +80,7 @@ class NavigationFilter(object):
             # Django that can't throw exceptions other than 404.
 
         result_qset = getattr(
-            model, result_manager).filter(
-                id__in=tuple(page.object_list))
+            model, result_manager).filter(id__in=tuple(page.object_list))
 
         if self.extra:
             result_qset = result_qset.extra(**self.extra)

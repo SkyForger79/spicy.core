@@ -26,6 +26,14 @@ def find_templates(
             base_dir)
         for app in app_modules_register.values()])
 
+    for app in app_modules_register.values():
+        backends_dir = os.path.join(os.path.dirname(app.__file__), 'backends')
+        if os.path.exists(backends_dir):
+            for backend in os.listdir(backends_dir):
+                backend_dir = os.path.join(backends_dir, backend, 'templates')
+                if os.path.exists(backend_dir):
+                    paths.append(os.path.join(backend_dir, base_dir))
+
     paths.extend([
         os.path.join(template_dir, base_dir)
         for template_dir in settings.TEMPLATE_DIRS])

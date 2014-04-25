@@ -33,8 +33,10 @@ class SimplePageForm(forms.ModelForm):
 
     def clean_content(self):
         content = self.cleaned_data['content']
+        request = http.HttpRequest()
+        request.session = {}
         context = template.RequestContext(
-            http.HttpRequest(),
+            request,
             {'page_slug': self.instance.title, 'page': self.instance})
         if content:
             try:

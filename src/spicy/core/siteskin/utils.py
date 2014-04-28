@@ -54,6 +54,7 @@ def get_render_from_response(request, url, get_forwarding=False):
 
     if '?' in url:
         path, query = url.split('?', 1)
+        query = query.encode('utf-8')
 
     if request and request.GET:
         if query:

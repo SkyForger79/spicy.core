@@ -1,8 +1,4 @@
 from django import forms
-from django.conf import settings
-from django.contrib.contenttypes.generic import BaseGenericInlineFormSet
-from django.contrib.contenttypes.generic import generic_inlineformset_factory
-from django.core.cache import cache
 from spicy.utils.models import get_custom_model_class
 from django.utils.encoding import smart_unicode
 from django.utils.safestring import SafeUnicode
@@ -24,10 +20,10 @@ class ValueAndHiddenInput(forms.HiddenInput):
 
 class ThemeForm(forms.ModelForm):
     theme = forms.CharField(
-        label=_('Theme'), 
-        widget=forms.Select(choices=utils.get_siteskin_themes()), 
+        label=_('Theme'),
+        widget=forms.Select(
+            attrs={'class': 'uniform'}, choices=utils.get_siteskin_themes()),
         required=True)
-    theme.widget.attrs['class'] = 'uniform'
 
     class Meta:
         model = SiteskinModel

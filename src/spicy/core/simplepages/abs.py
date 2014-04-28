@@ -32,8 +32,8 @@ class AbstractBasePage(MultiSitesTrashModel):
     class Meta:
         abstract = True
         db_table = 'sp_simplepage'
-        verbose_name = _('simple page')
-        verbose_name_plural = _('simple pages')
+        verbose_name = _('Simple page')
+        verbose_name_plural = _('Simple pages')
         ordering = ('url',)
         permissions = [('change_robots_txt', 'Robots.txt')]
 

@@ -25,7 +25,7 @@ def base(request):
         'current_site': current,
 
         'current_admin_base': current_admin_base,
-        'ADMIN_THEME': defaults.ADMIN_THEME,        
+        'ADMIN_THEME': defaults.ADMIN_THEME,
 
         # BBB deprecated
         'current_base': 'base.html',
@@ -35,10 +35,15 @@ def base(request):
 
         'ALL_SERVICES': all_services,
         'CONTENT_SERVICES': content_services,
-        
         'REDIRECT_FIELD_NAME': REDIRECT_FIELD_NAME,
-
         'DEBUG': settings.DEBUG,
+
+        # UTM params
+        'utm_campaign': request.GET.get('utm_campaign'),
+        'utm_source': request.GET.get('utm_source'),
+        'utm_medium': request.GET.get('utm_medium'),
+        'utm_content': request.GET.get('utm_content'),
+        'utm_term': request.GET.get('utm_term'),
     }
 
 

@@ -211,7 +211,7 @@ $(function(){
              if ($(data).filter(function() { 
                return this.text.localeCompare(term)===0; }).length===0)
              {return {id:'new_'+term, text:term};} },
-          tokenSeparators: [",",],
+          tokenSeparators: [";",],
           multiple: true,
     initSelection: function (element, callback){
       var val = element.val();

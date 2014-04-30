@@ -10,11 +10,12 @@ from spicy.core.profile.decorators import is_staff
 from spicy.core.siteskin.decorators import render_to
 from spicy import utils
 from spicy.utils import add_perm, change_perm, delete_perm
-from . import defaults, forms, listeners
+from . import defaults, listeners
 from .utils import find_simplepages, edit_simple_page
 
 
 SimplePage = utils.get_custom_model_class(defaults.SIMPLE_PAGE_MODEL)
+
 
 post_delete.connect(
     listeners.reload_server, sender=SimplePage,
@@ -98,6 +99,7 @@ def create(request):
     """
     Create a new simple page.
     """
+    from . import forms
     message = None
     if request.method == 'POST':
         form = forms.SimplePageForm(request.POST)

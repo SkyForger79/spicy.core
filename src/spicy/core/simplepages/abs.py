@@ -24,12 +24,6 @@ class EditableTemplateModel(models.Model):
     class Meta:
         abstract = True
 
-    def __unicode__(self):
-        return u"{0} -- {1}".format(self.url, self.title)
-
-    def get_absolute_url(self):
-        return self.url
-
 
 class AbstractSimplePage(EditableTemplateModel, MultiSitesTrashModel):
     sites = models.ManyToManyField('sites.Site')
@@ -55,3 +49,10 @@ class AbstractSimplePage(EditableTemplateModel, MultiSitesTrashModel):
         verbose_name_plural = _('Simple pages')
         ordering = ('url',)
         permissions = [('change_robots_txt', 'Robots.txt')]
+
+    def __unicode__(self):
+        return u"{0} -- {1}".format(self.url, self.title)
+
+    def get_absolute_url(self):
+        return self.url
+

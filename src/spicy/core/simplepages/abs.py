@@ -4,10 +4,7 @@ from django.template import loader, Template
 from spicy.core.trash.models import MultiSitesTrashModel
 
 
-class AbstractBasePage(MultiSitesTrashModel):
-    url = models.CharField(
-        _('URL'), max_length=100, db_index=True, unique=True)
-    title = models.CharField(_('title'), max_length=200)
+class EditableTemplateModel(models.Model):
     content = models.TextField(
         _('Page Source'), blank=True,
         default=(
@@ -16,12 +13,7 @@ class AbstractBasePage(MultiSitesTrashModel):
             '{% endblock %}'))
     template_name = models.CharField(
         _('template name'), max_length=255, blank=True, default='')
-    is_sitemap = models.BooleanField(
-        default=False, verbose_name=_('Do not add this page to sitemap.xml'))
-    is_active = models.BooleanField(
-        default=False, verbose_name=_('Do not show page visitors'))
     is_custom = models.BooleanField(_('Is custom'))
-    sites = models.ManyToManyField('sites.Site')
 
     #@cached_property
     def get_template(self):
@@ -31,11 +23,6 @@ class AbstractBasePage(MultiSitesTrashModel):
 
     class Meta:
         abstract = True
-        db_table = 'sp_simplepage'
-        verbose_name = _('Simple page')
-        verbose_name_plural = _('Simple pages')
-        ordering = ('url',)
-        permissions = [('change_robots_txt', 'Robots.txt')]
 
     def __unicode__(self):
         return u"{0} -- {1}".format(self.url, self.title)
@@ -44,7 +31,15 @@ class AbstractBasePage(MultiSitesTrashModel):
         return self.url
 
 
-class AbstractSimplePage(AbstractBasePage):
+class AbstractSimplePage(EditableTemplateModel, MultiSitesTrashModel):
+    sites = models.ManyToManyField('sites.Site')
+    url = models.CharField(
+        _('URL'), max_length=100, db_index=True, unique=True)
+    title = models.CharField(_('title'), max_length=200)
+    is_sitemap = models.BooleanField(
+        default=False, verbose_name=_('Do not add this page to sitemap.xml'))
+    is_active = models.BooleanField(
+        default=False, verbose_name=_('Do not show page visitors'))
     enable_comments = models.BooleanField(_('enable comments'), default=False)
     registration_required = models.BooleanField(
         _('registration required'),
@@ -53,5 +48,10 @@ class AbstractSimplePage(AbstractBasePage):
             "the page."),
         default=False)
 
-    class Meta(AbstractBasePage.Meta):
+    class Meta(EditableTemplateModel.Meta):
         abstract = True
+        db_table = 'sp_simplepage'
+        verbose_name = _('Simple page')
+        verbose_name_plural = _('Simple pages')
+        ordering = ('url',)
+        permissions = [('change_robots_txt', 'Robots.txt')]

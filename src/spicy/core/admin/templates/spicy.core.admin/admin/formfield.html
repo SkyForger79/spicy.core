@@ -210,8 +210,8 @@ $(function(){
           createSearchChoice:function(term, data) {
              if ($(data).filter(function() { 
                return this.text.localeCompare(term)===0; }).length===0)
-             {return {id:'new_'+term, text:term};} },
-          tokenSeparators: [",",],
+             {return {id:'new_'+term.replace(',','&#44;'), text:term};} },
+          tokenSeparators: ["$$",],
           multiple: true,
     initSelection: function (element, callback){
       var val = element.val();

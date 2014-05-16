@@ -116,6 +116,7 @@ def managers(request):
         form = forms.SettingsForm(request.POST, instance=instance)
         if form.is_valid():
             form.save()
+            messages = 'Success'
         else:
             messages.append(form.errors.as_text())
     else:

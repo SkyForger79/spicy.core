@@ -15,6 +15,22 @@ class EditableTemplateModel(models.Model):
         _('template name'), max_length=255, blank=True, default='')
     is_custom = models.BooleanField(_('Is custom'))
 
+    def get_main_content(self):
+        # For spicy.seo
+        if self.is_custom:
+            return self.content
+        else:
+            content = ''
+            for template_loader in loader.template_source_loaders:
+                try:
+                    content = template_loader.load_template_source(
+                        self.template_name)[0]
+                    break
+                except Exception:
+                    continue
+            return content
+
+
     #@cached_property
     def get_template(self):
         return (

@@ -188,7 +188,7 @@ $(function(){
   {{ label }}
   <select name="{{ field.html_name }}" class="uniform" id="id_{{ field.html_name }}">
     {% for id, name in field.field.choices %}
-    <option value="{{ id }}" {% ifequal field.value|stringformat:"s" id|stringformat:"s" %}selected="on"{% endifequal %}>{{ name }}</option>
+    <option value="{{ id }}"{% if field.value|stringformat:"s" == id|stringformat:"s" %} selected="on"{% endif %}>{{ name }}</option>
     {% endfor %}
   </select>  
   {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
@@ -269,7 +269,7 @@ $(function(){
   {% else %}
   <select name="{{ field.html_name }}" id="id_{{ field.html_name }}" class="chzn-select">
     {% for option_id, name in field.field.choices %}
-    <option value="{{ option_id }}" {% if field.value == option_id %}selected="on"{% endif %}>{{ name }}</option>
+    <option value="{{ option_id }}" {% if field.value|stringformat:"s" == option_id|stringformat:"s" %}selected="on"{% endif %}>{{ name }}</option>
     {% endfor %}
   </select>
   {% endif %}

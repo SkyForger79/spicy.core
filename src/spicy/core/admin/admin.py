@@ -32,9 +32,9 @@ class AdminApp(conf.AdminAppBase):
         conf.AdminLink(
             'spicyadmin:admin:application', _('Applications'),
             icon_class='icon-cloud-download', perms='admin.view_apps'),
-#        conf.AdminLink(
-#            'spicyadmin:admin:developer', _('Developer tools'),
-#            icon_class='icon-user-md'),
+        conf.AdminLink(
+            'spicyadmin:admin:developer', _('Developer tools'),
+            icon_class='icon-user-md'),
     )
 
     @render_to('menu.html', use_admin=True)

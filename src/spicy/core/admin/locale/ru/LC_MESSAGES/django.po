@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-03 10:05+0400\n"
+"POT-Creation-Date: 2014-06-03 14:39+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,29 +21,33 @@ msgstr ""
 "X-Language: ru_RU\n"
 "X-Source-Language: C\n"
 
-#: admin.py:21 conf.py:109
+#: admin.py:15 conf.py:109
 msgid "Admin"
 msgstr "Админка"
 
-#: admin.py:26
+#: admin.py:20
 msgid "Metrics, meta & Extra JS"
 msgstr "Метрика, метатеги и скрипты"
 
-#: admin.py:29
+#: admin.py:23
 msgid "Setup robots.txt"
 msgstr "Настройка robots.txt"
 
-#: admin.py:32
+#: admin.py:26
 msgid "Sitemap.xml"
 msgstr "Sitemap.xml"
 
-#: admin.py:35
+#: admin.py:29
 msgid "Manager's emails"
 msgstr "Адреса менеджеров"
 
-#: admin.py:39 templates/spicy.core.admin/admin/application.html:3
+#: admin.py:33 templates/spicy.core.admin/admin/application.html:3
 msgid "Applications"
 msgstr "Приложения"
+
+#: admin.py:36
+msgid "Developer tools"
+msgstr "Разработчик"
 
 #: defaults.py:25
 msgid "Account"
@@ -57,7 +61,7 @@ msgstr "Порядковый №."
 msgid "Store key or URL"
 msgstr "Хранить ключ или URL"
 
-#: models.py:14 models.py:88
+#: models.py:14 models.py:94
 msgid "Admins emails"
 msgstr "Адреса электронной почты администраторов"
 
@@ -102,39 +106,51 @@ msgid "Redmine key"
 msgstr "Ключ Redmine"
 
 #: models.py:75
-msgid "Redmine project URL"
+msgid "Redmin tracker URL"
 msgstr "URL проекта Redmine"
 
 #: models.py:77
+msgid "Redmine username"
+msgstr "Ключ Redmine"
+
+#: models.py:79
+msgid "Redmine password"
+msgstr "Redmine пароль"
+
+#: models.py:81
+msgid "Redmine project"
+msgstr "URL проекта Redmine"
+
+#: models.py:83
 msgid "Google Analytics API key"
 msgstr "Ключ API Google Analytics"
 
-#: models.py:86
+#: models.py:92
 msgid "Enable DEBUG toolbar"
 msgstr "Включить панель ОТЛАДКИ"
 
-#: models.py:87
+#: models.py:93
 msgid "DEBUG mode"
 msgstr "Режим ОТЛАДКИ"
 
-#: models.py:89
+#: models.py:95
 msgid "Managers emails"
 msgstr "Адреса электронной почты менеджеров"
 
-#: models.py:95
+#: models.py:101
 msgid "Site"
 msgstr "Сайт"
 
-#: models.py:102
+#: models.py:108
 #, python-brace-format
 msgid "Settings for {0}"
 msgstr "Настройки для {0}"
 
-#: models.py:106
+#: models.py:112
 msgid "Can change managers settings"
 msgstr ""
 
-#: models.py:107
+#: models.py:113
 #, fuzzy
 msgid "View applications"
 msgstr "Приложения"
@@ -176,8 +192,9 @@ msgid "Update request"
 msgstr "Запрос обновления"
 
 #: templates/spicy.core.admin/admin/application.html:75
-#: templates/spicy.core.admin/admin/developer.html:50
+#: templates/spicy.core.admin/admin/developer.html:59
 #: templates/spicy.core.admin/admin/main_settings.html:41
+#: templates/spicy.core.admin/admin/managers.html:38
 #: templates/spicy.core.admin/admin/robots_txt.html:38
 #: templates/spicy.core.admin/admin/sitemap.html:36
 #: templates/spicy.core.admin/admin/app/edit.html:39
@@ -187,6 +204,47 @@ msgstr "Сохранить изменения"
 #: templates/spicy.core.admin/admin/base.html:35
 msgid "Administrator interface"
 msgstr "Интерфейс администратора"
+
+#: templates/spicy.core.admin/admin/base.html:120
+#, fuzzy
+msgid "Redmine"
+msgstr "Ключ Redmine"
+
+#: templates/spicy.core.admin/admin/base.html:126
+msgid "Enter to Subjects"
+msgstr "Введите тему"
+
+#: templates/spicy.core.admin/admin/base.html:127
+msgid "Subjects"
+msgstr "Тема"
+
+#: templates/spicy.core.admin/admin/base.html:185
+msgid "Enter to Description"
+msgstr "Описание"
+
+#: templates/spicy.core.admin/admin/base.html:187
+msgid "Enter your Description"
+msgstr "Описание"
+
+#: templates/spicy.core.admin/admin/base.html:189
+msgid "Enter to File"
+msgstr "Добавьте файл"
+
+#: templates/spicy.core.admin/admin/base.html:223
+msgid "Close"
+msgstr "Закрыть"
+
+#: templates/spicy.core.admin/admin/base.html:224
+msgid "Send a Request"
+msgstr "Отправить заявку"
+
+#: templates/spicy.core.admin/admin/base.html:247
+msgid "'Your application '+ data.messages +' is accepted'"
+msgstr "'Ваша заявка '+ data.messages +' принята'"
+
+#: templates/spicy.core.admin/admin/base.html:253
+msgid "'Application have not been sent. Repeat later.'"
+msgstr "'Заявка не отправленна. Повторите позже'"
 
 #: templates/spicy.core.admin/admin/dashboard.html:40
 msgid "Sites on the Platform"
@@ -275,15 +333,16 @@ msgstr "Отключить автозаполнение"
 msgid "turn AutoComplete"
 msgstr "Включить атозаполнение"
 
-#: templates/spicy.core.admin/admin/formfield.html:154
+#: templates/spicy.core.admin/admin/formfield.html:157
 msgid "characters"
 msgstr "символов"
 
-#: templates/spicy.core.admin/admin/formfield.html:155
+#: templates/spicy.core.admin/admin/formfield.html:158
 msgid "words"
 msgstr "слов"
 
-#: templates/spicy.core.admin/admin/formfield.html:156
+#: templates/spicy.core.admin/admin/formfield.html:160
+#: templates/spicy.core.admin/admin/formfield.html:162
 msgid "A new row is delimited keywords"
 msgstr "Новая строка является разделителем ключевых слов"
 
@@ -329,6 +388,12 @@ msgstr "Войти снова"
 #: templates/spicy.core.admin/admin/robots_txt.html:3
 msgid "Edit settings"
 msgstr "Редактировать настройки"
+
+#: templates/spicy.core.admin/admin/managers.html:3
+#: templates/spicy.core.admin/admin/managers.html:4
+#, fuzzy
+msgid "Manager\\'s emails"
+msgstr "Адреса менеджеров"
 
 #: templates/spicy.core.admin/admin/menu.html:8
 msgid "Settings"

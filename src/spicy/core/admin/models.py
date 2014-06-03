@@ -71,8 +71,14 @@ class Settings(models.Model):
         _('Sentry key'), max_length=255, blank=True)
     redmine_key = models.CharField(
         _('Redmine key'), max_length=255, blank=True)
+    redmine_tracker_url = models.CharField(
+        _('Redmin tracker URL'), max_length=255, blank=True)
+    redmine_username = models.CharField(
+        _('Redmine username'), max_length=100, blank=True)
+    redmine_password = models.CharField(
+        _('Redmine password'), max_length=100, blank=True)
     redmine_project = models.CharField(
-        _('Redmine project URL'), max_length=255, blank=True)
+        _('Redmine project'), max_length=255, blank=True)
     ga_key = models.CharField(
         _('Google Analytics API key'), max_length=15, blank=True)
 

@@ -16,6 +16,8 @@ public_urls = patterns(
     'spicy.core.admin.views',
     url(r'^login/$', 'login', name='login'),
     url(r'^logout/$', 'logout', name='logout'),
+    url(r'^import-file/$', 'image_add', name='import-file'),
+    url(r'^export-to-redmine/$', 'export_to_redmine', name='export'),
 )
 
 urlpatterns = patterns(

@@ -25,3 +25,5 @@ ADMIN_APP_CREATE_LABELS = getattr(
     settings, 'ADMIN_APP_CREATE_LABELS', {'profile': _('Account')})
 
 DASHBOARD_LISTS_LENGTH = getattr(settings, 'DASHBOARD_LISTS_LENGTH', 5)
+
+CRM_BACKENDS = getattr(settings, 'CRM_BACKENDS', ())

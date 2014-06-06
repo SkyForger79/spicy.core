@@ -143,7 +143,8 @@
     <button class="btn btn-blue" type="submit" form="contact-form">{% trans 'Send a Request' %}</button>
   </div>
 </div>
-<script type="text/javascript" src="{% static '/static/spicy.mediacenter/js/fileuploader.js' %}"></script>
+<script type="text/javascript" src="{% static 'spicy.mediacenter/js/fileuploader.js' %}"></script>
+<link rel="stylesheet" href="{% static 'spicy.mediacenter/css/fileuploader.css' %}" type="text/css"/>
   <script>
   var path_files = [];
   var name_files = [];
@@ -190,15 +191,17 @@ $(function(){
     allowedExtensions: ['jpg', 'jpeg', 'png', 'gif', 'xls', 'doc', 'pdf', 'mp4', 'mp3', 'avi', 'wmv', 'mpg', 'mpeg', 'zip', 'rar'],
     template: '<div class="qq-uploader">' +
               '<div class="qq-upload-drop-area"><span>Перетащите сюда файлы для загрузки</span></div>' +
-              '<div class="qq-upload-button btn btn-green"><i class="icon-upload-alt"></i> Выбирите файлы для загрузки</div>' +
+              '<div class="qq-upload-button btn btn-green"><i class="icon-upload-alt"></i> Выбирите файлы</div>' +
               '<ul class="qq-upload-list separate-sections"></ul>' +
               '</div>',
     fileTemplate: '<li>' +
-              '<span class="qq-upload-file"></span>' +
-              '<span class="qq-upload-spinner"></span>' +
-              '<span class="qq-upload-size"></span>' +
-              '<a class="qq-upload-cancel" href="#">Отменить</a>' +
-              '</li>',
+                '<span class="qq-upload-file"></span>' +
+                '<span class="qq-upload-spinner"></span>' +
+                '<span class="qq-upload-size"></span>' +
+                '<a class="qq-upload-cancel" href="#">Отменить</a>' +
+                '<span class="qq-upload-failed-text">Ошибка</span>' +
+            '</li>',
+
     onSubmit: function(id, fileName){ },
     onProgress: function(id, fileName, loaded, total){ },
     onComplete: function(id, fileName, responseJSON){

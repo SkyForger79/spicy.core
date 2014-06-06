@@ -183,6 +183,25 @@ $(function(){
   {% endif %}
 </li>
 
+{% elif type == 'li-radio' %}
+<li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
+  {{ label }}
+  {% for id, name in field.field.choices %}
+  <div class="row-fluid">
+    <div class="span1">
+      <input type="radio" name="{{ field.html_name }}" value="{{ id }}" id="id_{{ field.html_name }}-{{ id }}"{% if field.value|stringformat:"s" == id|stringformat:"s" %} checked="checked"{% endif %}/>
+    </div>
+    <div class="span11">
+      <label for="id_{{ field.html_name }}-{{ id }}">{{ name }}</label>
+    </div>
+  </div>
+{% endfor %}
+  {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+
 {% elif type == 'li-select' %}
 <li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
   {{ label }}

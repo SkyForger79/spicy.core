@@ -116,7 +116,7 @@ def groups(request):
 
 
 @is_staff(required_perms='auth.add_group')
-@render_to('spicy.core.profile/admin/create_group.html', use_admin=True)
+@render_to('create_group.html', use_admin=True)
 def create_group(request):
     if request.method == 'POST':
         form = forms.GroupForm(request.POST)
@@ -133,7 +133,7 @@ def create_group(request):
 
 
 @is_staff(required_perms='auth.delete_group')
-@render_to('spicy.core.profile/admin/delete_group.html', use_admin=True)
+@render_to('delete_group.html', use_admin=True)
 def delete_group(request, group_id):
     group = get_object_or_404(Group, pk=group_id)
     if request.method == 'POST':
@@ -144,7 +144,7 @@ def delete_group(request, group_id):
 
 
 @is_staff(required_perms=change_perm(defaults.CUSTOM_USER_MODEL))
-@render_to('spicy.core.profile/admin/edit.html', use_admin=True)
+@render_to('edit.html', use_admin=True)
 def edit(request, profile_id):
     """Handles edit requests, renders template according `action`
     get parameter
@@ -178,7 +178,7 @@ def edit(request, profile_id):
 
 
 @is_staff(required_perms=change_perm(defaults.CUSTOM_USER_MODEL))
-@render_to('spicy.core.profile/admin/edit_media.html', use_admin=True)
+@render_to('edit_media.html', use_admin=True)
 def edit_media(request, profile_id):
     profile = get_object_or_404(Profile, id=profile_id)
     model = defaults.CUSTOM_USER_MODEL.split('.')[1].lower()
@@ -198,7 +198,7 @@ def delete(request, profile_id):
 
 
 @is_staff(required_perms=perm(defaults.CUSTOM_USER_MODEL, 'moderate'))
-@render_to('spicy.core.profile/admin/moderate.html', use_admin=True)
+@render_to('moderate.html', use_admin=True)
 def moderate(request, profile_id):
     message = None
     profile = get_object_or_404(Profile, id=profile_id)
@@ -215,7 +215,7 @@ def moderate(request, profile_id):
 
 
 @is_staff(required_perms='profile')
-@render_to('spicy.core.profile/admin/list.html', use_admin=True)
+@render_to('list.html', use_admin=True)
 def profiles_list(request):
     nav = utils.NavigationFilter(request, accepting_filters=[
         ('group', None), ('search_text', ''), ('is_staff', None),

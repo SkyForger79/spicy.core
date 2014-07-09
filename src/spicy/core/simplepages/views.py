@@ -25,4 +25,6 @@ def render_simplepage(request, page, **kwargs):
     except:
         rendered_page = ''
 
+    request.session['SIMPLEPAGE_ID'] = page.pk
+
     return http.HttpResponse(rendered_page, content_type=content_type)

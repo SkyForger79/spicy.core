@@ -20,6 +20,14 @@
     <script src="{% static 'spicy.core.admin/datetimepicker/jquery.datetimepicker.js' %}"></script>
     <script src="{% static 'spicy.core.admin/js/spicy.admin.js' %}" type="text/javascript"></script>
 
+    {% if '/media/' in request.path %}
+    <link rel="stylesheet" type="text/css" href="{% static 'spicy.mediacenter/css/mediacenter.css' %}">
+    <!--<link rel="stylesheet" type="text/css" href="{% static 'spicy.mediacenter/flowplayer/skin/minimalist.css' %}">
+    <script type="text/javascript" src="{% static 'spicy.mediacenter/flowplayer/flowplayer.min.js' %}"></script>-->
+    <link rel="stylesheet" href="//releases.flowplayer.org/5.4.6/skin/minimalist.css">
+    <script src="//releases.flowplayer.org/5.4.6/flowplayer.min.js"></script>
+    {% endif %}
+
     {% block extra_head %}{% endblock %}
     
     <!--[if lt IE 9]>
@@ -183,15 +191,14 @@ function alertForm(alert) {
           div.remove();    
         });
       }
-
-$(function(){
+$('#support-issue').on('show.bs.modal', function (e) {
     uploader = new qq.FileUploader({
     element: document.getElementById('file-uploader-issue'),
     action: '{% url "bramabrama:admin:import-file" %}',
     allowedExtensions: ['jpg', 'jpeg', 'png', 'gif', 'xls', 'doc', 'pdf', 'mp4', 'mp3', 'avi', 'wmv', 'mpg', 'mpeg', 'zip', 'rar'],
     template: '<div class="qq-uploader">' +
               '<div class="qq-upload-drop-area"><span>Перетащите сюда файлы для загрузки</span></div>' +
-              '<div class="qq-upload-button btn btn-green"><i class="icon-upload-alt"></i> Выбирите файлы</div>' +
+              '<div class="qq-upload-button btn btn-green"><i class="icon-upload-alt"></i> Выберите файлы</div>' +
               '<ul class="qq-upload-list separate-sections"></ul>' +
               '</div>',
     fileTemplate: '<li>' +

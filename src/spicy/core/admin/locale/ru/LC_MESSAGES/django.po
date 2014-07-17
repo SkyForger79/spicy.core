@@ -206,13 +206,12 @@ msgid "Administrator interface"
 msgstr "Интерфейс администратора"
 
 #: templates/spicy.core.admin/admin/base.html:120
-#, fuzzy
 msgid "Redmine"
-msgstr "Ключ Redmine"
+msgstr "Сообщить о проблеме"
 
 #: templates/spicy.core.admin/admin/base.html:126
 msgid "Enter to Subjects"
-msgstr "Введите тему"
+msgstr "Название проблемы"
 
 #: templates/spicy.core.admin/admin/base.html:127
 msgid "Subjects"
@@ -418,7 +417,7 @@ msgstr "Карта сайта"
 
 #: templates/spicy.core.admin/admin/top_navbar.html:17
 msgid "I need help!"
-msgstr ""
+msgstr "Нужна помощь!"
 
 #: templates/spicy.core.admin/admin/top_navbar.html:40
 msgid "Your profile"

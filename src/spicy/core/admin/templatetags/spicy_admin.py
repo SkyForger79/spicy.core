@@ -135,3 +135,24 @@ def check_perms(user, arg):
         return arg.any_perms(user)
     else:
         raise NotImplementedError()
+
+
+@register.simple_tag(takes_context=True)
+def apply(context, func, arg, result_var):
+    func_parts = func.rsplit('.', 1)
+    mod = func_parts[:-1]
+    func_attr = func_parts[-1]
+    if mod:
+        func = getattr(template.Variable(mod[0]).resolve(context), func_attr)
+    else:
+        func = context.get(func_attr)
+
+    if not func:
+        return u''
+    try:
+        result = func(arg)
+        context[result_var] = result
+    except:
+        pass
+
+    return u''

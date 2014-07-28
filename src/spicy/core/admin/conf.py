@@ -37,6 +37,9 @@ class AdminLink(object):
             return reverse(self.url_ns, args=[]) + self.get_params()
         raise TypeError
 
+    def get_counter(self, user):
+        return self.counter(user) if callable(self.counter) else self.counter
+
     def get_params(self):
         if self.params:
             return '?' + urllib.urlencode(self.params)
@@ -60,14 +63,18 @@ def check_perms(user, perms=None):
 
 
 class DashboardList(object):
-    def __init__(self, title, edit_url, queryset, date_field=None):
+    def __init__(
+            self, title, edit_url, queryset, date_field=None, perms=None):
         self.title = title
         self.edit_url = edit_url
         self.queryset = queryset
         self.date_field = date_field
+        self.perms = perms
 
-    def get_data(self):
-        for obj in self.queryset[:defaults.DASHBOARD_LISTS_LENGTH]:
+    def get_data(self, user):
+        queryset = (
+            self.queryset(user) if callable(self.queryset) else self.queryset)
+        for obj in queryset[:defaults.DASHBOARD_LISTS_LENGTH]:
             yield {
                 'object': obj,
                 'date': getattr(

@@ -134,7 +134,7 @@ def check_perms(user, arg):
     elif isinstance(arg, conf.AdminAppBase):
         return arg.any_perms(user)
     else:
-        raise NotImplementedError()
+        return user.has_perm(arg)
 
 
 @register.simple_tag(takes_context=True)

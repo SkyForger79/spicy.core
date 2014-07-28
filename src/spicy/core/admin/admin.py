@@ -54,9 +54,13 @@ def dashboard(request):
     dashboard_lists = []
     for admin_app in conf.admin_apps_register.values():
         if admin_app.dashboard_links:
-            dashboard_links.extend(admin_app.dashboard_links)
+            for link in admin_app.dashboard_links:
+                if conf.check_perms(request.user, link.perms):
+                    dashboard_links.append(link)
         if admin_app.dashboard_lists:
-            dashboard_lists.extend(admin_app.dashboard_lists)
+            for link in admin_app.dashboard_lists:
+                if conf.check_perms(request.user, link.perms):
+                    dashboard_lists.append(link)
     spicy_settings, _created = SettingsModel.on_site.get_or_create(
         pk__isnull=False)
     return {

@@ -29,10 +29,18 @@ class AdminApp(conf.AdminAppBase):
     order_number = 10
 
     menu_items = (
-        conf.AdminLink('profile:admin:create', _('Create profile')),
-        conf.AdminLink('profile:admin:index', _('All profiles')),
-        conf.AdminLink('profile:admin:create-group', _('Create group')),
-        conf.AdminLink('profile:admin:groups', _('Groups & Permissions')),
+        conf.AdminLink(
+            'profile:admin:create', _('Create profile'),
+            perms=add_perm(defaults.CUSTOM_USER_MODEL)),
+        conf.AdminLink(
+            'profile:admin:index', _('All profiles'),
+            perms=change_perm(defaults.CUSTOM_USER_MODEL)),
+        conf.AdminLink(
+            'profile:admin:create-group', _('Create group'),
+            perms='auth.add_group'),
+        conf.AdminLink(
+            'profile:admin:groups', _('Groups & Permissions'),
+            perms='auth.change_group'),
     )
 
     create = conf.AdminLink('profile:admin:create', _('Create profile'),)
@@ -49,12 +57,13 @@ class AdminApp(conf.AdminAppBase):
 
     dashboard_links = [
         conf.AdminLink(
-            'profile:admin:create', _('Create user'),
-            Profile.on_site.count(), 'icon-group')]
+            'profile:admin:create', _('Create user'), Profile.on_site.count(),
+            'icon-group', perms=add_perm(defaults.CUSTOM_USER_MODEL))]
     dashboard_lists = [
         conf.DashboardList(
             _('New users'), 'profile:admin:edit',
-            Profile.on_site.order_by('-id'), 'date_joined')]
+            Profile.on_site.order_by('-id'), 'date_joined',
+            change_perm(defaults.CUSTOM_USER_MODEL))]
 
 
 @is_staff(required_perms=change_perm(defaults.CUSTOM_USER_MODEL))

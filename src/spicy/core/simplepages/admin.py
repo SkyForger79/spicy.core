@@ -62,11 +62,13 @@ class AdminApp(conf.AdminAppBase):
     dashboard_links = [
         conf.AdminLink(
             'simplepages:admin:create', _('Create simple page'),
-            SimplePage.on_site.count(), 'icon-sitemap')]
+            SimplePage.on_site.count(), 'icon-sitemap',
+            perms=add_perm(defaults.SIMPLE_PAGE_MODEL))]
     dashboard_lists = [
         conf.DashboardList(
             _('New simple pages'), 'simplepages:admin:edit',
-            SimplePage.on_site.order_by('-id'))]
+            SimplePage.on_site.order_by('-id'),
+            perms=change_perm(defaults.SIMPLE_PAGE_MODEL))]
 
 
 @is_staff(required_perms=change_perm(defaults.SIMPLE_PAGE_MODEL))

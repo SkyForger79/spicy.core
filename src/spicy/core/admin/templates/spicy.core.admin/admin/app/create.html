@@ -1,7 +1,7 @@
 {% extends current_admin_base %}{% load spicy_admin i18n sk %}
 
-{% block title %}{% if title %}{{ title }}{% else %}{% trans "Create" %} {{ app.create.label }}{% endif %}{% endblock %}
-{% block status_title %}<i class="icon-plus-sign-alt"></i> {{ title|default:app.create.label }}{% endblock status_title %}
+{% block title %}{{ title }}{% endblock %}
+{% block status_title %}<i class="icon-plus-sign-alt"></i> {{ title }}{% endblock status_title %}
 {% block status_stats %}{% endblock status_stats %}
 
 {% block content %}
@@ -10,7 +10,7 @@
     <div class="span12">
       <div class="box">
         <div class="box-header">
-          <span class="title">{{ title|default:app.create.label }}</span>
+          <span class="title">{{ title }}</span>
         </div>
 	
         <div class="box-content">

@@ -20,7 +20,8 @@
               <i class="{{ link.icon_class }}"></i>
               <span>{{ link.label }}</span>
 	    </a>
-	    <span class="label label-black">{% apply "link.get_counter" request.user "counter" %}{{ counter }}</span>
+	    {% apply "link.get_counter" request.user "counter" %}
+	    {% if counter %}<span class="label label-black">{{ counter }}</span>{% endif %}
 	  </div>
 	  {% if not forloop.last %}
 	  {% cycle "" "</div><div class='row-fluid'>" %}

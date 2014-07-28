@@ -108,8 +108,6 @@ class AdminAppBase(object):
         AdminLink('mediacenter:admin:create', _('Create library')),
         AdminLink('mediacenter:admin:index', _('All libraries')),
         )
-
-    create = AdminLink('mediacenter:admin:create', _('Create library'),)
     """
     order_number = 0
     name = 'admin'
@@ -117,7 +115,6 @@ class AdminAppBase(object):
 
     menu_items = tuple()
 
-    create = None
     dashboard_links = None
     dashboard_lists = None
 

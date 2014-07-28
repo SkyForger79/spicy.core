@@ -43,10 +43,6 @@ class AdminApp(conf.AdminAppBase):
             perms='auth.change_group'),
     )
 
-    create = conf.AdminLink('profile:admin:create', _('Create profile'),)
-
-    perms = conf.Perms(view=[],  write=[], manage=[])
-
     @render_to('menu.html', use_admin=True)
     def menu(self, request, *args, **kwargs):
         return dict(app=self, *args, **kwargs)
@@ -58,7 +54,7 @@ class AdminApp(conf.AdminAppBase):
     dashboard_links = [
         conf.AdminLink(
             'profile:admin:create', _('Create user'), Profile.on_site.count(),
-            'icon-group', perms=add_perm(defaults.CUSTOM_USER_MODEL))]
+            'icon-user', perms=add_perm(defaults.CUSTOM_USER_MODEL))]
     dashboard_lists = [
         conf.DashboardList(
             _('New users'), 'profile:admin:edit',

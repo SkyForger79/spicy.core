@@ -7,7 +7,7 @@ from django.utils.translation import ugettext as _
 from spicy.core.profile.decorators import is_staff
 from spicy.core.siteskin.decorators import render_to
 from spicy import utils
-from spicy.core.admin.conf import AdminAppBase, AdminLink, Perms
+from spicy.core.admin.conf import AdminAppBase, AdminLink
 from . import models, forms
 
 
@@ -17,9 +17,11 @@ class AdminApp(AdminAppBase):
     order_number = 10
 
     menu_items = (
-        AdminLink('trash:admin:index', _('Trash')),
+        AdminLink(
+            'trash:admin:index', _('Trash'),
+            models.TrashProviderModel.objects.count(),
+            icon_class='icon-trash', perms='trash.change_trashprovidermodel'),
     )
-    perms = Perms(view=[],  write=[], manage=[])
 
     @render_to('menu.html', use_admin=True)
     def menu(self, request, *args, **kwargs):
@@ -30,13 +32,13 @@ class AdminApp(AdminAppBase):
         return dict(app=self, *args, **kwargs)
 
 
-@is_staff(required_perms='trash')
+@is_staff(required_perms='trash.change_trashprovidermodel')
 @render_to('spicy.core.trash/admin/list.html', use_admin=True)
 def trash_list(request):
     nav = utils.NavigationFilter(request, accepting_filters=[
         ('consumer_type', None), ('date_deleted', None), ('search_text', '')])
     search_args, search_kwargs = [], {}
-    
+
     form = forms.TrashFiltersForm(request.GET)
     if nav.search_text:
         search_args.append(
@@ -70,7 +72,7 @@ def trash_list(request):
         objects_list=objects_list, paginator=paginator, nav=nav, form=form)
 
 
-@is_staff(required_perms='trash')
+@is_staff(required_perms='trash.change_trashprovidermodel')
 def restore(request, provider_id):
     prov = get_object_or_404(models.TrashProviderModel, pk=provider_id)
     obj = prov.consumer_type.model_class().deleted_objects.get(

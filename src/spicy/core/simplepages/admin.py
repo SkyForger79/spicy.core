@@ -46,11 +46,6 @@ class AdminApp(conf.AdminAppBase):
             perms=add_perm(defaults.SIMPLE_PAGE_MODEL)),
     )
 
-    create = conf.AdminLink(
-        'simplepages:admin:create', _('Create simple page'))
-
-    perms = conf.Perms(view=[],  write=[], manage=[])
-
     @render_to('menu.html', use_admin=True)
     def menu(self, request, *args, **kwargs):
         return dict(app=self, *args, **kwargs)

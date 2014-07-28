@@ -3,7 +3,7 @@ from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext as _
 from spicy.utils.models import get_custom_model_class
 from spicy.core.profile.decorators import is_staff
-from spicy.core.admin.conf import AdminAppBase, AdminLink, Perms
+from spicy.core.admin.conf import AdminAppBase, AdminLink
 from spicy.utils import reload_server
 from spicy.core.siteskin.decorators import render_to
 from . import defaults, forms, utils
@@ -23,7 +23,6 @@ class AdminApp(AdminAppBase):
             perms='siteskin.change_siteskin',
             icon_class='icon-cog'),
     )
-    perms = Perms(view=[],  write=[], manage=[])
 
     @render_to('menu.html', use_admin=True)
     def menu(self, request, *args, **kwargs):

@@ -42,7 +42,8 @@ def find_simplepages():
             found.append(page)
         else:
             existing.append(page)
-            page.content = content
+            if not page.is_custom:
+                page.content = content
             page.save()
     return {'found': found, 'existing': existing}
 

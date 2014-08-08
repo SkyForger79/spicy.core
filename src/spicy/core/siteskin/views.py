@@ -63,15 +63,13 @@ def render(
     """
     # XXX mimetype is renamed to content_type in django 1.5!
     try:
-        home_page = SiteskinModel.objects.get(site=Site.objects.get_current())
+        siteskin = SiteskinModel.objects.get(site=Site.objects.get_current())
     except SiteskinModel.DoesNotExist:
-        home_page = None
-    try:
-        page = SimplePage.objects.get(pk=home_page.home_page.id)
-    except AttributeError:
-        page = get_object_or_404(SimplePage, url='/index/')
-    except SimplePage.DoesNotExist:
-        page = get_object_or_404(SimplePage, url='/index/')
+        siteskin = None
+    page = (
+        siteskin.home_page if siteskin and siteskin.home_page_id else
+        get_object_or_404(SimplePage, url='/index/'))
+
     context = {'page_slug': page.title, 'page': page}
     context.update(**kwargs)
     content_type = 'text/plain' if page.url.endswith('.txt') else 'text/html'

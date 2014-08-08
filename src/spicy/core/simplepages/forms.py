@@ -36,6 +36,7 @@ class EditableTemplateForm(forms.ModelForm):
             try:
                 template.Template(content).render(context)
             except Exception:
+                import traceback; traceback.print_exc()
                 raise forms.ValidationError(_("Template error detected"))
         return content
 

@@ -13,7 +13,6 @@ class NavigationFilter(object):
                  default_order=None, force_filter=None, extra=None):
         self.request = request
         self.querydict = request.GET
-
         self.order = None
 
         self.filter = ''
@@ -36,12 +35,8 @@ class NavigationFilter(object):
             direction = '-' if self.order_q.lower() == 'desc' else ''
             self.order = [direction + field for field in fields]
 
-    def get_queryset_with_paginator(
-            self, model, base_url=None, search_query=None,
-            obj_per_page=OBJECTS_PER_PAGE, manager='objects',
-            result_manager='objects', distinct=False):
-
-        base_url = base_url or self.request.path
+    def get_queryset_ids(
+            self, model, search_query=None, manager='objects', distinct=False):
 
         model_manager = getattr(model, manager)
         model_qset = model_manager.values_list('id', flat=True)
@@ -70,8 +65,20 @@ class NavigationFilter(object):
         if distinct:
             queryset = queryset.distinct()
 
-        paginator = Paginator(
-            queryset, obj_per_page)
+        return queryset
+
+    def get_queryset_with_paginator(
+            self, model, base_url=None, search_query=None,
+            obj_per_page=OBJECTS_PER_PAGE, manager='objects',
+            result_manager='objects', distinct=False):
+
+        base_url = base_url or self.request.path
+
+        queryset = self.get_queryset_ids(
+            model, search_query=search_query, manager=manager,
+            distinct=distinct)
+            
+        paginator = Paginator(queryset, obj_per_page)
         try:
 
             page = paginator.page(self.page)

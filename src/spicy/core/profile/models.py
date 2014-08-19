@@ -12,6 +12,7 @@ from django.core.mail import send_mail
 from django.core.management.color import color_style
 from django.db import models, transaction
 from django.template.loader import render_to_string
+from django.utils.crypto import get_random_string
 from django.utils.encoding import smart_str
 from django.utils.hashcompat import sha_constructor
 from django.utils.html import escape
@@ -27,6 +28,10 @@ style = color_style()
 
 
 class ProfileManager(UserManager):
+    def make_random_password(self, length=10,
+        allowed_chars=defaults.ACCOUNT_ALLOWED_CHARS):
+            return get_random_string(length, allowed_chars)
+
     def activate_user(self, activation_key):
         if defaults.SHA1_RE.search(activation_key):
             try:

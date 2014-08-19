@@ -54,6 +54,7 @@ setup(
         'pytils==0.2.3',
         'pytz==2013b',
         'html5lib==0.95',
+        'python-redmine==0.8.1',
 
         #'django-simple-captcha', # spicy.core.profile
         #'django-social-auth==0.6.1',# spicy.core.profile

@@ -4,7 +4,11 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from spicy.utils.html import make_slug
 
-
+ACCOUNT_ALLOWED_CHARS = 'abcdefghjkmnpqrstuvwxyz'\
+        'ABCDEFGHJKLMNPQRSTUVWXYZ'\
+        '23456789'
+ACCOUNT_ALLOWED_CHARS = getattr(
+    settings, 'ACCOUNT_ALLOWED_CHARS', ACCOUNT_ALLOWED_CHARS)
 USERNAME_MAX_LENGTH = getattr(settings, 'USERNAME_MAX_LENGTH', 100)
 SHA1_RE = getattr(settings, 'SHA1_RE', re.compile('^[a-f0-9]{40}$'))
 ACCOUNT_ACTIVATION_DAYS = getattr(settings, 'ACCOUNT_ACTIVATION_DAYS', 2)

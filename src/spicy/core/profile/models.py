@@ -45,6 +45,7 @@ class ProfileManager(UserManager):
             self, email, password=None, send_email=True, next_url=None,
             realhost=None, **kwargs):
         now = dt.datetime.now()
+        email = email.lower()
         if not 'username' in kwargs.keys():
             username = self.get_available_username(email.split('@')[0])
         else:

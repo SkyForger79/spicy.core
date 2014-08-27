@@ -7,6 +7,8 @@ from spicy.utils.html import make_slug
 ACCOUNT_ALLOWED_CHARS = 'abcdefghjkmnpqrstuvwxyz'\
         'ABCDEFGHJKLMNPQRSTUVWXYZ'\
         '23456789'
+ACCOUNT_CHARS_LENGTH = getattr(
+    settings, 'ACCOUNT_CHARS_LENGTH', 10)
 ACCOUNT_ALLOWED_CHARS = getattr(
     settings, 'ACCOUNT_ALLOWED_CHARS', ACCOUNT_ALLOWED_CHARS)
 USERNAME_MAX_LENGTH = getattr(settings, 'USERNAME_MAX_LENGTH', 100)

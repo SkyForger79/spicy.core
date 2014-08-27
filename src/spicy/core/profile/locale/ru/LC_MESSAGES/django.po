@@ -603,7 +603,7 @@ msgstr "Срок действия ключа активации - %(expiration_d
 
 #: templates/spicy.core.profile/mail/activation_email.txt:20
 msgid "Thank you for registering on our site"
-msgstr "Благодарим вам за регистрацию на нашем сайте"
+msgstr "Благодарим ваc за регистрацию на нашем сайте"
 
 #: templates/spicy.core.profile/mail/activation_email_subject.txt:1
 #, python-format

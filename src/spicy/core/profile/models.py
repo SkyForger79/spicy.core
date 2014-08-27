@@ -26,7 +26,7 @@ style = color_style()
 
 
 class ProfileManager(UserManager):
-    def make_random_password(self, length=10,
+    def make_random_password(self, length=defaults.ACCOUNT_CHARS_LENGTH,
         allowed_chars=defaults.ACCOUNT_ALLOWED_CHARS):
             return get_random_string(length, allowed_chars)
     

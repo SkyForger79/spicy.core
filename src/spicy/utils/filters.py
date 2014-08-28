@@ -23,7 +23,12 @@ class NavigationFilter(object):
             self.filter = force_filter
 
         for filter, default in accepting_filters:
-            setattr(self, filter, request.GET.get(filter, default))
+            setattr(
+                self, filter,
+                getattr(
+                    request.GET,
+                    'getlist' if isinstance(default, list) else 'get'
+                )(filter, default))
 
         self.page = request.GET.get('page', 1)
 
@@ -36,10 +41,13 @@ class NavigationFilter(object):
             self.order = [direction + field for field in fields]
 
     def get_queryset_ids(
-            self, model, search_query=None, manager='objects', distinct=False):
-
-        model_manager = getattr(model, manager)
-        model_qset = model_manager.values_list('id', flat=True)
+            self, model_or_qset, search_query=None, manager='objects',
+            distinct=False):
+        if hasattr(model_or_qset, 'Meta'):
+            model_manager = getattr(model_or_qset, manager)
+            model_qset = model_manager.values_list('id', flat=True)
+        else:
+            model_qset = model_or_qset.values_list('id', flat=True)
 
         # XXX: check usage
         if type(search_query) is dict:
@@ -68,14 +76,19 @@ class NavigationFilter(object):
         return queryset
 
     def get_queryset_with_paginator(
-            self, model, base_url=None, search_query=None,
+            self, model_or_qset, base_url=None, search_query=None,
             obj_per_page=OBJECTS_PER_PAGE, manager='objects',
             result_manager='objects', distinct=False):
+
+        if hasattr(model_or_qset, 'Meta'):
+            model = model_or_qset
+        else:
+            model = model_or_qset.model
 
         base_url = base_url or self.request.path
 
         queryset = self.get_queryset_ids(
-            model, search_query=search_query, manager=manager,
+            model_or_qset, search_query=search_query, manager=manager,
             distinct=distinct)
             
         paginator = Paginator(queryset, obj_per_page)

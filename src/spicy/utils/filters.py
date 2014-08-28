@@ -43,7 +43,7 @@ class NavigationFilter(object):
     def get_queryset_ids(
             self, model_or_qset, search_query=None, manager='objects',
             distinct=False):
-        if hasattr(model_or_qset, 'Meta'):
+        if hasattr(model_or_qset, '_meta'):
             model_manager = getattr(model_or_qset, manager)
             model_qset = model_manager.values_list('id', flat=True)
         else:
@@ -80,7 +80,7 @@ class NavigationFilter(object):
             obj_per_page=OBJECTS_PER_PAGE, manager='objects',
             result_manager='objects', distinct=False):
 
-        if hasattr(model_or_qset, 'Meta'):
+        if hasattr(model_or_qset, '_meta'):
             model = model_or_qset
         else:
             model = model_or_qset.model

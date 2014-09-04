@@ -21,17 +21,16 @@ class EditableTemplateModel(models.Model):
             return self.content
         else:
             content = ''
-            for template_loader in loader.template_source_loaders:
-                try:
-                    content = template_loader.load_template_source(
-                        self.template_name)[0]
-                    break
-                except Exception:
-                    continue
+            if loader.template_source_loaders:
+                for template_loader in loader.template_source_loaders:
+                    try:
+                        content = template_loader.load_template_source(
+                            self.template_name)[0]
+                        break
+                    except Exception:
+                        continue
             return content
 
-
-    #@cached_property
     def get_template(self):
         return (
             Template(self.content) if self.is_custom else
@@ -71,4 +70,3 @@ class AbstractSimplePage(EditableTemplateModel, MultiSitesTrashModel):
 
     def get_absolute_url(self):
         return self.url
-

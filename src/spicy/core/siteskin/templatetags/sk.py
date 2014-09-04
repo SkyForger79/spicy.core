@@ -132,7 +132,7 @@ def to_list(value):
 
 @register.filter
 def get(value, arg):
-    return value[arg]
+    return value.get(arg)
 
 
 @register.filter

@@ -43,7 +43,7 @@ class EditableTemplateModel(models.Model):
 class AbstractSimplePage(EditableTemplateModel, MultiSitesTrashModel):
     sites = models.ManyToManyField('sites.Site')
     url = models.CharField(
-        _('URL'), max_length=100, db_index=True, unique=True)
+        _('URL'), max_length=100, db_index=True)
     title = models.CharField(_('title'), max_length=200)
     is_sitemap = models.BooleanField(
         default=False, verbose_name=_('Do not add this page to sitemap.xml'))

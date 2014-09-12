@@ -313,7 +313,7 @@ $(function(){
 </li>
 
 {% elif type == 'table-formset'%}
-<div class="row-fluid item">
+<div class="row-fluid item" id="fset{{ form.prefix }}">
     <table class="table table-normal">
         <thead>
             <tr>
@@ -355,7 +355,7 @@ $(function(){
 </div>
 <script>
 $(document).ready(function(){
-  $('.item tbody tr').formset({
+  $('#fset{{ form.prefix }} tbody tr').formset({
     addText: '{% if not form.no_add %}<div class="padded"><button class="btn btn-green"><i class="icon-plus-sign"></i> Добавить</button></div>{% endif %}',
 
     deleteText: '{% if form.can_delete %}<button class="btn btn-red"><i class="icon-trash"></i></button>{% endif %}',

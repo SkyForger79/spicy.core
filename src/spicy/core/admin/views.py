@@ -19,7 +19,7 @@ File = get_custom_model_class(mc_defaults.CUSTOM_FILE_MODEL)
 
 def login(request):
     return views.login(
-        request, template_name='spicy.core.admin/admin/login.html', extra_context={'redirect':request.GET['next']})
+        request, template_name='spicy.core.admin/admin/login.html', extra_context={'redirect':request.GET.get('next')})
 
 
 def logout(request):

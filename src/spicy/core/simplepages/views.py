@@ -19,12 +19,12 @@ def render_simplepage(request, page, **kwargs):
     context = {'page_slug': page.title, 'page': page}
     context.update(**kwargs)
     content_type = 'text/plain' if page.url.endswith('.txt') else 'text/html'
+    request.session['SIMPLEPAGE_ID'] = page.pk
+
     try:
         rendered_page = page.get_template().render(
             RequestContext(request, context))
     except:
         rendered_page = ''
-
-    request.session['SIMPLEPAGE_ID'] = page.pk
 
     return http.HttpResponse(rendered_page, content_type=content_type)

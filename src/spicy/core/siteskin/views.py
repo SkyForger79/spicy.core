@@ -1,5 +1,4 @@
 from datetime import datetime as dt
-from django.shortcuts import render_to_response
 from django.template import RequestContext
 from spicy.core.simplepages.views import render_simplepage
 from spicy.utils.printing import print_error
@@ -12,6 +11,7 @@ from django import http
 
 SimplePage = get_custom_model_class(sp_defaults.SIMPLE_PAGE_MODEL)
 SiteskinModel = get_custom_model_class(defaults.SITESKIN_SETTINGS_MODEL)
+
 
 def page_not_found(request):
     """
@@ -73,7 +73,9 @@ def render(
     context = {'page_slug': page.title, 'page': page}
     context.update(**kwargs)
     content_type = 'text/plain' if page.url.endswith('.txt') else 'text/html'
+    request.session['SIMPLEPAGE_ID'] = page.pk
+
     return http.HttpResponse(
-       page.get_template().render(RequestContext(request, context)),
-       content_type=content_type)
+        page.get_template().render(RequestContext(request, context)),
+        content_type=content_type)
 

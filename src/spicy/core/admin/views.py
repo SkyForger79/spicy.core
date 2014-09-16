@@ -1,4 +1,5 @@
-import os, tempfile
+import os
+import tempfile
 from django.contrib.auth import views
 from spicy.core.profile.decorators import is_staff
 from spicy.core.service import api
@@ -17,13 +18,16 @@ Library = get_custom_model_class(mc_defaults.CUSTOM_LIBRARY_MODEL)
 Media = get_custom_model_class(mc_defaults.CUSTOM_MEDIA_MODEL)
 File = get_custom_model_class(mc_defaults.CUSTOM_FILE_MODEL)
 
+
 def login(request):
     return views.login(
-        request, template_name='spicy.core.admin/admin/login.html', extra_context={'redirect':request.GET.get('next')})
+        request, template_name='spicy.core.admin/admin/login.html',
+        extra_context={'redirect': request.GET.get('next')})
 
 
 def logout(request):
-    return views.logout(request, template_name='spicy.core.admin/admin/logout.html')
+    return views.logout(request,
+                        template_name='spicy.core.admin/admin/logout.html')
 
 
 def robots(request):
@@ -38,7 +42,8 @@ def image_add(request):
     t_file = tempfile.NamedTemporaryFile(delete=False)
     t_file.write(request.raw_post_data)
     t_file.close()
-    return {'success': True, 'media_file': {'path': t_file.name, 'filename': title}}
+    return {'success': True,
+            'media_file': {'path': t_file.name, 'filename': title}}
 
 
 @ajax_request
@@ -57,10 +62,12 @@ def export_to_redmine(request):
             uploads = []
             if path_files[0] and name_files[0]:
                 for x in xrange(len(path_files)):
-                    uploads.append({'path': path_files[x],'filename': name_files[x]})
+                    uploads.append(
+                        {'path': path_files[x], 'filename': name_files[x]})
             issue = redmine.issue.create(
                 project_id=redmine_settings.redmine_project,
-                subject=unicode(subject), description=unicode(desc), uploads=uploads)
+                subject=unicode(subject),
+                description=unicode(desc), uploads=uploads)
             success = 'ok'
             messages = issue.id
         except:
@@ -72,4 +79,4 @@ def export_to_redmine(request):
     else:
         success = 'false'
         messages = ''
-    return {'success': success, 'messages': messages,}
+    return {'success': success, 'messages': messages, }

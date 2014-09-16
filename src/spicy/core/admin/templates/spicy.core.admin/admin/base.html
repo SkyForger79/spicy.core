@@ -81,23 +81,17 @@
 	    </div>
 	    
 	    {% block status_stats %}
+	    {% if app.top_stats %}
 	    <ul class="inline pull-right sparkline-box">
-	      
+
+	      {% for stats in app.top_stats %}
               <li class="sparkline-row">
-		<h4 class="blue"><span>Orders</span> 847</h4>
-		<div class="sparkline big" data-color="blue"><canvas width="82" height="30" style="display: inline-block; width: 82px; height: 30px; vertical-align: top;"></canvas></div>
+		<h4 class="{{ stats.css_class }}"><span>{{ stats.name }}</span> {{ stats.value }}</h4>
+		{#<div class="sparkline big" data-color="blue"><canvas width="82" height="30" style="display: inline-block; width: 82px; height: 30px; vertical-align: top;"></canvas></div>#}
               </li>
-	      
-              <li class="sparkline-row">
-		<h4 class="green"><span>Reviews</span> 223</h4>
-		<div class="sparkline big" data-color="green"><canvas width="82" height="30" style="display: inline-block; width: 82px; height: 30px; vertical-align: top;"></canvas></div>
-              </li>
-	      
-              <li class="sparkline-row">
-		<h4 class="red"><span>New visits</span> 7930</h4>
-		<div class="sparkline big"><canvas width="82" height="30" style="display: inline-block; width: 82px; height: 30px; vertical-align: top;"></canvas></div>
-              </li>	
+	      {% endfor %}
 	    </ul>
+	    {% endif %}
 	    {% endblock status_stats %}
 
 	  </div>

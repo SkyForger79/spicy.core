@@ -117,6 +117,7 @@ class AdminAppBase(object):
 
     dashboard_links = None
     dashboard_lists = None
+    top_stats = None
 
     def edit_url(self, args=[0]):
         try:

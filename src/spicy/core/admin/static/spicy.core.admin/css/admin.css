@@ -23,3 +23,9 @@ margin-left: 0px;
 .triangle-button {
     cursor: pointer
 }
+
+.table-normal tbody .even { background: none repeat scroll 0 0 #f3f4f8 !important; }
+.table-normal tbody .odd { background: none repeat scroll 0 0 #ffffff !important; }
+.table-normal tbody td.extended {
+    border-left: 1px solid #eaebef !important;
+}

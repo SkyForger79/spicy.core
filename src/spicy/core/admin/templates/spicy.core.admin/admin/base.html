@@ -86,7 +86,7 @@
 
 	      {% for stats in app.top_stats %}
               <li class="sparkline-row">
-		<h4 class="{{ stats.css_class }}"><span>{{ stats.name }}</span> {{ stats.value }}</h4>
+		<a href="{{ stats.url }}"><h4 class="{{ stats.css_class }}"><span>{{ stats.name }}</span> {{ stats.value }}</h4></a>
 		{#<div class="sparkline big" data-color="blue"><canvas width="82" height="30" style="display: inline-block; width: 82px; height: 30px; vertical-align: top;"></canvas></div>#}
               </li>
 	      {% endfor %}

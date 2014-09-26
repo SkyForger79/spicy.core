@@ -31,9 +31,9 @@
     {% block extra_head %}{% endblock %}
     
     <!--[if lt IE 9]>
-	<script src="{% static 'spicy.core.admin/themes/default/javascripts/vendor/html5shiv.js' %}" type="text/javascript"></script>
-	<script src="{% static 'spicy.core.admin/themes/default/javascripts/vendor/excanvas.js' %}" type="text/javascript"></script>
-	<![endif]-->
+  <script src="{% static 'spicy.core.admin/themes/default/javascripts/vendor/html5shiv.js' %}" type="text/javascript"></script>
+  <script src="{% static 'spicy.core.admin/themes/default/javascripts/vendor/excanvas.js' %}" type="text/javascript"></script>
+  <![endif]-->
     
     <style type="text/css">.jqstooltip { position: absolute;left: 0px;top: 0px;visibility: hidden;background: rgb(0, 0, 0) transparent;background-color: rgba(0,0,0,0.6);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000);-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000)";color: white;font: 10px arial, san serif;text-align: left;white-space: nowrap;padding: 5px;border: 1px solid white;z-index: 10000;}.jqsfield { color: white;font: 10px arial, san serif;text-align: left;}</style>
     {% block extra_css %}{% endblock extra_css %}
@@ -46,7 +46,7 @@
   <body>
     {% captureas admin_index %}{% url 'spicyadmin:admin:index' %}{% endcaptureas %}
     {% block top_navbar %}{% include 'spicy.core.admin/admin/top_navbar.html' %}{% endblock top_navbar %}
-	
+  
     {% block menu %}
     <div class="sidebar-background">
       <div class="primary-sidebar-background"></div>
@@ -54,15 +54,15 @@
     
     <div class="primary-sidebar">
       <ul class="nav nav-collapse collapse nav-collapse-primary">
-	
+  
         <li class="{% if request.path == admin_index %}active{% endif %}">
           <span class="glow"></span>
           <a href="{{ admin_index }}">
             <i class="icon-dashboard icon-2x"></i>
             <span>{% trans 'Dashboard' %}</span>
           </a>
-        </li>	
-	{% for app in ADMIN_APPS %}{% app_menu request app %}{% endfor %}	
+        </li> 
+  {% for app in ADMIN_APPS %}{% app_menu request app %}{% endfor %} 
       </ul>
     </div>
     {% endblock %}
@@ -71,31 +71,37 @@
       {% block status_board %}
       
       <div class="container-fluid">
-	<div class="row-fluid">
-	  <div class="area-top clearfix">
-	    <div class="pull-left header">
+  <div class="row-fluid">
+    <div class="area-top clearfix">
+      <div class="pull-left header">
               <h3 class="title">
-		{% block status_title %}{% endblock status_title %}
+    {% block status_title %}{% endblock status_title %}
               </h3>
               <h5>{% block status_subtitle %}Description here...{% endblock status_subtitle %}</h5>
-	    </div>
-	    
-	    {% block status_stats %}
-	    {% if app.top_stats %}
-	    <ul class="inline pull-right sparkline-box">
-
-	      {% for stats in app.top_stats %}
+      </div>
+      
+      {% block status_stats %}
+      <ul class="inline pull-right sparkline-box">
+        
               <li class="sparkline-row">
-		<a href="{{ stats.url }}"><h4 class="{{ stats.css_class }}"><span>{{ stats.name }}</span> {{ stats.value }}</h4></a>
-		{#<div class="sparkline big" data-color="blue"><canvas width="82" height="30" style="display: inline-block; width: 82px; height: 30px; vertical-align: top;"></canvas></div>#}
+    <h4 class="blue"><span>Orders</span> 847</h4>
+    <div class="sparkline big" data-color="blue"><canvas width="82" height="30" style="display: inline-block; width: 82px; height: 30px; vertical-align: top;"></canvas></div>
               </li>
-	      {% endfor %}
-	    </ul>
-	    {% endif %}
-	    {% endblock status_stats %}
+        
+              <li class="sparkline-row">
+    <h4 class="green"><span>Reviews</span> 223</h4>
+    <div class="sparkline big" data-color="green"><canvas width="82" height="30" style="display: inline-block; width: 82px; height: 30px; vertical-align: top;"></canvas></div>
+              </li>
+        
+              <li class="sparkline-row">
+    <h4 class="red"><span>New visits</span> 7930</h4>
+    <div class="sparkline big"><canvas width="82" height="30" style="display: inline-block; width: 82px; height: 30px; vertical-align: top;"></canvas></div>
+              </li> 
+      </ul>
+      {% endblock status_stats %}
 
-	  </div>
-	</div>
+    </div>
+  </div>
 
       </div>
       
@@ -103,12 +109,12 @@
       
       {% if message %}
       <div class="container-fluid hpadded">
-	<div class="row-fluid">
-	  <div class="alert alert-{% if status == 'error' %}error{% else %}success{% endif %}">
-	    <button type="button" class="close" data-dismiss="alert">×</button>
-	    <strong>{{ message }}</strong>
-	  </div>
-	</div>
+  <div class="row-fluid">
+    <div class="alert alert-{% if status == 'error' %}error{% else %}success{% endif %}">
+      <button type="button" class="close" data-dismiss="alert">×</button>
+      <strong>{{ message }}</strong>
+    </div>
+  </div>
       </div>
       {% endif %}      
 
@@ -145,6 +151,7 @@
     <button class="btn btn-blue" type="submit" form="contact-form">{% trans 'Send a Request' %}</button>
   </div>
 </div>
+<script>var full_path_with_port = {{FULL_PATH_WITH_PORT}};</script>
 <script type="text/javascript" src="{% static 'spicy.mediacenter/js/fileuploader.js' %}"></script>
 <link rel="stylesheet" href="{% static 'spicy.mediacenter/css/fileuploader.css' %}" type="text/css"/>
   <script>

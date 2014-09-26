@@ -11,7 +11,7 @@
     
     <script src="{% static 'spicy.core.admin/js/jquery-1.10.1.min.js' %}" type="text/javascript"></script>
     {# <script src="{% static 'spicy.core.admin/js/jquery-1.9.1.min.js' %}" type="text/javascript"></script> #}
-    
+    <script>var full_path_with_port = "{{FULL_PATH_WITH_PORT}}";</script>
     <link href="{% static 'spicy.core.admin/themes/default/stylesheets/application.css' %}" media="screen" rel="stylesheet" type="text/css">  
     <link href="{% static 'spicy.core.admin/css/admin.css' %}" media="screen" rel="stylesheet" type="text/css">  
     <script src="{% static 'spicy.core.admin/themes/default/javascripts/application.js' %}" type="text/javascript"></script>
@@ -151,7 +151,7 @@
     <button class="btn btn-blue" type="submit" form="contact-form">{% trans 'Send a Request' %}</button>
   </div>
 </div>
-<script>var full_path_with_port = "{{FULL_PATH_WITH_PORT}}";</script>
+
 <script type="text/javascript" src="{% static 'spicy.mediacenter/js/fileuploader.js' %}"></script>
 <link rel="stylesheet" href="{% static 'spicy.mediacenter/css/fileuploader.css' %}" type="text/css"/>
   <script>

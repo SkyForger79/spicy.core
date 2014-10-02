@@ -4,20 +4,29 @@ from .conf import admin_apps_register
 
 def path_with_port(request):
 
-    if request.META.get('SERVER_PORT'):
-        return 'http://' + request.get_host() + ':'\
-            + request.META['SERVER_PORT'] + request.path
-    else:
-        return 'http://' + request.get_host() + request.path
+    try:
+
+        if request.META.get('SERVER_PORT'):
+            return 'http://' + request.get_host() + ':'\
+                + request.META['SERVER_PORT'] + request.path
+        else:
+            return 'http://' + request.get_host() + request.path
+    except:
+        return ''
 
 
 def host_with_port(request):
 
-    if request.META.get('SERVER_PORT'):
-        return 'http://' + request.get_host() + ':'\
-            + request.META['SERVER_PORT']
-    else:
-        return 'http://' + request.get_host()
+    try:
+
+        if request.META.get('SERVER_PORT'):
+            return 'http://' + request.get_host() + ':'\
+                + request.META['SERVER_PORT']
+        else:
+            return 'http://' + request.get_host()
+
+    except:
+        return ''
 
 
 def base(request):

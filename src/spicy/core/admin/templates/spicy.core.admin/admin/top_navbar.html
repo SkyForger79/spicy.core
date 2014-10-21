@@ -32,13 +32,15 @@
               </li>
 	      
               <li class="divider"></li>
-	      
+	      {% if request.user.pk %}
               <li>
                 <a href="{% url 'profile:admin:edit' request.user.pk %}">
                   <i class="icon-user"></i>
                   <span>{% trans "Your profile" %}</span>
                 </a>
               </li>
+        {% endif %}
+
 	      
               <li class="divider"></li>
 	      

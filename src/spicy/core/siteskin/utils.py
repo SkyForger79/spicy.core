@@ -57,11 +57,17 @@ def get_render_from_response(request, url, get_forwarding=False):
         query = query.encode('utf-8')
 
     if request and request.GET:
-        if query:
-            query += '&'
-        query += urllib.urlencode([
-            (k.encode('utf-8'), v.encode('utf-8')) for (k, v) in
-            request.GET.iteritems()])
+
+        try:
+            requestpath = request.get_full_path()
+            path2, query2 = requestpath.split('?', 1)
+            query2 = query2.encode('utf-8')
+            if query:
+                query += '&' + query2
+            else:
+                query = query2
+        except:
+            pass
 
     if request:
         meta = dict(request.META, PATH_INFO=path, QUERY_STRING=query)

@@ -43,11 +43,8 @@ class NavigationFilter(object):
 
     def get_queryset_ids(
             self, model_or_qset, search_query=None, manager='objects',
-            distinct=False, order_function=None):
-
-        if order_function:
-            model_qset = model_or_qset
-        elif hasattr(model_or_qset, '_meta'):
+            distinct=False):
+        if hasattr(model_or_qset, '_meta'):
             model_manager = getattr(model_or_qset, manager)
             model_qset = model_manager.values_list('id', flat=True)
         else:
@@ -58,7 +55,6 @@ class NavigationFilter(object):
             queryset = model_qset.filter(**search_query)
 
         elif type(search_query) is tuple:
-
             queryset = model_qset.filter(*search_query[0], **search_query[1])
 
         elif callable(search_query):  # XXX
@@ -68,17 +64,12 @@ class NavigationFilter(object):
             try:
                 queryset = model_qset.filter(search_query)
             except:
-
                 queryset = search_query.values_list('id', flat=True)
-
         else:
             queryset = model_qset.all()
 
         if self.order:
             queryset = queryset.order_by(*self.order)
-
-        if order_function:
-            queryset = order_function(queryset)
 
         if distinct:
             queryset = queryset.distinct()
@@ -88,18 +79,18 @@ class NavigationFilter(object):
     def get_queryset_with_paginator(
             self, model_or_qset, base_url=None, search_query=None,
             obj_per_page=OBJECTS_PER_PAGE, manager='objects',
-            result_manager='objects', distinct=False, order_function=None):
+            result_manager='objects', distinct=False):
 
         if hasattr(model_or_qset, '_meta'):
             model = model_or_qset
-        elif hasattr(model_or_qset, 'model'):
+        else:
             model = model_or_qset.model
 
         base_url = base_url or self.request.path
 
         queryset = self.get_queryset_ids(
             model_or_qset, search_query=search_query, manager=manager,
-            distinct=distinct, order_function=order_function)
+            distinct=distinct)
 
         paginator = Paginator(queryset, obj_per_page)
         try:
@@ -109,21 +100,14 @@ class NavigationFilter(object):
             raise Http404(_('Page %s does not exist.') % self.page)
             # Django that can't throw exceptions other than 404.
 
-        if order_function:
-            result_qset = []
-            for item_id in tuple(page.object_list):
-                item = getattr(model, result_manager).get(id=item_id)
-                result_qset.append(item)
-        else:
+        result_qset = getattr(
+            model, result_manager).filter(id__in=tuple(page.object_list))
 
-            result_qset = getattr(
-                model, result_manager).filter(id__in=tuple(page.object_list))
+        if self.extra:
+            result_qset = result_qset.extra(**self.extra)
 
-            if self.extra:
-                result_qset = result_qset.extra(**self.extra)
-
-            if self.order:
-                result_qset = result_qset.order_by(*self.order)  # 1082
+        if self.order:
+            result_qset = result_qset.order_by(*self.order)  # 1082
 
         # XXX
         page.object_list = result_qset

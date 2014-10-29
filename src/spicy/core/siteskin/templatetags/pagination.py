@@ -50,7 +50,9 @@ def _pagination(context, style='default', neighbours=False):
         request = context['request']
         requestpath = request.get_full_path()
         path, query = requestpath.split('?', 1)
-        get_params = query.encode('utf-8')
+        items = [(x[0], x[1].encode('utf-8'))
+            for x in request.GET.iteritems() if x[0] != 'page']
+        get_params = urllib.urlencode(items)
     except:
         pass
 

@@ -53,6 +53,10 @@ class ProfileManager(UserManager):
         else:
             username = kwargs.pop('username')
 
+        if realhost is None:
+            site = Site.objects.get_current()
+            realhost = site.domain
+
         try:
             profile = self.get(email=email)
         except self.model.DoesNotExist:

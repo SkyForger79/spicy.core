@@ -44,24 +44,28 @@ def _pagination(context, style='default', neighbours=False):
             page_list.append('.')
         page_list.append(paginator.num_pages)
 
+
+
     get_params = ''
 
     try:
         request = context['request']
         requestpath = request.get_full_path()
         path, query = requestpath.split('?', 1)
-        items = [(x[0], x[1].encode('utf-8'))
-            for x in request.GET.iteritems() if x[0] != 'page']
-        get_params = urllib.urlencode(items)
+        get_params = query.encode('utf-8')
     except:
         pass
 
+
     if hasattr(paginator, 'base_url'):
+        print 'it has base_url'
         paginator_base_url = paginator.base_url
     else:
         paginator_base_url = ''
     base_url = paginator_base_url + (
         '?%s&' % get_params if get_params else '?')
+
+    print base_url
 
     return {
         'base_url': base_url,

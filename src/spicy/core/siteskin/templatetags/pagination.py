@@ -50,9 +50,14 @@ def _pagination(context, style='default', neighbours=False):
         request = context['request']
         requestpath = request.get_full_path()
         path, query = requestpath.split('?', 1)
-        get_params = query.encode('utf-8')
-    except:
-        pass
+        if '?page=' in '?' + query:
+            get_params = ''
+        elif '&page=' in query:
+            get_params = query.split('&page=')[0].encode('utf-8')
+        else:
+            get_params = query.encode('utf-8')
+    except Exception, e:
+        print e
 
     if hasattr(paginator, 'base_url'):
         paginator_base_url = paginator.base_url

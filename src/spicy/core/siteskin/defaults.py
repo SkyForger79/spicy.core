@@ -9,12 +9,13 @@ SITESKIN_SETTINGS_MODEL = getattr(
 ADMIN_THEME = getattr(settings, 'ADMIN_THEME', None)
 DEFAULT_THEME = getattr(settings, 'DEFAULT_THEME', 'current')
 THEMES_PATH = getattr(settings, 'THEMES_PATH', os.path.abspath('../siteskins'))
+ABSOLUTE_THEME_PATH = getattr(settings, 'THEMES_PATH', '')
 SPICY_THEME_FILE = getattr(settings, 'SPICY_THEME_FILE', 'spicy.theme')
 
 SPICY_THEME_PRODUCT_KEYS = getattr(
     settings, 'SPICY_THEME_PRODUCT_KEYS',
     ['spicy.light', 'spicy.business', 'spicy.media', 'spicy.ecom']
-    )
+)
 
 # deprecated
 SITESKIN = getattr(settings, 'SITESKIN', 'example.com')

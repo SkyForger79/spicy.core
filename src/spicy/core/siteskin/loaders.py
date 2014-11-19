@@ -11,12 +11,14 @@ from . import defaults, utils
 
 
 class AppDirectoriesFinder(finders.AppDirectoriesFinder):
+
     def __init__(self, apps=None, *args, **kwargs):
         kwargs.pop('theme', None)
         super(AppDirectoriesFinder, self).__init__(apps, *args, **kwargs)
 
 
 class ThemeStaticFinder(finders.FileSystemFinder):
+
     def __init__(self, apps=None, theme=None, *args, **kwargs):
         # List of locations with static files
         self.locations = []
@@ -42,9 +44,20 @@ class ThemeStaticFinder(finders.FileSystemFinder):
 
 
 class ThemeTemplateLoader(filesystem.Loader):
+
     def get_template_sources(self, template_name, template_dirs=None):
+        try:  # that is for easier debugging when db is down
+            theme = utils.get_siteskin_settings().theme
+        except Exception, e:
+            print e
+            if defaults.ABSOLUTE_THEME_PATH:
+                theme = defaults.ABSOLUTE_THEME_PATH
+            else:
+                raise NotImplementedError(
+                    'Set ABSOLUTE_THEME_PATH in settings.py')
+
         template_dir = safe_join(
-            defaults.THEMES_PATH, utils.get_siteskin_settings().theme,
+            defaults.THEMES_PATH, theme,
             'templates')
 
         try:
@@ -61,6 +74,7 @@ class ThemeTemplateLoader(filesystem.Loader):
 
 
 class BackendTemplateLoader(app_directories.Loader):
+
     def get_template_sources(self, template_name, template_dirs=None):
         if not template_dirs:
             template_dirs = app_directories.app_template_dirs
@@ -87,6 +101,7 @@ class BackendTemplateLoader(app_directories.Loader):
 
 
 class ThemeStaticFilesStorage(storage.StaticFilesStorage):
+
     def __init__(self, *args, **kwargs):
         current_theme = utils.get_siteskin_settings().theme
         theme_name = os.path.basename(current_theme)

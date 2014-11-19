@@ -30,7 +30,7 @@ def get_themes_from_path(path, version=None):
     """
     themes = []
     try:
-        #for theme in os.path.walk(path, get_theme_dir, None):
+        # for theme in os.path.walk(path, get_theme_dir, None):
         for theme in os.listdir(path):
             theme_path = os.path.join(defaults.THEMES_PATH, theme)
             if os.path.isdir(theme_path):

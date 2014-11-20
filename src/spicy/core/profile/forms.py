@@ -606,3 +606,24 @@ class ProfileFiltersForm(forms.Form):
         label=_('Group'), queryset=Group.objects.all(), required=False)
     group.widget.attrs['class'] = 'uniform'
     search_text = forms.CharField(max_length=100, required=False)
+
+
+class ProfileUploadForm(forms.Form):
+    file = forms.FileField(label=_('CVS file'), required=False)
+    file_kind = forms.ChoiceField(
+        label=_('File type'), widget=forms.RadioSelect,
+        choices=(
+            (u'0', _('Profiles data')),  # (u'1', _('Images'))
+        ),
+        initial=u'0'
+    )
+    search_text = forms.CharField(label=_('Search'), required=False)
+
+DynamicProfileColumnForm = type(
+    'DynamicProfileColumnForm', (forms.Form,),
+    dict(
+        (field,
+         forms.BooleanField(
+             initial=True, label=Profile.get_field_label(field), required=False))
+        for field in Profile.get_exported_fields()
+    ))

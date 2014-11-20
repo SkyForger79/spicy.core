@@ -1,3 +1,5 @@
+import xlrd
+import xlwt
 import errno
 import random
 import smtplib
@@ -11,15 +13,17 @@ from django.contrib.sites.models import Site
 from django.core.mail import send_mail
 from django.core.management.color import color_style
 from django.db import models, transaction
+from django.db.models.query import QuerySet
 from django.template.loader import render_to_string
 from django.utils.crypto import get_random_string
 from django.utils.encoding import smart_str
 from django.utils.hashcompat import sha_constructor
 from django.utils.html import escape
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext, ugettext_lazy as _
 from spicy.core.service.models import ProviderModel
 from spicy.mediacenter.abs import MediaConsumerAbstractModel
 from spicy.utils.printing import print_error
+from StringIO import StringIO
 from uuid import uuid4
 from . import cache, defaults
 
@@ -27,7 +31,80 @@ from . import cache, defaults
 style = color_style()
 
 
+class ProfileQuerySet(QuerySet):
+
+    def export_data(self, columns):
+        result = StringIO()
+        workbook = xlwt.Workbook()
+        sheet = workbook.add_sheet('Profile')
+
+        fields = []
+        fields.insert(0, ('id', ugettext('Identifier')))
+        for field in columns:
+            label = self.model.get_field_label(field)
+            fields.append((field, label))
+
+        for i, (field, title) in enumerate(fields):
+            sheet.write(0, i, field)
+            sheet.write(1, i, title)
+            for j, item in enumerate(self):
+                sheet.write(j + 2, i, getattr(item, field))
+
+        workbook.save(result)
+        result.seek(0)
+        return result
+
+
 class ProfileManager(UserManager):
+    def get_query_set(self):
+        return ProfileQuerySet(self.model, using=self._db)
+
+    def import_data(self, src, fields):
+        fields.insert(0, 'id')
+        workbook = xlrd.open_workbook(file_contents=src.read())
+        sheet = workbook.sheet_by_index(0)
+        import_fields = {}
+        for i in xrange(sheet.ncols):
+            field_name = sheet.cell_value(0, i)
+            if field_name in fields:
+                import_fields[field_name] = i
+        id_pos = import_fields['id']
+        del import_fields['id']
+        ids = []
+        for i in xrange(2, sheet.nrows):
+            id = sheet.cell_value(i, id_pos)
+            
+            if id:
+                try:
+                    profile = self.model.objects.get(pk=id)
+                    _create = False
+                except self.models.DoesNotExist:
+                    _create = True
+            else:
+                _create = True
+            prof = {} 
+            for field, pos in import_fields.iteritems():
+                if sheet.cell_type(i, pos) != xlrd.XL_CELL_EMPTY:
+                    if not _create and field not in [
+                        'username', 'email', 'password']:
+                        setattr(profile, field, sheet.cell_value(i, pos))
+                    elif _create:
+                        prof.update({field: sheet.cell_value(i, pos)})
+            if _create:
+                try:
+                    password = prof['password']
+                except:
+                    password = None
+                profile = self.model.objects.create_inactive_user(
+                    prof['email'], password,
+                    first_name=prof['first_name'],
+                    last_name=prof['last_name'],
+                    phone=prof['phone'])
+            else:
+                profile.save()
+            ids.append(profile.pk)
+        return self.model.objects.filter(pk__in=ids)
+
     def make_random_password(self, length=10,
         allowed_chars=defaults.ACCOUNT_ALLOWED_CHARS):
             return get_random_string(length, allowed_chars)
@@ -181,6 +258,27 @@ class AbstractProfile(User, MediaConsumerAbstractModel):
             self.sites = [Site.objects.get_current()]
 
         return result
+
+    @classmethod
+    def get_field_label(cls, field):
+        try:
+            label = cls._meta.get_field_by_name(field)[0].verbose_name
+        except FieldDoesNotExist:
+            try:
+                label = getattr(cls, field, ).__doc__
+            except AttributeError:
+                if field.endswith('_id'):
+                    label = getattr(cls, field[:-3]).field.verbose_name
+                else:
+                    raise
+        return unicode(label)
+
+    @classmethod
+    def get_exported_fields(cls):
+        return [
+            'username', 'email', 'password', 'first_name',
+            'second_name', 'last_name', 'phone']
+
 
     @property
     def screenname(self):

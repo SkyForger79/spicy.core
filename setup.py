@@ -66,7 +66,11 @@ setup(
         'django-debug-toolbar',
         'django-devserver',
         'django-extensions',
+
+        'xlrd',
+        'xlwt'
     ],
+
     dependency_links=[
         #'svn+http://django-simple-captcha.googlecode.com/svn/trunk@54#egg=django-captcha',
         #'git+https://github.com/krvss/django-social-auth.git#egg=django-social-auth-0.7.13.dev',

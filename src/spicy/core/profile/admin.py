@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
 from django.db.models import Q
+from django import http
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
@@ -227,6 +228,8 @@ def profiles_list(request):
         ('last_login', None)])
     search_args, search_kwargs = [], {}
     form = forms.ProfileFiltersForm(request.GET)
+    status = 'ok'
+    message = ''
 
     if nav.search_text:
         search_args.append(
@@ -234,6 +237,51 @@ def profiles_list(request):
             Q(email__icontains=nav.search_text) |
             Q(first_name__icontains=nav.search_text) |
             Q(last_name__icontains=nav.search_text))
+
+    if 'export' in request.POST and request.user.is_superuser:
+        form = forms.ProfileUploadForm(request.POST, request.FILES)
+        form.is_valid()
+        if form.cleaned_data['file_kind'] == u'0':
+            queryset = Profile.objects.filter(pk__in=nav.get_queryset_ids(
+                Profile, search_query=(search_args, search_kwargs)))
+            columns_form = forms.DynamicProfileColumnForm(
+                request.POST, prefix='columns')
+            columns_form.is_valid()
+            columns = [
+                col[0] for col in columns_form.cleaned_data.iteritems()
+                if col[1]]
+            items = queryset.export_data(columns)
+            response = http.HttpResponse(
+                items, content_type='application/vnd.ms-excel')
+            response['Content-Disposition'] = 'attachment; filename=profiles.xls'
+            return response
+        else:
+            raise NotImplementedError
+
+    elif 'import' in request.POST and request.user.is_superuser:
+        form = forms.ProfileUploadForm(request.POST, request.FILES)
+        form.is_valid()
+        if form.cleaned_data['file_kind'] == u'0':
+            columns_form = forms.DynamicProfileColumnForm(
+                request.POST, prefix='columns')
+            columns_form.is_valid()
+            columns = [
+                col[0] for col in columns_form.cleaned_data.iteritems()
+                if col[1]]
+            if form.is_valid() and 'file' in request.FILES:
+                file_csv = request.FILES['file']
+                try:
+                    profiles = Profile.objects.import_data(file_csv, columns)
+                except:
+                    status = 'error'
+                    message = _('Error importing data')
+            else:
+                form = forms.ProfileUploadForm(request.POST, request.FILES)
+        else:
+            raise NotImplementedError
+    else:
+        form = forms.ProfileUploadForm()
+        columns_form = forms.DynamicProfileColumnForm(prefix='columns')    
 
     is_staff = request.GET.get('is_staff', False)
     if nav.is_staff:
@@ -259,7 +307,8 @@ def profiles_list(request):
 
     return {
         'nav': nav, 'objects_list': objects_list, 'paginator': paginator,
-        'is_staff': is_staff, 'form': form}
+        'is_staff': is_staff, 'form': form, 'columns_form': columns_form,
+        'status': status, 'message': message,}
 
 
 @is_staff(required_perms=delete_perm(defaults.CUSTOM_USER_MODEL))

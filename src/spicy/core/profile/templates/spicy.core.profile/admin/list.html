@@ -1,4 +1,4 @@
-{% extends current_admin_base %}{% load navigator pagination %}{% load url from future %}
+{% extends current_admin_base %}{% load navigator pagination sk spicy_admin %}{% load url from future %}
 
 {% block title %}{% trans "All profiles" %}{% endblock %}
 {% block status_title %}<i class="icon-user"></i> {% trans "All profiles" %}{% endblock status_title %}
@@ -45,13 +45,41 @@
                     </div>
                     <div class="span4 padded">
                         <div class="hpadded">
-                        <div class="pagination pagination-centered pagination-small" style="margin-  top: 0">
+                        <div class="pagination pagination-centered pagination-small" style="margin-top: 0">
                         {% pagination %}
                         </div>
                         </div>
                     </div>
                   </div>
               </div>
+
+        {% if request.user.is_superuser %}
+        <h4 class="padded">{% trans "Profile export and import" %}</h4>
+        <form class="fill-up" method="POST" enctype="multipart/form-data">
+          {% formfield "" form "file_kind" "li-hidden" %}
+          <div class="row-fluid hpadded" id="columns">
+        {% for field in columns_form %}
+        <div class="span1">
+          {{ field }}
+          <label for="id_{{ field.html_id }}">{{ field.label }}</label>
+        </div>
+        {% endfor %}
+          </div>
+          <div class="row-fluid padded">
+        <div class="span1">
+          <button class="btn btn-brown" type="submit" name="export"><i class="icon-arrow-right"></i> {% trans "Export" %}</button>
+        </div>
+        <div class="span3">
+          <input type="file" name="file"/>
+        </div>
+        <div class="span1">
+          <button class="btn btn-brown" type="submit" name="import"><i class="icon-arrow-left"></i> {% trans "Import" %}</button>
+        </div>
+        {% csrf_token %}
+          </div>
+        </form>
+        {% endif %}
+            
 	  
 
             <table class="table table-normal" style="border-top: 1px solid #CDCDCD;">

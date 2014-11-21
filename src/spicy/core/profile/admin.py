@@ -272,6 +272,8 @@ def profiles_list(request):
                 file_csv = request.FILES['file']
                 try:
                     profiles = Profile.objects.import_data(file_csv, columns)
+                    status = 'ok'
+                    message = _('Imported: %s' % len(profiles))
                 except:
                     status = 'error'
                     message = _('Error importing data')

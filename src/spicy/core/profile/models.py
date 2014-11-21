@@ -95,11 +95,14 @@ class ProfileManager(UserManager):
                     password = prof['password']
                 except:
                     password = None
-                profile = self.model.objects.create_inactive_user(
-                    prof['email'], password,
-                    first_name=prof['first_name'],
-                    last_name=prof['last_name'],
-                    phone=prof['phone'])
+                try:
+                    profile = self.model.objects.create_inactive_user(
+                        prof['email'], password,
+                        first_name=prof['first_name'],
+                        last_name=prof['last_name'],
+                        phone=prof['phone'])
+                except:
+                    pass
             else:
                 profile.save()
             ids.append(profile.pk)

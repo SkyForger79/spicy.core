@@ -68,44 +68,42 @@ class ProfileManager(UserManager):
             field_name = sheet.cell_value(0, i)
             if field_name in fields:
                 import_fields[field_name] = i
-        id_pos = import_fields['id']
+        id_pos = import_fields['email']
+        del import_fields['email']
         del import_fields['id']
         ids = []
         for i in xrange(2, sheet.nrows):
-            id = sheet.cell_value(i, id_pos)
+            email = sheet.cell_value(i, id_pos)
             
-            if id:
+            if email:
                 try:
-                    profile = self.model.objects.get(pk=id)
+                    profile = self.model.objects.get(email=email)
                     _create = False
-                except self.models.DoesNotExist:
+                except:
                     _create = True
             else:
                 _create = True
-            prof = {} 
+            prof = {}
             for field, pos in import_fields.iteritems():
-                if sheet.cell_type(i, pos) != xlrd.XL_CELL_EMPTY:
-                    if not _create and field not in [
-                        'username', 'email', 'password']:
-                        setattr(profile, field, sheet.cell_value(i, pos))
-                    elif _create:
-                        prof.update({field: sheet.cell_value(i, pos)})
-            if _create:
-                try:
-                    password = prof['password']
-                except:
-                    password = None
+#               if sheet.cell_type(i, pos) != xlrd.XL_CELL_EMPTY:
+                if not _create and field not in [
+                    'username', 'password']:
+                    setattr(profile, field, sheet.cell_value(i, pos))
+                elif _create:
+                    prof.update({field: sheet.cell_value(i, pos)})
+            if _create and prof:
                 try:
                     profile = self.model.objects.create_inactive_user(
-                        prof['email'], password,
+                        email, prof['password'],
                         first_name=prof['first_name'],
                         last_name=prof['last_name'],
                         phone=prof['phone'])
+                    ids.append(profile.pk)
                 except:
                     pass
             else:
                 profile.save()
-            ids.append(profile.pk)
+                ids.append(profile.pk)
         return self.model.objects.filter(pk__in=ids)
 
     def make_random_password(self, length=10,

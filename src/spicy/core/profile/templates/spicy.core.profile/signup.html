@@ -8,12 +8,12 @@
               <span>Имя:</span>
 
             <input type="text" name="{{ form.first_name.html_name }}" value="{{ form.first_name.value|default:'' }}"/>
-            {{ form.first_name.erorrs }}
+            {{ form.first_name.errors }}
 
               <span>Фамилия:</span>
 
             <input  type="text" name="{{ form.last_name.html_name }}" value="{{ form.last_name.value|default:'' }}">
-            {{ form.last_name.erorrs }}
+            {{ form.last_name.errors }}
 
               <span>E-mail:</span>
             <input  type="text" name="{{ form.email.html_name }}" value="{{ form.email.value|default:'' }}">

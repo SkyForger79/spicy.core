@@ -153,7 +153,7 @@ class ProfileService(api.Interface):
 
         if callable(defaults.DEFAULT_PROFILE_URL):
             user_redirect_uri = defaults.DEFAULT_PROFILE_URL(request.user)
-	elif isinstance(defaults.DEFAULT_PROFILE_URL, basestring):
+        elif isinstance(defaults.DEFAULT_PROFILE_URL, basestring):
             user_redirect_uri = load_module(defaults.DEFAULT_PROFILE_URL)(
                 request.user)
         else:
@@ -179,7 +179,7 @@ class ProfileService(api.Interface):
 
         is_blacklisted = False
         # BBB
-        #is_blacklisted = real_ip and models.BlacklistedIP.objects.filter(
+        # is_blacklisted = real_ip and models.BlacklistedIP.objects.filter(
         #    ip=real_ip).exists()
 
         if request.method == 'POST':
@@ -280,6 +280,98 @@ class ProfileService(api.Interface):
         return dict(
             status=status, message=unicode(message), redirect=redirect,
             form=form, REGISTRATION_ENABLED=defaults.REGISTRATION_ENABLED)
+
+    def login_or_register(self, request):
+
+        status = 'error'
+        message = ''
+        redirect = None
+        can_login = True
+        action = None
+        real_ip = request.META.get('REMOTE_ADDR')
+        is_blacklisted = real_ip and models.BlacklistedIP.objects.filter(
+            ip=real_ip).exists()
+
+        if request.user.is_authenticated():
+            redirect = self._get_redirect(request)
+            return dict(
+                status='ok',
+                message=unicode(_('User is signed in already')),
+                redirect=redirect)
+
+        elif 'register' in request.POST:
+
+            action = 'register'
+            register_form = load_module(CUSTOM_USER_SIGNUP_FORM)(request.POST)
+            login_form = LoginForm(request)
+            if not is_blacklisted and register_form.is_valid():
+                status = 'ok'
+                new_profile = register_form.save(
+                    request=request, realhost=request.get_host(),
+                    next_url=request.session.get(REDIRECT_FIELD_NAME, '/'))
+                request.session['profile_id'] = new_profile.pk
+                request.session['profile_email'] = new_profile.email
+
+        elif 'login' in request.POST:
+            action = 'login'
+            register_form = load_module(CUSTOM_USER_SIGNUP_FORM)()
+            login_form = LoginForm(data=request.POST)
+
+            # Brute force check.
+            username = request.POST.get('username')
+
+            login_check = self.check_login(
+                username, real_ip)
+            if login_check == defaults.AUTH_DISALLOW:
+                can_login = False
+            elif login_check == defaults.AUTH_WARN:
+                login_form.make_captcha_visible()
+                #captcha_required = True
+
+            if can_login and not is_blacklisted and login_form.is_valid():
+
+                if not redirect or ' ' in redirect or (
+                        '//' in redirect and re.match(r'[^\?]*//', redirect)):
+                    redirect = settings.LOGIN_REDIRECT_URL
+
+                if login_form.cleaned_data['is_remember']:
+                    request.session.set_expiry(1209600)
+
+                session_copy = dict(
+                    item for item in request.session.iteritems()
+                    if not item[0].startswith('_'))
+                auth_login(request, login_form.get_user())
+                redirect = self._get_redirect(request)
+
+                for key, value in session_copy.iteritems():
+                    request.session[key] = value
+                request.session[
+                    defaults.PASSWORD_HASH_KEY] = request.user.password
+
+                if request.session.test_cookie_worked():
+                    request.session.delete_test_cookie()
+                status = 'ok'
+
+            else:
+                if not login_form.is_valid():
+                    message = login_form.errors.as_text()
+                elif not can_login or is_blacklisted:
+                    message = _('Login is disabled or your account is banned.')
+
+        else:
+            login_form = LoginForm(request)
+            register_form = load_module(CUSTOM_USER_SIGNUP_FORM)()
+            request.session.set_test_cookie()
+            action = None
+            if not redirect:
+                redirect = request.REQUEST.get(REDIRECT_FIELD_NAME, '/')
+
+            request.session[REDIRECT_FIELD_NAME] = redirect
+
+        return dict(
+            status=status, message=unicode(message), redirect=redirect,
+            login_form=login_form, register_form=register_form,
+            REGISTRATION_ENABLED=defaults.REGISTRATION_ENABLED, action=action)
 
     def restore(self, request):
         message = ''

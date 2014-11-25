@@ -180,6 +180,18 @@ def signup(request):
     return result
 
 
+@never_cache
+@render_to('spicy.core.profile/login.html')
+def signin_or_register(request):
+    result = api.register['profile'].login_or_register(request)
+    if result['status'] == 'ok' and result['action'] == 'login':
+        return HttpResponseRedirect(
+            result.get('redirect'))
+    if result['status'] == 'ok' and result['action'] == 'register':
+        return HttpResponseRedirect(reverse('profile:public:success-signup'))
+    return result
+
+
 @render_to('spicy.core.profile/widgets/signin_form.html')
 def login_widget(request):
     result = api.register['profile'].login(request)
@@ -284,9 +296,9 @@ def new_social_user(request):
                 user.email = old_email
                 user.activate()
 
-                #tag, exists = api.register['xtag'].get_or_create_by_term_name(
+                # tag, exists = api.register['xtag'].get_or_create_by_term_name(
                 #    user.screenname, vocabulary='persons', user=user)
-                #tag.save()
+                # tag.save()
 
                 # Login.
                 redirect_to = request.session.pop(REDIRECT_FIELD_NAME, None)

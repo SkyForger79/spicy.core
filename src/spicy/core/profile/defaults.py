@@ -6,8 +6,8 @@ from spicy.utils.html import make_slug
 
 
 ACCOUNT_ALLOWED_CHARS = 'abcdefghjkmnpqrstuvwxyz'\
-        'ABCDEFGHJKLMNPQRSTUVWXYZ'\
-        '23456789'
+    'ABCDEFGHJKLMNPQRSTUVWXYZ'\
+    '23456789'
 ACCOUNT_ALLOWED_CHARS = getattr(
     settings, 'ACCOUNT_ALLOWED_CHARS', ACCOUNT_ALLOWED_CHARS)
 USERNAME_MAX_LENGTH = getattr(settings, 'USERNAME_MAX_LENGTH', 100)
@@ -21,7 +21,13 @@ NOTIFY_MANAGERS = getattr(settings, 'NOTIFY_MANAGERS', True)
 USE_CAPTCHA = getattr(settings, 'USE_CAPTCHA', True)
 # django.contrib.auth required settings
 
-settings.LOGIN_URL = '/signin/'
+USE_LOGIN_OR_REGISTER = getattr(settings, 'USE_LOGIN_OR_REGISTER', False)
+
+if USE_LOGIN_OR_REGISTER:
+    settings.LOGIN_URL = '/login/'
+else:
+    settings.LOGIN_URL = '/signin/'
+
 settings.LOGIN_REDIRECT_URL = '/'
 settings.LOGOUT_URL = '/signout/'
 

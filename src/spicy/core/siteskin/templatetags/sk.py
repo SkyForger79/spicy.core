@@ -152,3 +152,8 @@ def is_even(value):
 def head(value):
     if value:
         return value.split('.', 1)[0].split('-', 1)[0].split('_', 1)[0]
+
+
+@register.filter('fieldtype')
+def fieldtype(field):
+    return field.field.widget.__class__.__name__

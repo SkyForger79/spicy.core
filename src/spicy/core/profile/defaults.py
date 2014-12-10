@@ -74,3 +74,5 @@ ADMIN_CREATE_PROFILE_FORM = getattr(
 ADMIN_EDIT_PROFILE_FORM = getattr(
     settings, 'ADMIN_EDIT_PROFILE_FORM',
     'spicy.core.profile.forms.ProfileForm')
+
+LOGIN_WARNING = getattr(settings, 'LOGIN_WARNING', False)

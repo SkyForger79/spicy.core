@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import random
 import string
+import logging
 from uuid import uuid4
 from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME
@@ -165,7 +166,10 @@ def signin(request):
     if result['status'] == 'ok':
         return HttpResponseRedirect(
             result.get('redirect') or user_redirect_uri)
-    return result
+    else:
+        if defaults.LOGIN_WARNING and request.POST.get('username'):
+            logging.error('Error auth %s', request.POST.get('username'))
+        return result
 
 
 @never_cache

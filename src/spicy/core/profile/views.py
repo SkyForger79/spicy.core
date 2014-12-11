@@ -168,7 +168,8 @@ def signin(request):
             result.get('redirect') or user_redirect_uri)
     else:
         if defaults.LOGIN_WARNING and request.POST.get('username'):
-            logging.error('Error auth %s', request.POST.get('username'))
+            logger = logging.getLogger(__name__)
+            logger.error('Error auth %s', request.POST.get('username'))
         return result
 
 

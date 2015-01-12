@@ -3,7 +3,7 @@ from django.conf import settings
 from spicy.core.admin.conf import app_modules_register
 
 
-def find_templates(base_dir, name_tuples=True):
+def find_templates(base_dir, name_tuples=True, rel_path=False):
     templates = []
 
     # load app tempaltes

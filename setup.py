@@ -29,7 +29,7 @@ setup(
     license='BSD',
     keywords='django, cms',
     url='', # TODO: define an url
-    
+
     packages=find_packages('src'),
     package_dir={'': 'src',},
 
@@ -45,9 +45,10 @@ setup(
         'raven==3.2.1',
         'python-memcached==1.48',
         'uwsgi',
-        
+
         # spicy.scripts.py: deploy
-        'configparser==3.3.0r2',
+        # 'configparser==3.3.0r2',
+        'configparser',
         'Jinja2==2.6',
 
         # ?? siteskin deps.
@@ -78,7 +79,7 @@ setup(
     entry_points={
         'console_scripts': [
             'spicy = spicy.script:handle_command_line',
-        ],       
+        ],
     },
     classifiers=[
         'Framework :: Django',

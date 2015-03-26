@@ -16,7 +16,7 @@ from . import cache, defaults
 class APIResponse(object):
     """Класс представляет объек ответа API функций.
 
-    :param version: версия API 
+    :param version: версия API
     :type version: str
     :param code: код результата, может быть либо ``success``, либо ``error``. По умолчанию: ``JSON_API_STATUS_CODE_SUCCESS``
     :type code: str

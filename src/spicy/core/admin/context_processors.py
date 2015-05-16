@@ -6,11 +6,11 @@ def path_with_port(request):
 
     try:
 
-        if request.META.get('SERVER_PORT') and request.META.get('SERVER_PORT')\
-                != '80':
-            return 'http://' + request.get_host() + ':'\
-                + request.META['SERVER_PORT'] + request.path
-        else:
+        # if request.META.get('SERVER_PORT') and request.META.get('SERVER_PORT')\
+        #         != '80':
+        #     return 'http://' + request.get_host() + ':'\
+        #         + request.META['SERVER_PORT'] + request.path
+        # else:
             return 'http://' + request.get_host() + request.path
     except:
         return ''
@@ -19,14 +19,7 @@ def path_with_port(request):
 def host_with_port(request):
 
     try:
-
-        if request.META.get('SERVER_PORT') and request.META.get('SERVER_PORT')\
-                != '80':
-            return 'http://' + request.get_host() + ':'\
-                + request.META['SERVER_PORT']
-        else:
             return 'http://' + request.get_host()
-
     except:
         return ''
 

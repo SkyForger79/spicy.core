@@ -466,7 +466,7 @@ class Register(dict):
             self.load_services()
         try:
             return dict.__getitem__(self, name)
-        except KeyError:
+        except KeyError, e:
             raise ServiceDoesNotExist(name)
 
     def load_services(self):

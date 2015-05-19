@@ -47,7 +47,7 @@ setup(
         'uwsgi',
         
         # spicy.scripts.py: deploy
-        'configparser==3.3.0r2',
+        'configparser==3.3.0.post2',
         'Jinja2==2.6',
 
         # ?? siteskin deps.

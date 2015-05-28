@@ -28,7 +28,7 @@ class EditableTemplateForm(forms.ModelForm):
                 except Exception:
                     continue
 
-        if django_version() > '1.5':
+        if django_version() >= '1.5':
             from django.test.client import RequestFactory
             request = RequestFactory().get('/')
         else:

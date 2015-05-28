@@ -1,6 +1,7 @@
 from django import forms, http, template
 from django.template import loader
 from django.utils.translation import ugettext_lazy as _
+from django import get_version as django_version
 from spicy import utils
 from spicy.core.admin.conf import admin_apps_register
 from . import defaults
@@ -27,7 +28,11 @@ class EditableTemplateForm(forms.ModelForm):
                 except Exception:
                     continue
 
-        request = http.HttpRequest()
+        if django_version() > '1.5':
+            from django.test.client import RequestFactory
+            request = RequestFactory().get('/')
+        else:
+            request = http.HttpRequest()
         request.session = {}
         context = template.RequestContext(
             request,

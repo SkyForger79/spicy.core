@@ -25,7 +25,7 @@ from spicy.mediacenter.abs import MediaConsumerAbstractModel
 from spicy.utils.printing import print_error
 from StringIO import StringIO
 from uuid import uuid4
-from . import cache, defaults
+from . import cache, defaults, signals
 
 
 style = color_style()
@@ -145,6 +145,8 @@ class ProfileManager(UserManager):
                 email=email, last_login=now, date_joined=now, **kwargs)
 
             profile.save()
+            signals.create_profile.send(
+                sender=self.model, profile=profile)
 
             if password in (None, '', ' '):
                 password = self.make_random_password()

@@ -62,13 +62,6 @@ class AbstractSimplePage(EditableTemplateModel, MultiSitesTrashModel):
             "the page."),
         default=False)
 
-    SiteskinModel = get_custom_model_class(ss_defaults.SITESKIN_SETTINGS_MODEL)
-    siteskin = None
-    try:
-        siteskin = SiteskinModel.objects.get(site=Site.objects.get_current())
-    except SiteskinModel.DoesNotExist, e:
-        pass
-
     class Meta(EditableTemplateModel.Meta):
         abstract = True
         db_table = 'sp_simplepage'
@@ -79,10 +72,15 @@ class AbstractSimplePage(EditableTemplateModel, MultiSitesTrashModel):
 
 
     def is_homepage(self):
-        if not self.siteskin:
+        SiteskinModel = get_custom_model_class(ss_defaults.SITESKIN_SETTINGS_MODEL)
+        try:
+            siteskin = SiteskinModel.objects.get(site=Site.objects.get_current())
+        except SiteskinModel.DoesNotExist, e:
+            siteskin = None
+        if not siteskin:
             return False
         else:
-            if self.siteskin.home_page_id == self.id:
+            if siteskin.home_page_id == self.id:
                 return True
             else:
                 return False

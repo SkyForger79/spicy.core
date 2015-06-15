@@ -65,6 +65,9 @@ msgstr "Нет"
 msgid "Edit CMS settings"
 msgstr "Редактировать настройки CMS"
 
+msgid "Edit homepage"
+msgstr "Редактировать главную страницу"
+
 #: templates/spicy.core.siteskin/admin/edit.html:30
 msgid "Save changes"
 msgstr "Сохранить изменения"

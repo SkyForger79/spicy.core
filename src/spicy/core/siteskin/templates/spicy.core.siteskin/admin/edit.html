@@ -14,7 +14,7 @@
         <div class="box-header">
           <span class="title">{{ form.instance }}</span>
         </div>
-	
+
         <div class="box-content">
           <form name="edit_admin_settings" class="form-horizontal fill-up validatable" method="post" action="." autocomplete="off"
 		enctype="multipart/form-data">{% csrf_token %}
@@ -22,10 +22,10 @@
             <div class="row-fluid">
               <ul class="padded separate-sections">
 		{{ form.as_ul }}
-	      </ul>           
+	      </ul>
             </div>
-            
-	    <div class="form-actions">	      
+              <a href="{% url 'simplepages:admin:edit' form.instance.home_page_id %}">{% trans "Edit homepage" %}</a>
+	    <div class="form-actions">
 	      <div class="pull-right">
 		<button type="submit" class="btn btn-blue" name="save" onclick="document.edit_settings.submit(); return true;">{% trans "Save changes" %}</button>
 	      </div>

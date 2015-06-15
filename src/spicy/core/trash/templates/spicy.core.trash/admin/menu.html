@@ -1,0 +1,20 @@
+{% load url from future %}
+{% if perms.trash %}
+<li class="dark-nav{% if app.name in request.path %} active{% endif %}">
+  <span class="glow"></span>
+  <a class="accordion-toggle collapsed" data-toggle="collapse" href="#menu_{{ app.name }}">
+    <i class="icon-trash icon-2x"></i>
+    <span>{{ app.label }}
+      <i class="icon-caret-down"></i>
+    </span>
+  </a>
+
+  <ul id="menu_{{ app.name }}" class="collapse{% if app.name in request.path %} in{% endif %}">
+    <li>
+      <a href="{% url 'trash:admin:index' %}">
+        <i class="icon-trash"></i> {% trans "View archived items" %}
+      </a>
+    </li>
+  </ul>
+</li>
+{% endif %}

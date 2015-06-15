@@ -1,0 +1,29 @@
+{% extends current_base %}{% load url from future %}{% load staticfiles sk %}
+
+{% block content %}
+
+<h2>Подтверждение адреса электронной почты</h2></div>
+{% if msg %}
+<p>{{ msg }}</p>
+{% else %}
+
+Пожалуйста, введите адрес электронной почты, на который будет выслан код подтверждения.
+<form id="" name="" action="" method="post">{% csrf_token %}
+  <ul>
+    <li>
+      {{ form.email.label }}
+      {{ form.email }}
+      {{ form.email.errors }}
+    </li>
+    <li>
+      {{ form.captcha.label }}
+      {{ form.captcha }}
+      {{ form.captcha.errors }}
+    </li>
+    <li>
+      <input type="submit" value="Выслать код"/>
+    </li>
+  </ul>
+</form>
+
+{% endblock content %}

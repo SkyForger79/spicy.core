@@ -1,0 +1,4 @@
+{% if user.is_banned %}{% blocktrans with email=user.email %}Your account {{ email }} is banned{% endblocktrans %}{% else %}{% blocktrans with email=user.email %}Your account {{ email }} is not banned{% endblocktrans %}{% endif %}
+
+----
+{{ site.domain }}

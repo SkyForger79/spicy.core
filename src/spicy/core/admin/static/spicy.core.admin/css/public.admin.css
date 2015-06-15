@@ -1,0 +1,12 @@
+.edit{
+    position:absolute;
+    left:auto;
+    top:auto;
+    width:22px;
+    height:22px;
+    line-height:22px;
+    margin: 2px 0px 0px 2px;
+    background:url(../images/editicon.png) 0 0 no-repeat;
+    cursor:pointer;
+    z-index: 100;
+}

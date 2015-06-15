@@ -1,0 +1,15 @@
+{% extends current_base %}{% load url from future %}{% load staticfiles sk %}
+
+{% block content %}
+
+{% if profile.is_active %}
+<h3>Аккаунт успешно активирован!</h3>
+<a href="{{ next_url }}">перейти на ту страницу с которой вы решили зарегистрироваться</a>
+{% else %}
+<h3>Ощибка активации!</h3>
+<div>Восстановите пароль или запросите новый ключ активации.</div>
+<a href="{% url 'profile:public:restorepass' %}">Восстановление пароля</a>
+{# TODO form with captcha <a href="{% url 'profile:public:resend-activation' profile.id %}"></a> #}
+{% endif %}
+
+{% endblock content %}

@@ -1,0 +1,221 @@
+<!doctype html>{% load staticfiles spicy_admin sk i18n %}{% load url from future %}
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, maximum-scale=1, initial-scale=1, user-scalable=0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,800">
+    <link rel="shortcut icon" href="{% static 'spicy.core.admin/favicon.ico' %}" type="image/x-icon"/>
+
+    <meta charset="utf-8">    
+    <!-- Always force latest IE rendering engine or request Chrome Frame -->
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    
+    <script src="{% static 'spicy.core.admin/js/jquery-1.10.1.min.js' %}" type="text/javascript"></script>
+    {# <script src="{% static 'spicy.core.admin/js/jquery-1.9.1.min.js' %}" type="text/javascript"></script> #}
+    
+    <link href="{% static 'spicy.core.admin/themes/default/stylesheets/application.css' %}" media="screen" rel="stylesheet" type="text/css">  
+    <link href="{% static 'spicy.core.admin/css/admin.css' %}" media="screen" rel="stylesheet" type="text/css">  
+    <script>
+    var full_path_with_port = "{{FULL_PATH_WITH_PORT}}";
+    var host_with_port = "{{HOST_WITH_PORT}}";
+    </script>
+    <script src="{% static 'spicy.core.admin/themes/default/javascripts/application.js' %}" type="text/javascript"></script>
+    <script src="{% static 'spicy.core.admin/js/jquery.synctranslit.min.js' %}" type="text/javascript"></script>
+    <link href="{% static 'spicy.core.admin/datetimepicker/jquery.datetimepicker.css' %}" media="screen" rel="stylesheet" type="text/css">
+    <script src="{% static 'spicy.core.admin/datetimepicker/jquery.datetimepicker.js' %}"></script>
+    <script src="{% static 'spicy.core.admin/js/spicy.admin.js' %}" type="text/javascript"></script>
+
+    {% if '/media/' in request.path %}
+    <link rel="stylesheet" type="text/css" href="{% static 'spicy.mediacenter/css/mediacenter.css' %}">
+    <!--<link rel="stylesheet" type="text/css" href="{% static 'spicy.mediacenter/flowplayer/skin/minimalist.css' %}">
+    <script type="text/javascript" src="{% static 'spicy.mediacenter/flowplayer/flowplayer.min.js' %}"></script>-->
+    <link rel="stylesheet" href="//releases.flowplayer.org/5.4.6/skin/minimalist.css">
+    <script src="//releases.flowplayer.org/5.4.6/flowplayer.min.js"></script>
+    {% endif %}
+
+    {% block extra_head %}{% endblock %}
+    
+    <!--[if lt IE 9]>
+  <script src="{% static 'spicy.core.admin/themes/default/javascripts/vendor/html5shiv.js' %}" type="text/javascript"></script>
+  <script src="{% static 'spicy.core.admin/themes/default/javascripts/vendor/excanvas.js' %}" type="text/javascript"></script>
+  <![endif]-->
+    
+    <style type="text/css">.jqstooltip { position: absolute;left: 0px;top: 0px;visibility: hidden;background: rgb(0, 0, 0) transparent;background-color: rgba(0,0,0,0.6);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000);-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000)";color: white;font: 10px arial, san serif;text-align: left;white-space: nowrap;padding: 5px;border: 1px solid white;z-index: 10000;}.jqsfield { color: white;font: 10px arial, san serif;text-align: left;}</style>
+    {% block extra_css %}{% endblock extra_css %}
+    {% block extra_js %}{% endblock extra_js %}
+
+    
+    <title>{% block title %}{% trans "Administrator interface" %}{% endblock %} - SpicyCMS</title>
+  </head>
+
+  <body>
+    {% captureas admin_index %}{% url 'spicyadmin:admin:index' %}{% endcaptureas %}
+    {% block top_navbar %}{% include 'spicy.core.admin/admin/top_navbar.html' %}{% endblock top_navbar %}
+  
+    {% block menu %}
+    <div class="sidebar-background">
+      <div class="primary-sidebar-background"></div>
+    </div>
+    
+    <div class="primary-sidebar">
+      <ul class="nav nav-collapse collapse nav-collapse-primary">
+  
+        <li class="{% if request.path == admin_index %}active{% endif %}">
+          <span class="glow"></span>
+          <a href="{{ admin_index }}">
+            <i class="icon-dashboard icon-2x"></i>
+            <span>{% trans 'Dashboard' %}</span>
+          </a>
+        </li> 
+  {% for app in ADMIN_APPS %}{% app_menu request app %}{% endfor %} 
+      </ul>
+    </div>
+    {% endblock %}
+    
+    <div class="{% block content-class %}main-content{% endblock %}">
+      {% block status_board %}
+      
+      <div class="container-fluid">
+  <div class="row-fluid">
+    <div class="area-top clearfix">
+      <div class="pull-left header">
+              <h3 class="title">
+    {% block status_title %}{% endblock status_title %}
+              </h3>
+              <h5>{% block status_subtitle %}Description here...{% endblock status_subtitle %}</h5>
+      </div>
+      
+      {% block status_stats %}
+      {% if app.top_stats %}
+      <ul class="inline pull-right sparkline-box">
+
+        {% for stats in app.top_stats %}
+              <li class="sparkline-row">
+    <a href="{{ stats.url }}"><h4 class="{{ stats.css_class }}"><span>{{ stats.name }}</span> {{ stats.value }}</h4></a>
+    {#<div class="sparkline big" data-color="blue"><canvas width="82" height="30" style="display: inline-block; width: 82px; height: 30px; vertical-align: top;"></canvas></div>#}
+              </li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+      {% endblock status_stats %}
+
+    </div>
+  </div>
+
+      </div>
+      
+      {% endblock status_board %}
+      
+      {% if message %}
+      <div class="container-fluid hpadded">
+  <div class="row-fluid">
+    <div class="alert alert-{% if status == 'error' %}error{% else %}success{% endif %}">
+      <button type="button" class="close" data-dismiss="alert">×</button>
+      <strong>{{ message }}</strong>
+    </div>
+  </div>
+      </div>
+      {% endif %}      
+
+      {% block content %}{% endblock content %}
+
+    </div>
+
+{% if 'spicy.bramabrama' in ADMIN_APPS_REGISTER.keys %}
+    <div id="support-issue" class="modal hide fade in" style="display: hidden;" aria-hidden="false">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h6 id="modal-formLabel">{% trans 'Redmine'%}</h6>
+  </div>
+  <div class="modal-body">
+    <form class="form-horizontal fill-up separate-sections" enctype="multipart/form-data" id="contact-form" method="POST" action="{% url 'bramabrama:admin:export'%}">
+      {% csrf_token %}
+        <input type="hidden" name="path" value="{{ request.path }}">
+      <div>
+        <label>{% trans 'Enter to Subjects'%}</label>
+        <input type="text" name="subject" placeholder="{% trans 'Subjects'%}" required>
+      </div>
+      <div class="divider"><span>{% trans 'Enter to Description' %}</span></div>
+      <div>
+        <textarea rows="4" name="description" placeholder="{% trans 'Enter your Description' %}" required></textarea>
+      </div>
+      <div class="divider"><span>{% trans 'Enter to File' %}</span></div>
+      <div id="file-uploader-issue">
+      </div>
+    </form>
+    <div>+7 (495) 988 00 79 <br/> help@bramabrama.com</div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-default" data-dismiss="modal">{% trans 'Close' %}</button>
+    <button class="btn btn-blue" type="submit" form="contact-form">{% trans 'Send a Request' %}</button>
+  </div>
+</div>
+<script type="text/javascript" src="{% static 'spicy.mediacenter/js/fileuploader.js' %}"></script>
+<link rel="stylesheet" href="{% static 'spicy.mediacenter/css/fileuploader.css' %}" type="text/css"/>
+  <script>
+  var path_files = [];
+  var name_files = [];
+  $('#contact-form').on('submit', function(e) {
+    e.preventDefault();
+    var _this = this;
+    $(this).find('.btn-blue').attr({'disabled':'disabled'});
+    var that = $(e.target);
+    url = $(this).attr('action');
+    data = $(this).serializeArray();
+    file = that.find('input[name="files"]').val();
+    if(path_files && name_files) 
+        data.push({'name':'path_files[]','value': path_files});
+        data.push({'name':'name_files[]','value': name_files});
+        path_files = [];
+        name_files = [];
+        $('.qq-upload-list').empty();
+    $.post(url, data, function(data){
+        if(data.success == 'ok'){
+            alertForm({form: that, type: 'alert-success', msg: {% trans "'Your application '+ data.messages +' is accepted'" %}});
+            that.find('textarea').val('');
+            that.find('input[name="subject"]').val('');
+            $(_this).find('.btn-blue').removeAttr('disabled');
+        }
+        else{
+            alertForm({form: that, type: 'alert-danger', msg: {% trans "'Application have not been sent. Repeat later.'" %}});
+            return;
+        }
+    });
+  });
+function alertForm(alert) {
+        var div = $('<div class="alert ' + alert.type + '" style="display: none;">' + alert.msg + '</div>');        
+        alert.form.prepend(div);
+        div.slideDown(400).delay(3000).slideUp(400, function() {
+          alert.form.closest('.modal').modal('hide');
+          div.remove();    
+        });
+      }
+$('#support-issue').on('show.bs.modal', function (e) {
+    uploader = new qq.FileUploader({
+    element: document.getElementById('file-uploader-issue'),
+    action: '{% url "bramabrama:admin:import-file" %}',
+    allowedExtensions: ['jpg', 'jpeg', 'png', 'gif', 'xls', 'doc', 'pdf', 'mp4', 'mp3', 'avi', 'wmv', 'mpg', 'mpeg', 'zip', 'rar'],
+    template: '<div class="qq-uploader">' +
+              '<div class="qq-upload-drop-area"><span>Перетащите сюда файлы для загрузки</span></div>' +
+              '<div class="qq-upload-button btn btn-green"><i class="icon-upload-alt"></i> Выберите файлы</div>' +
+              '<ul class="qq-upload-list separate-sections"></ul>' +
+              '</div>',
+    fileTemplate: '<li>' +
+                '<span class="qq-upload-file"></span>' +
+                '<span class="qq-upload-spinner"></span>' +
+                '<span class="qq-upload-size"></span>' +
+                '<a class="qq-upload-cancel" href="#">Отменить</a>' +
+                '<span class="qq-upload-failed-text">Ошибка</span>' +
+            '</li>',
+
+    onSubmit: function(id, fileName){ },
+    onProgress: function(id, fileName, loaded, total){ },
+    onComplete: function(id, fileName, responseJSON){
+        path_files.push(responseJSON.media_file['path']);
+        name_files.push(responseJSON.media_file['filename']);
+    }
+  });
+});
+  </script>
+{% endif %}
+  </body>
+</html>

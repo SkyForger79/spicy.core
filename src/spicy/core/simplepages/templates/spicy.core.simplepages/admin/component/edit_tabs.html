@@ -1,0 +1,9 @@
+{% load url from future %}
+<ul class="nav nav-tabs nav-tabs-right">
+  <li{% if tab == 'page' %} class="active"{% endif%}><a href="{% url 'simplepages:admin:edit' instance.pk %}"><i class="icon-sitemap"></i> <span>{% trans "Edit page" %}</span></a></li>
+
+  {% if 'spicy.seo' in ADMIN_APPS_REGISTER.keys %}
+  <li{% if tab == 'seo' %} class="active"{% endif%}><a href="{% url 'simplepages:admin:edit-seo' instance.pk %}"><i class="icon-search"></i> <span>{% trans "Edit SEO" %}</span></a></li>
+  {% endif %}
+</ul>
+	  		  

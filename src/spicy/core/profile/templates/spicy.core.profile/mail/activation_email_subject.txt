@@ -1,0 +1,1 @@
+{% blocktrans with username=user.username %}Activation account email for {{ username }}{% endblocktrans%}

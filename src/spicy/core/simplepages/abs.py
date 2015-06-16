@@ -73,17 +73,12 @@ class AbstractSimplePage(EditableTemplateModel, MultiSitesTrashModel):
 
     def is_homepage(self):
         SiteskinModel = get_custom_model_class(ss_defaults.SITESKIN_SETTINGS_MODEL)
-        try:
-            siteskin = SiteskinModel.objects.get(site=Site.objects.get_current())
-        except SiteskinModel.DoesNotExist, e:
-            siteskin = None
-        if not siteskin:
-            return False
+        siteskin = SiteskinModel.objects.filter(site=Site.objects.get_current()).filter(home_page__id = self.id)
+
+        if siteskin:
+            return True
         else:
-            if siteskin.home_page_id == self.id:
-                return True
-            else:
-                return False
+            return False
 
     def __unicode__(self):
         return u"{0} -- {1}".format(self.url, self.title)

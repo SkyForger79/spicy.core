@@ -76,3 +76,5 @@ ADMIN_EDIT_PROFILE_FORM = getattr(
     'spicy.core.profile.forms.ProfileForm')
 
 LOGIN_WARNING = getattr(settings, 'LOGIN_WARNING', False)
+
+USE_HTML_EMAIL = getattr(settings, 'USE_HTML_EMAIL', False)

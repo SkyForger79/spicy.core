@@ -20,6 +20,7 @@ from django.utils.encoding import smart_str
 from django.utils.hashcompat import sha_constructor
 from django.utils.html import escape
 from django.utils.translation import ugettext, ugettext_lazy as _
+from django.core.mail import EmailMultiAlternatives
 from spicy.core.service.models import ProviderModel
 from spicy.mediacenter.abs import MediaConsumerAbstractModel
 from spicy.utils.printing import print_error
@@ -338,7 +339,7 @@ class AbstractProfile(User, MediaConsumerAbstractModel):
         key = ':'.join((str(self.pk), email, settings.SECRET_KEY))
         return sha_constructor(key).hexdigest()
 
-    def email_user(self, subject, message, email=None):
+    def email_user(self, subject, message, email=None, html_body=None):
         email = email or self.email
 
         if not email:
@@ -346,7 +347,11 @@ class AbstractProfile(User, MediaConsumerAbstractModel):
             return
 
         try:
-            send_mail(subject.strip('\n'), message, None, [email])
+            mail = EmailMultiAlternatives(subject=subject.strip('\n'), body=message,
+                from_email=None, to=[email], headers={'format': 'flowed'})
+            if html_body:
+                mail.attach_alternative(html_body, 'text/html')
+            mail.send()
             return True
         except socket.error, e:
             # TODO: log error
@@ -373,7 +378,13 @@ class AbstractProfile(User, MediaConsumerAbstractModel):
         subject = ''.join(subject.splitlines())
         message = render_to_string(
             'spicy.core.profile/mail/hello_email.txt', context)
-        self.email_user(subject, message)
+        
+        if defaults.USE_HTML_EMAIL:
+            html_body = render_to_string(
+                'spicy.core.profile/mail/hello_email.html', context)
+            self.email_user(subject, message, html_body=html_body)
+        else:
+            self.email_user(subject, message)
 
     def email_banned(self):
         site = Site.objects.get_current()
@@ -384,7 +395,12 @@ class AbstractProfile(User, MediaConsumerAbstractModel):
         subject = ''.join(subject.splitlines())
         message = render_to_string(
             'spicy.core.profile/mail/banned_email.txt', context)
-        self.email_user(subject, message)
+        if defaults.USE_HTML_EMAIL:
+            html_body = render_to_string(
+                'spicy.core.profile/mail/banned_email.html', context)
+            self.email_user(subject, message, html_body=html_body)
+        else:
+            self.email_user(subject, message)
 
     def notify_managers(self, user_password=None):
         context = {
@@ -418,7 +434,13 @@ class AbstractProfile(User, MediaConsumerAbstractModel):
         subject = ''.join(subject.splitlines())
         message = render_to_string(
             'spicy.core.profile/mail/activation_email.txt', context)
-        self.email_user(subject, message)
+        
+        if defaults.USE_HTML_EMAIL:
+            html_body = render_to_string(
+                'spicy.core.profile/mail/activation_email.html', context)
+            self.email_user(subject, message, html_body=html_body)
+        else:
+            self.email_user(subject, message)
 
     def email_passwd(self, password):
         if not self.email:
@@ -432,7 +454,12 @@ class AbstractProfile(User, MediaConsumerAbstractModel):
         subject = ''.join(subject.splitlines())
         message = render_to_string(
             'spicy.core.profile/mail/passwd_email.txt', context)
-        self.email_user(subject, message)
+        if defaults.USE_HTML_EMAIL:
+            html_body = render_to_string(
+                'spicy.core.profile/mail/passwd_email.html', context)
+            self.email_user(subject, message, html_body=html_body)
+        else:
+            self.email_user(subject, message)
 
     def email_confirm(self, email):
         site = Site.objects.get_current()
@@ -445,7 +472,12 @@ class AbstractProfile(User, MediaConsumerAbstractModel):
             ).splitlines())
         message = render_to_string(
             'spicy.core.profile/mail/set_email_email.txt', context)
-        self.email_user(subject, message, email=email)
+        if defaults.USE_HTML_EMAIL:
+            html_body = render_to_string(
+                'spicy.core.profile/mail/set_email_email.html', context)
+            self.email_user(subject, message, email=email, html_body=html_body)
+        else:
+            self.email_user(subject, message, email=email)
 
     def email_message_notify(self, msg):
         # !!! deprecated method use spicy.messages app
@@ -468,13 +500,17 @@ class AbstractProfile(User, MediaConsumerAbstractModel):
             return
 
         site = Site.objects.get_current()
+        context = dict(password=password, user=self, site=site)
         subject = render_to_string(
-            'spicy.core.profile/mail/forgotten_password_subject.txt',
-            dict(password=password, user=self, site=site))
+            'spicy.core.profile/mail/forgotten_password_subject.txt', context)
         message = render_to_string(
-            'spicy.core.profile/mail/forgotten_password_email.txt',
-            dict(password=password, user=self, site=site))
-        self.email_user(subject, message)
+            'spicy.core.profile/mail/forgotten_password_email.txt', context)
+        if defaults.USE_HTML_EMAIL:
+            html_body = render_to_string(
+                'spicy.core.profile/mail/forgotten_password_email.html', context)
+            self.email_user(subject, message, html_body=html_body)
+        else:
+            self.email_user(subject, message)
 
     @models.permalink
     def get_absolute_url(self):

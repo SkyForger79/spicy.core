@@ -1,0 +1,29 @@
+{% extends 'spicy.core.profile/mail/base.html' %}
+
+{% block title %}{% blocktrans with sitename=site.name %}Welcome to {{ sitename }}!{% endblocktrans %}{% endblock %}
+
+{% block body %}
+<div style="font-size:16px">
+<p>{% trans "Your account is not acivated yet. To activate press the following link:" %}</p><br>
+
+<a href="http://{{ realhost }}{% url 'profile:public:activate' user_id key %}?next={{ next_url }}">http://{{ realhost }}{% url 'profile:public:activate' user_id key %}?next={{ next_url }}</a><br>
+
+<p>{% trans "If you're unable to follow the link in this mail, just copy it to your browser's address bar." %}</p><br>
+
+<p>{% trans "Be careful while copying the link - using incomplete text would not lead to your account's activation" %}</p><br>
+
+<p>{% trans "Your registration data:" %}</p><br>
+
+<p>{% trans "Email" %}: {{ email }}</p>
+<p>{% trans "Username" %}: {{ user.username }}</p>
+<p>{% if password %}{% trans "Password" %}: {{ password }}{% endif %}</p><br>
+
+<p>{% blocktrans %}Key expires in {{ expiration_days }} days.{% endblocktrans %}</p><br>
+
+<p>{% trans "Thank you for registering on our site" %}</p><br>
+
+--
+
+<br><p>{{ site.domain }}</p>
+</div>
+{% endblock %}

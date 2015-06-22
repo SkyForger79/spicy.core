@@ -24,9 +24,11 @@
 		{{ form.as_ul }}
 	      </ul>
             </div>
+              {% if form.instance.home_page_id %}
               <div class="padded">
               <a href="{% url 'simplepages:admin:edit' form.instance.home_page_id %}" class="btn btn-blue">{% trans "Edit homepage" %}</a>
         </div>
+            {% endif %}
 	    <div class="form-actions">
 	      <div class="pull-right">
 		<button type="submit" class="btn btn-blue" name="save" onclick="document.edit_settings.submit(); return true;">{% trans "Save changes" %}</button>

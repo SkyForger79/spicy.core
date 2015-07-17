@@ -296,6 +296,7 @@ class ProfileService(api.Interface):
             redirect = self._get_redirect(request)
             return dict(
                 status='ok',
+                action='authenticated',
                 message=unicode(_('User is signed in already')),
                 redirect=redirect)
 

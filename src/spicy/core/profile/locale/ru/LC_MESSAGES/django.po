@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-16 19:24+0300\n"
+"POT-Creation-Date: 2015-07-23 16:02+0300\n"
 "PO-Revision-Date: 2011-04-19 22:28+0400\n"
 "Last-Translator: Stas Shtin<antisvin@gmail.com>\n"
 "Language-Team: Russian <LL@li.org>\n"
@@ -68,7 +68,6 @@ msgstr "Новый пользователь создан."
 
 #: admin.py:276
 #, fuzzy, python-format
-#| msgid "Import"
 msgid "Imported: %s"
 msgstr "Импорт"
 
@@ -138,7 +137,7 @@ msgid "Email new password"
 msgstr "Выслать новый пароль по email"
 
 #: forms.py:88 forms.py:135 forms.py:190 forms.py:467
-#: templates/spicy.core.profile/admin/list.html:91
+#: templates/spicy.core.profile/admin/list.html:95
 #: templates/spicy.core.profile/mail/activation_email.html:18
 #: templates/spicy.core.profile/mail/activation_email.txt:14
 #: templates/spicy.core.profile/mail/notify_managers_email.txt:3
@@ -192,11 +191,11 @@ msgid "This value must contain only letters, numbers and underscores."
 msgstr "Можно использовать только буквы, цифры и подчеркивание."
 
 #: forms.py:160 forms.py:161 forms.py:353
-#: templates/spicy.core.profile/admin/list.html:97
+#: templates/spicy.core.profile/admin/list.html:102
 msgid "Groups"
 msgstr "Группы"
 
-#: forms.py:164 forms.py:357 templates/spicy.core.profile/admin/list.html:94
+#: forms.py:164 forms.py:357 templates/spicy.core.profile/admin/list.html:98
 msgid "Sites"
 msgstr "Сайты"
 
@@ -221,7 +220,7 @@ msgid "There is no user with this email"
 msgstr "Пользователь с данным адресом электронной почты не найден"
 
 #: forms.py:263 forms.py:283 forms.py:346 forms.py:465 forms.py:517
-#: templates/spicy.core.profile/admin/list.html:93
+#: templates/spicy.core.profile/admin/list.html:97
 #: templates/spicy.core.profile/mail/activation_email.html:17
 #: templates/spicy.core.profile/mail/activation_email.txt:13
 #: templates/spicy.core.profile/mail/forgotten_password_email.html:14
@@ -285,7 +284,6 @@ msgstr "Группа"
 
 #: forms.py:612
 #, fuzzy
-#| msgid "CSV file"
 msgid "CVS file"
 msgstr "CSV файл"
 
@@ -295,17 +293,12 @@ msgstr "Тип файла"
 
 #: forms.py:616
 #, fuzzy
-#| msgid "Profiles"
 msgid "Profiles data"
 msgstr "Профайлы"
 
-#: forms.py:620 templates/spicy.core.profile/admin/list.html:41
+#: forms.py:620 templates/spicy.core.profile/admin/list.html:42
 msgid "Search"
 msgstr "Поиск"
-
-#: management/commands/createsuperuser.py:29
-msgid "Enter a valid e-mail address."
-msgstr "Введите верный адрес электронной почты."
 
 #: models.py:43
 msgid "Identifier"
@@ -337,7 +330,6 @@ msgstr "Телефон"
 
 #: models.py:233
 #, fuzzy
-#| msgid "All profiles"
 msgid "Google profile ID"
 msgstr "Все профили"
 
@@ -398,29 +390,69 @@ msgstr "Пользователи, активировавшие ПИНы"
 msgid "Users with pins not activated"
 msgstr "Пользователи не активировавшие ПИНы"
 
-#: services.py:173 services.py:299
+#: services.py:173 services.py:300
 msgid "User is signed in already"
 msgstr "Пользователь уже зарегестрирован"
 
-#: services.py:227 services.py:359
+#: services.py:227 services.py:360
 msgid "Login is disabled or your account is banned."
 msgstr "Учетная запись неактивно или Ваша учетная запись была забанена."
 
-#: services.py:393
+#: services.py:394
 msgid "New password has been sent to you email address"
 msgstr "Новый пароль был отправлен вам по электронной почте"
 
-#: services.py:399
+#: services.py:400
 msgid "Profile has been already activated"
 msgstr "Профайл уже был активирован"
 
-#: services.py:407
+#: services.py:408
 msgid "New activation key has been sent to your email address."
 msgstr "Новый ключ активации был отправлен вам по электронной почте."
 
-#: services.py:415
+#: services.py:416
 msgid "Unable to send activation key, please try again later"
 msgstr "Не удалось выслать код активации, попробуйте позже"
+
+#: views.py:83
+msgid "Password has been change successful"
+msgstr "Пароль был успешно изменен"
+
+#: views.py:143
+msgid "Email address is already set"
+msgstr "Адрес электронной почты уже указан"
+
+#: views.py:149 views.py:323
+msgid "Validation email has been sent"
+msgstr "Письмо с подтверждением было отправлено на указанный адрес"
+
+#: management/commands/createsuperuser.py:29
+msgid "Enter a valid e-mail address."
+msgstr "Введите верный адрес электронной почты."
+
+#: templates/spicy.core.profile/passwd.html:17
+msgid "Save"
+msgstr "Сохранить"
+
+#: templates/spicy.core.profile/success_signup.html:6
+msgid ""
+"Account successfully created! You must activate your profile. Activation "
+"link has been sent by email."
+msgstr ""
+"Учетная запись успешно создана! Необходимо активировать ваш профайл. Ссылка "
+"для активации была отправлена по электронной почте."
+
+#: templates/spicy.core.profile/success_signup.html:13
+#, python-format
+msgid ""
+"Please check your email <b>%(email)s</b>. You have been sent a letter "
+"containing profile activation link. <br/><b>Attention!</b> The letter could "
+"have arrived in your Spam fo\\\n"
+"lder, make sure to check it."
+msgstr ""
+"Пожалуйста, проверьте вашу электронную почту <b>%(email)s</b>. Вам было "
+"отправлено письмо со ссылкой для активации профайла. <br/><b>Внимание!</b> "
+"Письмо могло оказаться в папке Спам, обязательно проверьте её."
 
 #: templates/spicy.core.profile/admin/blacklisted_ips.html:9
 msgid "Profiles"
@@ -525,41 +557,45 @@ msgstr "Все группы"
 msgid "Month last login"
 msgstr "Логины за последний месяц"
 
-#: templates/spicy.core.profile/admin/list.html:57
+#: templates/spicy.core.profile/admin/list.html:59
 msgid "Profile export and import"
 msgstr ""
 
-#: templates/spicy.core.profile/admin/list.html:70
+#: templates/spicy.core.profile/admin/list.html:73
 msgid "Export"
 msgstr "Экспорт"
 
-#: templates/spicy.core.profile/admin/list.html:76
+#: templates/spicy.core.profile/admin/list.html:80
 msgid "Import"
 msgstr "Импорт"
 
-#: templates/spicy.core.profile/admin/list.html:92
+#: templates/spicy.core.profile/admin/list.html:96
 msgid "Full name"
 msgstr "Полное имя (ФИО)"
 
-#: templates/spicy.core.profile/admin/list.html:95
+#: templates/spicy.core.profile/admin/list.html:99
+msgid "Subscribe"
+msgstr "Подписка на рассылку"
+
+#: templates/spicy.core.profile/admin/list.html:100
 #: templates/spicy.core.profile/admin/parts/edit_profile_form.html:10
 msgid "Last login"
 msgstr "Дата последней авторизации"
 
-#: templates/spicy.core.profile/admin/list.html:96
+#: templates/spicy.core.profile/admin/list.html:101
 #: templates/spicy.core.profile/admin/parts/edit_profile_form.html:9
 msgid "Date joined"
 msgstr "Дата регистрации"
 
-#: templates/spicy.core.profile/admin/list.html:98
+#: templates/spicy.core.profile/admin/list.html:103
 msgid "Is active"
 msgstr "Активна"
 
-#: templates/spicy.core.profile/admin/list.html:118
+#: templates/spicy.core.profile/admin/list.html:126
 msgid "No site"
 msgstr "Без сайта"
 
-#: templates/spicy.core.profile/admin/list.html:134
+#: templates/spicy.core.profile/admin/list.html:147
 msgid "Has no group"
 msgstr "Без группы"
 
@@ -581,7 +617,6 @@ msgstr "Редактировать профайл"
 
 #: templates/spicy.core.profile/admin/parts/edit_profile_tabs.html:5
 #, fuzzy
-#| msgid "Media title"
 msgid "Media files"
 msgstr "Заголовок медиа"
 
@@ -703,13 +738,11 @@ msgstr ""
 
 #: templates/spicy.core.profile/mail/hello_email.html:13
 #, fuzzy, python-format
-#| msgid "Your email address"
 msgid "Your email: %(email)s,"
 msgstr "Ваш email адрес"
 
 #: templates/spicy.core.profile/mail/hello_email.html:14
 #, fuzzy
-#| msgid "Password"
 msgid "password"
 msgstr "Пароль"
 
@@ -795,10 +828,6 @@ msgstr "Спасибо что вы с нами"
 msgid "Change email for %(username)s on %(domain)s"
 msgstr "Изменение адреса электронной почты для %(username)s на %(domain)s"
 
-#: templates/spicy.core.profile/passwd.html:17
-msgid "Save"
-msgstr "Сохранить"
-
 #: templates/spicy.core.profile/social/new_user.html:5
 msgid "Login with social network account"
 msgstr "Войти с помощью аккаунта социальной сети "
@@ -840,38 +869,6 @@ msgid ""
 msgstr ""
 "Я прочитал и согласен с правилами <a href=\"%(user_agreement_url)s"
 "\">пользовательского соглашения</a>"
-
-#: templates/spicy.core.profile/success_signup.html:6
-msgid ""
-"Account successfully created! You must activate your profile. Activation "
-"link has been sent by email."
-msgstr ""
-"Учетная запись успешно создана! Необходимо активировать ваш профайл. Ссылка "
-"для активации была отправлена по электронной почте."
-
-#: templates/spicy.core.profile/success_signup.html:13
-#, python-format
-msgid ""
-"Please check your email <b>%(email)s</b>. You have been sent a letter "
-"containing profile activation link. <br/><b>Attention!</b> The letter could "
-"have arrived in your Spam fo\\\n"
-"lder, make sure to check it."
-msgstr ""
-"Пожалуйста, проверьте вашу электронную почту <b>%(email)s</b>. Вам было "
-"отправлено письмо со ссылкой для активации профайла. <br/><b>Внимание!</b> "
-"Письмо могло оказаться в папке Спам, обязательно проверьте её."
-
-#: views.py:81
-msgid "Password has been change successful"
-msgstr "Пароль был успешно изменен"
-
-#: views.py:142
-msgid "Email address is already set"
-msgstr "Адрес электронной почты уже указан"
-
-#: views.py:148 views.py:319
-msgid "Validation email has been sent"
-msgstr "Письмо с подтверждением было отправлено на указанный адрес"
 
 #~ msgid "Notification"
 #~ msgstr "Оповещение"
@@ -4495,9 +4492,6 @@ msgstr "Письмо с подтверждением было отправлен
 
 #~ msgid "Subscribe for digest"
 #~ msgstr "Подписка на рассылку"
-
-#~ msgid "Subscribe"
-#~ msgstr "Подписаться"
 
 #~ msgid "User status"
 #~ msgstr "Подпись/статус"

@@ -231,7 +231,8 @@ class ValidateEmailMixin:
             except Profile.MultipleObjectsReturned:
                 pass
             raise forms.ValidationError(
-                _(u'This address already belongs to other user'))
+                _(u'This address already belongs to other user')
+                + u' <a href="%s">%s</a>&nbsp;<a href="%s">%s</a>' % (reverse('profile:public:signin'), _(u'Authorization'), reverse('profile:public:restorepass'),  _(u'Restore password')),code='alreadyused')
         elif self.fields['email'].required:
             raise forms.ValidationError(_(u'This field is required'))
         return email
@@ -319,7 +320,7 @@ class SignupForm(forms.Form, ValidateEmailMixin):
             profile = Profile.objects.create_inactive_user(
                 email, password=password,
                 next_url=next_url,
-                realhost=realhost, 
+                realhost=realhost,
                 **data)
 
             profile.sites.add(*Site.objects.all())

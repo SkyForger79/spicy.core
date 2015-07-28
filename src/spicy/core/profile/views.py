@@ -22,7 +22,7 @@ from django.views.decorators.cache import never_cache
 from spicy.utils.printing import print_warning
 from spicy.utils.models import get_custom_model_class
 from spicy.core.service import api
-from spicy.core.siteskin.decorators import render_to, ajax_request
+from spicy.core.siteskin.decorators import render_to, ajax_request, multi_view
 from . import defaults, models, forms
 from .models import BlacklistedIP
 
@@ -175,7 +175,9 @@ def signin(request):
 
 
 @never_cache
-@render_to('spicy.core.profile/signup.html')
+@ajax_request
+# @multi_view()
+# @render_to('spicy.core.profile/signup.html')
 def signup(request):
     result = api.register['profile'].register(request)
     if result['status'] == 'ok':

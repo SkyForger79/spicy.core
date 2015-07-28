@@ -4521,8 +4521,8 @@ msgstr ""
 #~ msgid "Login:"
 #~ msgstr "Логин:"
 
-#~ msgid "Restore password"
-#~ msgstr "Восстановить пароль"
+msgid "Restore password"
+msgstr "Восстановить пароль"
 
 #~ msgid "Page %(number)s"
 #~ msgstr "Страница %(number)s"
@@ -6587,8 +6587,8 @@ msgstr ""
 #~ msgid "My pincodes"
 #~ msgstr "Мои пин коды"
 
-#~ msgid "Authozitation"
-#~ msgstr "Авторизация"
+msgid "Authorization"
+msgstr "Авторизация"
 
 #~ msgid ""
 #~ "\n"
@@ -6662,8 +6662,8 @@ msgstr ""
 #~ msgid "Permission denied"
 #~ msgstr "Доступ запрещен"
 
-#~ msgid "Sign up"
-#~ msgstr "Регистрация"
+msgid "Sign up"
+msgstr "Регистрация"
 
 #~ msgid "Please correct errors below:"
 #~ msgstr "Исправьте следующие ошибки:"

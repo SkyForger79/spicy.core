@@ -1,0 +1,45 @@
+{% extends current_base %}{% load url from future %}{% load staticfiles sk %}
+
+{% block content %}
+<h3>Регистрация</h3>
+      {{ form.non_fields_errors }}
+    <form action="" method="POST" name="signup_form">{% csrf_token %}
+
+              <span>Имя:</span>
+
+            <input type="text" name="{{ form.first_name.html_name }}" value="{{ form.first_name.value|default:'' }}"/>
+            {{ form.first_name.errors }}
+
+              <span>Фамилия:</span>
+
+            <input  type="text" name="{{ form.last_name.html_name }}" value="{{ form.last_name.value|default:'' }}">
+            {{ form.last_name.errors }}
+
+              <span>E-mail:</span>
+            <input  type="text" name="{{ form.email.html_name }}" value="{{ form.email.value|default:'' }}">
+            {{ form.email.errors }}
+
+              <span>Пароль:</span>
+            <input  type="password" name="{{ form.password.html_name }}" value=""/>
+
+              <span>Повторите пароль:</span>
+
+            <input  type="password" name="{{ form.password2.html_name }}" value="" />
+            {{ form.password.errors }}
+
+              <span>Телефон:</span>
+            <input  type="text" name="{{ form.phone.html_name }}" value="{{ form.phone.value|default:"" }}">
+            {{ form.phone.errors }}
+
+
+              <input type="checkbox" value="1" name="{{ form.accept_agreement.html_name }}" checked="checked"/>
+              <span>Я ознакомился с <a target="_blank" href="{% url 'profile:public:user-agreement' %}">договором-офертой</a></span>
+	      
+
+      <a href="{% url 'profile:public:signin' %}">Уже зарегистрированы? Входите!</a>
+
+        <span onclick="document.signup_form.submit(); return true;">Начать работать</span>
+
+      </form>
+
+{% endblock content %}

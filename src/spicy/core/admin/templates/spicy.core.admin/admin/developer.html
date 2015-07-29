@@ -1,0 +1,70 @@
+{% extends current_admin_base %}{% load spicy_admin sk navigator %}{% load url from future %}
+
+{% block title %}{% trans "Developer" %}{% endblock %}
+{% block status_title %}<i class="icon-pencil"></i>{% endblock status_title %}
+{% block status_stats %}
+
+{% endblock status_stats %}
+
+{% block content %}
+<div class="container-fluid hpadded">
+  <div class="row-fluid">
+    <div class="span12">
+      <div class="box">
+	{% comment %}
+        <div class="box-header">
+          <span class="title">{{ form.instance }}</span>
+        </div>
+	{% endcomment %}
+	
+        <div class="box-content">
+
+	  <form name="edit_admin_settings" class="form-horizontal fill-up validatable" method="post" action="." autocomplete="off"
+		enctype="multipart/form-data">{% csrf_token %}
+
+	  
+	  <div class="row-fluid">
+            <ul class="padded separate-sections">
+	      
+           {% formfield "" form "sentry_key" "li-text" %} 
+           {% formfield "" form "redmine_key" "li-text" %}
+            <hr>
+           {% formfield "" form "redmine_tracker_url" "li-text" %}
+           {% formfield "" form "redmine_username" "li-text" %}
+           {% formfield "" form "redmine_password" "li-password" %}
+           {% formfield "" form "redmine_project" "li-text" %}
+            <hr>
+           {% formfield "" form "enable_debug_toolbar" "li-checkbox" %}
+           {% formfield "" form "debug_mode" "li-checkbox" %}
+    	    </ul>           
+          </div>
+          
+	  
+	  <pre>
+	  TODO
+
+	  FTP access
+	  Issue tracker request from - create new Issue here and redirect. - widget ??
+	  Show current Application version using Issue Tracker roadmap
+	  Show all spent time
+	  Show current month spent time	 
+
+	  Memcached status
+	  Database status
+	  </pre>
+          
+	    <div class="form-actions">	      
+	      <div class="pull-right">
+		<button type="submit" class="btn btn-blue" name="save" onclick="document.edit_settings.submit(); return true;">{% trans "Save changes" %}</button>
+	      </div>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}{{ form.media }}{% endblock %}

@@ -1,0 +1,31 @@
+{% extends current_base %}{% load url from future %}{% load staticfiles sk %}
+
+{% block content %}
+<h2>Авторизация или <a href="{% url 'profile:public:signup' %}?{{ REDIRECT_FIELD_NAME }}={{ redirect }}" id="registration-link">Регистрация</a></h2>
+
+{% if message %}<p>{{ message }}</p>{% endif %}
+<form method="POST" action="{% url 'profile:public:signin' %}?{{ REDIRECT_FIELD_NAME }}={{ redirect }}" enctype="multipart/form-data" id="auth-login-form">{% csrf_token %}
+  <input type="hidden" name="next" value="{{ redirect }}" />
+
+    {{ form.non_field_errors }}
+
+      <ul>
+        <li><label>Логин:</label>{{ form.username }}{{ form.username.errors }}</li>
+        <li><label>Пароль:</label>{{ form.password }}{{ form.password.errors }}</li>
+        <li>{{ form.is_remember }}<label for="id_is_remember">Запомнить меня</label>
+          <a href="{% url 'profile:public:restorepass' %}">Напомнить пароль</a>
+        </li>
+      </ul>
+      
+      {% comment %}
+      <div>
+        <p>Экспресс-авторизация при помощи социальных сетей.</p>
+        {% include "spicy.core.profile/profile/social/networks.html" %}
+      </div>
+      {% endcomment %}
+
+      <input type="submit" class="default-button" value="{% trans "Login" %}"/>
+</form>
+
+
+{% endblock content %}

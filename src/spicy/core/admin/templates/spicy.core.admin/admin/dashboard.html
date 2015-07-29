@@ -1,0 +1,342 @@
+{% extends current_admin_base %}{% load sk spicy_admin %}
+
+{% block title %}{% trans "Dashboard" %}{% endblock title %}
+
+{% block status_title %}<i class="icon-dashboard"></i> {% trans "Dashboard" %}{% endblock status_title %}
+
+{% block content %}
+<div class="container-fluid padded">
+  <div class="row-fluid">
+
+    <div class="span3">
+      <!-- find me in partials/action_nav_normal -->
+
+      <!--big normal buttons-->
+      <div class="action-nav-normal">
+	<div class="row-fluid">
+	  {% for link in dashboard_links %}
+	  <div class="span6 action-nav-button">
+	    <a href="{{ link.url }}">
+              <i class="{{ link.icon_class }}"></i>
+              <span>{{ link.label }}</span>
+	    </a>
+	    {% apply "link.get_counter" request.user "counter" %}
+	    {% if counter %}<span class="label label-black">{{ counter }}</span>{% endif %}
+	  </div>
+	  {% if not forloop.last %}
+	  {% cycle "" "</div><div class='row-fluid'>" %}
+	  {% endif %}
+	  {% endfor %}
+	</div>
+      </div>
+    </div>
+
+    <div class="span9">
+      <div class="box">
+	<div class="box-header">
+	  <div class="title"><i class="icon-home"></i> {{ site.domain }} - {{ site.name }}</div>
+	  {% if sites|length > 1 %}
+	  <ul class="box-toolbar">
+            <li class="toolbar-link">
+              <a href="#" data-toggle="dropdown"><i class="icon-cog"></i> {% trans 'Sites on the Platform' %} - {{ sites|length }}</a>
+              <ul class="dropdown-menu">
+		{% for s in sites|dictsort:"id" %}
+		{% if site != s %}
+		<li><a href="http://{{ s.domain }}/admin/"><i class="icon-pencil"></i> {{ s.name }}</a></li>
+		{% endif %}
+		{% endfor %}
+              </ul>
+            </li>
+	  </ul>
+	  {% endif %}
+	</div>
+{% if spicy_settings.ga_key %}
+	<div class="box-content padded">
+	  <div class="row-fluid">
+	    <div class="span12 separate-sections" style="margin-top: 5px;">
+	      <div class="row-fluid">
+		<h3>{% trans "Weekly statistics" %}</h3>
+	      </div>
+              <div class="row-fluid">
+		<div class="span6">
+		  <div class="dashboard-stats">
+		    <ul class="inline">
+                      <li class="glyph"><i class="icon-bolt icon-2x"></i></li>
+                      <li class="count" id="total_visitors">?</li>
+		    </ul>
+		    {#<div class="progress progress-blue"><div class="bar tip" title="80%" data-percent="80"></div></div>#}
+		    <div class="stats-label">{% trans "Total Visits" %}</div>
+		  </div>
+
+		  <div class="row-fluid" style="margin-top:30px;">
+		    <div class="span6">
+		      <div class="dashboard-stats small">
+			<ul class="inline">
+			  <li class="glyph"><i class="icon-user"></i></li>
+			  <li class="count" id="new_visits">?</li>
+			</ul>
+			{#<div class="progress progress-blue"><div class="bar tip" title="65%" data-percent="65"></div></div>#}
+			<div class="stats-label">{% trans "New Visitors" %}</div>
+		      </div>
+		    </div>
+
+		    <div class="span6">
+		      <div class="dashboard-stats small">
+			<ul class="inline">
+			  <li class="glyph"><i class="icon-eye-open"></i></li>
+			  <li class="count" id="page_views">?</li>
+			</ul>
+			{#<div class="progress progress-blue"><div class="bar tip" title="80%" data-percent="80"></div></div>#}
+			<div class="stats-label">{% trans "Page Views" %}</div>
+		      </div>
+		    </div>
+		  </div>
+
+		</div>
+		<div class="span6">
+		  <div class="sine-chart" id="ga-chart">
+		    <button id="authorize-button" class="btn btn-green" style="visibility: hidden">{% trans "Authorize Google Analytics access to your account" %}</button>
+		  </div>
+		</div>
+              </div>
+
+	    </div>
+	  </div>
+	</div>
+    <script type="text/javascript">
+var clientId = '23119541224'
+
+var apiKey = 'AIzaSyC71-ClFEC2UNWVRpFBFtK5MeMYh5SYxKE'
+
+var scopes = 'https://www.googleapis.com/auth/analytics.readonly'
+
+function handleClientLoad() {
+  gapi.client.setApiKey(apiKey)
+  window.setTimeout(checkAuth,1)
+}
+
+function checkAuth() {
+  gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: true}, handleAuthResult)
+}
+
+function handleAuthResult(authResult) {
+  var authorizeButton = document.getElementById('authorize-button')
+  if (authResult && !authResult.error) {
+    authorizeButton.style.visibility = 'hidden'
+    loadGAClient()
+  } else {
+    authorizeButton.style.visibility = ''
+    authorizeButton.onclick = handleAuthClick
+  }
+}
+
+function handleAuthClick(event) {
+  gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: false}, handleAuthResult)
+  return false
+}
+
+function loadGAClient() {
+  gapi.client.load('analytics', 'v3', makeApiCall)
+}
+
+function makeApiCall(){
+  gapi.client.analytics.management.webproperties.list({'accountId': '~all'}).execute(handleWebproperties);
+
+}
+function handleWebproperties(results) {
+  if (!results.code) {
+    if (results && results.items && results.items.length) {
+
+      for (var i in results.items){
+        var property = results.items[i]
+        if (property.id == '{{ spicy_settings.ga_key }}'){
+          queryProfiles(property.accountId, property.id)
+          break
+        }
+      }
+
+    } else {
+      console.log('No webproperties found for this user.');
+    }
+  } else {
+    console.log('There was an error querying webproperties: ' + results.message);
+  }
+}
+
+function queryProfiles(accountId, webpropertyId) {
+  gapi.client.analytics.management.profiles.list({
+      'accountId': accountId,
+      'webPropertyId': webpropertyId
+  }).execute(handleProfiles);
+}
+
+function handleProfiles(results) {
+  if (!results.code) {
+    if (results && results.items && results.items.length) {
+      for (var i in results.items) {
+        var profile = results.items[i]
+
+        // Step 3. Query the Core Reporting API
+        queryCoreReportingApi(profile.id);
+      }
+
+    } else {
+      console.log('No views (profiles) found for this user.');
+    }
+  } else {
+    console.log('There was an error querying views (profiles): ' + results.message);
+  }
+}
+
+function queryCoreReportingApi(profileId) {
+  console.log('Querying Core Reporting API.');
+
+  // Use the Analytics Service Object to query the Core Reporting API
+  gapi.client.analytics.data.ga.get({
+    'ids': 'ga:' + profileId,
+    'start-date': '6daysAgo',
+    'end-date': 'today',
+    'dimensions': 'ga:date',
+    'metrics': 'ga:visits,ga:newVisits,ga:pageViews'
+  }).execute(handleCoreReportingResults);
+}
+
+function handleCoreReportingResults(results) {
+  if (results.error) {
+    console.log('There was an error querying core reporting API: ' + results.message);
+  } else {
+    printResults(results);
+  }
+}
+function printResults(results) {
+  if (results.rows && results.rows.length) {
+    totals = [0, 0, 0]
+    var data= [
+      {xScale: 'ordinal', yScale: 'linear', comp: [], main: [{data: [], className: 'main.l1'}, {data: [], className: 'main.l2'}]},
+      {xScale: 'ordinal', yScale: 'linear', comp: [], main: [{data: [], className: 'main.l1'}]}
+    ]
+    for (var i in results.rows){
+      console.log(results.rows[i])
+      totals[0] += parseInt(results.rows[i][1])
+      totals[1] += parseInt(results.rows[i][2])
+      totals[2] += parseInt(results.rows[i][3])
+      datestr = results.rows[i][0]
+      var date = datestr.substr(0, 4) + '-' + datestr.substr(4, 2) + '-' + datestr.substr(6, 2)
+      data[0].main[0].data.push({x: date, y: parseInt(results.rows[i][1]), label: '{% trans "visits" %}', i: 0})
+      data[0].main[1].data.push({x: date, y: parseInt(results.rows[i][2]), label: '{% trans "new visitors" %}', i: 0})
+      data[1].main[0].data.push({x: date, y: parseInt(results.rows[i][3]), label: '{% trans "page views" %}', i: 1})
+    }
+    $('#total_visitors').html(totals[0])
+    $('#new_visits').html(totals[1])
+    $('#page_views').html(totals[2])
+
+    $('#ga-chart').html('')
+    $('#ga-chart').after(
+      '<div class="row-fluid">' +
+        '<div class="span4 padded">' +
+          '<div class="btn-group" id="ga-chart-type">' +
+            '<button class="btn btn-blue btn-lightblue" data-type="0">{% trans "Visitors" %}</button>' +
+            '<button class="btn btn-blue" data-type="1">{% trans "Page Views" %}</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="span8">' +
+          '<div id="chart-title-0" class="padded chart-title row-fluid">' +
+            '<div class="span6"><div style="width: 100px; border-color: #3880AA; background-color: #3880AA; height: 4px; float:left; margin-top: 10px; margin-right: 5px"></div><br/><b style="font-size:large">{% trans "Total Visits" %}</b></div>' +
+            '<div class="span6"><div style="width: 100px; border-color: #4DA944; background-color: #4DA944; height: 4px; float:left; margin-top: 10px; margin-right: 5px"></div><br/><b style="font-size:large">{% trans "New Visitors" %}</b></div>' +
+          '</div>' +
+          '<div id="chart-title-1" class="padded chart-title row-fluid" style="display: none">' +
+            '<div class="span6"><div style="width: 100px; border-color: #3880AA; background-color: #3880AA; height: 4px; float:left; margin-top: 10px; margin-right: 5px"></div><br/><b style="font-size:large">{% trans "Page Views" %}</b></div>' +
+          '</div>' +
+        '</div>' +
+      '</div>')
+    
+var weekdays = ['{% trans "Sunday" %}', '{% trans "Monday" %}', '{% trans "Tuesday" %}', '{% trans "Wednesday" %}', '{% trans "Thursday" %}', '{% trans "Friday" %}', '{% trans "Saturday" %}']
+var order = [0, 1],
+  i = 0,
+  xFormat = d3.time.format('%A'),
+  chart = new xChart('line-dotted', data[order[i]], '#ga-chart', {
+    axisPaddingTop: 5,
+    dataFormatX: function (x) {
+      return new Date(x);
+    },
+    tickFormatX: function (x) {
+      return weekdays[x.getDay()]
+    },
+    timing: 1250
+  }),
+  rotateTimer,
+  toggles = d3.selectAll('#ga-chart-type button'),
+  t = 3500;
+
+function updateChart(i) {
+  $('#chart-title-' + (i?0:1)).hide()
+  console.log('#chart-title-' + (i?0:1))
+  $('#chart-title-' + i).show()
+  var d = data[i];
+  chart.setData(d);
+  toggles.classed('btn-lightblue', function () {
+    return (d3.select(this).attr('data-type') == i);
+  });
+  return d;
+}
+
+toggles.on('click', function (d, i) {
+  clearTimeout(rotateTimer);
+  updateChart(i);
+});
+
+function rotateChart() {
+  i += 1;
+  i = (i >= order.length) ? 0 : i;
+  var d = updateChart(order[i]);
+  rotateTimer = setTimeout(rotateChart, t);
+}
+rotateTimer = setTimeout(rotateChart, t);
+
+  } else {
+    console.log('No results found');
+  }
+}
+    </script>
+
+    <script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
+
+{% endif %}
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid padded">
+  <div class="row-fluid">
+    {% for dashboard_list in dashboard_lists %}
+    <div class="span4">
+      <div class="box">
+	<div class="box-header">
+          <div class="title">{{ dashboard_list.title }}</div>
+	</div>
+
+	<div class="box-content padded">
+	  {% apply "dashboard_list.get_data" request.user "results" %}
+	  {% for data in results %}
+          <div class="row-fluid">
+            {% if data.date %}<div class="span3"><i class="icon-time"></i> {{ data.date|date:"d M Y" }}</div>{% endif %}
+            <div class="span{{ data.date|yesno:'7,10' }}"><a href="{{ data.edit_url }}">{{ data.object }}</a></div>
+            <div class="span1"><a href="{{ data.edit_url }}"><i class="icon-pencil"></i></a></div>
+	    <div class="span1"><a href="{{ data.object.get_absolute_url }}"><i class="icon-eye-open"></i></a></div>
+          </div>
+	  {% endfor %}
+	</div> 
+      </div>
+    </div>
+    {% if not forloop.last %}{% cycle "" "" "</div><div class='row-fluid'>" %}{% endif %}
+    {% endfor %}
+
+  </div>
+</div>
+
+
+</div>
+
+{% endblock content %}

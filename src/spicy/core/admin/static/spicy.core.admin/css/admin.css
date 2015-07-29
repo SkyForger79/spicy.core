@@ -1,0 +1,31 @@
+.error {
+    color: red;
+}
+
+.thumbnails > li {
+float: left;
+margin-bottom: 0px;
+margin-left: 0px;
+}
+
+.modal-backdrop {
+    z-index: 10000;
+ }
+
+.modal {
+    z-index: 10050;
+}
+
+.autocomplete-light-widget, .autocomplete-light-widget input, .autocomplete-light-widget input:focus {
+    width: 100% !important;
+}
+
+.triangle-button {
+    cursor: pointer
+}
+
+.table-normal tbody .even { background: none repeat scroll 0 0 #f3f4f8 !important; }
+.table-normal tbody .odd { background: none repeat scroll 0 0 #ffffff !important; }
+.table-normal tbody td.extended {
+    border-left: 1px solid #eaebef !important;
+}

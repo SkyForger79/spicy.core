@@ -1,0 +1,50 @@
+{% load url from future %}
+{% load spicy_admin %}
+<div class="row-fluid">
+  <div class="span6">
+    <ul class="padded separate-sections">
+      {% formfield "" form "username" "li-text" %}
+      {% formfield "" form "email" "li-text" %}
+      <li><hr/></li>
+      <li><strong>{% trans "Date joined" %}</strong>: {{ form.instance.date_joined|date:"d-m-Y H:i" }}</li>
+      <li><strong>{% trans "Last login" %}</strong>: {{ form.instance.last_login|date:"d-m-Y H:i" }}</li>
+      <li>
+	<a data-toggle="modal" href="#passwd" class="btn btn-gray">{% trans "Change password" %}</a>
+	<a class="btn btn-green" onclick="call_method('{% url 'profile:admin:resend-activation' form.instance.pk %}');">{% trans "Resend activation key" %}</a>
+      </li>
+      <li><hr/></li>
+      {% if MANUAL_ACTIVATION %}
+      <li>
+	<div class="alert alert-success">
+	  <button type="button" class="close" data-dismiss="alert">×</button>
+	  <strong>{% trans "Manual activation mode is enabled is_active = ON is_banned = ON|OFF" %}</strong>
+	</div>	
+      </li>{% endif %}
+      {% formfield "" form "is_staff" "li-checkbox" %}		
+      {% formfield "" form "is_superuser" "li-checkbox" %}		
+      {% formfield "" form "is_active" "li-checkbox" %}		
+      {% formfield "" form "is_banned" "li-checkbox" %}		
+      <li><hr/></li>
+      {% formfield "" form "sites" "li-multiple-select" %}
+      {% formfield "" form "groups" "li-multiple-select" %}
+      {% formfield "" form "user_permissions" "li-multiple-select" %}
+      {# <li>{{ form.user_permissions }}</li> #}
+    </ul>
+  </div>
+  <div class="span6">
+    <ul class="padded separate-sections">
+      {% formfield "" form "first_name" "li-text" %}
+      {% formfield "" form "last_name" "li-text" %}
+      {% formfield "" form "second_name" "li-text" %}		 
+      <li><hr/></li>
+      {% formfield "" form "accept_agreement" "li-checkbox" %}		
+      {% formfield "" form "subscribe_me" "li-checkbox" %}		
+      {% formfield "" form "hide_email" "li-checkbox" %}				  
+      <li><hr/></li>
+      {% formfield "" form "phone" "li-text" %}
+      {% formfield "" form "google_profile_id" "li-text" %}
+      {% formfield "" form "timezone" "li-text" %}
+    </ul>
+  </div>
+</div>	    
+

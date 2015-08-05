@@ -277,15 +277,15 @@ class ProfileService(api.Interface):
             redirect = request.REQUEST.get(REDIRECT_FIELD_NAME, '/')
             request.session[REDIRECT_FIELD_NAME] = redirect
 
-        # Для отправки формы через Ajax
-        if request.is_ajax():
-            return dict(
-                status=status, message=unicode(message), errors=form.errors.as_text())
-
-        else:
-            return dict(
-            status=status, message=unicode(message), redirect=redirect,
-            form=form, REGISTRATION_ENABLED=defaults.REGISTRATION_ENABLED, errors=str(form.errors))
+        # # Для отправки формы через Ajax
+        # if request.is_ajax():
+        #     return dict(
+        #         status=status, message=unicode(message), errors=form.errors.as_text())
+        #
+        # else:
+        return dict(
+        status=status, message=unicode(message), redirect=redirect,
+        form=form, REGISTRATION_ENABLED=defaults.REGISTRATION_ENABLED, errors=str(form.errors))
 
     def login_or_register(self, request):
 

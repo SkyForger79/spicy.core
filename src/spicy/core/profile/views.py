@@ -175,9 +175,9 @@ def signin(request):
 
 
 @never_cache
-@ajax_request
+# @ajax_request
 # @multi_view()
-# @render_to('spicy.core.profile/signup.html')
+@render_to('spicy.core.profile/signup.html')
 def signup(request):
     result = api.register['profile'].register(request)
     if result['status'] == 'ok':
@@ -195,8 +195,7 @@ def signin_or_register(request):
     if result['status'] == 'ok' and result['action'] == 'authenticated':
         return HttpResponseRedirect(reverse('profile:public:index', kwargs={'username': request.user.username}))
     elif result['status'] == 'ok' and result['action'] == 'login':
-        return HttpResponseRedirect(
-            result.get('redirect'))
+        return HttpResponseRedirect(result.get('redirect'))
     elif result['status'] == 'ok' and result['action'] == 'register':
         return HttpResponseRedirect(reverse('profile:public:success-signup'))
     else:

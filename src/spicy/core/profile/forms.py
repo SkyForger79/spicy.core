@@ -231,8 +231,8 @@ class ValidateEmailMixin:
             except Profile.MultipleObjectsReturned:
                 pass
             raise forms.ValidationError(
-                _(u'This address already belongs to other user')
-                + ' <a href="%s">%s</a>&nbsp;<a href="%s">%s</a>' % (reverse('profile:public:signin'), _(u'Authorization'), reverse('profile:public:restorepass'),  _(u'Restore password')),code='alreadyused')
+                _(u'This address already belongs to other user'))
+                # + ' <a href="%s">%s</a>&nbsp;<a href="%s">%s</a>' % (reverse('profile:public:signin'), _(u'Authorization'), reverse('profile:public:restorepass'),  _(u'Restore password')),code='alreadyused')
         elif self.fields['email'].required:
             raise forms.ValidationError(_(u'This field is required'))
         return email

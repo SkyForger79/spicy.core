@@ -205,7 +205,8 @@ msgstr "Права"
 
 #: forms.py:234 forms.py:482 forms.py:592
 msgid "This address already belongs to other user"
-msgstr "Это адрес уже использует другой пользователь"
+msgstr "Это адрес уже зарегистрирован, укажите другой адрес "
+"или войдите под своими учетными данными."
 
 #: forms.py:236 forms.py:255 forms.py:275
 msgid "This field is required"

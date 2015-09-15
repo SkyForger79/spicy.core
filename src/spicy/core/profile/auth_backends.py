@@ -3,6 +3,7 @@ from django.contrib.sites.models import Site
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import get_model
 
+from django_auth_ldap.backend import LDAPBackend
 
 from spicy.core.profile import cache, defaults
 
@@ -62,7 +63,27 @@ class CustomUserModelBackend(ModelBackend):
         perms = cache.get_permissions(user_obj, 'user', 'user')
         perms.update(cache.get_permissions(user_obj, 'group', 'group__user'))
         return perms
-        
+
+
+class CustomUserModelLDAPBackend(LDAPBackend):
+    """
+    For using as LDAP backend in AUTHENTICATION_BACKENDS setting.
+
+    e.g.
+    AUTHENTICATION_BACKENDS = ('spicy.core.profile.auth_backends.CustomUserModelLDAPBackend',
+                               'spicy.core.profile.auth_backends.CustomUserModelBackend')
+    """
+    def get_user_model(self):
+        """ Override base method to use custom user model rather than User model """
+        app, model = defaults.CUSTOM_USER_MODEL.split('.', 1)
+        user_model = get_model(app, model)
+        if not user_model:
+            raise ImproperlyConfigured(
+                'Could not get custom user model',
+                defaults.CUSTOM_USER_MODEL)
+        return user_model
+
+
 """
 class NoEmailMonkeyPatch(object):
     def get_user_details(self, response):

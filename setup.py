@@ -68,6 +68,7 @@ setup(
         'django-devserver',
         'django-extensions',
         'django-autocomplete-light==2.0.0a15',
+        'django-auth-ldap==1.2.6',
 
         'xlrd',
         'xlwt'

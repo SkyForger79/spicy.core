@@ -83,6 +83,15 @@ class CustomUserModelLDAPBackend(LDAPBackend):
                 defaults.CUSTOM_USER_MODEL)
         return user_model
 
+    def get_or_create_user(self, username, ldap_user):
+        """ Override for mark profile as LDAP user """
+        profile, created = super(CustomUserModelLDAPBackend, self).get_or_create_user(username, ldap_user)
+        # Mark profile as LDAP user
+        if created:
+            profile.is_ldap_user = True
+            profile.save()
+        return profile, created
+
 
 """
 class NoEmailMonkeyPatch(object):

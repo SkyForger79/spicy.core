@@ -68,6 +68,7 @@ setup(
         'django-devserver',
         'django-extensions',
         'django-autocomplete-light==2.0.0a15',
+        # For LDAP auth backend
         'django-auth-ldap==1.2.6',
 
         'xlrd',
@@ -75,8 +76,12 @@ setup(
     ],
 
     dependency_links=[
-        #'svn+http://django-simple-captcha.googlecode.com/svn/trunk@54#egg=django-captcha',
-        #'git+https://github.com/krvss/django-social-auth.git#egg=django-social-auth-0.7.13.dev',
+        # Spicy db settings
+        # Warning! This package patches Django, see readme at https://code.spicycms.com/spicy.dbsettings
+        'hg+https://code.spicycms.com/spicy.dbsettings#egg=spicy.dbsettings',
+
+        # 'svn+http://django-simple-captcha.googlecode.com/svn/trunk@54#egg=django-captcha',
+        # 'git+https://github.com/krvss/django-social-auth.git#egg=django-social-auth-0.7.13.dev',
     ],
     entry_points={
         'console_scripts': [

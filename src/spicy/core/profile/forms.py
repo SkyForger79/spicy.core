@@ -181,7 +181,7 @@ class ProfileForm(forms.ModelForm):
         fields = (
             'username', 'first_name', 'second_name', 'last_name', 'email',
             'groups', 'user_permissions', 'sites', 'is_staff', 'is_active',
-            'is_banned', 'accept_agreement', 'is_superuser', 'subscribe_me',
+            'is_banned', 'is_ldap_user', 'accept_agreement', 'is_superuser', 'subscribe_me',
             'hide_email', 'phone', 'timezone', 'google_profile_id')
 
 

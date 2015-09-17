@@ -101,6 +101,7 @@
                                     <td>{% nav_order_url nav 'date_joined' _('Date joined') "icon-sort" "icon-sort-down" "icon-sort-up" %}</td>
                                     <td>{% trans 'Groups' %}</td>
                                     <td>{% nav_order_url nav 'is_active' _('Is active') "icon-sort" "icon-sort-down" "icon-sort-up" %}</td>
+                                    <td>{% nav_order_url nav 'is_ldap_user' _('LDAP user') "icon-sort" "icon-sort-down" "icon-sort-up" %}</td>
                                 </tr>
                                 </thead>
 
@@ -151,6 +152,13 @@
                                                 <i class="green icon-ok"></i>
                                             {% else %}
                                                 <i class="icon-remove red"></i>
+                                            {% endif %}
+                                        </td>
+                                        <td style="text-align: center;">
+                                            {% if profile.is_ldap_user %}
+                                                <i class="green icon-ok"></i>
+                                            {% else %}
+                                                &nbsp;
                                             {% endif %}
                                         </td>
                                     </tr>

@@ -219,6 +219,9 @@ class AbstractProfile(User, MediaConsumerAbstractModel):
     activation_key = models.CharField(_('activation key'), max_length=40)
     is_banned = models.BooleanField(
         _('user is banned'), blank=True, default=defaults.MANUAL_ACTIVATION)
+    # Flag showing if user was created from LDAP server.
+    # It used in CustomUserModelLDAPBackend, see spicy.core.profile.auth_backends module
+    is_ldap_user = models.BooleanField(_('LDAP user'), default=False)
     accept_agreement = models.BooleanField(
         _('Accept user agreement'), blank=True, default=True)
     subscribe_me = models.BooleanField(

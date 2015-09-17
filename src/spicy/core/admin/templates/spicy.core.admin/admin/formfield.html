@@ -22,6 +22,16 @@
   {% endif %}
 </li>
 
+{% elif type == 'li-checkbox-disabled' %}
+<li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
+  <input disabled readonly type="checkbox" id="id_{{ field.html_name }}" class="icheck" name="{{ field.html_name }}" {% if field.value %}checked="on"{% endif %}/>
+  {{ label }}
+  {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note">{{ field.help_text }}</div>
+  {% endif %}
+</li>
+
 {% elif type == 'li-text' %}
 <li class="input">
   {{ label }} {#{ default_value}#}

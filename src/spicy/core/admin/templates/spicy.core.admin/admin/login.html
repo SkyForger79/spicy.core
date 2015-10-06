@@ -1,28 +1,30 @@
-{% extends current_admin_base %}{% load i18n %}{% load url from future %}
+{% extends current_admin_base %}
+
+{% load i18n %}
+{% load url from future %}
+
 {% block title %}{% trans "Login" %}{% endblock title %}
 {% block top_navbar %}{% endblock top_navbar %}
-
 {% block menu %}{% endblock menu %}
 {% block status_board %}{% endblock status_board %}
-
 {% block content-class %}container{% endblock %}
+
 {% block content %}
 <div class="span4 offset4">
   <div class="padded">
     <div class="login box" style="margin-top: 80px;">
-
       <div class="box-header">
         <span class="title">Login</span>
       </div>
       <div class="box-content padded">
-        <form class="separate-sections" method="POST" action="{% url 'spicyadmin:public:login' %}?{{ REDIRECT_FIELD_NAME }}={% if not redirect %}{% url 'spicyadmin:admin:index' %}{% else %}{{ redirect }}{% endif %}" name="login_form">{% csrf_token %}
-	  <input type="hidden" name="next" value="{% if not redirect %}{% url 'spicyadmin:admin:index' %}{% else %}{{ redirect }}{% endif %}" />
+        <form class="separate-sections" method="POST" action="{% url 'spicyadmin:public:login' %}" name="login_form">{% csrf_token %}
+	        <input type="hidden" name="next" value="{{ next }}" />
 
-	  {% if form.non_field_errors %}
-	  <div class="alert alert-error">
-            {{ form.non_field_errors }}
-	  </div>
-	  {% endif %}
+          {% if form.non_field_errors %}
+          <div class="alert alert-error">
+                  {{ form.non_field_errors }}
+          </div>
+          {% endif %}
 
           <div class="input-prepend">
             <span class="add-on" href="#">
@@ -30,24 +32,26 @@
             </span>	    	    
             <input type="text" placeholder="{% trans "username" %}" name="{{ form.username.html_name }}" {% if form.username.value %}value="{{ form.username.value }}"{% endif %} class="validate[required]">	    
           </div>
-	  {% if form.username.errors %}<span class="help-block note"><i class="icon-warning-sign"></i>{{ form.username.errors.as_text }}</span>{% endif %}
+
+	        {% if form.username.errors %}<span class="help-block note"><i class="icon-warning-sign"></i>{{ form.username.errors.as_text }}</span>{% endif %}
 
           <div class="input-prepend">	    
             <span class="add-on" href="#">
               <i class="icon-key"></i>
             </span>	    
-	    <input type="password" placeholder="{% trans "password" %}" name="{{ form.password.html_name }}" class="validate[required]">	    
+	          <input type="password" placeholder="{% trans "password" %}" name="{{ form.password.html_name }}" class="validate[required]">
           </div>
-	  {% if form.password.errors %}<span class="help-block note"><i class="icon-warning-sign"></i>{{ form.password.errors.as_text }}</span>{% endif %}
+	        {% if form.password.errors %}<span class="help-block note"><i class="icon-warning-sign"></i>{{ form.password.errors.as_text }}</span>{% endif %}
 
-	  {% comment %}
+          {% comment %}
           <div class="icheckbox_flat-aero">
-	    <input type="checkbox" class="icheck" id="id_{{ form.is_remember.html_name }}" name="{{ form.is_remember.html_name }}"/>
-	  </div>
-          <label for="id_{{ form.is_remember.html_name }}" class="">{% trans "Remember me" %}</label>	 
-	  {% endcomment %}
-	  <input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;"/>
-	  <a class="btn btn-blue btn-block" onclick="document.login_form.submit(); return false;">
+            <input type="checkbox" class="icheck" id="id_{{ form.is_remember.html_name }}" name="{{ form.is_remember.html_name }}"/>
+          </div>
+          <label for="id_{{ form.is_remember.html_name }}" class="">{% trans "Remember me" %}</label>
+          {% endcomment %}
+
+	        <input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;"/>
+	        <a class="btn btn-blue btn-block" onclick="document.login_form.submit(); return false;">
             {% trans "Login" %} <i class="icon-signin"></i>
           </a>
 	  
@@ -57,8 +61,8 @@
         <a href="{% url 'profile:public:signup' %}">
           {% trans "Don't have an account?" %} <strong>{% trans "Sign Up" %}</strong>
         </a>
-	<br/>
-	<a href="{% url 'profile:public:restorepass' %}">{% trans "Forgot password?" %}</a>
+	      <br/>
+	      <a href="{% url 'profile:public:restorepass' %}">{% trans "Forgot password?" %}</a>
       </div>
     </div>
 

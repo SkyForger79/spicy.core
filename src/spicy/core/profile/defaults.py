@@ -21,9 +21,15 @@ NOTIFY_MANAGERS = getattr(settings, 'NOTIFY_MANAGERS', True)
 USE_CAPTCHA = getattr(settings, 'USE_CAPTCHA', True)
 # django.contrib.auth required settings
 
-settings.LOGIN_URL = getattr(settings, 'LOGIN_URL_CMS', '/signin/')
-settings.LOGIN_REDIRECT_URL = '/'
-settings.LOGOUT_URL = '/signout/'
+# Defaults for webapp urls
+settings.LOGIN_URL = getattr(settings, 'LOGIN_URL', '/signin/')
+settings.LOGIN_REDIRECT_URL = getattr(settings, 'LOGIN_REDIRECT_URL', '/')
+settings.LOGOUT_URL = getattr(settings, 'LOGOUT_URL', '/signout/')
+
+# Defaults for Spicy CMS admin urls
+LOGIN_URL_CMS = getattr(settings, 'LOGIN_URL_CMS', '/admin/login/')
+LOGIN_REDIRECT_URL_CMS = getattr(settings, 'LOGIN_REDIRECT_URL_CMS', '/admin/')
+LOGOUT_URL_CMS = getattr(settings, 'LOGOUT_URL_CMS', '/admin/logout/')
 
 # social-auth patch
 settings.SOCIAL_AUTH_USERNAME_FIXER = make_slug

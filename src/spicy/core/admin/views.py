@@ -1,17 +1,19 @@
 import os
 import tempfile
+
 from django.contrib.auth import views
-from spicy.core.profile.decorators import is_staff
-from spicy.core.service import api
-from spicy.core.siteskin.decorators import render_to, ajax_request
-from django.shortcuts import get_object_or_404
-from django.utils.translation import ugettext_lazy as _
+from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.http import HttpResponse
+
+from spicy.core.siteskin.decorators import ajax_request
 from spicy.mediacenter import defaults as mc_defaults
-from django.core.files.base import ContentFile
 from spicy.utils.models import get_custom_model_class
-from . import defaults
+
 from redmine import Redmine
+
+from . import defaults
+from ..profile import defaults as profile_defaults
+
 
 SettingsModel = get_custom_model_class(defaults.ADMIN_SETTINGS_MODEL)
 Library = get_custom_model_class(mc_defaults.CUSTOM_LIBRARY_MODEL)
@@ -19,10 +21,14 @@ Media = get_custom_model_class(mc_defaults.CUSTOM_MEDIA_MODEL)
 File = get_custom_model_class(mc_defaults.CUSTOM_FILE_MODEL)
 
 
-def login(request):
-    return views.login(
-        request, template_name='spicy.core.admin/admin/login.html',
-        extra_context={'redirect': request.GET.get('next')})
+def login(request, template_name='spicy.core.admin/admin/login.html',
+          redirect_field_name=REDIRECT_FIELD_NAME):
+    # Correct redirect url for Spicy CMS admin
+    redirect_to = request.REQUEST.get(redirect_field_name,
+                                      profile_defaults.LOGIN_REDIRECT_URL_CMS)
+    extra_context = {redirect_field_name: redirect_to}
+
+    return views.login(request, template_name, extra_context=extra_context)
 
 
 def logout(request):

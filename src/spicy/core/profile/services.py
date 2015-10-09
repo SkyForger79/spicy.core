@@ -20,7 +20,9 @@ from .forms import LoginForm
 
 Profile = get_custom_model_class(defaults.CUSTOM_USER_MODEL)
 
-CUSTOM_USER_SIGNUP_FORM = getattr(
+# For a dynamic behavior using lambda
+# because we can change CUSTOM_USER_SIGNUP_FORM later in runtime
+CUSTOM_USER_SIGNUP_FORM = lambda: getattr(
     settings, 'CUSTOM_USER_SIGNUP_FORM', 'spicy.core.profile.forms.SignupForm')
 
 
@@ -259,7 +261,7 @@ class ProfileService(api.Interface):
             redirect = redirect or user_redirect_uri
 
         elif request.method == "POST":
-            form = load_module(CUSTOM_USER_SIGNUP_FORM)(request.POST)
+            form = load_module(CUSTOM_USER_SIGNUP_FORM())(request.POST)
             redirect = reverse('profile:public:success-signup')
             if not is_blacklisted and form.is_valid():
                 status = 'ok'
@@ -270,7 +272,7 @@ class ProfileService(api.Interface):
                 request.session['profile_email'] = new_profile.email
 
         else:
-            form = load_module(CUSTOM_USER_SIGNUP_FORM)()
+            form = load_module(CUSTOM_USER_SIGNUP_FORM())()
             request.session.set_test_cookie()
 
             # Display the login form and handle the login action.
@@ -303,7 +305,7 @@ class ProfileService(api.Interface):
         elif 'register' in request.POST:
 
             action = 'register'
-            register_form = load_module(CUSTOM_USER_SIGNUP_FORM)(request.POST)
+            register_form = load_module(CUSTOM_USER_SIGNUP_FORM())(request.POST)
             login_form = LoginForm(request)
             if not is_blacklisted and register_form.is_valid():
                 status = 'ok'
@@ -315,7 +317,7 @@ class ProfileService(api.Interface):
 
         elif 'login' in request.POST:
             action = 'login'
-            register_form = load_module(CUSTOM_USER_SIGNUP_FORM)()
+            register_form = load_module(CUSTOM_USER_SIGNUP_FORM())()
             login_form = LoginForm(data=request.POST)
 
             # Brute force check.
@@ -361,7 +363,7 @@ class ProfileService(api.Interface):
 
         else:
             login_form = LoginForm(request)
-            register_form = load_module(CUSTOM_USER_SIGNUP_FORM)()
+            register_form = load_module(CUSTOM_USER_SIGNUP_FORM())()
             request.session.set_test_cookie()
             action = None
             if not redirect:

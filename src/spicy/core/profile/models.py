@@ -49,7 +49,13 @@ class ProfileQuerySet(QuerySet):
             sheet.write(0, i, field)
             sheet.write(1, i, title)
             for j, item in enumerate(self):
-                sheet.write(j + 2, i, getattr(item, field))
+                if field == 'subscribe_me':
+                    if getattr(item, field) == 1:
+                        sheet.write(j + 2, i, '+')
+                    else:
+                        sheet.write(j + 2, i, '-')
+                else:
+                    sheet.write(j + 2, i, getattr(item, field))
 
         workbook.save(result)
         result.seek(0)
@@ -281,7 +287,7 @@ class AbstractProfile(User, MediaConsumerAbstractModel):
     def get_exported_fields(cls):
         return [
             'username', 'email', 'password', 'first_name',
-            'second_name', 'last_name', 'phone']
+            'second_name', 'last_name', 'phone', 'subscribe_me']
 
 
     @property

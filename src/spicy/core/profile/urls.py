@@ -17,6 +17,8 @@ public_urls = patterns(
     url(r'^users/(?P<username>[\w\-_.]+)/$', 'profile', name='index'),
     url(r'^users/(?P<username>[\w\-_.]+)/edit/$', 'edit', name='edit'),
     url(r'^users/(?P<username>[\w\-_.]+)/passwd/$', 'passwd', name='passwd'),
+    url(r'^users/(?P<username>[\w\-_.]+)/change-password/$', 'change_password',
+        name='change-password'),
     url(r'^login/widget/$', 'login_widget', name='login-widget'),
     url(
         r'^registration/widget/$', 'registration_widget',

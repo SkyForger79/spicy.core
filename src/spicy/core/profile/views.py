@@ -368,3 +368,31 @@ def sa_set_new_user_inactive(
     user.save()
     kwargs['request'].session['NEW_USER'] = user
     return {'user': user, 'is_new': True}
+
+
+@ajax_request
+def change_password(request, username):
+    user = get_object_or_404(Profile, username=username)
+    errors = {}
+    result = False
+    form = PasswordChangeForm(user)
+    if request.POST:
+        form = PasswordChangeForm(user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            session_copy = dict(
+                item for item in request.session.iteritems()
+                if not item[0].startswith('_'))
+
+            user.backend =  'spicy.core.profile.auth_backends.CustomUserModelBackend'
+            auth_login(request, user)
+
+            for key, value in session_copy.iteritems():
+                request.session[key] = value
+            request.session[
+                defaults.PASSWORD_HASH_KEY] = user.password
+            result = True
+        else:
+            errors = form.errors
+
+    return dict(result=result, errors=errors)

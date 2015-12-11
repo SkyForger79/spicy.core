@@ -1,7 +1,7 @@
 {% extends current_admin_base %}{% load spicy_admin sk navigator %}{% load url from future %}
 
-{% block title %}{% trans "Edit" %} {{ form.instance }}{% endblock %}
-{% block status_title %}<i class="icon-pencil"></i> {% trans "Edit" %} - {{ current_site.domain }}{{ form.instance.url }}{% endblock status_title %}
+{% block title %}{% trans "Edit" %} {{ form.instance.get_absolute_url }}{% endblock %}
+{% block status_title %}<i class="icon-pencil"></i> {{ current_site.domain }}{{ form.instance.get_absolute_url }}{% endblock status_title %}
 {% block status_subtitle %}{% if form.instance.template_name %}{% trans "This page uses template:" %} <b>{{ form.instance.template_name }}</b>{% else %}{% trans "You can edit page content manually." %}{% endif %}{% endblock status_subtitle %}
 
 {% block status_stats %}
@@ -17,7 +17,7 @@
 	  {% include "spicy.core.simplepages/admin/component/edit_tabs.html" %}
         </div>
         <div class="box-content">
-          <form name="edit_{{ app.name }}" class="form-horizontal fill-up validatable" method="post" action="." autocomplete="off"
+          <form id="edit_{{ app.name }}" class="form-horizontal fill-up validatable" method="post" action="." autocomplete="off"
 		enctype="multipart/form-data">{% csrf_token %}
 
 	    {% include "spicy.core.simplepages/admin/component/edit_form.html" %}
@@ -46,24 +46,10 @@
 {{ form.media }}
 <script>
 $(function(){
-    if($('input[name="template_name"]').val()){
-        $('.custom').html("{% trans 'Enable customization' %}");
-    }
-    else {
-        $('.custom').html("{% trans 'Disable customization' %}");
-    }
-    $('.custom').click(function(){
-        if($('input[name="template_name"]').val()) {
-            $('input[name="template_name"]').val('');
-            $('.form-horizontal').submit();
-        }
-        else{
-            var name = "spicy.core.simplepages/simplepages/";
-            name += $('input[name="url"]').val().replace('/','').replace('/','.').replace('/','.')+'html';
-            $('input[name="template_name"]').val(name);
-            $('.form-horizontal').submit();
-        }
-    });
+  $('.custom').click(function(){
+    $('#id_is_custom').val({% if form.instance.is_custom %}''{% else %}'on'{% endif %})
+    $('#edit_{{ app.name }}').submit()
+  });
 });
 </script>
 {% endblock %}

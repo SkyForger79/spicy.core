@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 import random
 import string
+import logging
 from uuid import uuid4
+
 from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.core.exceptions import PermissionDenied
@@ -14,14 +16,15 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
+
 from django.views.decorators.cache import never_cache
+
 from spicy.utils.printing import print_warning
 from spicy.utils.models import get_custom_model_class
 from spicy.core.service import api
-from spicy.core.siteskin.decorators import render_to, ajax_request
+from spicy.core.siteskin.decorators import render_to, ajax_request, multi_view
 from . import defaults, models, forms
 from .models import BlacklistedIP
-
 
 Profile = get_custom_model_class(defaults.CUSTOM_USER_MODEL)
 
@@ -136,7 +139,6 @@ def signout(request):
 @login_required
 @render_to('spicy.core.profile/set_email.html')
 def set_email(request):
-
     if request.user.email:
         return {'msg': _('Email address is already set')}
     if request.method == 'POST':
@@ -165,10 +167,15 @@ def signin(request):
     if result['status'] == 'ok':
         return HttpResponseRedirect(
             result.get('redirect') or user_redirect_uri)
-    return result
+    else:
+        if defaults.LOGIN_WARNING and request.POST.get('username'):
+            logger = logging.getLogger(__name__)
+            logger.error('Error auth %s', request.POST.get('username'))
+        return result
 
 
 @never_cache
+@multi_view()
 @render_to('spicy.core.profile/signup.html')
 def signup(request):
     result = api.register['profile'].register(request)
@@ -178,6 +185,20 @@ def signup(request):
                 reverse('profile:public:success-signup'),
                 result['redirect']))
     return result
+
+
+@never_cache
+@render_to('spicy.core.profile/login.html')
+def signin_or_register(request):
+    result = api.register['profile'].login_or_register(request)
+    if result['status'] == 'ok' and result['action'] == 'authenticated':
+        return HttpResponseRedirect(reverse('profile:public:index', kwargs={'username': request.user.username}))
+    elif result['status'] == 'ok' and result['action'] == 'login':
+        return HttpResponseRedirect(result.get('redirect'))
+    elif result['status'] == 'ok' and result['action'] == 'register':
+        return HttpResponseRedirect(reverse('profile:public:success-signup'))
+    else:
+        return result
 
 
 @render_to('spicy.core.profile/widgets/signin_form.html')
@@ -284,9 +305,9 @@ def new_social_user(request):
                 user.email = old_email
                 user.activate()
 
-                #tag, exists = api.register['xtag'].get_or_create_by_term_name(
+                # tag, exists = api.register['xtag'].get_or_create_by_term_name(
                 #    user.screenname, vocabulary='persons', user=user)
-                #tag.save()
+                # tag.save()
 
                 # Login.
                 redirect_to = request.session.pop(REDIRECT_FIELD_NAME, None)

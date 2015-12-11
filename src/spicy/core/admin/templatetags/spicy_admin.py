@@ -3,7 +3,7 @@ from django import template
 from django.conf import settings
 from django.template.loader_tags import BlockNode
 from django.core.urlresolvers import reverse
-
+from spicy.core.admin import conf
 
 register = template.Library()
 
@@ -114,7 +114,45 @@ def formfield(
         field = form[field_name]
         label = field.label_tag(title or field.label)
 
+    try:
+        consumer_type = (
+            getattr(form, '__class__') or form.form
+        ).Meta.model.__name__.lower()
+    except AttributeError:
+        consumer_type = None
+
     return dict(
         title=title, form=form, type=type, field=field, label=label,
         preview_link=preview_link, classes=classes, id=id, ajax_url=ajax_url,
-        data_url=data_url, from_field=from_field)
+        data_url=data_url, from_field=from_field, consumer_type=consumer_type)
+
+
+@register.filter
+def check_perms(user, arg):
+    if isinstance(arg, conf.AdminLink):
+        return conf.check_perms(user, arg.perms)
+    elif isinstance(arg, conf.AdminAppBase):
+        return arg.any_perms(user)
+    else:
+        return user.has_perm(arg)
+
+
+@register.simple_tag(takes_context=True)
+def apply(context, func, arg, result_var):
+    func_parts = func.rsplit('.', 1)
+    mod = func_parts[:-1]
+    func_attr = func_parts[-1]
+    if mod:
+        func = getattr(template.Variable(mod[0]).resolve(context), func_attr)
+    else:
+        func = context.get(func_attr)
+
+    if not func:
+        return u''
+    try:
+        result = func(arg)
+        context[result_var] = result
+    except:
+        pass
+
+    return u''

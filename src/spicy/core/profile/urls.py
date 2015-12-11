@@ -3,6 +3,7 @@ from django.conf.urls import patterns, url, include
 
 public_urls = patterns(
     'spicy.core.profile.views',
+    url(r'^login/$', 'signin_or_register', name='signin-or-register'),
     url(r'^signin/$', 'signin', name='signin'),
     url(r'^signup/$', 'signup', name='signup'),
     url(r'^signout/$', 'signout', name='signout'),

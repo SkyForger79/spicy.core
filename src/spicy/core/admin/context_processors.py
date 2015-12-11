@@ -1,20 +1,43 @@
-from django.conf import settings
-
-from spicy.utils.printing import print_info
 from . import defaults
 from .conf import admin_apps_register
 
+
+def path_with_port(request):
+
+    try:
+
+        # if request.META.get('SERVER_PORT') and request.META.get('SERVER_PORT')\
+        #         != '80':
+        #     return 'http://' + request.get_host() + ':'\
+        #         + request.META['SERVER_PORT'] + request.path
+        # else:
+        if request.is_secure():
+            return 'https://' + request.get_host() + request.path
+        else:
+            return 'http://' + request.get_host() + request.path
+    except:
+        return ''
+
+
+def host_with_port(request):
+
+    try:
+        if request.is_secure():
+            return 'https://' + request.get_host()
+        else:
+            return 'http://' + request.get_host()
+    except:
+        return ''
+
+
 def base(request):
-    current_admin_base = 'spicy.core.admin/admin/base.html'
-    if defaults.ADMIN_THEME is not None:
-        current_admin_base = defaults.ADMIN_THEME + '/base.html'
-
     return {
-        'current_admin_base': current_admin_base,
-        'ADMIN_THEME': defaults.ADMIN_THEME,
-
-        'ADMIN_APPS': sorted(admin_apps_register.values(), key=lambda x: x.order_number, reverse=False),
-
+        'ADMIN_APPS': sorted(
+            admin_apps_register.values(),
+            key=lambda x: x.order_number, reverse=False),
+        'ADMIN_APPS_REGISTER': admin_apps_register,
         'ADMIN_DASHBOARD_APPS': defaults.ADMIN_DASHBOARD_APPS,
-        }
+        'FULL_PATH_WITH_PORT': path_with_port(request),
+        'HOST_WITH_PORT': host_with_port(request)
 
+    }

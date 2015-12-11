@@ -11,6 +11,7 @@ register = template.Library()
 
 
 class GenericSSINode(template.Node):
+
     def __init__(self, url, get_forwarding=False):
         self.url = url
         self.get_forwarding = get_forwarding
@@ -46,6 +47,7 @@ def generic_ssi(parser, token):
 
 
 class RenderFromResponseNode(template.Node):
+
     def __init__(self, url):
         self.url = url
 
@@ -78,6 +80,7 @@ def captureas(parser, token):
 
 
 class CaptureasNode(template.Node):
+
     def __init__(self, nodelist, varname):
         self.nodelist = nodelist
         self.varname = varname
@@ -97,8 +100,8 @@ def colorize_diff(value):
         u'\n'.join(
             '<span%s>%s</span>' % (
                 (' style="color:#cc0000;"' if line.startswith('-') else
-                (' style="color:#008800;"' if line.startswith('+') else
-                 (' style="color:#990099;"' if line.startswith('@') else ''))),
+                 (' style="color:#008800;"' if line.startswith('+') else
+                  (' style="color:#990099;"' if line.startswith('@') else ''))),
                 conditional_escape(line)) for line in value.splitlines()))
 
 
@@ -132,7 +135,12 @@ def to_list(value):
 
 @register.filter
 def get(value, arg):
-    return value[arg]
+    return value.get(arg)
+
+
+@register.filter
+def getlist(value, arg):
+    return value.getlist(arg)
 
 
 @register.filter
@@ -144,3 +152,8 @@ def is_even(value):
 def head(value):
     if value:
         return value.split('.', 1)[0].split('-', 1)[0].split('_', 1)[0]
+
+
+@register.filter('fieldtype')
+def fieldtype(field):
+    return field.field.widget.__class__.__name__

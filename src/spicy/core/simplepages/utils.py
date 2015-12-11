@@ -1,5 +1,5 @@
 import os
-from . import defaults, forms
+from . import defaults
 from django.conf import settings
 from django.contrib.sites.models import Site
 from spicy import utils
@@ -33,24 +33,29 @@ def find_simplepages():
         content = file(filepath).read()
         template_name = os.path.join(base_dir, original_filename)
         page, is_created = SimplePage.objects.get_or_create(
-            title=basename, url=url,
-            defaults={'content': content, 'template_name': template_name})
+            url=url,
+            defaults={
+                'content': content, 'template_name': template_name,
+                'title': basename})
         if is_created:
             page.sites = [site]
             found.append(page)
         else:
             existing.append(page)
-            page.content = content
-            page.save()
+            if not page.is_custom:
+                page.content = content
+                page.save()
     return {'found': found, 'existing': existing}
 
 
 def edit_simple_page(request, page):
     message = None
+    from . import forms
     if request.method == 'POST':
         form = forms.SimplePageForm(request.POST, instance=page)
         if form.is_valid():
             page = form.save()
+            form = forms.SimplePageForm(instance=page)
         else:
             message = settings.MESSAGES['error']
     else:

@@ -10,7 +10,6 @@ def base(request):
     sites = Site.objects.all()
     current = Site.objects.get_current()
 
-    siteskin_base = defaults.SITESKIN + '/base.html'
     all_services = [
         (srv.name, unicode(srv.label))
         for srv in api.register.get_list()]
@@ -18,16 +17,33 @@ def base(request):
         (srv.name, unicode(srv.label))
         for srv in api.register.get_list(stype='content')]
 
+    current_admin_base = 'spicy.core.admin/admin/base.html'
+    if defaults.ADMIN_THEME is not None:
+        current_admin_base = defaults.ADMIN_THEME + '/base.html'
+
     return {
         'current_site': current,
+
+        'current_admin_base': current_admin_base,
+        'ADMIN_THEME': defaults.ADMIN_THEME,
+
+        # BBB deprecated
+        'current_base': 'base.html',
+        'current_path': request.path,
+
         'sites': sites,
+
         'ALL_SERVICES': all_services,
         'CONTENT_SERVICES': content_services,
-        'current_base': siteskin_base.strip('/'),
-        'current_path': request.path,
         'REDIRECT_FIELD_NAME': REDIRECT_FIELD_NAME,
-        'SITESKIN': defaults.SITESKIN,
         'DEBUG': settings.DEBUG,
+
+        # UTM params
+        'utm_campaign': request.GET.get('utm_campaign'),
+        'utm_source': request.GET.get('utm_source'),
+        'utm_medium': request.GET.get('utm_medium'),
+        'utm_content': request.GET.get('utm_content'),
+        'utm_term': request.GET.get('utm_term'),
     }
 
 

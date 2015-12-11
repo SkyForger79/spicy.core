@@ -10,4 +10,9 @@ add_perm = partial(perm, prefix='add')
 change_perm = partial(perm, prefix='change')
 delete_perm = partial(perm, prefix='delete')
 
-__all__ = 'add_perm', 'change_perm', 'delete_perm', 'perm'
+
+def app_perm(custom_model):
+    return custom_model.split('.')[0]
+
+
+__all__ = 'add_perm', 'change_perm', 'delete_perm', 'perm', 'app_perm'

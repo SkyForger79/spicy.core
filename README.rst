@@ -2,6 +2,8 @@
 Spicy docs
 ==========
 
+Fixed version 1.2.0
+
 Main and the one using case:
 
 .. code-block:: sh

@@ -8,16 +8,15 @@ from django.template import RequestContext, loader
 from django.template.base import TemplateDoesNotExist, TemplateSyntaxError
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
-from spicy.core.siteskin import cache, defaults
 from spicy.utils import make_cache_key
 from spicy.utils.printing import print_error, print_info, print_warning
-from . import defaults
+from . import cache, defaults
 
 
 class APIResponse(object):
     """Класс представляет объек ответа API функций.
 
-    :param version: версия API 
+    :param version: версия API
     :type version: str
     :param code: код результата, может быть либо ``success``, либо ``error``. По умолчанию: ``JSON_API_STATUS_CODE_SUCCESS``
     :type code: str

@@ -1,23 +1,23 @@
-from django.conf import settings 
-
-from spicy.core.service import api
-
-from spicy.core.siteskin.decorators import render_to
-from spicy.core.profile.decorators import is_staff
-
 import re
 from datetime import datetime, timedelta
+from django.conf import settings
+from spicy.core.profile.decorators import is_staff
+from spicy.core.service import api
+from spicy.core.siteskin.decorators import render_to
 
-@is_staff#(required_perms=('',))
+
+@is_staff
+#(required_perms=('',))
 @render_to('rmanager/admin/versions.html')
 def versions(request):
     return {'versions': api.register.get_list()}
 
-@is_staff#(required_perms=('',))
+
+@is_staff
+#(required_perms=('',))
 @render_to('rmanager/admin/db_logger.html')
 def db_logger(request):
     return {'versions': api.register.get_list()}
-
 
 
 @is_staff
@@ -33,21 +33,20 @@ def memcache(request):
     try:
         import memcache
     except ImportError:
-        message = '"memcache" python module is unavailable, install it please. '
+        message = '"memcache" python module is unavailable, install it please'
     
     # get first memcached URI
-    m = re.match(
-        "memcached://([.\w]+:\d+)", settings.CACHE_BACKEND
-        )
+    m = re.match("memcached://([.\w]+:\d+)", settings.CACHE_BACKEND)
     if not m:
-        message = 'Can not locate memcached configuration in the settings.py file.'
+        message = 'Can not locate memcached configuration in settings.py file'
     else:
         host = memcache._Host(m.group(1))
         host.connect()
         try:
             host.send_cmd("stats")
         except:
-            message = 'Memcached server is unavailable. %s ' % settings.CACHE_BACKEND
+            message = (
+                'Memcached server is unavailable. %s' % settings.CACHE_BACKEND)
 
     if not message:
         stats = Stats()
@@ -70,8 +69,5 @@ def memcache(request):
         host.close_socket()
             
     return {
-        'message': message,
-        'stats': stats,
-        'hit_rate': hit_rate,
-        'time': datetime.now(), # server time
-         }
+        'message': message, 'stats': stats, 'hit_rate': hit_rate,
+        'time': datetime.now()}

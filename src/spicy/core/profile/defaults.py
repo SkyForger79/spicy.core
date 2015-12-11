@@ -4,11 +4,10 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from spicy.utils.html import make_slug
 
+
 ACCOUNT_ALLOWED_CHARS = 'abcdefghjkmnpqrstuvwxyz'\
-        'ABCDEFGHJKLMNPQRSTUVWXYZ'\
-        '23456789'
-ACCOUNT_CHARS_LENGTH = getattr(
-    settings, 'ACCOUNT_CHARS_LENGTH', 10)
+    'ABCDEFGHJKLMNPQRSTUVWXYZ'\
+    '23456789'
 ACCOUNT_ALLOWED_CHARS = getattr(
     settings, 'ACCOUNT_ALLOWED_CHARS', ACCOUNT_ALLOWED_CHARS)
 USERNAME_MAX_LENGTH = getattr(settings, 'USERNAME_MAX_LENGTH', 100)
@@ -22,7 +21,7 @@ NOTIFY_MANAGERS = getattr(settings, 'NOTIFY_MANAGERS', True)
 USE_CAPTCHA = getattr(settings, 'USE_CAPTCHA', True)
 # django.contrib.auth required settings
 
-settings.LOGIN_URL = '/signin/'
+settings.LOGIN_URL = getattr(settings, 'LOGIN_URL_CMS', '/signin/')
 settings.LOGIN_REDIRECT_URL = '/'
 settings.LOGOUT_URL = '/signout/'
 
@@ -75,3 +74,7 @@ ADMIN_CREATE_PROFILE_FORM = getattr(
 ADMIN_EDIT_PROFILE_FORM = getattr(
     settings, 'ADMIN_EDIT_PROFILE_FORM',
     'spicy.core.profile.forms.ProfileForm')
+
+LOGIN_WARNING = getattr(settings, 'LOGIN_WARNING', False)
+
+USE_HTML_EMAIL = getattr(settings, 'USE_HTML_EMAIL', False)

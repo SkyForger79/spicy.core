@@ -11,6 +11,9 @@ def path_with_port(request):
         #     return 'http://' + request.get_host() + ':'\
         #         + request.META['SERVER_PORT'] + request.path
         # else:
+        if request.is_secure():
+            return 'https://' + request.get_host() + request.path
+        else:
             return 'http://' + request.get_host() + request.path
     except:
         return ''
@@ -19,6 +22,9 @@ def path_with_port(request):
 def host_with_port(request):
 
     try:
+        if request.is_secure():
+            return 'https://' + request.get_host()
+        else:
             return 'http://' + request.get_host()
     except:
         return ''

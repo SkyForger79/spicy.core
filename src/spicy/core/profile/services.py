@@ -244,7 +244,6 @@ class ProfileService(api.Interface):
             ip=real_ip).exists()
 
         if request.user.is_authenticated():
-            form = None
             redirect = request.REQUEST.get(
                 REDIRECT_FIELD_NAME, request.session.get(REDIRECT_FIELD_NAME))
             try:
@@ -257,6 +256,11 @@ class ProfileService(api.Interface):
             else:
                 user_redirect_uri = defaults.DEFAULT_PROFILE_URL
             redirect = redirect or user_redirect_uri
+
+            return dict(status='ok',
+                        message=unicode(message),
+                        redirect=redirect,
+                        REGISTRATION_ENABLED=defaults.REGISTRATION_ENABLED)
 
         elif request.method == "POST":
             form = load_module(custom_user_signup_form)(request.POST)

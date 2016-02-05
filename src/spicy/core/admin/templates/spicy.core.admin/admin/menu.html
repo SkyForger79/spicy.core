@@ -1,7 +1,6 @@
 {% load url from future %}
-{% load spicy_admin %}
-{% if perms.admin.change_settings %}
-<li class="dark-nav{% if "/admin/settings/" in request.path %} active{% endif %}">
+{% if request.user.is_superuser %}
+<li class="dark-nav{% if "/admin/settings" in request.path %} active{% endif %}">
   <span class="glow"></span>
   <a class="accordion-toggle collapsed" data-toggle="collapse" href="#admin">
     <i class="icon-wrench icon-2x"></i>
@@ -11,15 +10,12 @@
   </a>
 
   <ul id="admin" class="collapse {% if "/admin/settings" in request.path %} in{% endif %}">
-    {% for link in app.menu_items %}
-    {% if request.user|check_perms:link %}
     <li>
-      <a href="{{ link.url }}">
-        {% if link.icon_class %}<i class="{{ link.icon_class }}"></i> {% endif %}{{ link.label }}
+      <a href="{#% url 'spicyadmin:admin:theme' %#}">
+        <i class="icon-list-alt"></i> {% trans "Theme" %}
       </a>
     </li>
-    {% endif %}
-    {% endfor %}
+
   </ul>
 </li>
 {% endif %}

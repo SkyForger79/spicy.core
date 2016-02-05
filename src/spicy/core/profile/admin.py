@@ -1,19 +1,19 @@
 from datetime import datetime, timedelta
 from django.conf import settings
 from django.contrib import admin
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, User
 from django.core.urlresolvers import reverse
 from django.db.models import Q
-from django import http
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
-from spicy.core.admin import conf, defaults as admin_defaults
+from spicy.core.admin import defaults as admin_defaults
+from spicy.core.admin.conf import AdminAppBase, AdminLink, Perms
 from spicy.core.service import api
 from spicy.core.siteskin.decorators import render_to, ajax_request
 from spicy.core.siteskin.decorators import APIResponse, APIResponseFail
 from spicy import utils
-from spicy.utils.permissions import perm, change_perm, add_perm, delete_perm
+from spicy.utils.permissions import *
 from . import defaults, forms
 from .decorators import is_staff
 from .models import BlacklistedIP
@@ -24,25 +24,21 @@ Profile = utils.get_custom_model_class(defaults.CUSTOM_USER_MODEL)
 admin.site.register(Profile)
 
 
-class AdminApp(conf.AdminAppBase):
+class AdminApp(AdminAppBase):
     name = 'profile'
     label = _('Profile')
     order_number = 10
 
     menu_items = (
-        conf.AdminLink(
-            'profile:admin:create', _('Create profile'),
-            perms=add_perm(defaults.CUSTOM_USER_MODEL)),
-        conf.AdminLink(
-            'profile:admin:index', _('All profiles'),
-            perms=change_perm(defaults.CUSTOM_USER_MODEL)),
-        conf.AdminLink(
-            'profile:admin:create-group', _('Create group'),
-            perms='auth.add_group'),
-        conf.AdminLink(
-            'profile:admin:groups', _('Groups & Permissions'),
-            perms='auth.change_group'),
+        AdminLink('profile:admin:create', _('Create profile')),
+        AdminLink('profile:admin:index', _('All profiles')),
+        AdminLink('profile:admin:create-group', _('Create group')),
+        AdminLink('profile:admin:groups', _('Groups & Permissions')),
     )
+
+    create = AdminLink('profile:admin:create', _('Create profile'),)
+
+    perms = Perms(view=[],  write=[], manage=[])
 
     @render_to('menu.html', use_admin=True)
     def menu(self, request, *args, **kwargs):
@@ -52,20 +48,11 @@ class AdminApp(conf.AdminAppBase):
     def dashboard(self, request, *args, **kwargs):
         return dict(app=self, *args, **kwargs)
 
-    dashboard_links = [
-        conf.AdminLink(
-            'profile:admin:create', _('Create user'), Profile.on_site.count(),
-            'icon-user', perms=add_perm(defaults.CUSTOM_USER_MODEL))]
-    dashboard_lists = [
-        conf.DashboardList(
-            _('New users'), 'profile:admin:edit',
-            Profile.on_site.order_by('-id'), 'date_joined',
-            change_perm(defaults.CUSTOM_USER_MODEL))]
-
 
 @is_staff(required_perms=change_perm(defaults.CUSTOM_USER_MODEL))
 @ajax_request
 def passwd(request, profile_id):
+    message = ''
     profile = get_object_or_404(Profile, id=profile_id)
     if request.method == 'POST':
         form = forms.AdminPasswdForm(profile, request.POST)
@@ -122,7 +109,7 @@ def groups(request):
 
 
 @is_staff(required_perms='auth.add_group')
-@render_to('create_group.html', use_admin=True)
+@render_to('spicy.core.profile/admin/create_group.html', use_admin=True)
 def create_group(request):
     if request.method == 'POST':
         form = forms.GroupForm(request.POST)
@@ -139,7 +126,7 @@ def create_group(request):
 
 
 @is_staff(required_perms='auth.delete_group')
-@render_to('delete_group.html', use_admin=True)
+@render_to('spicy.core.profile/admin/delete_group.html', use_admin=True)
 def delete_group(request, group_id):
     group = get_object_or_404(Group, pk=group_id)
     if request.method == 'POST':
@@ -150,7 +137,7 @@ def delete_group(request, group_id):
 
 
 @is_staff(required_perms=change_perm(defaults.CUSTOM_USER_MODEL))
-@render_to('edit.html', use_admin=True)
+@render_to('spicy.core.profile/admin/edit.html', use_admin=True)
 def edit(request, profile_id):
     """Handles edit requests, renders template according `action`
     get parameter
@@ -184,7 +171,7 @@ def edit(request, profile_id):
 
 
 @is_staff(required_perms=change_perm(defaults.CUSTOM_USER_MODEL))
-@render_to('edit_media.html', use_admin=True)
+@render_to('spicy.core.profile/admin/edit_media.html', use_admin=True)
 def edit_media(request, profile_id):
     profile = get_object_or_404(Profile, id=profile_id)
     model = defaults.CUSTOM_USER_MODEL.split('.')[1].lower()
@@ -204,7 +191,7 @@ def delete(request, profile_id):
 
 
 @is_staff(required_perms=perm(defaults.CUSTOM_USER_MODEL, 'moderate'))
-@render_to('moderate.html', use_admin=True)
+@render_to('spicy.core.profile/admin/moderate.html', use_admin=True)
 def moderate(request, profile_id):
     message = None
     profile = get_object_or_404(Profile, id=profile_id)
@@ -221,15 +208,13 @@ def moderate(request, profile_id):
 
 
 @is_staff(required_perms='profile')
-@render_to('list.html', use_admin=True)
+@render_to('spicy.core.profile/admin/list.html', use_admin=True)
 def profiles_list(request):
     nav = utils.NavigationFilter(request, accepting_filters=[
         ('group', None), ('search_text', ''), ('is_staff', None),
         ('last_login', None)])
     search_args, search_kwargs = [], {}
     form = forms.ProfileFiltersForm(request.GET)
-    status = 'ok'
-    message = ''
 
     if nav.search_text:
         search_args.append(
@@ -237,53 +222,6 @@ def profiles_list(request):
             Q(email__icontains=nav.search_text) |
             Q(first_name__icontains=nav.search_text) |
             Q(last_name__icontains=nav.search_text))
-
-    if 'export' in request.POST and request.user.is_superuser:
-        form = forms.ProfileUploadForm(request.POST, request.FILES)
-        form.is_valid()
-        if form.cleaned_data['file_kind'] == u'0':
-            queryset = Profile.objects.filter(pk__in=nav.get_queryset_ids(
-                Profile, search_query=(search_args, search_kwargs)))
-            columns_form = forms.DynamicProfileColumnForm(
-                request.POST, prefix='columns')
-            columns_form.is_valid()
-            columns = [
-                col[0] for col in columns_form.cleaned_data.iteritems()
-                if col[1]]
-            items = queryset.export_data(columns)
-            response = http.HttpResponse(
-                items, content_type='application/vnd.ms-excel')
-            response['Content-Disposition'] = 'attachment; filename=profiles.xls'
-            return response
-        else:
-            raise NotImplementedError
-
-    elif 'import' in request.POST and request.user.is_superuser:
-        form = forms.ProfileUploadForm(request.POST, request.FILES)
-        form.is_valid()
-        if form.cleaned_data['file_kind'] == u'0':
-            columns_form = forms.DynamicProfileColumnForm(
-                request.POST, prefix='columns')
-            columns_form.is_valid()
-            columns = [
-                col[0] for col in columns_form.cleaned_data.iteritems()
-                if col[1]]
-            if form.is_valid() and 'file' in request.FILES:
-                file_csv = request.FILES['file']
-                try:
-                    profiles = Profile.objects.import_data(file_csv, columns)
-                    status = 'ok'
-                    message = _('Imported: %s' % len(profiles))
-                except:
-                    status = 'error'
-                    message = _('Error importing data')
-            else:
-                form = forms.ProfileUploadForm(request.POST, request.FILES)
-        else:
-            raise NotImplementedError
-    else:
-        form = forms.ProfileUploadForm()
-        columns_form = forms.DynamicProfileColumnForm(prefix='columns')    
 
     is_staff = request.GET.get('is_staff', False)
     if nav.is_staff:
@@ -309,8 +247,7 @@ def profiles_list(request):
 
     return {
         'nav': nav, 'objects_list': objects_list, 'paginator': paginator,
-        'is_staff': is_staff, 'form': form, 'columns_form': columns_form,
-        'status': status, 'message': message,}
+        'is_staff': is_staff, 'form': form}
 
 
 @is_staff(required_perms=delete_perm(defaults.CUSTOM_USER_MODEL))

@@ -1,8 +1,8 @@
 function process_response(api_response){
     if (api_response.code == 'error'){
-    Growl.error({title:"Error!", text: api_response.errors.join('<br/>')});
+	Growl.error({title:"Error!", text: api_response.errors.join('<br/>')});
     } else if (api_response.code == 'success'){
-    Growl.success({title:"Success!", text: api_response.messages.join('<br/>')});
+	Growl.success({title:"Success!", text: api_response.messages.join('<br/>')});
     }
 }
 
@@ -10,13 +10,13 @@ function post_form(form_id){
     var form = $(form_id);
     
     $.post(form.attr('action'), form.serialize(), function(data){                
-        process_response(data);
+	    process_response(data);
         });
 }    
 
-function call_method(url){  
+function call_method(url){	
     $.get(url, function(data){                
-        process_response(data);
+	    process_response(data);
         });
 }
 
@@ -203,9 +203,6 @@ $(document).ajaxSend(function(event, xhr, settings) {
                 row.find('input,select,textarea,label').each(function() {
                     updateElementIndex($(this), options.prefix, formCount);
                 });
-                row.find($('input[name*="position"]')).each(function() {
-                   $(this).val(0)
-                }); //this fixes a bug when a default value isn't shown
                 $('#id_' + options.prefix + '-TOTAL_FORMS').val(formCount + 1);
                 // If a post-add callback was supplied, call it with the added form:
                 if (options.added) options.added(row);
@@ -229,8 +226,5 @@ $(document).ajaxSend(function(event, xhr, settings) {
         added: null,                     // Function called each time a new form is added
         removed: null                    // Function called each time a form is deleted
     };
-})(jQuery)
 
-$(function(){
-  $('.datetime').datetimepicker({lang:'ru',format:'Y-m-d H:i',});
-})
+})(jQuery)

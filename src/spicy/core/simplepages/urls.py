@@ -13,7 +13,6 @@ admin_urls = patterns(
     url(r'^create/$', 'create', name='create'),
     url(r'^find/$', 'find', name='find'),
     url(r'^(?P<simplepage_id>\d+)/$', 'edit', name='edit'),
-    url(r'^(?P<simplepage_id>\d+)/seo/$', 'edit_seo', name='edit-seo'),
     url(r'^(?P<simplepage_id>\d+)/delete/$', 'delete', name='delete'),
 )
 

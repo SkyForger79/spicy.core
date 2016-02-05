@@ -1,5 +1,3 @@
-import inspect
-import os
 import sys
 import traceback
 from django.utils.importlib import import_module
@@ -12,9 +10,6 @@ def load_module(path, config='SERVICE'):
         mod = import_module(module)
         return getattr(mod, attr)
 
-    except AttributeError:
-        return
-
     except ImportError, e:
         sys.stdout.write(traceback.format_exc())
         raise ImproperlyConfigured(
@@ -26,16 +21,4 @@ def load_module(path, config='SERVICE'):
             % config)
 
 
-def reload_server():
-    try:
-        import uwsgi
-        uwsgi.reload()
-    except ImportError:
-        try:
-            path = inspect.getsourcefile(reload_server)
-            os.utime(path, None)
-        except Exception:
-            pass
-
-
-__all__ = 'load_module', 'reload_server'
+__all__ = 'load_module',

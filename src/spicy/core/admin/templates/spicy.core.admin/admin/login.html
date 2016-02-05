@@ -15,8 +15,8 @@
         <span class="title">Login</span>
       </div>
       <div class="box-content padded">
-        <form class="separate-sections" method="POST" action="{% url 'spicyadmin:public:login' %}?{{ REDIRECT_FIELD_NAME }}={% if not redirect %}{% url 'spicyadmin:admin:index' %}{% else %}{{ redirect }}{% endif %}" name="login_form">{% csrf_token %}
-	  <input type="hidden" name="next" value="{% if not redirect %}{% url 'spicyadmin:admin:index' %}{% else %}{{ redirect }}{% endif %}" />
+        <form class="separate-sections" method="POST" action="{% url 'spicyadmin:public:login' %}?{{ REDIRECT_FIELD_NAME }}={% if not redirect %}{% url 'spicyadmin:public:index' %}{% else %}{{ redirect }}{% endif %}" name="login_form">{% csrf_token %}
+	  <input type="hidden" name="next" value="{% if not redirect %}{% url 'spicyadmin:public:index' %}{% else %}{{ redirect }}{% endif %}" />
 
 	  {% if form.non_field_errors %}
 	  <div class="alert alert-error">

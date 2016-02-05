@@ -1,4 +1,8 @@
-from functools import wraps, update_wrapper
+try:
+    from functools import wraps, update_wrapper
+except ImportError:
+    from django.utils.functional import wraps, update_wrapper  # Python 2.3, 2.4 fallback.
+
 
 # Licence for MethodDecoratorAdaptor and auto_adapt_to_methods
 #
@@ -11,7 +15,6 @@ from functools import wraps, update_wrapper
 # [2] http://stackoverflow.com/users/107366/ants-aasma
 # [3] http://stackoverflow.com/users/12855/silentghost
 # [4] http://creativecommons.org/licenses/by-sa/2.5/
-
 
 class MethodDecoratorAdaptor(object):
     """
@@ -26,13 +29,10 @@ class MethodDecoratorAdaptor(object):
         # 'func' and 'decorator' attributes in its own __dict__
         self.decorator = decorator
         self.func = func
-
     def __call__(self, *args, **kwargs):
         return self.decorator(self.func)(*args, **kwargs)
-
     def __get__(self, instance, owner):
         return self.decorator(self.func.__get__(instance, owner))
-
 
 def auto_adapt_to_methods(decorator):
     """

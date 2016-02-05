@@ -182,7 +182,7 @@ class ProfileForm(forms.ModelForm):
             'username', 'first_name', 'second_name', 'last_name', 'email',
             'groups', 'user_permissions', 'sites', 'is_staff', 'is_active',
             'is_banned', 'accept_agreement', 'is_superuser', 'subscribe_me',
-            'hide_email', 'phone', 'timezone', 'google_profile_id')
+            'hide_email', 'phone', 'timezone')
 
 
 class ModerateProfileForm(forms.ModelForm):
@@ -232,7 +232,6 @@ class ValidateEmailMixin:
                 pass
             raise forms.ValidationError(
                 _(u'This address already belongs to other user'))
-                # + ' <a href="%s">%s</a>&nbsp;<a href="%s">%s</a>' % (reverse('profile:public:signin'), _(u'Authorization'), reverse('profile:public:restorepass'),  _(u'Restore password')),code='alreadyused')
         elif self.fields['email'].required:
             raise forms.ValidationError(_(u'This field is required'))
         return email
@@ -320,7 +319,7 @@ class SignupForm(forms.Form, ValidateEmailMixin):
             profile = Profile.objects.create_inactive_user(
                 email, password=password,
                 next_url=next_url,
-                realhost=realhost,
+                realhost=realhost, 
                 **data)
 
             profile.sites.add(*Site.objects.all())
@@ -367,8 +366,7 @@ class CreateProfileForm(ProfileForm, ValidateEmailMixin):
             'username', 'first_name', 'second_name', 'last_name', 'email',
             'groups', 'sites', 'is_staff', 'is_superuser', 'is_active',
             'is_banned', 'user_permissions', 'phone', 'timezone',
-            'hide_email', 'subscribe_me', 'accept_agreement',
-            'google_profile_id')
+            'hide_email', 'subscribe_me', 'accept_agreement')
 
     def clean_username(self):
         username = self.cleaned_data.get('username', '').strip()
@@ -607,24 +605,3 @@ class ProfileFiltersForm(forms.Form):
         label=_('Group'), queryset=Group.objects.all(), required=False)
     group.widget.attrs['class'] = 'uniform'
     search_text = forms.CharField(max_length=100, required=False)
-
-
-class ProfileUploadForm(forms.Form):
-    file = forms.FileField(label=_('CVS file'), required=False)
-    file_kind = forms.ChoiceField(
-        label=_('File type'), widget=forms.RadioSelect,
-        choices=(
-            (u'0', _('Profiles data')),  # (u'1', _('Images'))
-        ),
-        initial=u'0'
-    )
-    search_text = forms.CharField(label=_('Search'), required=False)
-
-DynamicProfileColumnForm = type(
-    'DynamicProfileColumnForm', (forms.Form,),
-    dict(
-        (field,
-         forms.BooleanField(
-             initial=True, label=Profile.get_field_label(field), required=False))
-        for field in Profile.get_exported_fields()
-    ))

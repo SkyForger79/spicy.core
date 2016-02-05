@@ -3,10 +3,11 @@ from spicy.core.service import api
 
 
 class TrashProvider(api.Provider):
-    model = 'trash.TrashProviderModel'
+    model = 'trash.models.TrashProviderModel'
 
 
 class TrashService(api.Interface):
     name = 'trash'
     label = _('Trash provider service')
-    schema = dict(GENERIC_CONSUMER=TrashProvider)
+
+    provider_schema = dict(GENERIC_CONSUMER=TrashProvider)

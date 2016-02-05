@@ -30,9 +30,9 @@ def is_staff(function=None, required_perms=(),
                 # 'qwf' / 'zxc.vbb'
                 return _check_perms(user, required_perms)
             elif (
-                    isinstance(required_perms, (list, tuple)) and
-                    required_perms and
-                    isinstance(required_perms[0], (list, tuple))):
+                isinstance(required_perms, (list, tuple)) and
+                required_perms and
+                isinstance(required_perms[0], (list, tuple))):
                 # ('foo.bar', 'qwe.ars'), ('zxc',)
                 return any(
                     all(_check_perms(user, perm) for perm in perms)
@@ -41,11 +41,10 @@ def is_staff(function=None, required_perms=(),
                 # ('ars.stdt', 'zxc.cvb')
                 return all(_check_perms(user, perm) for perm in required_perms)
 
-    decorator = user_passes_test(
+    actual_decorator = auto_adapt_to_methods(user_passes_test(
         lambda u: is_staff_and_has_perms(u),
-        login_url='/admin/login/',
-        redirect_field_name=redirect_field_name)
-    actual_decorator = auto_adapt_to_methods(decorator)
+            login_url='/admin/login/',
+        redirect_field_name=redirect_field_name))
     if function:
         return actual_decorator(function)
     return actual_decorator

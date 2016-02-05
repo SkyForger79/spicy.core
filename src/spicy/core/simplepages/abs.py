@@ -1,59 +1,47 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.template import loader, Template
-from django.contrib.sites.models import Site
-from spicy.core.siteskin import defaults as ss_defaults
-from spicy.core.trash.models import MultiSitesTrashModel
-from spicy.utils.models import get_custom_model_class
+from spicy.utils import cached_property
 
 
-
-
-class EditableTemplateModel(models.Model):
+class AbstractBasePage(models.Model):
+    url = models.CharField(_('URL'), max_length=100, db_index=True)
+    title = models.CharField(_('title'), max_length=200)
     content = models.TextField(
-        _('Page Source'), blank=True,
+        _('content'), blank=True,
         default=(
             '{% extends current_base %}\n'
             '{% block content %}\n<!-- Page content here-->\n'
             '{% endblock %}'))
     template_name = models.CharField(
-        _('template name'), max_length=255, blank=True, default='')
-    is_custom = models.BooleanField(_('Is custom'))
+        _('template name'), max_length=255, blank=True, default='',
+        help_text=_(
+            "Example: 'spicy.core.simplepages/simplepages/default.html'. "
+            "If this isn't provided, content can be edited by hand."))
+    sites = models.ManyToManyField('sites.Site')
 
-    def get_main_content(self):
-        # For spicy.seo
-        if self.is_custom:
-            return self.content
-        else:
-            content = ''
-            if loader.template_source_loaders:
-                for template_loader in loader.template_source_loaders:
-                    try:
-                        content = template_loader.load_template_source(
-                            self.template_name)[0]
-                        break
-                    except Exception:
-                        continue
-            return content
-
+    #@cached_property
     def get_template(self):
-        return (
-            Template(self.content) if self.is_custom else
-            loader.get_template(self.template_name))
+        if self.template_name:
+            return loader.get_template(self.template_name)
+        return Template(self.content)
 
     class Meta:
         abstract = True
+        db_table = 'sp_simplepage'
+        verbose_name = _('simple page')
+        verbose_name_plural = _('simple pages')
+        ordering = ('url',)
+        permissions = [('change_robots_txt', 'Robots.txt')]
+
+    def __unicode__(self):
+        return u"%s -- %s" % (self.url, self.title)
+
+    def get_absolute_url(self):
+        return self.url
 
 
-class AbstractSimplePage(EditableTemplateModel, MultiSitesTrashModel):
-    sites = models.ManyToManyField('sites.Site')
-    url = models.CharField(
-        _('URL'), max_length=100, db_index=True)
-    title = models.CharField(_('title'), max_length=200)
-    is_sitemap = models.BooleanField(
-        default=False, verbose_name=_('Do not add this page to sitemap.xml'))
-    is_active = models.BooleanField(
-        default=False, verbose_name=_('Do not show page visitors'))
+class AbstractSimplePage(AbstractBasePage):
     enable_comments = models.BooleanField(_('enable comments'), default=False)
     registration_required = models.BooleanField(
         _('registration required'),
@@ -62,26 +50,5 @@ class AbstractSimplePage(EditableTemplateModel, MultiSitesTrashModel):
             "the page."),
         default=False)
 
-    class Meta(EditableTemplateModel.Meta):
+    class Meta(AbstractBasePage.Meta):
         abstract = True
-        db_table = 'sp_simplepage'
-        verbose_name = _('Simple page')
-        verbose_name_plural = _('Simple pages')
-        ordering = ('url',)
-        permissions = [('change_robots_txt', 'Robots.txt')]
-
-
-    def is_homepage(self):
-        SiteskinModel = get_custom_model_class(ss_defaults.SITESKIN_SETTINGS_MODEL)
-        siteskin = SiteskinModel.objects.filter(site=Site.objects.get_current()).filter(home_page__id = self.id)
-
-        if siteskin:
-            return True
-        else:
-            return False
-
-    def __unicode__(self):
-        return u"{0} -- {1}".format(self.url, self.title)
-
-    def get_absolute_url(self):
-        return self.url

@@ -1,4 +1,3 @@
-from django.contrib.sites.models import Site
 from django.contrib.sites.managers import CurrentSiteManager
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -15,15 +14,7 @@ class NonTrashManager(models.Manager):
 
 
 class SiteNonTrashManager(NonTrashManager):
-    def get_query_set(self):
-        query_set = super(SiteNonTrashManager, self).get_query_set()
-        return query_set.filter(site=Site.objects.get_current())
-
-
-class MultiSitesNonTrashManager(NonTrashManager):
-    def get_query_set(self):
-        query_set = super(MultiSitesNonTrashManager, self).get_query_set()
-        return query_set.filter(sites=Site.objects.get_current())
+    pass
 
 
 class TrashManager(models.Manager):
@@ -33,21 +24,7 @@ class TrashManager(models.Manager):
 
 
 class SiteTrashManager(TrashManager):
-    def get_query_set(self):
-        query_set = super(SiteTrashManager, self).get_query_set()
-        return query_set.filter(site=Site.objects.get_current())
-
-
-class MultiSitesTrashManager(TrashManager):
-    def get_query_set(self):
-        query_set = super(MultiSitesTrashManager, self).get_query_set()
-        return query_set.filter(sites=Site.objects.get_current())
-
-
-class MultiSitesManager(TrashManager):
-    def get_query_set(self):
-        query_set = super(MultiSitesManager, self).get_query_set()
-        return query_set.filter(sites=Site.objects.get_current())
+    pass
 
 
 class TrashModel(models.Model):
@@ -66,8 +43,6 @@ class TrashModel(models.Model):
         if trash is False - object deleted absolutely.
         """
         if not self.is_deleted and trash:
-            # For spicy.history.
-            self._action_type = 5
             self.is_deleted = True
             self.save()
             try:
@@ -88,16 +63,6 @@ class SiteTrashModel(TrashModel):
     objects = SiteNonTrashManager()
     deleted_objects = SiteTrashManager()
     all_objects = CurrentSiteManager()
-
-    class Meta:
-        abstract = True
-
-
-class MultiSitesTrashModel(TrashModel):
-    objects = MultiSitesNonTrashManager()
-    deleted_objects = MultiSitesTrashManager()
-    all_objects = MultiSitesManager()
-    on_site = objects
 
     class Meta:
         abstract = True

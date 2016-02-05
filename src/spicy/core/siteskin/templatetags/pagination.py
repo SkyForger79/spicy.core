@@ -44,21 +44,10 @@ def _pagination(context, style='default', neighbours=False):
             page_list.append('.')
         page_list.append(paginator.num_pages)
 
-    get_params = ''
-
-    try:
-        request = context['request']
-        requestpath = request.get_full_path()
-        path, query = requestpath.split('?', 1)
-        if '?page=' in '?' + query:
-            get_params = ''
-        elif '&page=' in query:
-            get_params = query.split('&page=')[0].encode('utf-8')
-        else:
-            get_params = query.encode('utf-8')
-    except Exception, e:
-        print e
-
+    request = context['request']
+    items = [(x[0], x[1].encode('utf-8'))
+             for x in request.GET.iteritems() if x[0] != 'page']
+    get_params = urllib.urlencode(items)
     if hasattr(paginator, 'base_url'):
         paginator_base_url = paginator.base_url
     else:
@@ -73,7 +62,7 @@ def _pagination(context, style='default', neighbours=False):
         'style': style,
         'paginator': paginator,
         'neighbours': neighbours
-    }
+        }
 
 
 @register.filter
@@ -83,4 +72,4 @@ def take(value, arg):
 
 @register.filter
 def columns(data, cols):
-    return [data[v:v + cols] for v in xrange(0, len(data), cols)]
+    return [data[v:v+cols] for v in xrange(0, len(data), cols)]

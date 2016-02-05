@@ -1,26 +1,22 @@
-{% load url from future %}
-{% load spicy_admin %}
-{% if perms.siteskin.change_siteskin %}
-<li class="dark-nav{% if "/admin/siteskin/" in request.path %} active{% endif %}">
+{% with perms.admin as pm %}
+<li class="dark-nav{% if "/admin/settings" in request.path %} active{% endif %}">
   <span class="glow"></span>
-  <a class="accordion-toggle collapsed" data-toggle="collapse" href="#siteskin">
-    <i class="icon-magic icon-2x"></i>
-    <span>{% trans "Theme" %}
+  <a class="accordion-toggle collapsed" data-toggle="collapse" href="#settings">
+    <i class="icon-wrench icon-2x"></i>
+    <span>{% trans "Settings" %}
       <i class="icon-caret-down"></i>
     </span>
   </a>
 
-  <ul id="siteskin" class="collapse {% if "/admin/siteskin/" in request.path %} in{% endif %}">
-    {% for link in app.menu_items %}
-    {% if request.user|check_perms:link %}
+  <ul id="presscenter" class="collapse {% if "/admin/settings" in request.path %} in{% endif %}">
     <li>
-      <a href="{{ link.url }}">
-        {% if link.icon_class %}<i class="{{ link.icon_class }}"></i> {% endif %}{{ link.label }}
+      <a href="{#% url 'spicyadmin:admin:theme' %#}">
+        <i class="icon-list-alt"></i> {% trans "Theme" %}
       </a>
     </li>
-    {% endif %}
-    {% endfor %}
+
   </ul>
 </li>
+{% endwith %}
 {% endif %}
 

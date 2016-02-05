@@ -1,8 +1,10 @@
 import datetime
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.sites.models import Site
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+
 from spicy.utils import cached_property
 
 
@@ -15,7 +17,45 @@ class CustomAbstractModel(models.Model):
         abstract = True
 
 
+class ServiceManager(models.Manager):
+    def get_by_natural_key(self, name):
+        return self.get(name=name)
+
+
+class Service(models.Model):
+    name = models.CharField(_('Name'), max_length=255)
+    description = models.TextField(_('Description'), blank=True)
+
+    date_joined = models.DateTimeField(_('Date joined'), auto_now=True)
+    is_default = models.BooleanField('Is enabled by default', default=True)
+
+    price = models.PositiveIntegerField(_('Price'), default=0)
+    site = models.ManyToManyField(Site)
+    is_enabled = models.BooleanField('Is enabled', default=True)
+
+    #default = generic.GenericRelation(_('Default settings'), blank=True)
+
+    objects = ServiceManager()
+
+    def is_free(self):
+        return (self.price == 0)
+    is_free.boolean = True
+
+    def __unicode__(self):
+        return self.name
+
+    def natural_key(self):
+        return (self.name,)
+
+    class Meta:
+        abstract = True
+        # XXX
+        db_table = 'srv_register'
+
+
 class ProviderModel(models.Model):
+    #service = models.ForeignKey(Service)
+
     consumer_type = models.ForeignKey(ContentType, blank=True)
     consumer_id = models.PositiveIntegerField()
     consumer = generic.GenericForeignKey(

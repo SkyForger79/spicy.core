@@ -1,6 +1,5 @@
 {% load url from future %}
-{% load spicy_admin %}
-{% if request.user|check_perms:app %}
+{% if perms.simplepages %}
 <li class="dark-nav{% if '/admin/simplepages/' in request.path %} active{% endif %}">
   <span class="glow"></span>
   <a class="accordion-toggle collapsed" data-toggle="collapse" href="#menu_{{ app.name }}">
@@ -12,13 +11,11 @@
 
   <ul id="menu_{{ app.name }}" class="collapse{% if '/admin/simplepages/' in request.path %} in{% endif %}">
     {% for link in app.menu_items %}
-    {% if request.user|check_perms:link %}
     <li>
       <a href="{{ link.url }}">
-        {% if link.icon_class %}<i class="{{ link.icon_class }}"></i> {% endif %}{{ link.label }}
+         {{ link.label }}
       </a>
     </li>
-    {% endif %}
     {% endfor %}
   </ul>
 </li>

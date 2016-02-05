@@ -1,5 +1,3 @@
-import xlrd
-import xlwt
 import errno
 import random
 import smtplib
@@ -8,115 +6,30 @@ import datetime as dt
 from django.conf import settings
 from django.contrib.auth.models import User, UserManager, Group, Permission
 from django.contrib.auth.models import AnonymousUser as BasicAnonymousUser
-from django.contrib.sites.managers import CurrentSiteManager
 from django.contrib.sites.models import Site
 from django.core.mail import send_mail
-from django.core.management.color import color_style
 from django.db import models, transaction
-from django.db.models.query import QuerySet
 from django.template.loader import render_to_string
 from django.utils.crypto import get_random_string
 from django.utils.encoding import smart_str
 from django.utils.hashcompat import sha_constructor
 from django.utils.html import escape
-from django.utils.translation import ugettext, ugettext_lazy as _
-from django.core.mail import EmailMultiAlternatives
-from spicy.core.service.models import ProviderModel
-from spicy.mediacenter.abs import MediaConsumerAbstractModel
+from django.utils.translation import ugettext_lazy as _
+from django.core.management.color import color_style
 from spicy.utils.printing import print_error
-from StringIO import StringIO
+from spicy.core.service.models import ProviderModel
 from uuid import uuid4
-from . import cache, defaults, signals
+from . import cache, defaults
 
 
 style = color_style()
 
 
-class ProfileQuerySet(QuerySet):
-
-    def export_data(self, columns):
-        result = StringIO()
-        workbook = xlwt.Workbook()
-        sheet = workbook.add_sheet('Profile')
-
-        fields = []
-        fields.insert(0, ('id', ugettext('Identifier')))
-        for field in columns:
-            label = self.model.get_field_label(field)
-            fields.append((field, label))
-
-        for i, (field, title) in enumerate(fields):
-            sheet.write(0, i, field)
-            sheet.write(1, i, title)
-            for j, item in enumerate(self):
-                if field == 'subscribe_me':
-                    if getattr(item, field) == 1:
-                        sheet.write(j + 2, i, '+')
-                    else:
-                        sheet.write(j + 2, i, '-')
-                else:
-                    sheet.write(j + 2, i, getattr(item, field))
-
-        workbook.save(result)
-        result.seek(0)
-        return result
-
-
 class ProfileManager(UserManager):
-    def get_query_set(self):
-        return ProfileQuerySet(self.model, using=self._db)
-
-    def import_data(self, src, fields):
-        fields.insert(0, 'id')
-        workbook = xlrd.open_workbook(file_contents=src.read())
-        sheet = workbook.sheet_by_index(0)
-        import_fields = {}
-        for i in xrange(sheet.ncols):
-            field_name = sheet.cell_value(0, i)
-            if field_name in fields:
-                import_fields[field_name] = i
-        id_pos = import_fields['email']
-        del import_fields['email']
-        del import_fields['id']
-        ids = []
-        for i in xrange(2, sheet.nrows):
-            email = sheet.cell_value(i, id_pos)
-            
-            if email:
-                try:
-                    profile = self.model.objects.get(email=email)
-                    _create = False
-                except:
-                    _create = True
-            else:
-                _create = True
-            prof = {}
-            for field, pos in import_fields.iteritems():
-#               if sheet.cell_type(i, pos) != xlrd.XL_CELL_EMPTY:
-                if not _create and field not in [
-                    'username', 'password']:
-                    setattr(profile, field, sheet.cell_value(i, pos))
-                elif _create:
-                    prof.update({field: sheet.cell_value(i, pos)})
-            if _create and prof:
-                try:
-                    profile = self.model.objects.create_inactive_user(
-                        email, prof['password'],
-                        first_name=prof['first_name'],
-                        last_name=prof['last_name'],
-                        phone=prof['phone'])
-                    ids.append(profile.pk)
-                except:
-                    pass
-            else:
-                profile.save()
-                ids.append(profile.pk)
-        return self.model.objects.filter(pk__in=ids)
-
-    def make_random_password(self, length=10,
+    def make_random_password(self, length=defaults.ACCOUNT_CHARS_LENGTH,
         allowed_chars=defaults.ACCOUNT_ALLOWED_CHARS):
             return get_random_string(length, allowed_chars)
-
+    
     def activate_user(self, activation_key):
         if defaults.SHA1_RE.search(activation_key):
             try:
@@ -138,10 +51,6 @@ class ProfileManager(UserManager):
         else:
             username = kwargs.pop('username')
 
-        if realhost is None:
-            site = Site.objects.get_current()
-            realhost = site.domain
-
         try:
             profile = self.get(email=email)
         except self.model.DoesNotExist:
@@ -152,8 +61,6 @@ class ProfileManager(UserManager):
                 email=email, last_login=now, date_joined=now, **kwargs)
 
             profile.save()
-            signals.create_profile.send(
-                sender=self.model, profile=profile)
 
             if password in (None, '', ' '):
                 password = self.make_random_password()
@@ -174,6 +81,7 @@ class ProfileManager(UserManager):
                     send_email=send_email, password=password,
                     realhost=realhost, next_url=next_url)
                 
+
             if defaults.NOTIFY_MANAGERS:
                 self.model.notify_managers(profile)
 
@@ -219,35 +127,36 @@ class ProfileManager(UserManager):
         return count
 
 
-class AbstractProfile(User, MediaConsumerAbstractModel):
-    IS_ACTIVATED = 'Already activated'
+class AbstractProfile(User):
     user_ptr = models.OneToOneField(User, parent_link=True)
+
+    IS_ACTIVATED = 'Already activated'
     activation_key = models.CharField(_('activation key'), max_length=40)
     is_banned = models.BooleanField(
         _('user is banned'), blank=True, default=defaults.MANUAL_ACTIVATION)
+
     accept_agreement = models.BooleanField(
         _('Accept user agreement'), blank=True, default=True)
     subscribe_me = models.BooleanField(
         _('Subscribe me for news update'), blank=True, default=True)
+
     hide_email = models.BooleanField(_('Hide my email'), default=True)
+
     second_name = models.CharField(
         _('Second name'), max_length=255, blank=True)
+
     phone = models.CharField(_('Phone'), max_length=100, blank=True)
+
     timezone = models.CharField(
         max_length=50, default=settings.TIME_ZONE, blank=True)
-    google_profile_id = models.CharField(
-        _('Google profile ID'), max_length=100, blank=True,
-        help_text=_(
-            'Visit http://profiles.google.com/me to find out ID from redirect '
-            'URL'))
+
     sites = models.ManyToManyField(Site, blank=True)
 
     objects = ProfileManager()
-    on_site = CurrentSiteManager(field_name='sites')
 
     class Meta:
         abstract = True
-        ordering = ['-date_joined', '-id']
+        ordering = ['-id']
         #db_table = 'auth_profile'
         permissions = (
             ('view_profile', 'Can view user profiles'),
@@ -268,27 +177,6 @@ class AbstractProfile(User, MediaConsumerAbstractModel):
             self.sites = [Site.objects.get_current()]
 
         return result
-
-    @classmethod
-    def get_field_label(cls, field):
-        try:
-            label = cls._meta.get_field_by_name(field)[0].verbose_name
-        except FieldDoesNotExist:
-            try:
-                label = getattr(cls, field, ).__doc__
-            except AttributeError:
-                if field.endswith('_id'):
-                    label = getattr(cls, field[:-3]).field.verbose_name
-                else:
-                    raise
-        return unicode(label)
-
-    @classmethod
-    def get_exported_fields(cls):
-        return [
-            'username', 'email', 'password', 'first_name',
-            'second_name', 'last_name', 'phone', 'subscribe_me']
-
 
     @property
     def screenname(self):
@@ -345,7 +233,7 @@ class AbstractProfile(User, MediaConsumerAbstractModel):
         key = ':'.join((str(self.pk), email, settings.SECRET_KEY))
         return sha_constructor(key).hexdigest()
 
-    def email_user(self, subject, message, email=None, html_body=None):
+    def email_user(self, subject, message, email=None):
         email = email or self.email
 
         if not email:
@@ -353,11 +241,7 @@ class AbstractProfile(User, MediaConsumerAbstractModel):
             return
 
         try:
-            mail = EmailMultiAlternatives(subject=subject.strip('\n'), body=message,
-                from_email=None, to=[email], headers={'format': 'flowed'})
-            if html_body:
-                mail.attach_alternative(html_body, 'text/html')
-            mail.send()
+            send_mail(subject.strip('\n'), message, None, [email])
             return True
         except socket.error, e:
             # TODO: log error
@@ -384,13 +268,7 @@ class AbstractProfile(User, MediaConsumerAbstractModel):
         subject = ''.join(subject.splitlines())
         message = render_to_string(
             'spicy.core.profile/mail/hello_email.txt', context)
-        
-        if defaults.USE_HTML_EMAIL:
-            html_body = render_to_string(
-                'spicy.core.profile/mail/hello_email.html', context)
-            self.email_user(subject, message, html_body=html_body)
-        else:
-            self.email_user(subject, message)
+        self.email_user(subject, message)
 
     def email_banned(self):
         site = Site.objects.get_current()
@@ -401,16 +279,11 @@ class AbstractProfile(User, MediaConsumerAbstractModel):
         subject = ''.join(subject.splitlines())
         message = render_to_string(
             'spicy.core.profile/mail/banned_email.txt', context)
-        if defaults.USE_HTML_EMAIL:
-            html_body = render_to_string(
-                'spicy.core.profile/mail/banned_email.html', context)
-            self.email_user(subject, message, html_body=html_body)
-        else:
-            self.email_user(subject, message)
+        self.email_user(subject, message)
 
-    def notify_managers(self, user_password=None):
+    def notify_managers(self):
         context = {
-            'user': self, 'site': Site.objects.get_current(), 'user_password': user_password}
+            'user': self, 'site': Site.objects.get_current()}
         subject = render_to_string(
             'spicy.core.profile/mail/notify_managers_subject.txt', context)
         subject = ''.join(subject.splitlines())
@@ -440,13 +313,7 @@ class AbstractProfile(User, MediaConsumerAbstractModel):
         subject = ''.join(subject.splitlines())
         message = render_to_string(
             'spicy.core.profile/mail/activation_email.txt', context)
-        
-        if defaults.USE_HTML_EMAIL:
-            html_body = render_to_string(
-                'spicy.core.profile/mail/activation_email.html', context)
-            self.email_user(subject, message, html_body=html_body)
-        else:
-            self.email_user(subject, message)
+        self.email_user(subject, message)
 
     def email_passwd(self, password):
         if not self.email:
@@ -460,12 +327,7 @@ class AbstractProfile(User, MediaConsumerAbstractModel):
         subject = ''.join(subject.splitlines())
         message = render_to_string(
             'spicy.core.profile/mail/passwd_email.txt', context)
-        if defaults.USE_HTML_EMAIL:
-            html_body = render_to_string(
-                'spicy.core.profile/mail/passwd_email.html', context)
-            self.email_user(subject, message, html_body=html_body)
-        else:
-            self.email_user(subject, message)
+        self.email_user(subject, message)
 
     def email_confirm(self, email):
         site = Site.objects.get_current()
@@ -478,12 +340,7 @@ class AbstractProfile(User, MediaConsumerAbstractModel):
             ).splitlines())
         message = render_to_string(
             'spicy.core.profile/mail/set_email_email.txt', context)
-        if defaults.USE_HTML_EMAIL:
-            html_body = render_to_string(
-                'spicy.core.profile/mail/set_email_email.html', context)
-            self.email_user(subject, message, email=email, html_body=html_body)
-        else:
-            self.email_user(subject, message, email=email)
+        self.email_user(subject, message, email=email)
 
     def email_message_notify(self, msg):
         # !!! deprecated method use spicy.messages app
@@ -506,17 +363,13 @@ class AbstractProfile(User, MediaConsumerAbstractModel):
             return
 
         site = Site.objects.get_current()
-        context = dict(password=password, user=self, site=site)
         subject = render_to_string(
-            'spicy.core.profile/mail/forgotten_password_subject.txt', context)
+            'spicy.core.profile/mail/forgotten_password_subject.txt',
+            dict(password=password, user=self, site=site))
         message = render_to_string(
-            'spicy.core.profile/mail/forgotten_password_email.txt', context)
-        if defaults.USE_HTML_EMAIL:
-            html_body = render_to_string(
-                'spicy.core.profile/mail/forgotten_password_email.html', context)
-            self.email_user(subject, message, html_body=html_body)
-        else:
-            self.email_user(subject, message)
+            'spicy.core.profile/mail/forgotten_password_email.txt',
+            dict(password=password, user=self, site=site))
+        self.email_user(subject, message)
 
     @models.permalink
     def get_absolute_url(self):
@@ -576,4 +429,3 @@ class TestProfile(AbstractProfile):
     class Meta:
         abstract = False
         db_table = 'test_profile'
-        ordering = '-is_staff', '-id'

@@ -9,11 +9,11 @@ DEFAULT_FILTERS = getattr(
 
 
 class NavigationFilter(object):
-
     def __init__(self, request, accepting_filters=DEFAULT_FILTERS,
                  default_order=None, force_filter=None, extra=None):
         self.request = request
         self.querydict = request.GET
+
         self.order = None
 
         self.filter = ''
@@ -24,12 +24,7 @@ class NavigationFilter(object):
             self.filter = force_filter
 
         for filter, default in accepting_filters:
-            setattr(
-                self, filter,
-                getattr(
-                    request.GET,
-                    'getlist' if isinstance(default, list) else 'get'
-                )(filter, default))
+            setattr(self, filter, request.GET.get(filter, default))
 
         self.page = request.GET.get('page', 1)
 
@@ -41,14 +36,15 @@ class NavigationFilter(object):
             direction = '-' if self.order_q.lower() == 'desc' else ''
             self.order = [direction + field for field in fields]
 
-    def get_queryset_ids(
-            self, model_or_qset, search_query=None, manager='objects',
-            distinct=False):
-        if hasattr(model_or_qset, '_meta'):
-            model_manager = getattr(model_or_qset, manager)
-            model_qset = model_manager.values_list('id', flat=True)
-        else:
-            model_qset = model_or_qset.values_list('id', flat=True)
+    def get_queryset_with_paginator(
+            self, model, base_url=None, search_query=None,
+            obj_per_page=OBJECTS_PER_PAGE, manager='objects',
+            result_manager='objects', distinct=False):
+
+        base_url = base_url or self.request.path
+
+        model_manager = getattr(model, manager)
+        model_qset = model_manager.values_list('id', flat=True)
 
         # XXX: check usage
         if type(search_query) is dict:
@@ -74,25 +70,8 @@ class NavigationFilter(object):
         if distinct:
             queryset = queryset.distinct()
 
-        return queryset
-
-    def get_queryset_with_paginator(
-            self, model_or_qset, base_url=None, search_query=None,
-            obj_per_page=OBJECTS_PER_PAGE, manager='objects',
-            result_manager='objects', distinct=False):
-
-        if hasattr(model_or_qset, '_meta'):
-            model = model_or_qset
-        else:
-            model = model_or_qset.model
-
-        base_url = base_url or self.request.path
-
-        queryset = self.get_queryset_ids(
-            model_or_qset, search_query=search_query, manager=manager,
-            distinct=distinct)
-
-        paginator = Paginator(queryset, obj_per_page)
+        paginator = Paginator(
+            queryset, obj_per_page)
         try:
 
             page = paginator.page(self.page)
@@ -101,7 +80,8 @@ class NavigationFilter(object):
             # Django that can't throw exceptions other than 404.
 
         result_qset = getattr(
-            model, result_manager).filter(id__in=tuple(page.object_list))
+            model, result_manager).filter(
+                id__in=tuple(page.object_list))
 
         if self.extra:
             result_qset = result_qset.extra(**self.extra)
@@ -121,7 +101,6 @@ class NavigationFilter(object):
 
 
 class MultiModelNavigationFilter(NavigationFilter):
-
     def get_queryset_with_paginator(
             self, models, base_url=None, search_query=None,
             obj_per_page=OBJECTS_PER_PAGE, managers='objects', distinct=False):
@@ -179,12 +158,12 @@ class MultiModelNavigationFilter(NavigationFilter):
             raise Http404(_('Page %s does not exist.') % self.page)
             # Django that can't throw exceptions other than 404.
 
-        # result_qset = getattr(
+        #result_qset = getattr(
         #    model, result_manager).filter(
         #        id__in=tuple(page.object_list))
 
-        # if self.order:
-        # result_qset = result_qset.order_by(*self.order)  # 1082
+        #if self.order:
+        #    result_qset = result_qset.order_by(*self.order)  # 1082
 
         paginator.current_page = page
         paginator.current_object_list = page.object_list
@@ -194,7 +173,6 @@ class MultiModelNavigationFilter(NavigationFilter):
 
 
 class MultiQueryset(object):
-
     def __init__(self, querysets):
         self.querysets = querysets
         self.lengths = [queryset.count() for queryset in querysets]

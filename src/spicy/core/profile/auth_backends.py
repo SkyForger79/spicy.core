@@ -17,9 +17,9 @@ class CustomUserModelBackend(ModelBackend):
     def authenticate(self, username=None, password=None):
         user_model = self.get_user_model()
         if '@' in username:
-            kwargs = {'email': username}
+            kwargs = {'email__iexact': username}
         else:
-            kwargs = {'username': username}
+            kwargs = {'username__iexact': username}
         kwargs['is_banned'] = False
 
         try:

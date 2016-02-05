@@ -2,6 +2,8 @@
 Spicy docs
 ==========
 
+OLD version 1.0.0 for LookinHotels and other
+
 Main and the one using case:
 
 .. code-block:: sh

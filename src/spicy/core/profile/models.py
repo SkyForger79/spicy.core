@@ -57,6 +57,9 @@ class ProfileQuerySet(QuerySet):
 
 
 class ProfileManager(UserManager):
+<<<<<<< local
+    def make_random_password(self, length=defaults.ACCOUNT_CHARS_LENGTH,
+=======
     def get_query_set(self):
         return ProfileQuerySet(self.model, using=self._db)
 
@@ -108,9 +111,14 @@ class ProfileManager(UserManager):
         return self.model.objects.filter(pk__in=ids)
 
     def make_random_password(self, length=10,
+>>>>>>> other
         allowed_chars=defaults.ACCOUNT_ALLOWED_CHARS):
             return get_random_string(length, allowed_chars)
+<<<<<<< local
+    
+=======
 
+>>>>>>> other
     def activate_user(self, activation_key):
         if defaults.SHA1_RE.search(activation_key):
             try:

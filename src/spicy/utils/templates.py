@@ -3,11 +3,15 @@ from django.conf import settings
 from spicy.core.admin.conf import app_modules_register
 
 
+<<<<<<< local
+def find_templates(base_dir, name_tuples=True, rel_path=False):
+=======
 def find_templates(
         base_dir, name_tuples=True, abs_path=None, rel_path=False,
         from_dict=None):
     if abs_path is None:
         abs_path = not name_tuples
+>>>>>>> other
     templates = []
 
     from spicy.core.siteskin.utils import get_siteskin_settings

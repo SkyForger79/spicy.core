@@ -4,10 +4,20 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from spicy.utils.html import make_slug
 
+<<<<<<< local
+=======
 
+>>>>>>> other
 ACCOUNT_ALLOWED_CHARS = 'abcdefghjkmnpqrstuvwxyz'\
+<<<<<<< local
+        'ABCDEFGHJKLMNPQRSTUVWXYZ'\
+        '23456789'
+ACCOUNT_CHARS_LENGTH = getattr(
+    settings, 'ACCOUNT_CHARS_LENGTH', 10)
+=======
     'ABCDEFGHJKLMNPQRSTUVWXYZ'\
     '23456789'
+>>>>>>> other
 ACCOUNT_ALLOWED_CHARS = getattr(
     settings, 'ACCOUNT_ALLOWED_CHARS', ACCOUNT_ALLOWED_CHARS)
 USERNAME_MAX_LENGTH = getattr(settings, 'USERNAME_MAX_LENGTH', 100)

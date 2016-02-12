@@ -124,7 +124,7 @@ class cached_property(object):
         setattr(inst, self.name, result)
         return result
 
-CDATA_RE = re.compile(u'[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F%s]')
+CDATA_RE = re.compile(u'[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]')
 cdata = lambda s: '<![CDATA[%s]]>' % CDATA_RE.sub(
     ' ', s).replace(']]>', ']]]]><![CDATA[>')
 # Expand ]]> to an escaped version that doesn't end CDATA block. We could

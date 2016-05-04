@@ -37,6 +37,8 @@ def generate_random_password(length=10):
 @render_to('spicy.core.profile/profile.html')
 def profile(request, username):
     user = get_object_or_404(Profile, username=username)
+    if request.user != user:
+        raise PermissionDenied()
     return dict(user=user)
 
 

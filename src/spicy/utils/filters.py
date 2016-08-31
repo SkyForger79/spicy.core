@@ -43,7 +43,7 @@ class NavigationFilter(object):
 
     def get_queryset_ids(
             self, model_or_qset, search_query=None, manager='objects',
-            distinct=False):
+            distinct=False, annotate=None, order_non_fields=None):
         if hasattr(model_or_qset, '_meta'):
             model_manager = getattr(model_or_qset, manager)
             model_qset = model_manager.values_list('id', flat=True)
@@ -68,6 +68,12 @@ class NavigationFilter(object):
         else:
             queryset = model_qset.all()
 
+        if annotate:
+            queryset = queryset.annotate(**annotate)
+
+        if order_non_fields:
+            queryset = queryset.order_by(order_non_fields)
+
         if self.order:
             queryset = queryset.order_by(*self.order)
 
@@ -79,7 +85,8 @@ class NavigationFilter(object):
     def get_queryset_with_paginator(
             self, model_or_qset, base_url=None, search_query=None,
             obj_per_page=OBJECTS_PER_PAGE, manager='objects',
-            result_manager='objects', distinct=False):
+            result_manager='objects', distinct=False,
+            annotate=None, order_non_fields=None):
 
         if hasattr(model_or_qset, '_meta'):
             model = model_or_qset
@@ -90,7 +97,7 @@ class NavigationFilter(object):
 
         queryset = self.get_queryset_ids(
             model_or_qset, search_query=search_query, manager=manager,
-            distinct=distinct)
+            distinct=distinct, annotate=annotate, order_non_fields=order_non_fields)
 
         paginator = Paginator(queryset, obj_per_page)
         try:

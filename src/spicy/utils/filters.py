@@ -2,6 +2,7 @@ from django.conf import settings
 from django.core.paginator import Paginator, InvalidPage
 from django.utils.translation import ugettext as _
 from django.http import Http404
+from django.db.models import Count
 
 OBJECTS_PER_PAGE = getattr(settings, 'OBJECTS_PER_PAGE', 50)
 DEFAULT_FILTERS = getattr(
@@ -110,11 +111,17 @@ class NavigationFilter(object):
         result_qset = getattr(
             model, result_manager).filter(id__in=tuple(page.object_list))
 
+        if annotate:
+            result_qset = result_qset.annotate(**annotate)
+
         if self.extra:
             result_qset = result_qset.extra(**self.extra)
 
         if self.order:
             result_qset = result_qset.order_by(*self.order)  # 1082
+
+        if order_non_fields:
+            result_qset = result_qset.order_by(order_non_fields)
 
         # XXX
         page.object_list = result_qset

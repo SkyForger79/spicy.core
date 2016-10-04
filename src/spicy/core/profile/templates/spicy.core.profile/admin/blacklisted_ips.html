@@ -3,7 +3,7 @@
 
 {% block extra_js %}
 <script type="text/javascript">
-var urlDeleteObjList="{% url profile:admin:delete-blacklisted-ips %}";
+var urlDeleteObjList="{% url 'profile:admin:delete-blacklisted-ips' %}";
 </script>
 {% endblock %}
 {% block navigation_root %}{% trans "Profiles" %}{% endblock %}
@@ -56,10 +56,10 @@ var urlDeleteObjList="{% url profile:admin:delete-blacklisted-ips %}";
       {{ ip.date_banned }}
     </div>
     <div class="">
-      <a href="{% url profile:admin:edit ip.set_by.pk %}">{{ ip.set_by }}</a>
+      <a href="{% url 'profile:admin:edit' ip.set_by.pk %}">{{ ip.set_by }}</a>
     </div>
     <div class="">
-      <a href="{% url profile:admin:edit ip.set_for.pk %}">{{ ip.set_for }}</a>
+      <a href="{% url 'profile:admin:edit' ip.set_for.pk %}">{{ ip.set_for }}</a>
     </div>
   </li>
 {% endfor %}

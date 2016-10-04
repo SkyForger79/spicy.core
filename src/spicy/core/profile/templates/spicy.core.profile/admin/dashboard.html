@@ -2,7 +2,7 @@
 
 {% if pm.change_profile or pm.view_profile %}
 <div class="span6 action-nav-button">  
-  <a href="{% url profile:admin:index %}" title="{% trans "Users" %}">
+  <a href="{% url 'profile:admin:index' %}" title="{% trans "Users" %}">
     <i class="icon-user"></i>
     <span>{% trans "Users" %}</span>
   </a>

@@ -42,7 +42,7 @@ window.location.href = '{{ redirect }}';
 $('#login-link').click(
   function(){
     $.get(
-      '{% url profile:public:login-widget %}',
+      '{% url "profile:public:login-widget" %}',
       function(data){
         $('#auth-registration-block').html(data);
       }
@@ -54,7 +54,7 @@ $('#auth-registration-form').submit(
   function(){
     $.ajax({
       type: 'POST',
-      url: '{% url profile:public:registration-widget %}',
+      url: '{% url "profile:public:registration-widget" %}',
       Data: $('#auth-registration-form').serialize(),
       success: function(data, textStatus){
         $('#auth-registration-block').html(data);

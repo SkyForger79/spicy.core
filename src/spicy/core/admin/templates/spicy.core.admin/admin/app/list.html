@@ -46,7 +46,7 @@
 		  <td>{{ obj.pk }}</td>
                   <td>
 		    {% if not edit_url %}{% captureas edit_url %}{{ app.name }}:admin:edit{% endcaptureas %}{% endif %}
-                    <a href="{% url edit_url obj.pk %}"> {{ obj }}</a>
+                    <a href="{% url 'edit_url' obj.pk %}"> {{ obj }}</a>
                   </td>                  
 		</tr>
 		{% endfor %}

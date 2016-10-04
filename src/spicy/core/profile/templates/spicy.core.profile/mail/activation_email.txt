@@ -2,7 +2,7 @@
 
 {% trans "Your account is not acivated yet. To activate press the following link:" %}
 
-http://{{ realhost }}{% url profile:public:activate user_id key %}?next={{ next_url }}
+http://{{ realhost }}{% url 'profile:public:activate' user_id key %}?next={{ next_url }}
 
 {% trans "If you're unable to follow the link in this mail, just copy it to your browser's address bar." %}
 

@@ -32,7 +32,7 @@
                 <div class="form-actions controls">
                   <button type="submit" class="btn btn-green pull-right">{% trans "Create" %}</button>
 		  {% if perms.auth.delete_group and group_form.instance.pk %}
-		  <a href="{% url profile:admin:delete-group group_form.instance.pk %}">{% trans "Delete" %}</a>{% endif %}
+		  <a href="{% url 'profile:admin:delete-group' group_form.instance.pk %}">{% trans "Delete" %}</a>{% endif %}
                 </div>
               </div>
             </form>

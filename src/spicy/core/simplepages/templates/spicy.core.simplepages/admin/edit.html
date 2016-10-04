@@ -25,7 +25,7 @@
 	    <div class="form-actions">
 	      {% if not no_delete_url %}
 	      {% if not delete_url %}{% captureas delete_url %}{{ app.name }}:admin:delete{% endcaptureas %}{% endif %}
-	      <a class="btn btn-red" href="{% url delete_url form.instance.pk %}">{% trans "Delete" %}</a>
+	      <a class="btn btn-red" href="{% url 'delete_url' form.instance.pk %}">{% trans "Delete" %}</a>
 	      {% endif %}
 
 	      <div class="pull-right">

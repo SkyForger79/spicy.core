@@ -42,10 +42,12 @@ def profile(request, username):
     return dict(user=user)
 
 
+
 @login_required
 @render_to('spicy.core.profile/edit.html')
 def edit(request, username):
     messages = ''
+
     user = get_object_or_404(Profile, username=username)
 
     if request.user != user:

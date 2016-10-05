@@ -242,6 +242,11 @@ class AbstractProfile(User, MediaConsumerAbstractModel):
             'URL'))
     sites = models.ManyToManyField(Site, blank=True)
 
+    if 'spicy.crm' in settings.INSTALLED_APPS:
+        sms_notification = models.BooleanField(default=False)
+        skype = models.CharField(_('Skype'), max_length=40, blank=True)
+        inner_phone = models.CharField(_('Inner phone'), max_length=20, blank=True)
+
     objects = ProfileManager()
     on_site = CurrentSiteManager(field_name='sites')
 

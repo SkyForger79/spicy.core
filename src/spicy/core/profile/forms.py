@@ -171,19 +171,31 @@ class ProfileForm(forms.ModelForm):
             _("Permissions"), is_stacked=False),
         queryset=Permission.objects.all())
 
+    if 'spicy.crm' in settings.INSTALLED_APPS:
+        sms_notification = forms.BooleanField(_('SMS notifications'))
+        skype = forms.RegexField(
+            label=_('Skype'), max_length=40, regex=r'^[\w\-_]+$')
+        inner_phone = forms.CharField(_('Inner phone'))
+
+
     def save(self, *args, **kwargs):
         profile = super(ProfileForm, self).save(*args, **kwargs)
         if self.cleaned_data['is_active']:
             profile.activate()
 
+    def __init__(self, *args, **kwargs):
+        profile = super(ProfileForm, self).__init__(*args, **kwargs)
+        if 'spicy.crm' in settings.INSTALLED_APPS:
+            self._meta.fields.extend(
+                ['skype', 'sms_notification', 'inner_phone'])
+
     class Meta:
         model = Profile
-        fields = (
+        fields = [
             'username', 'first_name', 'second_name', 'last_name', 'email',
             'groups', 'user_permissions', 'sites', 'is_staff', 'is_active',
             'is_banned', 'accept_agreement', 'is_superuser', 'subscribe_me',
-            'hide_email', 'phone', 'timezone', 'google_profile_id')
-
+            'hide_email', 'phone', 'timezone', 'google_profile_id']
 
 class ModerateProfileForm(forms.ModelForm):
     username = forms.RegexField(

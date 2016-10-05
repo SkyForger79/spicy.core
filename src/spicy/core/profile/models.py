@@ -246,6 +246,9 @@ class AbstractProfile(User, MediaConsumerAbstractModel):
         sms_notification = models.BooleanField(default=False)
         skype = models.CharField(_('Skype'), max_length=40, blank=True)
         inner_phone = models.CharField(_('Inner phone'), max_length=20, blank=True)
+        sendmail_since = models.DateTimeField(_('Send mail since time'), blank=True, null=True)
+        sendmail_for = models.DateTimeField(_('Send mail for time'), blank=True, null=True)
+        sip_account = models.CharField(_('SIP account'), max_length=150, blank=True, null=True)
 
     objects = ProfileManager()
     on_site = CurrentSiteManager(field_name='sites')

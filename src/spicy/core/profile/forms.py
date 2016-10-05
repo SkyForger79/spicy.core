@@ -129,6 +129,7 @@ class PublicProfileForm(forms.ModelForm):
             'subscribe_me', 'birthday')
         widgets = {'preview': forms.widgets.HiddenInput()}
 
+from datetime import time
 
 class ProfileForm(forms.ModelForm):
     username = forms.RegexField(
@@ -176,7 +177,9 @@ class ProfileForm(forms.ModelForm):
         skype = forms.RegexField(
             label=_('Skype'), max_length=40, regex=r'^[\w\-_]+$')
         inner_phone = forms.CharField(_('Inner phone'))
-
+        #sendmail_since = forms.TimeField(_('When start sending email notifications'))
+        #sendmail_for = forms.TimeField(_('When stop sending email notifications'))
+        sip_account = forms.CharField(_('SIP account'))
 
     def save(self, *args, **kwargs):
         profile = super(ProfileForm, self).save(*args, **kwargs)
@@ -184,10 +187,12 @@ class ProfileForm(forms.ModelForm):
             profile.activate()
 
     def __init__(self, *args, **kwargs):
-        profile = super(ProfileForm, self).__init__(*args, **kwargs)
+        super(ProfileForm, self).__init__(*args, **kwargs)
         if 'spicy.crm' in settings.INSTALLED_APPS:
             self._meta.fields.extend(
-                ['skype', 'sms_notification', 'inner_phone'])
+                ['skype', 'sms_notification', 'inner_phone', 'sip_account', ])#'sendmail_from', 'sendmail_to',])
+
+
 
     class Meta:
         model = Profile

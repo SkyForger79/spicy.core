@@ -171,28 +171,18 @@ class ProfileForm(forms.ModelForm):
         widget=widgets.FilteredSelectMultiple(
             _("Permissions"), is_stacked=False),
         queryset=Permission.objects.all())
-
-    if 'spicy.crm' in settings.INSTALLED_APPS:
-        sms_notification = forms.BooleanField(_('SMS notifications'))
-        skype = forms.RegexField(
-            label=_('Skype'), max_length=40, regex=r'^[\w\-_]+$')
-        inner_phone = forms.CharField(_('Inner phone'))
-        #sendmail_since = forms.TimeField(_('When start sending email notifications'))
-        #sendmail_for = forms.TimeField(_('When stop sending email notifications'))
-        sip_account = forms.CharField(_('SIP account'))
+    sms_notification = forms.BooleanField(required=False)
+    skype = forms.RegexField(required=False,
+        label=_('Skype'), max_length=40, regex=r'^[\w\-_]+$')
+    inner_phone = forms.CharField(_('Inner phone'), required=False)
+    sendmail_since = forms.TimeField(_('When start sending email notifications'), required=False)
+    sendmail_for = forms.DateTimeField(_('When stop sending email notifications'), required=False)
+    sip_account = forms.CharField(_('SIP account'), required=False)
 
     def save(self, *args, **kwargs):
         profile = super(ProfileForm, self).save(*args, **kwargs)
         if self.cleaned_data['is_active']:
             profile.activate()
-
-    def __init__(self, *args, **kwargs):
-        super(ProfileForm, self).__init__(*args, **kwargs)
-        if 'spicy.crm' in settings.INSTALLED_APPS:
-            self._meta.fields.extend(
-                ['skype', 'sms_notification', 'inner_phone', 'sip_account', ])#'sendmail_from', 'sendmail_to',])
-
-
 
     class Meta:
         model = Profile
@@ -200,7 +190,10 @@ class ProfileForm(forms.ModelForm):
             'username', 'first_name', 'second_name', 'last_name', 'email',
             'groups', 'user_permissions', 'sites', 'is_staff', 'is_active',
             'is_banned', 'accept_agreement', 'is_superuser', 'subscribe_me',
-            'hide_email', 'phone', 'timezone', 'google_profile_id']
+            'hide_email', 'phone', 'timezone', 'google_profile_id', 'skype',
+            'sms_notification', 'inner_phone', 'sip_account', 'sendmail_since',
+            'sendmail_for']
+
 
 class ModerateProfileForm(forms.ModelForm):
     username = forms.RegexField(

@@ -6,12 +6,12 @@
       {% formfield "" form "username" "li-text" %}
       {% formfield "" form "email" "li-text" %}
       {% if uses_crm %}
-          {% comment %}
-          {% formfield "" form "sendmail_since" "li-date" %}
-          {% formfield "" form "sendmail_for" "li-date" %}
-          {% endcomment %}
-          {% formfield "" form "skype" "li-text" %}
-          {% formfield "" form "sip_account" "li-text" %}
+    {% comment %}
+      {% formfield "" form "sendmail_since" "li-date" %}
+      {% formfield "" form "sendmail_for" "li-date" %}
+    {% endcomment %}
+      {% formfield "" form "skype" "li-text" %}
+      {% formfield "" form "sip_account" "li-text" %}
       {% endif %}
       <li><hr/></li>
       <li><strong>{% trans "Date joined" %}</strong>: {{ form.instance.date_joined|date:"d-m-Y H:i" }}</li>

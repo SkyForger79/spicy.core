@@ -45,7 +45,7 @@
 	      <button type="submit" class="btn btn-red" onclick="document.delete_{{ app.name }}.submit()">{% trans "Delete" %}</button>
 	      <div class="pull-right">
 		{% if not edit_url %}{% captureas edit_url %}{{ app.name }}:admin:edit{% endcaptureas %}{% endif %}
-		<a class="btn btn-gray" href="{% url 'edit_url' instance.id %}">{% trans "Return to" %} {{ instance }}</a>
+		<a class="btn btn-gray" href="{% url edit_url instance.id %}">{% trans "Return to" %} {{ instance }}</a>
 	      </div>
 	    </div>
 	  </form>

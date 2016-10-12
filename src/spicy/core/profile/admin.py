@@ -177,10 +177,13 @@ def edit(request, profile_id):
 
     passwd_form = forms.AdminPasswdForm(profile)
 
+    uses_crm = 'spicy.crm' in settings.INSTALLED_APPS
+
     return {
         'action': action, 'instance': profile, 'form': form,
         'passwd_form': passwd_form, 'message': message,
-        'services': api.register.get_list(consumer=profile), 'tab': 'edit'}
+        'services': api.register.get_list(consumer=profile),
+        'tab': 'edit', 'uses_crm': uses_crm}
 
 
 @is_staff(required_perms=change_perm(defaults.CUSTOM_USER_MODEL))

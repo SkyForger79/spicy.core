@@ -241,6 +241,12 @@ class AbstractProfile(User, MediaConsumerAbstractModel):
             'Visit http://profiles.google.com/me to find out ID from redirect '
             'URL'))
     sites = models.ManyToManyField(Site, blank=True)
+    sms_notification = models.BooleanField(blank=True, default=False)
+    skype = models.CharField(_('Skype'), max_length=40, blank=True)
+    inner_phone = models.CharField(_('Inner phone'), max_length=20, blank=True)
+    sip_account = models.CharField(_('SIP account'), max_length=150, blank=True, null=True)
+    sendmail_since = models.TimeField(_('Send mail since time'), blank=True, null=True)
+    sendmail_for = models.DateTimeField(_('Send mail for time'), blank=True, null=True)
 
     objects = ProfileManager()
     on_site = CurrentSiteManager(field_name='sites')

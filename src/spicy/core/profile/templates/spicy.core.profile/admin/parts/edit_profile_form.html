@@ -5,6 +5,14 @@
     <ul class="padded separate-sections">
       {% formfield "" form "username" "li-text" %}
       {% formfield "" form "email" "li-text" %}
+      {% if uses_crm %}
+    {% comment %}
+      {% formfield "" form "sendmail_since" "li-date" %}
+      {% formfield "" form "sendmail_for" "li-date" %}
+    {% endcomment %}
+      {% formfield "" form "skype" "li-text" %}
+      {% formfield "" form "sip_account" "li-text" %}
+      {% endif %}
       <li><hr/></li>
       <li><strong>{% trans "Date joined" %}</strong>: {{ form.instance.date_joined|date:"d-m-Y H:i" }}</li>
       <li><strong>{% trans "Last login" %}</strong>: {{ form.instance.last_login|date:"d-m-Y H:i" }}</li>
@@ -41,7 +49,9 @@
       {% formfield "" form "subscribe_me" "li-checkbox" %}		
       {% formfield "" form "hide_email" "li-checkbox" %}				  
       <li><hr/></li>
+      {% if uses_crm %}{% formfield "" form "inner_phone" "li-text" %}{% endif %}
       {% formfield "" form "phone" "li-text" %}
+      {% if uses_crm %}{% formfield "" form "sms_notification" "li-checkbox" %}{% endif %}
       {% formfield "" form "google_profile_id" "li-text" %}
       {% formfield "" form "timezone" "li-text" %}
     </ul>

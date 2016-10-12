@@ -182,6 +182,15 @@ $(function(){
   <div class="note pull-right">{{ field.help_text }}</div>
   {% endif %}
 </li>
+{% elif type == 'li-time' %}
+<li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
+  {{ label }}
+  <input class="time fill-up"  type="text" name="{{ field.html_name }}" value="{% if field.value %}{{ field.value|default:field.value }}{% endif %}" id="id_{{ field.html_name }}"/>
+  {% if field.errors %}<span class="help-block note error"><i class="icon-warning-sign"></i>{{ field.errors.as_text }}</span>{% endif %}
+  {% if field.help_text %}
+  <div class="note pull-right">{{ field.help_text }}</div>
+  {% endif %}
+</li>
 
 {% elif type == 'li-radio' %}
 <li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>

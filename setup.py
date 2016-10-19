@@ -63,7 +63,7 @@ setup(
         # debug deps.
         # 'logutils', #TODO: version?
         'numpydoc',
-        'django-nose',
+        'django-nose==1.2',
         'django-debug-toolbar',
         'django-devserver',
         'django-extensions',

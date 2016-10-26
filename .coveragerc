@@ -1,0 +1,20 @@
+[run]
+source =
+    src
+branch = False
+omit =
+    src/spicy/core/siteskin/static/*
+    */fixtures/*
+    src/spicy/core/admin/static/*
+    src/spicy/templates/*
+    */locale/*
+    docs/*
+    sql/*
+    
+[report]
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    raise AssertionError
+    raise NotImplementedError
+if __name__ == .__main__.:

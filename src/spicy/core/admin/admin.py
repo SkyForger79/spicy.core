@@ -82,6 +82,8 @@ def robots_txt(request):
     else:
         form = forms.RobotsForm(instance=robots)
         sform = forms.SiteForm(instance=site)
+        sform.fields['name'].label = _('Display name')
+        sform.fields['domain'].label = _('Domain name')
     return {'form': form, 'sform': sform}
 
 

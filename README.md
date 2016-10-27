@@ -13,6 +13,11 @@ Main and the one using case:
 
 TODO: write readme in plain text at least
 
+Requirements
+----
+
+Spicy.core compatible with Django >= 1.3 <= 1.5.12, and Python 2.7
+
 Docs
 ----
 TODO: write docs

@@ -25,6 +25,12 @@ msgstr ""
 msgid "Admin"
 msgstr "Админка"
 
+msgid "Display name"
+msgstr "Имя сайта"
+
+msgid "Domain name"
+msgstr "Домен"
+
 #: admin.py:20
 msgid "Metrics, meta & Extra JS"
 msgstr "Метрика, метатеги и скрипты"

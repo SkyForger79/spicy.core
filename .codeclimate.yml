@@ -19,6 +19,14 @@ engines:
       - python
       #mass_threshold: 30
       - javascript
+    exclude_fingerprints:
+    - 936c373d0959962259099830c8695052
+    - 411055b385ff7018b28bd87a7e18b435
+    - 306681705d561d53c0ea798913bf473c
+    - 8be9bbccab22840b877ea3a2010cc3d6
+    - d61ef9e88ea90869e8dd31f5af60d867
+    - 8574919c1dfe3ace262a7e88788a82fd
+    
 ratings:
   paths:
   - src/**

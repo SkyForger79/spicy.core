@@ -386,9 +386,11 @@ class ProfileService(api.Interface):
             if form.is_valid():
                 profile = Profile.objects.get(
                     email__iexact=form.cleaned_data['email'])
+                is_active = profile.is_active
                 if 'send_pass' in request.POST:
                     newpass = generate_random_password()
                     profile.set_password(newpass)
+                    profile.is_active = is_active
                     profile.save()
                     profile.email_forgotten_passwd(newpass)
 

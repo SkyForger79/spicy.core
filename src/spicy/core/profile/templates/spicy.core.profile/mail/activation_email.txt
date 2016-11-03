@@ -1,3 +1,4 @@
+{% load url from future %}
 {% blocktrans with sitename=site.name %}Welcome to {{ sitename }}!{% endblocktrans %}
 
 {% trans "Your account is not acivated yet. To activate press the following link:" %}

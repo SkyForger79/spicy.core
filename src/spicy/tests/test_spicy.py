@@ -1,11 +1,11 @@
 """spicy main test cases."""
 import unittest
 
-from fabric.api import local
-from fabric.colors import red, green, yellow
+# from fabric.api import local
+# from fabric.colors import red, green, yellow
 
 import spicy
-import spicy.script as tool
+# import spicy.script as tool
 
 
 class TestSpicy(unittest.TestCase):

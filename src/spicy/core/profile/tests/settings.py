@@ -7,7 +7,7 @@ TEMPLATE_DEBUG = DEBUG
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 # TEST_RUNNER = 'spicy.spicyunittest.SpicyTextTestRunner'
 NOSE_ARGS = [
-    '--nocapture',
+    # '--nocapture',
     # '--with-coverage',
     # '--cover-html',
     # '--cover-html-dir=cover',
@@ -63,6 +63,12 @@ INSTALLED_APPS = [
     'spicy.core.admin',
     'spicy.core.service',
     'spicy.core.siteskin',
+    'spicy.core.simplepages',
     'django_nose',
 ]
 
+ROOT_URLCONF = 'spicy.core.profile.tests.dummy_root_urls'
+
+SITE_ID = 1
+
+SECRET_KEY = 'test secret key'

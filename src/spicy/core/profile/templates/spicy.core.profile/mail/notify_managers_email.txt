@@ -1,4 +1,4 @@
-{% load url from future %}{% blocktrans %}New user is registered {{ now }}{% endblocktrans %}
+{% load url from future %}{% load i18n %}{% blocktrans %}New user is registered {{ now }}{% endblocktrans %}
 
 {% trans "Username" %}: {{ user.username }}
 {% trans "First Name" %}: {{ user.first_name }}

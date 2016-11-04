@@ -1,1 +1,1 @@
-{% trans "New registration" %} {{ user.username}} - {{ site.domain }}
+{% load i18n %}{% trans "New registration" %} {{ user.username}} - {{ site.domain }}

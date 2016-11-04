@@ -57,14 +57,14 @@ setup(
         'html5lib==0.95',
         'python-redmine==0.8.1',
 
-        #'django-simple-captcha', # spicy.core.profile
+        'django-simple-captcha==0.4.6', # spicy.core.profile
         #'django-social-auth==0.6.1',# spicy.core.profile
 
         # debug deps.
         # 'logutils', #TODO: version?
-        'numpydoc',
+        'numpydoc==0.4',
         'django-nose==1.2',
-        'django-debug-toolbar',
+        'django-debug-toolbar==1.3',
         'django-devserver',
         'django-extensions',
         'django-autocomplete-light==2.0.0a15',

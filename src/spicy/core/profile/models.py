@@ -13,6 +13,7 @@ from django.contrib.sites.models import Site
 from django.core.mail import send_mail
 from django.core.management.color import color_style
 from django.db import models, transaction
+from django.db.models import FieldDoesNotExist
 from django.db.models.query import QuerySet
 from django.template.loader import render_to_string
 from django.utils.crypto import get_random_string
@@ -22,7 +23,7 @@ from django.utils.html import escape
 from django.utils.translation import ugettext, ugettext_lazy as _
 from django.core.mail import EmailMultiAlternatives
 from spicy.core.service.models import ProviderModel
-from spicy.mediacenter.abs import MediaConsumerAbstractModel
+# from spicy.mediacenter.abs import MediaConsumerAbstractModel
 from spicy.utils.printing import print_error
 from StringIO import StringIO
 from uuid import uuid4
@@ -219,7 +220,8 @@ class ProfileManager(UserManager):
         return count
 
 
-class AbstractProfile(User, MediaConsumerAbstractModel):
+# class AbstractProfile(User, MediaConsumerAbstractModel):
+class AbstractProfile(User):
     IS_ACTIVATED = 'Already activated'
     user_ptr = models.OneToOneField(User, parent_link=True)
     activation_key = models.CharField(_('activation key'), max_length=40)

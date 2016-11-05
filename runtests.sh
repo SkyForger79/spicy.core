@@ -1,9 +1,10 @@
 #!/bin/bash
 set +x
 
-virtualenv spicycore-env
+virtualenv --no-site-packages spicycore-env
 source spicycore-env/bin/activate
 pip install .
+pip install -r requirements_dev.txt
 
 export PYTHONPATH="${PYTHONPATH}:$(pwd)/src"
 export DJANGO_SETTINGS_MODULE="spicy.tests.settings"

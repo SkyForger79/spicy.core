@@ -2,7 +2,7 @@ from django.contrib.auth.models import Group, Permission, User
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.test import TestCase
-from extprofile.models import Profile
+from spicy.core.profile.models import TestProfile
 
 
 class PermissionCacheTest(TestCase):
@@ -118,7 +118,7 @@ class PermissionCacheTest(TestCase):
         # Get group perms in cache.
         self.assert_(self.user.get_all_permissions())
         self.assertEqual(cache.get(self.user_key), set())
-        content_type = ContentType.objects.get_for_model(Profile)
+        content_type = ContentType.objects.get_for_model(TestProfile)
         # Create new perm.
         perm = Permission.objects.create(
             name='change', content_type=content_type,
@@ -146,7 +146,7 @@ class PermissionCacheTest(TestCase):
         # Get group perms in cache.
         self.assertEqual(self.user.get_all_permissions(), self.all_perms())
         self.assertEqual(cache.get(self.user_key), self.all_perms())
-        content_type = ContentType.objects.get_for_model(Profile)
+        content_type = ContentType.objects.get_for_model(TestProfile)
         # Create new perm.
         perm = Permission.objects.create(
             name='change', content_type=content_type,
@@ -172,7 +172,7 @@ class PermissionCacheTest(TestCase):
         # Get group perms in cache.
         self.assert_(self.user.get_group_permissions())
         self.assert_(cache.get(self.group_key))
-        content_type = ContentType.objects.get_for_model(Profile)
+        content_type = ContentType.objects.get_for_model(TestProfile)
         # Create new perm.
         perm = Permission.objects.create(
             name='change', content_type=content_type,

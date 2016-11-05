@@ -12,14 +12,6 @@ TODO: write readme in plain text at least
 Tools
 -----
 
-**virtualenvwrapper** (optional)
-Makes work with virtual environments more comfort. Docs here: [virtualenvwrapper](https://virtualenvwrapper.readthedocs.io/en/latest/).
-If use Debian-based OS, you can install it with:
-
-```bash
-sudo apt-get install -y virtualenvwrapper
-```
-
 Команда для работы с проектами django/SpicyCMF. Позволяет деплоить проекты и создавать шаблонные.
 
 ```spicy -h```
@@ -28,15 +20,6 @@ sudo apt-get install -y virtualenvwrapper
 Tests
 -----
 
-Настройте окружение под модуль spicy.core, если вы хотите заняться разработкой только этого модуля или протеситровать его.
-
-
-```bash
-virtualenv spicycore-env
-source spicycore-env/bin/activate
-pip install .
-pip install -r requirements_dev.txt
-```
 
 Команда запуска тестов для локальной разработки в стиле TDD:
 
@@ -44,9 +27,9 @@ pip install -r requirements_dev.txt
 ./runtests.sh
 ```
 
-Эта команда будет каждый раз создавать тестовую базу данных и запускать тесты из директории `src`.
-Таким образом программист может не делать приложение Django и тестировать базовую функциональность. расшрять ее и модифицировать
-изменяя код и запуская тесты.
+Эта команда будет каждый раз создавать тестовую базу данных и окружение из файла `setup.py`, запускать тесты из директории `src`.
+Таким образом программист может не делать приложение Django и тестировать базовую функциональность модуля.
+Расшрять ее и модифицировать изменяя код, и запуская тесты.
 
 
 And you must remember

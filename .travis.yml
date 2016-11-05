@@ -2,4 +2,4 @@ language: python
 python:
   - "2.7"
 install: "pip install -r requirements_dev.txt"
-script: runtests.sh
+script: bash runtests.sh

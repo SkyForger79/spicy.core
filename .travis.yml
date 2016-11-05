@@ -6,7 +6,7 @@ python:
 sudo: false
 
 env:
-  - DJANGO_SETTINGS_MODULE="spicy.core.profile.tests.settings"
+  - DJANGO_SETTINGS_MODULE="spicy.tests.settings"
 
 install: 
   - pip install -U pip>=8.0

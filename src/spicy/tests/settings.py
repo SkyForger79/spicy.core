@@ -54,3 +54,7 @@ ROOT_URLCONF = 'spicy.tests.dummy_root_urls'
 SITE_ID = 1
 
 SECRET_KEY = 'test secret key'
+
+SERVICES = [
+
+]

@@ -38,8 +38,10 @@ class ServiceProviderForAll(api.Interface):
 
 class ServiceRegisterTestCase(TestCase):
     def setUp(self):
-        api.register.add(ServiceProviderForUser)
-        api.register.add(ServiceProviderForAll)
+        api.register.add(
+            'spicy.core.service.tests.test_api.ServiceProviderForUser')
+        api.register.add(
+            'spicy.core.service.tests.test_api.ServiceProviderForAll')
 
     def tearDown(self):
         api.register.remove('test_service_for_user')
@@ -55,7 +57,8 @@ class ServiceRegisterTestCase(TestCase):
     def test_remove(self):
         api.register.remove('test_service_for_user')
         self.assertFalse('test_service_for_user' in api.register)
-        api.register.add(ServiceProviderForUser)
+        api.register.add(
+            'spicy.core.service.tests.test_api.ServiceProviderForUser')
 
     def test_does_not_exist(self):
         self.assertRaises(api.ServiceDoesNotExist,
@@ -66,8 +69,10 @@ class ProviderTestCase(TestCase):
     def setUp(self):
         self.consumer, created = User.objects.get_or_create(username='test')
 
-        api.register.add(ServiceProviderForUser)
-        api.register.add(ServiceProviderForAll)
+        api.register.add(
+            'spicy.core.service.tests.test_api.ServiceProviderForUser')
+        api.register.add(
+            'spicy.core.service.tests.test_api.ServiceProviderForAll')
 
     def tearDown(self):
         api.register.remove('test_service_for_user')
@@ -115,8 +120,10 @@ class ServiceInterfaceTestCase(TestCase):
 
         self.current_site = Site.objects.get_current()
 
-        api.register.add(ServiceProviderForUser)
-        api.register.add(ServiceProviderForAll)
+        api.register.add(
+            'spicy.core.service.tests.test_api.ServiceProviderForUser')
+        api.register.add(
+            'spicy.core.service.tests.test_api.ServiceProviderForAll')
 
     def tearDown(self):
         api.register.remove('test_service_for_user')

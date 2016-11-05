@@ -58,6 +58,7 @@ setup(
         #'python-redmine==0.8.1',
 
         'django-simple-captcha<0.4.7', # spicy.core.profile
+        'Pillow==3.4.2',
         #'django-social-auth==0.6.1',# spicy.core.profile
 
         # debug deps.

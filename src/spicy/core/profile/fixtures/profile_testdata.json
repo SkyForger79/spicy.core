@@ -19,10 +19,9 @@
     },
     {
         "pk": 1,
-        "model": "test_profile.profile",
+        "model": "profile.testprofile",
         "fields": {
-            "activation_key": 123,
-            "obj_per_page": 10
+            "activation_key": 123
             }
     },
     {
@@ -45,10 +44,9 @@
     },
     {
         "pk": 2,
-        "model": "test_profile.profile",
+        "model": "profile.testprofile",
         "fields": {
-            "activation_key": 123,
-            "obj_per_page": 10
+            "activation_key": 123
             }
     },
     {
@@ -71,10 +69,9 @@
     },
     {
         "pk": 3,
-        "model": "test_profile.profile",
+        "model": "profile.testprofile",
         "fields": {
-            "activation_key": 123,
-            "obj_per_page": 10
+            "activation_key": 123
             }
     },
     {
@@ -97,10 +94,9 @@
     },
     {
         "pk": 4,
-        "model": "test_profile.profile",
+        "model": "profile.testprofile",
         "fields": {
-            "activation_key": 123,
-            "obj_per_page": 10
+            "activation_key": 123
             }
     },
     {
@@ -123,10 +119,9 @@
     },
     {
         "pk": 5,
-        "model": "test_profile.profile",
+        "model": "profile.testprofile",
         "fields": {
-            "activation_key": 123,
-            "obj_per_page": 10
+            "activation_key": 123
             }
     },
     {
@@ -149,10 +144,9 @@
     },
     {
         "pk": 6,
-        "model": "test_profile.profile",
+        "model": "profile.testprofile",
         "fields": {
-            "activation_key": 123,
-            "obj_per_page": 10
+            "activation_key": 123
             }
     },
     {
@@ -175,10 +169,10 @@
     },
     {
         "pk": 7,
-        "model": "test_profile.profile",
+        "model": "profile.testprofile",
         "fields": {
-            "activation_key": 123,
-            "obj_per_page": 10
+            "activation_key": 123
             }
     }
 ]
+

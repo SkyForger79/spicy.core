@@ -15,5 +15,3 @@ install:
 
 script: 
   - ./runtests.sh
-  
-after_success: coveralls

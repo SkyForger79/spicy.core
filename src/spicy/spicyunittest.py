@@ -2,6 +2,7 @@
 import unittest
 
 from fabric.colors import *
+from django.test.utils import setup_test_environment
 
 
 class SpicyTextTestResult(unittest.TestResult):
@@ -111,4 +112,6 @@ class SpicyTextTestRunner(unittest.TextTestRunner):
         return self.resultclass(self.stream, self.descriptions, self.verbosity)
 
 
+setup_test_environment()
+print '@@@'
 unittest.main(testRunner=SpicyTextTestRunner)

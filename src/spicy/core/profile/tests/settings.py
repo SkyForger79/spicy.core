@@ -18,33 +18,14 @@ NOSE_ARGS = [
 #
 # ]
 
-TEST = 'test' in sys.argv
 
-if TEST:
-    # in-memory SQLite used for testing
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': ':memory:',
-        }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'spicy_test.db',
     }
+}
 
-else:
-    DATABASES = {
-        # 'default': {
-        #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        #     'NAME': 'spicycms',
-        #     'USER': 'postgres',
-        #     'PASSWORD': 'postgres',
-        #     'HOST': 'localhost',
-        #     'PORT': '5432',
-        #     },
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': 'spicy.db',
-            'TEST_NAME': 'test_spicy.db',
-        }
-    }
 
 INSTALLED_APPS = [
     # Dajngo admin

@@ -1,12 +1,16 @@
 #!/bin/bash
 set +x
 
-export DJANGO_SETTINGS_MODULE="spicy.core.profile.tests.settings"
-export PYTHONPATH="${PYTHONPATH}:$(pwd)/src"
+virtualenv spicycore-env
+source spicycore-env/bin/activate
+pip install .
 
+export PYTHONPATH="${PYTHONPATH}:$(pwd)/src"
+export DJANGO_SETTINGS_MODULE="spicy.tests.settings"
 
 django-admin.py syncdb --noinput
 coverage run --parallel-mode -m unittest discover
-rm spicy_test.db
 
-COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN coveralls
+rm spicy_test.db
+rm .coverage.*
+rm -rf spicycore-env

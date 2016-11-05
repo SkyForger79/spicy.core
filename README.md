@@ -1,21 +1,13 @@
-[![Code Climate](https://codeclimate.com/github/spicycms/spicy.core/badges/gpa.svg)](https://codeclimate.com/github/spicycms/spicy.core)  [![Test Coverage](https://codeclimate.com/github/spicycms/spicy.core/badges/coverage.svg)](https://codeclimate.com/github/spicycms/spicy.core/coverage)
+[![Build Status](https://travis-ci.org/spicycms/spicy.core.svg?branch=tests_fix)](https://travis-ci.org/spicycms/spicy.core) [![Test Coverage](https://codeclimate.com/github/spicycms/spicy.core/badges/coverage.svg)](https://codeclimate.com/github/spicycms/spicy.core/coverage) [![Code Climate](https://codeclimate.com/github/spicycms/spicy.core/badges/gpa.svg)](https://codeclimate.com/github/spicycms/spicy.core)
+
 
 ==========
-Spicy docs
+SpicyCMF core documentation version 1.2.0
 ==========
 
-Fixed version 1.2.0
-
-Main and the one using case:
-
-.. code-block:: sh
-   `spicy -h`
 
 TODO: write readme in plain text at least
 
-Docs
-----
-TODO: write docs
 
 Tools
 -----
@@ -23,28 +15,38 @@ Tools
 **virtualenvwrapper** (optional)
 Makes work with virtual environments more comfort. Docs here: [virtualenvwrapper](https://virtualenvwrapper.readthedocs.io/en/latest/).
 If use Debian-based OS, you can install it with:
+
 ```bash
 sudo apt-get install -y virtualenvwrapper
 ```
 
+Команда для работы с проектами django/SpicyCMF. Позволяет деплоить проекты и создавать шаблонные.
+
+```spicy -h```
+
+
 Tests
 -----
-На данный момент тесты используют движок ```unittest```, рекомендуемвый разработчиками Django. Встроенные в Django классы для написания тестов, такие как ```django.test.TestCase``` внутри наследуются от ```unittest.TestCase```, но реализуют специализированную функцональность, например транзакционность обращений к БД в ходе тестов.
 
-Исходя из того, что при разработке тестов необходимо часто вность изменения в кодовую базу, был выбран подход, при котором тесты запускаются для кода в каталоге ```src``` модуля ```spicy.core```, что не требует установки модуля в систему через ```python setup.py install``` после каждой внесенной правки, но требует добавления каталога ```src``` в ```PYTHONPATH```.
+Настройте окружение под модуль spicy.core, если вы хотите заняться разработкой только этого модуля или протеситровать его.
 
-Необходимые для разработки ядра модули перечислены в ```requirements_dev.txt``` и, соответственно, устанавливаются командой:
+
 ```bash
+virtualenv spicycore-env
+source spicycore-env/bin/activate
+pip install .
 pip install -r requirements_dev.txt
 ```
 
-Команда запуска тестов со сбором статистики по покрытыю выглядит следующим образом:
+Команда запуска тестов для локальной разработки в стиле TDD:
 
 ```bash
-DJANGO_SETTINGS_MODULE="spicy.core.profile.tests.settings" \
-PYTHONPATH="${PYTHONPATH}:$(pwd)/src" \
-python -m unittest discover
+./runtests.sh
 ```
+
+Эта команда будет каждый раз создавать тестовую базу данных и запускать тесты из директории `src`.
+Таким образом программист может не делать приложение Django и тестировать базовую функциональность. расшрять ее и модифицировать
+изменяя код и запуская тесты.
 
 
 And you must remember

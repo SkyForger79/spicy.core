@@ -45,10 +45,11 @@ INSTALLED_APPS = [
     'spicy.core.service',
     'spicy.core.siteskin',
     'spicy.core.simplepages',
+    'spicy.core.rmanager',
     'django_nose',
 ]
 
-ROOT_URLCONF = 'spicy.core.profile.tests.dummy_root_urls'
+ROOT_URLCONF = 'spicy.tests.dummy_root_urls'
 
 SITE_ID = 1
 

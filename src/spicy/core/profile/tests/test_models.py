@@ -3,14 +3,13 @@ import os
 
 from django.contrib.sites.models import Site
 
-os.environ['DJANGO_SETTINGS_MODULE'] = 'spicy.core.profile.tests.settings'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'spicy.tests.settings'
 
 import unittest
 # from django.contrib.auth.models import User
 # from spicy.core.profile.utils import get_concrete_profile
 
 
-import spicy
 from spicy.core.profile.models import TestProfile
 
 

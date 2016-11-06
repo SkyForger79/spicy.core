@@ -1,7 +1,6 @@
 """Test settings."""
-import os
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+import sys, os
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -28,82 +27,90 @@ DATABASES = {
     }
 }
 
-AUTHENTICATION_BACKENDS = (
-    'spicy.core.profile.auth_backends.CustomUserModelBackend',
-)
 
-LOGIN_REDIRECT_URL = '/'
-LOGIN_URL = '/signin/'
-REGISTRATION_OPEN = True
-
-INSTALLED_APPS = (
-     # Django native apps
+INSTALLED_APPS = [
+    # Dajngo admin
     'django.contrib.admin',
+
+    # Django native apps
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.humanize',
     'django.contrib.sessions',
     'django.contrib.sites',
+    'django.contrib.flatpages',
     'django.contrib.staticfiles',
 
-    # Spicy core components
+    # spicy.core components
     'spicy.core.profile',
-    'spicy.core.trash',
     'spicy.core.admin',
     'spicy.core.service',
     'spicy.core.siteskin',
     'spicy.core.simplepages',
-)
+    'spicy.core.rmanager',
 
-ROOT_URLCONF = 'spicy.tests.urls'
+    # 
+    'django_nose',
+]
+
+ROOT_URLCONF = 'spicy.tests.dummy_root_urls'
 
 SITE_ID = 1
 
 SECRET_KEY = 'test secret key'
 
-SERVICES = (
-    # 'spicy.core.profile.services.ProfileService',
-    # 'spicy.core.trash.services.TrashService',
-)
+SERVICES = [
+    'spicy.core.profile.services.ProfileService',
+    'spicy.core.trash.services.TrashService',
+]
+
+# use specific example themes path for tests
+THEMES_PATH = os.path.abspath('src/spicy/siteskin-examples')
+
 
 TEMPLATE_LOADERS = (
-    'django.template.loaders.app_directories.Loader',
     'spicy.core.siteskin.loaders.ThemeTemplateLoader',
+    'django.template.loaders.app_directories.Loader',
     'spicy.core.siteskin.loaders.BackendTemplateLoader',
-)
-
-STATIC_URL = 'static'
-
-STATICFILES_FINDERS = (
-    'spicy.core.siteskin.loaders.ThemeStaticFinder',
-    'spicy.core.siteskin.loaders.AppDirectoriesFinder',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
-
+    
     'spicy.core.profile.context_processors.auth',
     'spicy.core.siteskin.context_processors.base',
     'spicy.core.admin.context_processors.base',
-
+    
     'django.core.context_processors.debug',
     'django.core.context_processors.i18n',
     'django.core.context_processors.media',
     'django.core.context_processors.request',
 )
 
-MIDDLEWARE_CLASSES = (
-    'spicy.core.siteskin.middleware.AjaxMiddleware',
-    'spicy.core.siteskin.threadlocals.ThreadLocals',
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.abspath(os.path.join(THEMES_PATH, STATIC_URL))
 
-    'django.middleware.common.CommonMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
+STATICFILES_FINDERS = (
+    'spicy.core.siteskin.loaders.ThemeStaticFinder',
+    'spicy.core.siteskin.loaders.AppDirectoriesFinder',
 )
 
-# if DEBUG:
-#     MIDDLEWARE_CLASSES += (
-#         'spicy.core.rmanager.middleware.ProfileMiddleware',
-#     )
+MIDDLEWARE_CLASSES = (
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    
+    'spicy.core.profile.middleware.AuthMiddleware',
+    
+    'django.middleware.doc.XViewMiddleware',
+    
+    # XXX is it required ??
+    'spicy.core.siteskin.middleware.AjaxMiddleware',
+    'spicy.core.siteskin.threadlocals.ThreadLocals', )
+
+if DEBUG:
+    MIDDLEWARE_CLASSES += (
+        # Peofiler for developers
+        'spicy.core.rmanager.middleware.ProfileMiddleware',
+        # error with profile.Profile module
+    )

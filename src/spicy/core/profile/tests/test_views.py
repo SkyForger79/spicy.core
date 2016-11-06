@@ -1,12 +1,21 @@
 import os
+
 from django.conf import settings
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.sites.models import Site
+from django.core.urlresolvers import reverse
 from django.test import TestCase
+from spicy.core.service import api
+
 
 class AuthViewsTestCase(TestCase):
     fixtures = ['basetestdata.json']
     #urls = 'django.contrib.auth.urls'
+    profile_service_name = 'profile'
+    profile_service_path = 'spicy.core.profile.services.ProfileService'
 
     def setUp(self):
+        api.register.add(self.profile_service_path)
         self.old_LANGUAGES = settings.LANGUAGES
         self.old_LANGUAGE_CODE = settings.LANGUAGE_CODE
         settings.LANGUAGES = (('en', 'English'),)
@@ -20,9 +29,21 @@ class AuthViewsTestCase(TestCase):
         ,)
 
     def tearDown(self):
+        api.register.remove(self.profile_service_name)
         settings.LANGUAGES = self.old_LANGUAGES
         settings.LANGUAGE_CODE = self.old_LANGUAGE_CODE
         settings.TEMPLATE_DIRS = self.old_TEMPLATE_DIRS
+
+    def login(self, password='password'):
+        response = self.client.post(reverse('profile:public:signin'), {
+            'username': 'testclient',
+            'password': password
+        }
+                                    )
+        self.assertEquals(response.status_code, 302)
+        self.assert_(response['Location'].endswith(settings.LOGIN_REDIRECT_URL))
+        # self.assert_(SESSION_KEY in self.client.session)
+
 
 class PasswordResetTest(AuthViewsTestCase):
 
@@ -114,17 +135,8 @@ class PasswordResetTest(AuthViewsTestCase):
         self.assertEquals(response.status_code, 200)
         self.assert_("The two password fields didn&#39;t match" in response.content)
 
+
 class ChangePasswordTest(AuthViewsTestCase):
-
-    def login(self, password='password'):
-        response = self.client.post('/login/', {
-            'username': 'testclient',
-            'password': password
-            }
-        )
-        self.assertEquals(response.status_code, 302)
-        self.assert_(response['Location'].endswith(settings.LOGIN_REDIRECT_URL))
-
     def fail_login(self, password='password'):
         response = self.client.post('/login/', {
             'username': 'testclient',
@@ -172,10 +184,11 @@ class ChangePasswordTest(AuthViewsTestCase):
         self.fail_login()
         self.login(password='password1')
 
-class LoginTest(AuthViewsTestCase):
 
+class LoginTest(AuthViewsTestCase):
     def test_current_site_in_context_after_login(self):
-        response = self.client.get(reverse('django.contrib.auth.views.login'))
+        # response = self.client.get(reverse('django.contrib.auth.views.login'))
+        response = self.client.get(reverse('profile:public:signin'))
         self.assertEquals(response.status_code, 200)
         site = Site.objects.get_current()
         self.assertEquals(response.context['site'], site)
@@ -183,24 +196,13 @@ class LoginTest(AuthViewsTestCase):
         self.assert_(isinstance(response.context['form'], AuthenticationForm),
                      'Login form is not an AuthenticationForm')
 
+
 class LogoutTest(AuthViewsTestCase):
-    urls = 'django.contrib.auth.tests.urls'
-
-    def login(self, password='password'):
-        response = self.client.post('/login/', {
-            'username': 'testclient',
-            'password': password
-            }
-        )
-        self.assertEquals(response.status_code, 302)
-        self.assert_(response['Location'].endswith(settings.LOGIN_REDIRECT_URL))
-        self.assert_(SESSION_KEY in self.client.session)
-
     def confirm_logged_out(self):
         self.assert_(SESSION_KEY not in self.client.session)
 
     def test_logout_default(self):
-        "Logout without next_page option renders the default template"
+        """Logout without next_page option renders the default template"""
         self.login()
         response = self.client.get('/logout/')
         self.assertEquals(200, response.status_code)
@@ -208,7 +210,7 @@ class LogoutTest(AuthViewsTestCase):
         self.confirm_logged_out()
 
     def test_logout_with_next_page_specified(self):
-        "Logout with next_page option given redirects to specified resource"
+        """Logout with next_page option given redirects to specified resource"""
         self.login()
         response = self.client.get('/logout/next_page/')
         self.assertEqual(response.status_code, 302)
@@ -216,7 +218,7 @@ class LogoutTest(AuthViewsTestCase):
         self.confirm_logged_out()
 
     def test_logout_with_redirect_argument(self):
-        "Logout with query string redirects to specified resource"
+        """Logout with query string redirects to specified resource"""
         self.login()
         response = self.client.get('/logout/?next=/login/')
         self.assertEqual(response.status_code, 302)
@@ -224,7 +226,7 @@ class LogoutTest(AuthViewsTestCase):
         self.confirm_logged_out()
 
     def test_logout_with_custom_redirect_argument(self):
-        "Logout with custom query string redirects to specified resource"
+        """Logout with custom query string redirects to specified resource"""
         self.login()
         response = self.client.get('/logout/custom_query/?follow=/somewhere/')
         self.assertEqual(response.status_code, 302)

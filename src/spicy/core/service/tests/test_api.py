@@ -52,7 +52,9 @@ class ServiceRegisterTestCase(TestCase):
         self.assertTrue('test_service_for_all' in api.register)
 
     def test_register_fake(self):
-        self.assertRaises(api.WrongServiceAPI, api.register.add, FakeService)
+        self.assertRaises(api.WrongServiceAPI,
+                          api.register.add,
+                          'spicy.core.service.tests.test_api.FakeService')
 
     def test_remove(self):
         api.register.remove('test_service_for_user')

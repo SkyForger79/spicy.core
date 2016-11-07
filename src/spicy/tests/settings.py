@@ -53,7 +53,7 @@ INSTALLED_APPS = [
     'django_nose',
 ]
 
-ROOT_URLCONF = 'spicy.tests.dummy_root_urls'
+ROOT_URLCONF = 'spicy.tests.urls'
 
 SITE_ID = 1
 

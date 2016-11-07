@@ -40,7 +40,7 @@ class AuthViewsTestCase(TestCase):
             'password': password
         }
                                     )
-        self.assertEquals(response.status_code, 302)
+        self.assertEquals(response.status_code, 200)
         self.assert_(response['Location'].endswith(settings.LOGIN_REDIRECT_URL))
         # self.assert_(SESSION_KEY in self.client.session)
 
@@ -59,23 +59,29 @@ class PasswordResetTest(AuthViewsTestCase):
 
     def test_email_not_found(self):
         "Error is raised if the provided email address isn't currently registered"
-        response = self.client.get('/password_reset/')
+        target_url = reverse('profile:public:restorepass')
+        response = self.client.get(target_url)
         self.assertEquals(response.status_code, 200)
-        response = self.client.post('/password_reset/', {'email': 'not_a_real_email@email.com'})
+        response = self.client.post(target_url, {'email': 'not_a_real_email@email.com'})
         self.assertContains(response, "That e-mail address doesn&#39;t have an associated user account")
         self.assertEquals(len(mail.outbox), 0)
 
     def test_email_found(self):
         "Email is sent if a valid email address is provided for password reset"
-        response = self.client.post('/password_reset/', {'email': 'staffmember@example.com'})
-        self.assertEquals(response.status_code, 302)
+        target_url = reverse('profile:public:restorepass')
+        response = self.client.post(target_url,
+                                    {'email': 'staffmember@example.com'})
+        self.assertEquals(response.status_code, 200)
         self.assertEquals(len(mail.outbox), 1)
         self.assert_("http://" in mail.outbox[0].body)
 
     def _test_confirm_start(self):
         # Start by creating the email
-        response = self.client.post('/password_reset/', {'email': 'staffmember@example.com'})
-        self.assertEquals(response.status_code, 302)
+        target_url = reverse('profile:public:restorepass')
+
+        response = self.client.post(target_url,
+                                    {'email': 'staffmember@example.com'})
+        self.assertEquals(response.status_code, 200)
         self.assertEquals(len(mail.outbox), 1)
         return self._read_signup_email(mail.outbox[0])
 
@@ -118,7 +124,7 @@ class PasswordResetTest(AuthViewsTestCase):
         response = self.client.post(path, {'new_password1': 'anewpassword',
                                            'new_password2': 'anewpassword'})
         # It redirects us to a 'complete' page:
-        self.assertEquals(response.status_code, 302)
+        self.assertEquals(response.status_code, 200)
         # Check the password has been changed
         u = User.objects.get(email='staffmember@example.com')
         self.assert_(u.check_password("anewpassword"))
@@ -138,7 +144,7 @@ class PasswordResetTest(AuthViewsTestCase):
 
 class ChangePasswordTest(AuthViewsTestCase):
     def fail_login(self, password='password'):
-        response = self.client.post('/login/', {
+        response = self.client.post(reverse('profile:public:signin'), {
             'username': 'testclient',
             'password': password
             }
@@ -147,11 +153,12 @@ class ChangePasswordTest(AuthViewsTestCase):
         self.assert_("Please enter a correct username and password. Note that both fields are case-sensitive." in response.content)
 
     def logout(self):
-        response = self.client.get('/logout/')
+        response = self.client.get(reverse('profile:public:signout'))
+        self.assertEquals(response.status_code, 200)
 
     def test_password_change_fails_with_invalid_old_password(self):
         self.login()
-        response = self.client.post('/password_change/', {
+        response = self.client.post(reverse('profile:public:passwd'), {
             'old_password': 'donuts',
             'new_password1': 'password1',
             'new_password2': 'password1',
@@ -162,7 +169,7 @@ class ChangePasswordTest(AuthViewsTestCase):
 
     def test_password_change_fails_with_mismatched_passwords(self):
         self.login()
-        response = self.client.post('/password_change/', {
+        response = self.client.post(reverse('profile:public:passwd'), {
             'old_password': 'password',
             'new_password1': 'password1',
             'new_password2': 'donuts',
@@ -173,13 +180,13 @@ class ChangePasswordTest(AuthViewsTestCase):
 
     def test_password_change_succeeds(self):
         self.login()
-        response = self.client.post('/password_change/', {
+        response = self.client.post(reverse('profile:public:passwd'), {
             'old_password': 'password',
             'new_password1': 'password1',
             'new_password2': 'password1',
             }
         )
-        self.assertEquals(response.status_code, 302)
+        self.assertEquals(response.status_code, 200)
         self.assert_(response['Location'].endswith('/password_change/done/'))
         self.fail_login()
         self.login(password='password1')
@@ -204,7 +211,7 @@ class LogoutTest(AuthViewsTestCase):
     def test_logout_default(self):
         """Logout without next_page option renders the default template"""
         self.login()
-        response = self.client.get('/logout/')
+        response = self.client.get(reverse('profile:public:signout'))
         self.assertEquals(200, response.status_code)
         self.assert_('Logged out' in response.content)
         self.confirm_logged_out()
@@ -213,7 +220,7 @@ class LogoutTest(AuthViewsTestCase):
         """Logout with next_page option given redirects to specified resource"""
         self.login()
         response = self.client.get('/logout/next_page/')
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 200)
         self.assert_(response['Location'].endswith('/somewhere/'))
         self.confirm_logged_out()
 
@@ -221,7 +228,7 @@ class LogoutTest(AuthViewsTestCase):
         """Logout with query string redirects to specified resource"""
         self.login()
         response = self.client.get('/logout/?next=/login/')
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 200)
         self.assert_(response['Location'].endswith('/login/'))
         self.confirm_logged_out()
 
@@ -229,6 +236,6 @@ class LogoutTest(AuthViewsTestCase):
         """Logout with custom query string redirects to specified resource"""
         self.login()
         response = self.client.get('/logout/custom_query/?follow=/somewhere/')
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 200)
         self.assert_(response['Location'].endswith('/somewhere/'))
         self.confirm_logged_out()

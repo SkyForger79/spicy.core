@@ -1,0 +1,43 @@
+engines:
+  rubocop:
+    enabled: true
+    #checks:
+    #	Rubocop/Metrics/ClassLength:
+    #  	enabled: false
+  #brakeman:
+  #  enabled: true
+    #exclude_fingerprints:
+    #- 08c185b3f764f262539a1f76997d3a89
+  eslint:
+    enabled: true
+  csslint:
+    enabled: true
+  duplication:
+    enabled: true
+    config:
+      languages:
+      - python
+      #mass_threshold: 30
+      - javascript
+    exclude_fingerprints:
+    - 936c373d0959962259099830c8695052
+    - 411055b385ff7018b28bd87a7e18b435
+    - 306681705d561d53c0ea798913bf473c
+    - 8be9bbccab22840b877ea3a2010cc3d6
+    - d61ef9e88ea90869e8dd31f5af60d867
+    - 8574919c1dfe3ace262a7e88788a82fd
+    
+ratings:
+  paths:
+  - src/**
+  - "**.py"
+  - "**.js"
+  - "**.html"
+exclude_paths:
+  - src/spicy/core/siteskin/static/**
+  - "**/fixtures/**"
+  - src/spicy/core/admin/static/**
+  - src/spicy/templates/**
+  - "**/locale/**"
+  - docs/**
+  - sql/**

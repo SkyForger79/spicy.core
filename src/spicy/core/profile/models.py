@@ -13,6 +13,7 @@ from django.contrib.sites.models import Site
 from django.core.mail import send_mail
 from django.core.management.color import color_style
 from django.db import models, transaction
+from django.db.models import FieldDoesNotExist
 from django.db.models.query import QuerySet
 from django.template.loader import render_to_string
 from django.utils.crypto import get_random_string
@@ -22,7 +23,7 @@ from django.utils.html import escape
 from django.utils.translation import ugettext, ugettext_lazy as _
 from django.core.mail import EmailMultiAlternatives
 from spicy.core.service.models import ProviderModel
-from spicy.mediacenter.abs import MediaConsumerAbstractModel
+# from spicy.mediacenter.abs import MediaConsumerAbstractModel
 from spicy.utils.printing import print_error
 from StringIO import StringIO
 from uuid import uuid4
@@ -219,7 +220,8 @@ class ProfileManager(UserManager):
         return count
 
 
-class AbstractProfile(User, MediaConsumerAbstractModel):
+# class AbstractProfile(User, MediaConsumerAbstractModel):
+class AbstractProfile(User):
     IS_ACTIVATED = 'Already activated'
     user_ptr = models.OneToOneField(User, parent_link=True)
     activation_key = models.CharField(_('activation key'), max_length=40)
@@ -241,12 +243,6 @@ class AbstractProfile(User, MediaConsumerAbstractModel):
             'Visit http://profiles.google.com/me to find out ID from redirect '
             'URL'))
     sites = models.ManyToManyField(Site, blank=True)
-    sms_notification = models.BooleanField(blank=True, default=False)
-    skype = models.CharField(_('Skype'), max_length=40, blank=True)
-    inner_phone = models.CharField(_('Inner phone'), max_length=20, blank=True)
-    sip_account = models.CharField(_('SIP account'), max_length=150, blank=True, null=True)
-    sendmail_since = models.TimeField(_('Send mail since time'), blank=True, null=True)
-    sendmail_for = models.DateTimeField(_('Send mail for time'), blank=True, null=True)
 
     objects = ProfileManager()
     on_site = CurrentSiteManager(field_name='sites')

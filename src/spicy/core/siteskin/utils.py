@@ -75,9 +75,13 @@ def get_render_from_response(request, url, get_forwarding=False):
             meta = dict(request.META, PATH_INFO=path, QUERY_STRING='')
     else:
         meta = dict(PATH_INFO=path)
+
+        # deprecated
         # this is because django 1.3 now checking wsgi.input attribute in
         # request https://code.djangoproject.com/changeset/14453
-        meta['wsgi.input'] = FakePayload('')  # XXX maybe not needed since 1.4?
+        # XXX maybe not needed since 1.4 ?
+        meta['wsgi.input'] = FakePayload('')
+        
     response = Client().request(**meta)
 
     if isinstance(response, http.HttpResponseRedirect):

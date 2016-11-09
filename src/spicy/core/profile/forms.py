@@ -129,7 +129,6 @@ class PublicProfileForm(forms.ModelForm):
             'subscribe_me', 'birthday')
         widgets = {'preview': forms.widgets.HiddenInput()}
 
-from datetime import time
 
 class ProfileForm(forms.ModelForm):
     username = forms.RegexField(
@@ -171,13 +170,6 @@ class ProfileForm(forms.ModelForm):
         widget=widgets.FilteredSelectMultiple(
             _("Permissions"), is_stacked=False),
         queryset=Permission.objects.all())
-    sms_notification = forms.BooleanField(required=False)
-    skype = forms.RegexField(required=False,
-        label=_('Skype'), max_length=40, regex=r'^[\w\-_]+$')
-    inner_phone = forms.CharField(_('Inner phone'), required=False)
-    sendmail_since = forms.TimeField(_('When start sending email notifications'), required=False)
-    sendmail_for = forms.DateTimeField(_('When stop sending email notifications'), required=False)
-    sip_account = forms.CharField(_('SIP account'), required=False)
 
     def save(self, *args, **kwargs):
         profile = super(ProfileForm, self).save(*args, **kwargs)
@@ -186,13 +178,11 @@ class ProfileForm(forms.ModelForm):
 
     class Meta:
         model = Profile
-        fields = [
+        fields = (
             'username', 'first_name', 'second_name', 'last_name', 'email',
             'groups', 'user_permissions', 'sites', 'is_staff', 'is_active',
             'is_banned', 'accept_agreement', 'is_superuser', 'subscribe_me',
-            'hide_email', 'phone', 'timezone', 'google_profile_id', 'skype',
-            'sms_notification', 'inner_phone', 'sip_account', 'sendmail_since',
-            'sendmail_for']
+            'hide_email', 'phone', 'timezone', 'google_profile_id')
 
 
 class ModerateProfileForm(forms.ModelForm):

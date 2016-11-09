@@ -1,0 +1,28 @@
+# use glob syntax.
+# syntax: glob
+
+docs/_build
+.idea
+dist*
+build*
+*.egg*
+.DS_Store
+.project
+.pydevproject
+*.pyc
+*.un~
+*~
+build
+*.swp
+.\#*
+\#*
+# archive files
+*.tar.gz
+*.rar
+# picture files
+
+# video files
+*.mp4
+# audio files
+*.mp3
+*.orig

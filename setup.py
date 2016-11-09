@@ -40,11 +40,11 @@ setup(
     install_requires=[
         'Django==1.4.11',
         'Fabric==1.6',
-        'Sphinx==1.2b1',
+        #'Sphinx==1.2b1',
         'numpydoc==0.4',
         'raven==3.2.1',
-        'python-memcached==1.48',
-        'uwsgi',
+        #'python-memcached==1.48',
+        #'uwsgi',
 
         # spicy.scripts.py: deploy
         # 'configparser==3.3.0r2',
@@ -55,18 +55,20 @@ setup(
         'pytils==0.2.3',
         'pytz==2013b',
         'html5lib==0.95',
-        'python-redmine==0.8.1',
+        #'python-redmine==0.8.1',
 
-        #'django-simple-captcha', # spicy.core.profile
+        'django-simple-captcha<0.4.7', # spicy.core.profile
+        'Pillow==3.4.2',
         #'django-social-auth==0.6.1',# spicy.core.profile
 
         # debug deps.
         # 'logutils', #TODO: version?
-        'numpydoc',
-        'django-nose',
-        'django-debug-toolbar',
-        'django-devserver',
-        'django-extensions',
+        'pycrypto==2.6.1',  # for Fabric API
+        'numpydoc==0.4',
+        'django-nose==1.2',
+        #'django-debug-toolbar==1.3',
+        #'django-devserver',
+        #'django-extensions',
         'django-autocomplete-light==2.0.0a15',
 
         'xlrd',

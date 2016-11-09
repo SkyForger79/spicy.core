@@ -5,6 +5,9 @@ python:
 
 sudo: false
 
+addons:
+  srcclr: true
+  
 env:
   - DJANGO_SETTINGS_MODULE="spicy.tests.settings"
 

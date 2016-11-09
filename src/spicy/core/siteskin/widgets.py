@@ -9,11 +9,13 @@ from django.forms.util import flatatt
 from django.utils.html import escape, conditional_escape
 from django.utils.safestring import mark_safe
 from django.utils.encoding import force_unicode
-from django.utils.simplejson import JSONEncoder
 from django.utils.translation import ugettext
 from django.core.validators import EMPTY_VALUES
 from django.db import models
-
+try:
+    from json import JSONEncoder
+except ImportError:
+    from django.utils.simplejson import JSONEncoder
 
 ### NEW 
 

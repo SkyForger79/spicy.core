@@ -6,11 +6,14 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext, loader
 from django.template.base import TemplateDoesNotExist, TemplateSyntaxError
-from django.utils import simplejson
 from django.utils.translation import ugettext as _
 from spicy.utils import make_cache_key
 from spicy.utils.printing import print_error, print_info, print_warning
 from . import cache, defaults
+try:
+    import json
+except ImportError:
+    from django.utils import simplejson as json
 
 
 class APIResponse(object):
@@ -88,7 +91,7 @@ class JsonResponse(HttpResponse):
     """
     def __init__(self, data):
         super(JsonResponse, self).__init__(
-            content=simplejson.dumps(data, cls=DjangoJSONEncoder),
+            content=json.dumps(data, cls=DjangoJSONEncoder),
             mimetype='application/json')
         if not 'Content-Length' in self:
             self['Content-Length'] = len(self.content)

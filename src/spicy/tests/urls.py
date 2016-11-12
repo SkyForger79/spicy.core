@@ -1,4 +1,4 @@
-from django.conf.urls import url, include
+from django.conf.urls import url, include, patterns
 
 import spicy.core.admin.urls as admin_urls
 import spicy.core.profile.urls as profile_urls
@@ -9,3 +9,7 @@ urlpatterns = [
     url(r'^profile/', include(profile_urls, namespace='profile')),
     url(r'^service/', include(service_urls, namespace='service')),
 ]
+
+urlpatterns += patterns('',
+    url(r'^captcha/', include('captcha.urls')),
+)

@@ -49,7 +49,8 @@ INSTALLED_APPS = [
     'spicy.core.simplepages',
     'spicy.core.rmanager',
 
-    # 
+    #
+    'captcha',
     'django_nose',
 ]
 
@@ -107,6 +108,12 @@ MIDDLEWARE_CLASSES = (
     # XXX is it required ??
     'spicy.core.siteskin.middleware.AjaxMiddleware',
     'spicy.core.siteskin.threadlocals.ThreadLocals', )
+
+EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
+
+SOUTH_MIGRATION_MODULES = {
+    'captcha': 'captcha.south_migrations',
+}
 
 if DEBUG:
     MIDDLEWARE_CLASSES += (

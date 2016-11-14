@@ -109,6 +109,59 @@ your project's settings. ::
    
 Docs
 ----
+
+####Custom User Profile
+В этом разделе описана последовательность действий с примером кода, которая позволит создать кастомную модель профайла.
+Например, вы хотите добавить поля skype и sms_notification к модели пользователя. Для этого необходимо:
+
+1) запустить проект со схемой данных для базового профайла
+
+* в бд вы получаете таблицу test_profile, без дополнительных полей
+* в коде класс-модель profile.TestProfile, без дополнительных полей
+
+2) создать новую ветку в проекте (apps.webapp), перейти на нее и расширить модель профайла нужными полями
+
+<pre>
+class CustomProfile(AbstractProfile):
+    sms_notification = models.BooleanField(_('Use SMS notification'), blank=True, default=False)
+    skype = models.CharField(_('Skype'), max_length=255, blank=True, null=True)
+
+    class Meta:
+        abstract = False
+        db_table = 'test_profile'
+</pre>
+
+3) добавить в settings.py настройку новой модели профайла
+
+<pre>CUSTOM_USER_MODEL = 'webapp.CustomProfile'</pre>
+
+* в бд остается таблица test_profile, без дополнительных полей
+* в коде начинает использоваться класс-модель CustomProfile, с расширенным набором полей
+
+4) сделать патч таблицы профайла tet_profile - добавить новые поля модели (внутри контейнера db)
+
+<pre>
+begin;
+alter table test_profile add column sms_notification boolean default False;
+alter table test_profile add column skype varchar(255);
+commit;
+</pre>
+
+* в бд таблица test_profile расширена полями
+* в коде используется расширенный класс пользователя webapp.CustomProfile
+
+5) сделать патч системных таблиц Django - заменить на уровне бд customprofile на test_profile, чтобы сохранить старые данные пользователей (внутри контейнера db)
+
+<pre>
+begin;
+SELECT django_content_type.id into test_id FROM django_content_type WHERE app_label = 'profile' AND model = 'testprofile';
+SELECT django_content_type.id into custom_id FROM django_content_type WHERE app_label = 'webapp' AND model = 'customprofile';
+
+update auth_permission set content_type_id = (select * from test_id) where content_type_id = (select * from custom_id);
+delete from django_content_type where id = (select * from custom_id);
+update django_content_type set app_label = 'webapp', model = 'customprofile' where id=(select * from test_id);
+
+
 TODO: write docs
 TODO: custom User Profile, forms create and edit templates
 TODO: use API service

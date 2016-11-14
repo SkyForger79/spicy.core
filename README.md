@@ -161,6 +161,25 @@ update auth_permission set content_type_id = (select * from test_id) where conte
 delete from django_content_type where id = (select * from custom_id);
 update django_content_type set app_label = 'webapp', model = 'customprofile' where id=(select * from test_id);
 
+drop table test_id;
+drop table custom_id;
+commit;
+
+begin;
+alter table test_profile_sites rename testprofile_id to customprofile_id;
+commit;
+</pre>
+
+* в бд таблица test_profile расширена полями
+* системные таблицы Django не содержат ссылок на customprofile
+* в коде используется расширенный класс пользователя webapp.CustomProfile
+
+6) убедиться, что новый профайл работает корректно
+
+* создание пользователя работает
+* изменение пользователя работает
+* удаление пользователя работает
+
 
 TODO: write docs
 TODO: custom User Profile, forms create and edit templates

@@ -6,6 +6,7 @@ from django.template.loaders import app_directories, filesystem
 from django.utils._os import safe_join
 from django.utils.datastructures import SortedDict
 from django.contrib.staticfiles import finders, storage
+from spicy.utils import print_error, print_text, print_success
 
 from . import defaults, utils
 
@@ -26,10 +27,20 @@ class ThemeStaticFinder(finders.FileSystemFinder):
         self.storages = SortedDict()
 
         prefix = None
+        
         root = safe_join(
             defaults.THEMES_PATH, theme or utils.get_siteskin_settings().theme,
             'static')
 
+        if not os.path.isdir(root):
+            print_error(
+                'Check THEMES_PATH and DEFAULT_THEME(CURRENT_THEME) settings vars'
+                'Cannt lookup `static` and `templates` dirs inside'
+                'siteskin theme path ``%s``'%root
+            )
+            return
+
+        
         if os.path.abspath(settings.STATIC_ROOT) == os.path.abspath(root):
             raise ImproperlyConfigured(
                 "The STATICFILES_DIRS setting should not contain the "

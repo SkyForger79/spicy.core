@@ -413,6 +413,12 @@ class Register(dict):
     def add(self, path_to_srv_interface):
         service = load_module(path_to_srv_interface)
 
+        if service is None:
+            print_error(
+                'Cannt initialize %s, check module version and reinstall tested copy.'
+                % path_to_srv_interface)
+            return
+            
         if not issubclass(service, Interface):
             raise WrongServiceAPI(
                 'You must inherit services.Interface at first.')

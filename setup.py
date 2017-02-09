@@ -21,14 +21,14 @@ def long_description():
 
 setup(
     name='spicy',
-    version=version,
+    version='1.2.1',
 
     author='Burtsev Alexander',
-    author_email='eburus@gmail.com',
-    description='spicy',
+    author_email='ab@bramabrama.com',
+    description='SpicyCMS core modules',
     license='BSD',
     keywords='django, cms',
-    url='', # TODO: define an url
+    url='http://spicycms.com', # TODO: define an url
 
     packages=find_packages('src'),
     package_dir={'': 'src',},
@@ -38,7 +38,7 @@ setup(
     long_description=long_description(),
 
     install_requires=[
-        'Django==1.4.11',
+        'Django==1.5.12',
         'Fabric==1.6',
         #'Sphinx==1.2b1',
         'numpydoc==0.4',
@@ -86,7 +86,7 @@ setup(
     },
     classifiers=[
         'Framework :: Django',
-        'Development Status :: 1.1',
+        'Development Status :: 1.2.1',
         'Topic :: Internet',
         'License :: OSI Approved :: BSD License',
         'Intended Audience :: Developers',

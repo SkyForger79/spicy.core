@@ -17,8 +17,12 @@ def get_custom_model_class(custom_model_name):
 
 
 def backend_factory(setting, class_name, delegate_methods=()):
+    '''Why we use it?
+    
+    '''
     bases = ()
     backends = []
+    
     from spicy.utils import load_module
     for backend in setting:
         backend_class = load_module(backend + '.' + class_name)

@@ -18,7 +18,7 @@ ADMIN_SETTINGS_MODEL = getattr(
 # should be a pair of (namespace , app).
 APP_ORDER = getattr(
     settings, 'APP_ORDER',
-    ('presscenter', 'mediacenter', 'labels', 'profile', 'service', 'siteskin')
+    ('profile', 'service', 'siteskin')
 )
 
 ADMIN_APP_CREATE_LABELS = getattr(
@@ -26,4 +26,3 @@ ADMIN_APP_CREATE_LABELS = getattr(
 
 DASHBOARD_LISTS_LENGTH = getattr(settings, 'DASHBOARD_LISTS_LENGTH', 5)
 
-CRM_BACKENDS = getattr(settings, 'CRM_BACKENDS', ())

@@ -326,6 +326,7 @@ class SignupForm(forms.Form, ValidateEmailMixin):
             profile.sites.add(*Site.objects.all())
             profile.save()
 
+            # XXX deprecated
             if 'mediacenter' in settings.INSTALLED_APPS:
                 from mediacenter.models import Library
                 # add medialibrary for the profile userpics

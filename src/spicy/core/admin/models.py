@@ -2,8 +2,7 @@ from django.contrib.sites.managers import CurrentSiteManager
 from django.contrib.sites.models import Site
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from . import conf
-from spicy.core.admin import abs
+from . import conf, abs
 
 
 class AdminApp(models.Model):
@@ -53,7 +52,7 @@ class AdminApp(models.Model):
         db_table = 'spicy_apps'
 
 
-class Settings(abs.BaseRedmineSettings):
+class Settings(models.Model):
     @staticmethod
     def get_robots_default():
         site = Site.objects.get_current()
@@ -70,8 +69,6 @@ class Settings(abs.BaseRedmineSettings):
         _('User license public key'), max_length=255, blank=True)
     sentry_key = models.CharField(
         _('Sentry key'), max_length=255, blank=True)
-    redmine_key = models.CharField(
-        _('Redmine key'), max_length=255, blank=True)
     ga_key = models.CharField(
         _('Google Analytics API key'), max_length=15, blank=True)
 
@@ -109,7 +106,8 @@ class Settings(abs.BaseRedmineSettings):
         abstract = False
 
 """
-TODO or not TODO ???
+XXX
+TODO
 is it dublication of simple content block functionality?
 
 class CustomVariable(models.Model):

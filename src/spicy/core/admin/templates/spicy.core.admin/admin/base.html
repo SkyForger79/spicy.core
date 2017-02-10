@@ -27,7 +27,8 @@
     {# <script src="{% static 'spicy.core.admin/datetimepicker/jquery.datetimepicker.js' %}"></script> #}
     <script src="{% static 'spicy.core.admin/js/spicy.admin.js' %}" type="text/javascript"></script>
 
-    {% if '/media/' in request.path %}
+    {% if '/media/' in request.path and 'spicy.mediacenter' in ADMIN_APPS_REGISTER.keys %}
+    {# XXX test with different CMS #}
     <link rel="stylesheet" type="text/css" href="{% static 'spicy.mediacenter/css/mediacenter.css' %}">
     <!--<link rel="stylesheet" type="text/css" href="{% static 'spicy.mediacenter/flowplayer/skin/minimalist.css' %}">
     <script type="text/javascript" src="{% static 'spicy.mediacenter/flowplayer/flowplayer.min.js' %}"></script>-->

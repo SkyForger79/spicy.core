@@ -61,8 +61,8 @@ class ThemeTemplateLoader(filesystem.Loader):
             theme = utils.get_siteskin_settings().theme
         except Exception, e:
             print e
-            if defaults.ABSOLUTE_THEME_PATH:
-                theme = defaults.ABSOLUTE_THEME_PATH
+            if defaults.DEFAULT_THEME:
+                theme = defaults.DEFAULT_THEME
             else:
                 raise NotImplementedError(
                     'Set ABSOLUTE_THEME_PATH in settings.py')

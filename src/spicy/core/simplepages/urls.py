@@ -1,5 +1,8 @@
+from django.db import connection
+
 from django.conf import settings
 from django.conf.urls import patterns, url, include
+
 from spicy.utils import get_custom_model_class
 from . import defaults
 
@@ -19,14 +22,16 @@ admin_urls = patterns(
 
 urlpatterns = patterns('')
 
-
-for page in SimplePage.objects.filter(sites__id__exact=settings.SITE_ID):
-    urlpatterns += patterns(
-        'spicy.core.simplepages.views',
-        url(r'^%s$' % page.url.lstrip('/'), 'render_simplepage',
-            {'page': page},
-            name=page.template_name)
-    )
+if 'django_site' in connection.introspection.table_names():
+    # XXX
+    # load it only after syncdb and check database exist
+    for page in SimplePage.objects.filter(sites__id__exact=settings.SITE_ID):
+        urlpatterns += patterns(
+            'spicy.core.simplepages.views',
+            url(r'^%s$' % page.url.lstrip('/'), 'render_simplepage',
+                {'page': page},
+                name=page.template_name)
+        )
 
 
 urlpatterns += patterns(

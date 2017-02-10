@@ -1,4 +1,5 @@
 import os
+
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.core.files.storage import FileSystemStorage
@@ -6,8 +7,8 @@ from django.template.loaders import app_directories, filesystem
 from django.utils._os import safe_join
 from django.utils.datastructures import SortedDict
 from django.contrib.staticfiles import finders, storage
-from spicy.utils import print_error, print_text, print_success
 
+from spicy.utils import print_error, print_text, print_success
 from . import defaults, utils
 
 
@@ -34,11 +35,11 @@ class ThemeStaticFinder(finders.FileSystemFinder):
 
         if not os.path.isdir(root):
             print_error(
-                'Check THEMES_PATH and DEFAULT_THEME(CURRENT_THEME) settings vars'
-                'Cannt lookup `static` and `templates` dirs inside'
-                'siteskin theme path ``%s``'%root
+                'ERROR!\n'
+                'Check THEMES_PATH and DEFAULT_THEME(CURRENT_THEME) settings vars\n'
+                'Cannt lookup `static` and `templates` dirs inside\n'
+                'Create siteskin theme path for static ``mkdir -p %s``\n'%root
             )
-            return
 
         
         if os.path.abspath(settings.STATIC_ROOT) == os.path.abspath(root):
@@ -61,8 +62,8 @@ class ThemeTemplateLoader(filesystem.Loader):
             theme = utils.get_siteskin_settings().theme
         except Exception, e:
             print e
-            if defaults.ABSOLUTE_THEME_PATH:
-                theme = defaults.ABSOLUTE_THEME_PATH
+            if defaults.DEFAULT_THEME:
+                theme = defaults.DEFAULT_THEME
             else:
                 raise NotImplementedError(
                     'Set ABSOLUTE_THEME_PATH in settings.py')

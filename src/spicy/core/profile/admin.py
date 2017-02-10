@@ -24,6 +24,7 @@ Profile = utils.get_custom_model_class(defaults.CUSTOM_USER_MODEL)
 admin.site.register(Profile)
 
 
+
 class AdminApp(conf.AdminAppBase):
     name = 'profile'
     label = _('Profile')

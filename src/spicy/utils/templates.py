@@ -1,6 +1,5 @@
 import os
 from django.conf import settings
-from spicy.core.admin.conf import app_modules_register
 
 
 def find_templates(
@@ -11,6 +10,8 @@ def find_templates(
     templates = []
 
     from spicy.core.siteskin.utils import get_siteskin_settings
+    from spicy.core.admin.conf import app_modules_register
+    
     try:
         paths = [
             os.path.join(

@@ -29,11 +29,6 @@ from .models import BlacklistedIP
 Profile = get_custom_model_class(defaults.CUSTOM_USER_MODEL)
 
 
-def generate_random_password(length=10):
-    chars = string.letters + string.digits
-    return ''.join([random.choice(chars) for i in range(length)])
-
-
 @render_to('spicy.core.profile/profile.html')
 def profile(request, username):
     user = get_object_or_404(Profile, username=username)

@@ -103,10 +103,15 @@ class ProviderMeta(type):
 
 class Provider(object):
     """
-    Provide common views, api methods for defined web-application service.
-    Service choose provider instance using own schema.
+    Provide common views(reusable controllers), 
+    api methods by pre-configured web-application service.
 
-    provider = api.register['service_name'][ConsumerDjangoModel]
+    Service provider choose correct provider for any DjangoAppModelConsumer
+    using own schemas if its necessary.
+
+    provider = api.register['service_name'][DjangoAppModelConsumer]
+
+    provider.view_method()
 
     :param model: ManyToMany model for consumer 'app.ModelName'
     :type str:
@@ -415,7 +420,7 @@ class Register(dict):
 
         if service is None:
             print_error(
-                'Cannt initialize %s, check module version and reinstall tested copy.'
+                'Cannt initialize %s, check module and reinstall worked copy.'
                 % path_to_srv_interface)
             return
             

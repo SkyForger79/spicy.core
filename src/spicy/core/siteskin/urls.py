@@ -1,5 +1,5 @@
 import os
-from django.db import connection
+
 from django.conf import settings
 from django.conf.urls import patterns, url, include
 from django.contrib.staticfiles import urls as st_urls
@@ -17,11 +17,13 @@ public_urls = patterns(
         {'template_name': 'index.html', 'page_slug': 'index'}, name='index'),
 )
 
-if settings.DEBUG and 'spicy_siteskin' in connection.introspection.table_names():
-    current_theme = os.path.basename(
-        utils.get_siteskin_settings().theme)
-    st_urls.urlpatterns = [st_urls.staticfiles_urlpatterns(
-        '{}{}/'.format(settings.STATIC_URL, current_theme))]
+#from django.db import connection
+#if settings.DEBUG and 'spicy_siteskin' in connection.introspection.table_names():
+current_theme = os.path.basename(
+    utils.get_siteskin_settings().theme)
+
+st_urls.urlpatterns = [st_urls.staticfiles_urlpatterns(
+    '{}{}/'.format(settings.STATIC_URL, current_theme))]
 
 urlpatterns = patterns(
     '',

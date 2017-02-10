@@ -1,6 +1,6 @@
 from django.contrib.sites.models import Site
 from django.contrib.sites.managers import CurrentSiteManager
-from django.db import models, connection
+from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from spicy.core.service import api
 from spicy.core.service.models import ProviderModel
@@ -25,9 +25,8 @@ class MultiSitesNonTrashManager(NonTrashManager):
         query_set = super(MultiSitesNonTrashManager, self).get_query_set()
 
         # XXX for syncdb
-        if connection.introspection.table_names():
-            return query_set.filter(sites=Site.objects.get_current())
-        return query_set
+        #if connection.introspection.table_names():
+        return query_set.filter(sites=Site.objects.get_current())
 
 
 class TrashManager(models.Manager):

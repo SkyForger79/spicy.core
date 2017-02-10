@@ -1,6 +1,6 @@
 import os
 from django.conf import settings
-from spicy.core.simplepages.defaults import SIMPLE_PAGE_MODEL
+#from spicy.core.simplepages.defaults import SIMPLE_PAGE_MODEL
 
 SITESKIN_SETTINGS_MODEL = getattr(
     settings, 'SITESKIN_SETTINGS_MODEL', 'siteskin.Siteskin')
@@ -87,16 +87,17 @@ SITEMAP = getattr(
     #         'has_media': True
     #     },
     # },
-    {
-        'model': SIMPLE_PAGE_MODEL,
-        'filter': {'sites__id__exact': settings.SITE_ID},
-        'exclude': {'url__startswith': '/test/'},
-        'gen': {
-            'loc': lambda x: x.get_absolute_url(),
-            'changefreq': 'daily',
-            'priority': '0.7'
-        }
-    }]
+    # {
+    #     'model': SIMPLE_PAGE_MODEL,
+    #     'filter': {'sites__id__exact': settings.SITE_ID},
+    #     'exclude': {'url__startswith': '/test/'},
+    #     'gen': {
+    #         'loc': lambda x: x.get_absolute_url(),
+    #         'changefreq': 'daily',
+    #         'priority': '0.7'
+    #     }
+    # }
+    ]
 )
 
 DATETIME_FORMAT = getattr(settings, 'DATETIME_FORMAT', '%Y-%m-%dT%H:%M:%S+03:00')

@@ -1,5 +1,9 @@
 from functools import partial
 
+def generate_random_password(length=10):
+    chars = string.letters + string.digits
+    return ''.join([random.choice(chars) for i in range(length)])
+
 
 def perm(custom_model, prefix):
     app, model = custom_model.split('.', 1)

@@ -9,16 +9,15 @@ from django.utils.html import escape
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import REDIRECT_FIELD_NAME
-from spicy.core.profile.views import generate_random_password
+
+from spicy import utils
 from spicy.core.service import api
-from spicy.utils import load_module
-from spicy.utils.models import get_custom_model_class
 from spicy.core.siteskin.decorators import ajax_request, render_to
 from . import defaults, models
 from .decorators import is_staff
 from .forms import LoginForm
 
-Profile = get_custom_model_class(defaults.CUSTOM_USER_MODEL)
+Profile = utils.get_custom_model_class(defaults.CUSTOM_USER_MODEL)
 
 CUSTOM_USER_SIGNUP_FORM = getattr(
     settings, 'CUSTOM_USER_SIGNUP_FORM', 'spicy.core.profile.forms.SignupForm')
@@ -154,7 +153,7 @@ class ProfileService(api.Interface):
         if callable(defaults.DEFAULT_PROFILE_URL):
             user_redirect_uri = defaults.DEFAULT_PROFILE_URL(request.user)
         elif isinstance(defaults.DEFAULT_PROFILE_URL, basestring):
-            user_redirect_uri = load_module(defaults.DEFAULT_PROFILE_URL)(
+            user_redirect_uri = utils.load_module(defaults.DEFAULT_PROFILE_URL)(
                 request.user)
         else:
             user_redirect_uri = defaults.DEFAULT_PROFILE_URL
@@ -263,7 +262,7 @@ class ProfileService(api.Interface):
                         REGISTRATION_ENABLED=defaults.REGISTRATION_ENABLED)
 
         elif request.method == "POST":
-            form = load_module(CUSTOM_USER_SIGNUP_FORM)(request.POST)
+            form = utils.load_module(CUSTOM_USER_SIGNUP_FORM)(request.POST)
             redirect = reverse('profile:public:success-signup')
             if not is_blacklisted and form.is_valid():
                 status = 'ok'
@@ -274,7 +273,7 @@ class ProfileService(api.Interface):
                 request.session['profile_email'] = new_profile.email
 
         else:
-            form = load_module(CUSTOM_USER_SIGNUP_FORM)()
+            form = utils.load_module(CUSTOM_USER_SIGNUP_FORM)()
             request.session.set_test_cookie()
 
             # Display the login form and handle the login action.
@@ -307,7 +306,7 @@ class ProfileService(api.Interface):
         elif 'register' in request.POST:
 
             action = 'register'
-            register_form = load_module(CUSTOM_USER_SIGNUP_FORM)(request.POST)
+            register_form = utils.load_module(CUSTOM_USER_SIGNUP_FORM)(request.POST)
             login_form = LoginForm(request)
             if not is_blacklisted and register_form.is_valid():
                 status = 'ok'
@@ -319,7 +318,7 @@ class ProfileService(api.Interface):
 
         elif 'login' in request.POST:
             action = 'login'
-            register_form = load_module(CUSTOM_USER_SIGNUP_FORM)()
+            register_form = utils.load_module(CUSTOM_USER_SIGNUP_FORM)()
             login_form = LoginForm(data=request.POST)
 
             # Brute force check.
@@ -365,7 +364,7 @@ class ProfileService(api.Interface):
 
         else:
             login_form = LoginForm(request)
-            register_form = load_module(CUSTOM_USER_SIGNUP_FORM)()
+            register_form = utils.load_module(CUSTOM_USER_SIGNUP_FORM)()
             request.session.set_test_cookie()
             action = None
             if not redirect:
@@ -380,14 +379,14 @@ class ProfileService(api.Interface):
 
     def restore(self, request):
         message = ''
-        RestorePasswordForm = load_module(defaults.RESTORE_PASSWORD_FORM)
+        RestorePasswordForm = utils.load_module(defaults.RESTORE_PASSWORD_FORM)
         if request.method == 'POST':
             form = RestorePasswordForm(request.POST)
             if form.is_valid():
                 profile = Profile.objects.get(
                     email__iexact=form.cleaned_data['email'])
-                if 'send_pass' in request.POST:
-                    newpass = generate_random_password()
+                if 'send_pass' in request.POST:                    
+                    newpass = utils.generate_random_password()
                     profile.set_password(newpass)
                     profile.save()
                     profile.email_forgotten_passwd(newpass)

@@ -82,7 +82,7 @@ setup(
     },
     classifiers=[
         'Framework :: Django',
-        'Development Status :: 1.2.1',
+        'Development Status :: %s'%version,
         'Topic :: Internet',
         'License :: OSI Approved :: BSD License',
         'Intended Audience :: Developers',

@@ -4,7 +4,9 @@ set +x
 virtualenv --no-site-packages spicycore-env
 source spicycore-env/bin/activate
 pip install .
-pip install -r requirements_dev.txt
+pip install coveralls==1.1
+pip install pip>8.0
+
 
 export PYTHONPATH="${PYTHONPATH}:$(pwd)/src"
 export DJANGO_SETTINGS_MODULE="spicy.tests.settings"

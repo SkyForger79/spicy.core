@@ -11,7 +11,7 @@ env:
 install: 
   - pip install -U pip>=8.0
   - pip install .
-  - pip install -r requirements_dev.txt
+  - pip install coveralls==1.1
 
 script: 
   - django-admin.py syncdb --noinput

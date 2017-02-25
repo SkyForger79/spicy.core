@@ -14,7 +14,7 @@ def long_description():
     """Return long description from README.rst if it's present
     because it doesn't get installed."""
     try:
-        return open('README.rst').read()
+        return open('README.md').read()
     except IOError:
         return long_description
 
@@ -28,7 +28,7 @@ setup(
     description='spicy',
     license='BSD',
     keywords='django, cms',
-    url='', # TODO: define an url
+    url='http://spicycms.com', # TODO: define an url
 
     packages=find_packages('src'),
     package_dir={'': 'src',},
@@ -38,41 +38,37 @@ setup(
     long_description=long_description(),
 
     install_requires=[
-        'Django==1.4.11',
-        'Fabric==1.6',
-        #'Sphinx==1.2b1',
+        'Django==1.5.12',
         'numpydoc==0.4',
-        'raven==3.2.1',
-        #'python-memcached==1.48',
-        #'uwsgi',
+        'python-memcached==1.58',
+        'uwsgi',
 
-        # spicy.scripts.py: deploy
-        # 'configparser==3.3.0r2',
-        'configparser',
-        'Jinja2==2.6',
+        # TODO check deps.
+        'django-autocomplete-light==2.0.0a15',
+        'configparser==3.5.0',
+        'Jinja2==2.9.5',
+        'xlrd==1.0.0',
+        'xlwt==1.2.0',
+        
 
-        # ?? siteskin deps.
+        # TODO siteskin deps. check actual versions
         'pytils==0.2.3',
         'pytz==2013b',
         'html5lib==0.95',
-        #'python-redmine==0.8.1',
 
-        'django-simple-captcha<0.4.7', # spicy.core.profile
+        # TODO check spicy.core.profile deps.
+        #'django-social-auth==0.6.1', 
+        'python-social-auth==0.2.13',
         'Pillow==3.4.2',
-        #'django-social-auth==0.6.1',# spicy.core.profile
-
+        'django-simple-captcha<0.4.7', 
+        
         # debug deps.
-        # 'logutils', #TODO: version?
+        'Fabric==1.6',
         'pycrypto==2.6.1',  # for Fabric API
+        'raven==3.2.1',
         'numpydoc==0.4',
         'django-nose==1.2',
-        #'django-debug-toolbar==1.3',
-        #'django-devserver',
-        #'django-extensions',
-        'django-autocomplete-light==2.0.0a15',
-
-        'xlrd',
-        'xlwt'
+        'django-debug-toolbar==0.9.4',
     ],
 
     dependency_links=[
@@ -86,7 +82,7 @@ setup(
     },
     classifiers=[
         'Framework :: Django',
-        'Development Status :: 1.1',
+        'Development Status :: 1.2.1',
         'Topic :: Internet',
         'License :: OSI Approved :: BSD License',
         'Intended Audience :: Developers',

@@ -1,5 +1,0 @@
-#Django==1.4.11
-coveralls==1.1
-pip>8.0
-
-#django-simple-captcha<0.4.7

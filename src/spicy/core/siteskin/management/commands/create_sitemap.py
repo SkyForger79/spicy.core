@@ -1,48 +1,26 @@
 import datetime
 import gzip
 import os
+from cStringIO import StringIO
+from math import ceil
+from optparse import make_option
+
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sitemaps import ping_google
 from django.contrib.sites.models import Site
 from django.core.management.base import BaseCommand
 from django.db.models.loading import get_model
-from math import ceil
-from optparse import make_option
-from spicy.mediacenter.defaults import MEDIACENTER_ROOT
-from spicy.presscenter.defaults import DOC_THUMB_SIZE, CUSTOM_DOCUMENT_MODEL
+
 from spicy.core.service import api
-from spicy.core.simplepages.defaults import SIMPLE_PAGE_MODEL
 from spicy.core.siteskin import defaults
 from spicy.utils import cdata
-from cStringIO import StringIO
+
+
 
 
 now = datetime.datetime.now()
 
-SITEMAP = [
-    {
-        'model': CUSTOM_DOCUMENT_MODEL,
-        'filter': {'is_public': True, 'pub_date__lte': now},
-        'gen': {
-            'loc': lambda x: x.get_absolute_url(),
-            'changefreq': 'daily',
-            'priority':'0.8',
-            'has_media': True
-        },
-    },
-    {
-        'model': SIMPLE_PAGE_MODEL,
-        'filter': {'sites__id__exact': settings.SITE_ID},
-        'exclude': {'url__startswith': '/test/'},
-        'gen': {
-            'loc': lambda x: x.get_absolute_url(),
-            'changefreq': 'daily',
-            'priority': '0.7'
-        }
-    }]
-DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S+03:00'
-OBJECTS_LIMIT = 20000
 
 
 class Command(BaseCommand):
@@ -71,7 +49,7 @@ class Command(BaseCommand):
 
     def __init__(self):
         self.file_obj = None
-        self.sitemap_dir = os.path.join(MEDIACENTER_ROOT, 'sitemaps/')
+        self.sitemap_dir = os.path.join(defaults.SITEMAP_ROOT, 'sitemaps/')
 
         if not os.path.exists(self.sitemap_dir):
             try:
@@ -131,7 +109,7 @@ class Command(BaseCommand):
             print u'Unable to write to file: %s with data %s' % (string, data)
             raise
         # Check if we've reached objects limit.
-        if self.string_cnt >= OBJECTS_LIMIT:
+        if self.string_cnt >= defaults.OBJECTS_LIMIT:
             self.string_cnt = 0
             self.change_file()
 
@@ -178,7 +156,7 @@ class Command(BaseCommand):
         self.main_sitemap_file.write(self.main_text_start)
         self.file_create()
 
-        sitemap = SITEMAP
+        sitemap = defaults.SITEMAP
         for import_object in sitemap:
             module, object_model = import_object['model'].split('.')
             model = get_model(module, object_model)
@@ -211,13 +189,15 @@ class Command(BaseCommand):
                 query = query.only(*only)
             if limit is not None:
                 query = query[:int(limit)]
-            num_cycles = int(ceil(query.count() / float(OBJECTS_LIMIT)))
+            num_cycles = int(ceil(query.count() / float(defaults.OBJECTS_LIMIT)))
             for i in xrange(num_cycles):
                 sub_query = query[
-                    OBJECTS_LIMIT * i: OBJECTS_LIMIT * (i + 1)]
+                    defaults.OBJECTS_LIMIT * i: defaults.OBJECTS_LIMIT * (i + 1)]
+
+                # XXX check services and media
                 if import_object.get('load_thumbs', False):
                     api.register['media'].load_thumbs(
-                        sub_query, *DOC_THUMB_SIZE)
+                        sub_query, *defaults.SITEMAP_THUMB_SIZE)
                 #media_attrs = import_object.get('media_attrs')
                 #if media_attrs:
                 #    api.register['media'].load_media(sub_query, media_attrs) 
@@ -239,7 +219,7 @@ class Command(BaseCommand):
         ping_google(defaults.SITEMAP_URL + '%ssitemap.xml' % self.prefix)
 
     def handle_normal(self, query, gen, content_type, object_model, verbosity):
-        thumb_width, thumb_height = DOC_THUMB_SIZE
+        thumb_width, thumb_height = defaults.SITEMAP_THUMB_SIZE
         for i, data in enumerate(query):
             if verbosity > 1 and i % 1000 == 0:
                 print i, '...'
@@ -300,7 +280,7 @@ class Command(BaseCommand):
                             extra += (
                                 u'<video:publication_date>%s'
                                 '</video:publication_date>'
-                                % prov.date_joined.strftime(DATETIME_FORMAT))
+                                % prov.date_joined.strftime(defaults.DATETIME_FORMAT))
                             extras.append(u'<video:video>%s</video:video>' % extra)
 
                 self.write(url, u''.join(extras))

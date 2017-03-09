@@ -1,15 +1,22 @@
 import os
+import re
 
 from django.conf import settings
+from django.contrib.auth import SESSION_KEY
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
+from django.core import mail
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 from spicy.core.service import api
 
+TEST_USER_NAME = 'user'
+TEST_USER_PASSWORD = 'password'
+
 
 class AuthViewsTestCase(TestCase):
-    fixtures = ['basetestdata.json']
+    fixtures = ['profile_testdata.json']
     #urls = 'django.contrib.auth.urls'
     profile_service_name = 'profile'
     profile_service_path = 'spicy.core.profile.services.ProfileService'
@@ -28,21 +35,26 @@ class AuthViewsTestCase(TestCase):
             )
         ,)
 
+        # changing password for default user
+        user = User.objects.get(username=TEST_USER_NAME)
+        user.set_password(TEST_USER_PASSWORD)
+        user.save()
+
     def tearDown(self):
         api.register.remove(self.profile_service_name)
         settings.LANGUAGES = self.old_LANGUAGES
         settings.LANGUAGE_CODE = self.old_LANGUAGE_CODE
         settings.TEMPLATE_DIRS = self.old_TEMPLATE_DIRS
 
-    def login(self, password='password'):
+    def login(self, password=TEST_USER_PASSWORD):
         response = self.client.post(reverse('profile:public:signin'), {
-            'username': 'testclient',
+            'username': TEST_USER_NAME,
             'password': password
         }
                                     )
-        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.status_code, 302)
         self.assert_(response['Location'].endswith(settings.LOGIN_REDIRECT_URL))
-        # self.assert_(SESSION_KEY in self.client.session)
+        self.assert_(SESSION_KEY in self.client.session)
 
 
 class PasswordResetTest(AuthViewsTestCase):
@@ -180,7 +192,7 @@ class ChangePasswordTest(AuthViewsTestCase):
 
     def test_password_change_succeeds(self):
         self.login()
-        response = self.client.post(reverse('profile:public:passwd'), {
+        response = self.client.post(reverse('profile:public:passwd', kwargs={'username': TEST_USER_NAME}), {
             'old_password': 'password',
             'new_password1': 'password1',
             'new_password2': 'password1',

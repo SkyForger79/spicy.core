@@ -21,7 +21,8 @@ NOTIFY_MANAGERS = getattr(settings, 'NOTIFY_MANAGERS', True)
 USE_CAPTCHA = getattr(settings, 'USE_CAPTCHA', True)
 # django.contrib.auth required settings
 
-settings.LOGIN_URL = getattr(settings, 'LOGIN_URL_CMS', '/signin/')
+# XXX
+settings.LOGIN_URL = getattr(settings, 'LOGIN_URL', '/signin/')
 settings.LOGIN_REDIRECT_URL = '/'
 settings.LOGOUT_URL = '/signout/'
 

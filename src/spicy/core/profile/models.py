@@ -5,6 +5,9 @@ import random
 import smtplib
 import socket
 import datetime as dt
+from StringIO import StringIO
+from uuid import uuid4
+
 from django.conf import settings
 from django.contrib.auth.models import User, UserManager, Group, Permission
 from django.contrib.auth.models import AnonymousUser as BasicAnonymousUser
@@ -22,11 +25,9 @@ from django.utils.hashcompat import sha_constructor
 from django.utils.html import escape
 from django.utils.translation import ugettext, ugettext_lazy as _
 from django.core.mail import EmailMultiAlternatives
+
 from spicy.core.service.models import ProviderModel
-# from spicy.mediacenter.abs import MediaConsumerAbstractModel
 from spicy.utils.printing import print_error
-from StringIO import StringIO
-from uuid import uuid4
 from . import cache, defaults, signals
 
 
@@ -220,9 +221,9 @@ class ProfileManager(UserManager):
         return count
 
 
-# class AbstractProfile(User, MediaConsumerAbstractModel):
 class AbstractProfile(User):
     IS_ACTIVATED = 'Already activated'
+
     user_ptr = models.OneToOneField(User, parent_link=True)
     activation_key = models.CharField(_('activation key'), max_length=40)
     is_banned = models.BooleanField(
@@ -250,7 +251,6 @@ class AbstractProfile(User):
     class Meta:
         abstract = True
         ordering = ['-date_joined', '-id']
-        #db_table = 'auth_profile'
         permissions = (
             ('view_profile', 'Can view user profiles'),
             ('moderate_profile', 'Can moderate profiles'),
@@ -285,6 +285,7 @@ class AbstractProfile(User):
                     raise
         return unicode(label)
 
+    # XXX deprecated
     @classmethod
     def get_exported_fields(cls):
         return [

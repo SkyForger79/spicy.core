@@ -5,6 +5,7 @@ import traceback
 from django.utils.importlib import import_module
 from django.core.exceptions import ImproperlyConfigured
 
+from .printing import print_error
 
 def load_module(path, config='SERVICE'):
     module, attr = path.rsplit('.', 1)
@@ -12,7 +13,9 @@ def load_module(path, config='SERVICE'):
         mod = import_module(module)
         return getattr(mod, attr)
 
-    except AttributeError:
+    except AttributeError, e:
+        sys.stdout.write(traceback.format_exc())
+        print_error('Check config for %s | %s: %s' %(module, attr, e))
         return
 
     except ImportError, e:

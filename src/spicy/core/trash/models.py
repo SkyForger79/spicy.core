@@ -23,6 +23,9 @@ class SiteNonTrashManager(NonTrashManager):
 class MultiSitesNonTrashManager(NonTrashManager):
     def get_query_set(self):
         query_set = super(MultiSitesNonTrashManager, self).get_query_set()
+
+        # XXX for syncdb
+        #if connection.introspection.table_names():
         return query_set.filter(sites=Site.objects.get_current())
 
 

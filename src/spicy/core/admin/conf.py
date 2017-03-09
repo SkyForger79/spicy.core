@@ -103,12 +103,6 @@ class Perms(object):
 
 
 class AdminAppBase(object):
-    """
-    menu_items = (
-        AdminLink('mediacenter:admin:create', _('Create library')),
-        AdminLink('mediacenter:admin:index', _('All libraries')),
-        )
-    """
     order_number = 0
     name = 'admin'
     label = _('Admin')

@@ -21,11 +21,11 @@ def long_description():
 
 setup(
     name='spicy',
-    version=version,
+    version='1.2.1',
 
     author='Burtsev Alexander',
-    author_email='eburus@gmail.com',
-    description='spicy',
+    author_email='ab@bramabrama.com',
+    description='SpicyCMS core modules',
     license='BSD',
     keywords='django, cms',
     url='http://spicycms.com', # TODO: define an url
@@ -39,6 +39,8 @@ setup(
 
     install_requires=[
         'Django==1.5.12',
+        'Fabric==1.6',
+        #'Sphinx==1.2b1',
         'numpydoc==0.4',
         'python-memcached==1.58',
         'uwsgi',
@@ -82,7 +84,7 @@ setup(
     },
     classifiers=[
         'Framework :: Django',
-        'Development Status :: %s'%version,
+        'Development Status :: 1.2.1',
         'Topic :: Internet',
         'License :: OSI Approved :: BSD License',
         'Intended Audience :: Developers',

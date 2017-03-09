@@ -4,6 +4,8 @@ from django.conf.urls import patterns, url, include
 admin_urls = patterns(
     'spicy.core.admin.admin',
     url(r'^$', 'dashboard', name='index'),
+
+    # XXX check core.modules and move to them
     url(r'^settings/main/$', 'main_settings', name='settings'),
     url(r'^settings/robots/$', 'robots_txt', name='robots'),
     url(r'^settings/sitemap/$', 'sitemap', name='sitemap'),
@@ -16,13 +18,16 @@ public_urls = patterns(
     'spicy.core.admin.views',
     url(r'^login/$', 'login', name='login'),
     url(r'^logout/$', 'logout', name='logout'),
+
+    # XXX ? 
     url(r'^import-file/$', 'image_add', name='import-file'),
-    url(r'^export-to-redmine/$', 'export_to_redmine', name='export'),
 )
 
 urlpatterns = patterns(
     '',
     url(r'^admin/', include(admin_urls, namespace='admin')),
     url(r'^admin/', include(public_urls, namespace='public')),
+
+    # XXX move to siteskin
     url(r'^robots.txt$', 'spicy.core.admin.views.robots'),
 )

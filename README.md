@@ -18,6 +18,10 @@ SpicyCMF core documentation version 1.2.0
 Нет возможности быстро разделить работы на frontend / backend для простых приложений с HTML страницами. Тема помогает отделить работы webmaster от python-developer и делать для сайтов несколько разных версий отображения, меняя их на лету  итестирую их эффективность без риска сломать все приложение и необходимыости приклекать программиста для восстановления старого отображения сайта
 Simplepages - 
 
+# Calculate template_source_loaders the first time the function is executed                                                
+# because putting this logic in the module-level namespace may cause                                                         # circular import errors. See Django ticket #1292.
+
+
 ### Концепция приложения-модуля для Django
 
 Команда создает в текущей директории приложение 

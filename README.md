@@ -36,6 +36,20 @@ views.py
 templates
 
 
+### ВАЖНО setup.py и MANIFEST.in
+
+recursive-include src/spicy/core/admin/locale *
+recursive-include src/spicy/core/admin/static *
+recursive-include src/spicy/core/admin/templates *
+
+
+Для spicy модуля нужно обязательно делать файл манифест,
+чтобы устанавливались статичные файлы модуля python.
+
+Это важно для templates, ``static``, ``locale`` и ``fixtures``
+
+
+
 ### Концепция проекта Django приложения
 
 Команда создает в текущей директории проект

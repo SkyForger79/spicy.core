@@ -72,7 +72,6 @@ class ThemeTemplateLoader(filesystem.Loader):
             defaults.THEMES_PATH, theme,
             'templates')
 
-        #
         #if defaults.DEBUG_ERROR_PAGES
         try:
             yield safe_join(template_dir, template_name)

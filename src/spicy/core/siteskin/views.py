@@ -1,5 +1,6 @@
 from datetime import datetime as dt
 from django.template import RequestContext
+
 from spicy.core.simplepages.views import render_simplepage
 from spicy.utils.printing import print_error
 from . import defaults
@@ -9,7 +10,7 @@ from django.contrib.sites.models import Site
 from django.shortcuts import get_object_or_404
 from django import http
 
-SimplePage = get_custom_model_class(sp_defaults.SIMPLE_PAGE_MODEL)
+SimplePageModel = get_custom_model_class(sp_defaults.SIMPLE_PAGE_MODEL)
 SiteskinModel = get_custom_model_class(defaults.SITESKIN_SETTINGS_MODEL)
 
 
@@ -55,27 +56,48 @@ def server_error(request):
     return response
 
 
-def render(
-        request, template_name, context_intstance=None, mimetype=None,
-        **kwargs):
+def render(request, template_name,
+           context_intstance=None, **kwargs):
     """
-    Example of universal rubric rendering
+    Universal sitepage renderer.
+    
+
+    TODO unittests
     """
-    # XXX mimetype is renamed to content_type in django 1.5!
     try:
-        siteskin = SiteskinModel.objects.get(site=Site.objects.get_current())
+        theme_config = SiteskinModel.objects.get(
+            site=Site.objects.get_current())
+        # log information about theme
     except SiteskinModel.DoesNotExist:
-        siteskin = None
-    page = (
-        siteskin.home_page if siteskin and siteskin.home_page_id else
-        get_object_or_404(SimplePage, url='/index/'))
+        theme_config = None
 
-    context = {'page_slug': page.title, 'page': page}
-    context.update(**kwargs)
-    content_type = 'text/plain' if page.url.endswith('.txt') else 'text/html'
-    request.session['SIMPLEPAGE_ID'] = page.pk
+    try:
+        custom_index_page = SimplePageModel.objects,get(url='/index/')
+        # Log information about custom page for index.html
+    except SimplePageModel.DoesNotExist:
+        custom_index_page = None
+    
+    page = ( 
+        siteskin.home_page
+        if theme_config and theme_config.home_page_id
+        else custom_index_page)
 
-    return http.HttpResponse(
-        page.get_template().render(RequestContext(request, context)),
+    if page is not None:
+        # Use dynamic index page and user theme customizations
+        context = {'page_slug': page.title, 'page': page}
+        request.session['SIMPLEPAGE_ID'] = page.pk
+        context.update(**kwargs)
+        content_type = 'text/plain' if page.url.endswith('.txt') else 'text/html'
+
+        return http.HttpResponse(
+            page.get_template().render(RequestContext(request, context)),
+            content_type=content_type)
+
+    # we use index.html in the theme directory by default.
+    
+    return http.HttpResponse(get_template(template_name).render(
+        request, {'page_slug': '/', 'page'}
         content_type=content_type)
+        
+    
 

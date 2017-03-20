@@ -1,14 +1,15 @@
 from datetime import datetime as dt
-from django.template import RequestContext
+from django.template import RequestContext, loader
 
-from spicy.core.simplepages.views import render_simplepage
-from spicy.utils.printing import print_error
+from django.contrib.sites.models import Site
+from django import http
+from django.utils._os import safe_join
+
 from . import defaults
+from spicy.core.simplepages.views import render_simplepage
 from spicy.core.simplepages import defaults as sp_defaults
 from spicy.utils.models import get_custom_model_class
-from django.contrib.sites.models import Site
-from django.shortcuts import get_object_or_404
-from django import http
+from spicy.utils.printing import print_error
 
 SimplePageModel = get_custom_model_class(sp_defaults.SIMPLE_PAGE_MODEL)
 SiteskinModel = get_custom_model_class(defaults.SITESKIN_SETTINGS_MODEL)
@@ -57,7 +58,7 @@ def server_error(request):
 
 
 def render(request, template_name,
-           context_intstance=None, **kwargs):
+           context_instance=None, **kwargs):
     """
     Universal sitepage renderer.
     
@@ -72,7 +73,7 @@ def render(request, template_name,
         theme_config = None
 
     try:
-        custom_index_page = SimplePageModel.objects,get(url='/index/')
+        custom_index_page = SimplePageModel.objects.get(url='/index/')
         # Log information about custom page for index.html
     except SimplePageModel.DoesNotExist:
         custom_index_page = None
@@ -93,11 +94,14 @@ def render(request, template_name,
             page.get_template().render(RequestContext(request, context)),
             content_type=content_type)
 
-    # we use index.html in the theme directory by default.
-    
-    return http.HttpResponse(get_template(template_name).render(
-        request, {'page_slug': '/', 'page'}
-        content_type=content_type)
-        
-    
+    # we use index.html in the default theme directory by default.
 
+    theme_name = (
+        theme_config.theme
+        if theme_config
+        else defaults.DEFAULT_THEME)
+    template_path = safe_join(defaults.THEMES_PATH, theme_name, 'templates','index.html')
+    template = loader.get_template(template_path)
+
+    return http.HttpResponse(
+        template.render(RequestContext(request, {'page_slug': '/', 'page': '' })))

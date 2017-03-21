@@ -79,7 +79,7 @@ def render(request, template_name,
         custom_index_page = None
     
     page = ( 
-        siteskin.home_page
+        theme_config.home_page # siteskin.home_page
         if theme_config and theme_config.home_page_id
         else custom_index_page)
 

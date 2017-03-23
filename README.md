@@ -107,47 +107,49 @@ Cunsumer
 Модуль Siteskin является частью модуля spicy.core и предназначен для управления оформлением сайта посредством тем. 
 Основной особенностью тем spicy.core.siteskin является то, что они могут хранить полный набор файлов для оформления, или же минимальный набор файлов шаблонов.
 
-Такой механизм обеспечивается модульностью продукта SpicyCMS. 
-Каждый модуль spiсy вмещает в себя набор необходимых файлов.
+
+Такой механизм обеспечивается модульностью продукта SpicyCMS.Каждый модуль spiсy вмещает в себя набор необходимых файлов.
 В случае, если выбранная тема из каталога THEME_PATH не включает в себя нужных файлов, они берутся из интегрированных в модули spicy.
 
 **Структура каталога темы**
 
 Минимально необходимая структура каталога темы выглядит так:
-
+```
 ├── static            Используемые темой файлы статики (CSS-стили, JS-скрипты, иконка сайта favicon.ico)
 │   ├── css
 │   ├── favicon.ico
 │   ├── js
 │   └── plugins  
-├── templates
+├── templates		  Шаблоны django
 │   └── index.html  
 ├── readme.md
 └── spicy.theme      Файл описания в формате JSON
-
+```
 **Поля spicy.theme**
 
-"theme_name" : 'mini_theme' : Отображаемое имя темы     
-"theme_description" : Описание темы
-"author" :  Автор
-"author_link": Ссылка на автора
-"theme_link" : Ссылка на тему'    
-"theme_thumbnail_link": Ссылка на картинку-превью темы
-"version" : ' Версии продукта, совместимые с данной темой
-
+"theme_name" : 'mini_theme'	: Отображаемое имя темы     
+"theme_description"			: Описание темы
+"author"					:  Автор
+"author_link"				: Ссылка на автора
+"theme_link" 				: Ссылка на тему'   
+"theme_thumbnail_link"		: Ссылка на картинку-превью темы
+"version" 					: Версии продукта, совместимые с данной темой
 
 
 Ниже описана структура каталогов с файлами оформления, включенными в состав модулей.
 
 #### spicy.categories ####
 
-spicy.categories/src/spicy/categories/templates 
+```
+spicy.categories/src/spicy/categories/templates  
 └── spicy.categories
     └── admin
         └── menu.html
+```
 
 #### spicy.core.profile ####
 
+```
 spicy.core/src/spicy/core/profile/templates
 └── spicy.core.profile
     ├── activate.html
@@ -203,9 +205,11 @@ spicy.core/src/spicy/core/profile/templates
     └── widgets
         ├── signin_form.html
         └── signup_form.html
+```
 
 #### spicy.core.admin ####
 
+```
 spicy.core/src/spicy/core/admin/templates
 └── spicy.core.admin
     ├── admin
@@ -235,17 +239,21 @@ spicy.core/src/spicy/core/admin/templates
     │   ├── top_navbar.html
     │   └── wysiwyg.html
     └── public.admin.html
+```
 
 #### spicy.core.trash ####
 
+```
 spicy.core/src/spicy/core/trash/templates
 └── spicy.core.trash
     └── admin
         ├── list.html
         └── menu.html
+```
 
 #### spicy.core.simplepages ####
 
+```
 spicy.core/src/spicy/core/simplepages/templates
 └── spicy.core.simplepages
     ├── admin
@@ -264,17 +272,21 @@ spicy.core/src/spicy/core/simplepages/templates
         ├── errors.403.html
         ├── errors.404.html
         └── errors.500.html
+```
 
 #### spicy.core.siteskin ####
 
+```
 spicy.core/src/spicy/core/siteskin/templates
 └── spicy.core.siteskin
     └── admin
         ├── edit.html
         └── menu.html
+```
 
 #### spicy.core.service.templates ####
 
+```
 spicy.core/src/spicy/core/service/templates
 ├── service
 │   └── admin
@@ -283,14 +295,18 @@ spicy.core/src/spicy/core/service/templates
     └── admin
         ├── dashboard.html
         └── service_preview.html
+```
 
 #### spicy.core ####
 
+```
 spicy.core/src/spicy/siteskin-examples/current/templates 
 └── base.html
+```
 
 #### spicy.document ####
 
+```
 spicy.document/src/spicy/document/templates
 └── spicy.document
     ├── admin
@@ -313,9 +329,11 @@ spicy.document/src/spicy/document/templates
     │   ├── service_doc_list.html
     │   └── service_document.html
     └── document.html
+```
 
 #### spicy.feedback ####
 
+```
 spicy.feedback/src/spicy/feedback/templates
 └── spicy.feedback
     ├── admin
@@ -338,9 +356,11 @@ spicy.feedback/src/spicy/feedback/templates
     │   └── default.html
     └── sms
         └── report.txt
+```
 
 #### spicy.history ####
 
+```
 spicy.history/src/spicy/history/templates
 └── spicy.history
     └── admin
@@ -349,9 +369,11 @@ spicy.history/src/spicy/history/templates
         ├── diff.html
         ├── list.html
         └── menu.html
+```
 
 #### spicy.menu ####
 
+```
 spicy.menu/src/spicy/menu/templates 
 └── spicy.menu
     └── admin
@@ -365,8 +387,14 @@ spicy.menu/src/spicy/menu/templates
         ├── list_tree.html
         ├── menu.html
         └── preview.html
+```
 
 #### Переменные настройки, касающиеся модуля Siteskin ####
+
+
+####
+
+
 
 
 

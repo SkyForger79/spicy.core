@@ -145,7 +145,7 @@ Cunsumer
 spicy.categories/src/spicy/categories/templates  
 └── spicy.categories
     └── admin
-        └── menu.html                   Шаблон оформления пункта Категории в меню админ.панели
+        └── menu.html                   Шаблон оформления пункта Категории админ.панели
 ```
 
 #### spicy.core.profile ####
@@ -154,7 +154,7 @@ spicy.categories/src/spicy/categories/templates
 spicy.core/src/spicy/core/profile/templates
 └── spicy.core.profile
     ├── activate.html
-    ├── admin                           Шаблоны оформления пункта Профили в меню админ.панели     
+    ├── admin                           Шаблоны оформления пункта Профили админ.панели     
     │   ├── blacklisted_ips.html        
     │   ├── create_group.html
     │   ├── create.html
@@ -211,8 +211,8 @@ spicy.core/src/spicy/core/profile/templates
 #### spicy.core.admin ####
 
 ```
-spicy.core/src/spicy/core/admin/templates
-└── spicy.core.admin
+spicy.core/src/spicy/core/admin/templates 
+└── spicy.core.admin                        Шаблоны оформления админки
     ├── admin
     │   ├── app
     │   │   ├── component
@@ -246,7 +246,7 @@ spicy.core/src/spicy/core/admin/templates
 
 ```
 spicy.core/src/spicy/core/trash/templates
-└── spicy.core.trash                        Шаблоны оформления пункта Trash(Корзина) в меню админ.панели
+└── spicy.core.trash                        Шаблоны оформления пункта Trash(Корзина) админ.панели
     └── admin
         ├── list.html
         └── menu.html
@@ -256,7 +256,7 @@ spicy.core/src/spicy/core/trash/templates
 
 ```
 spicy.core/src/spicy/core/simplepages/templates
-└── spicy.core.simplepages                  Шаблоны оформления пункта Страницы в меню админ.панели
+└── spicy.core.simplepages                  Шаблоны оформления пункта Страницы админ.панели
     ├── admin
     │   ├── component
     │   │   ├── create_form.html
@@ -279,7 +279,7 @@ spicy.core/src/spicy/core/simplepages/templates
 
 ```
 spicy.core/src/spicy/core/siteskin/templates 
-└── spicy.core.siteskin                     Шаблоны оформления пункта Страницы в меню админ.панели
+└── spicy.core.siteskin                     Шаблоны оформления пункта Страницы админ.панели
     └── admin
         ├── edit.html
         └── menu.html
@@ -310,7 +310,7 @@ spicy.core/src/spicy/siteskin-examples/current/templates
 ```
 spicy.document/src/spicy/document/templates 
 └── spicy.document
-    ├── admin                               Шаблоны оформления пункта Документы в меню админ.панели
+    ├── admin                               Шаблоны оформления пункта Документы админ.панели
     │   ├── component
     │   │   └── create_form.html
     │   ├── create.html
@@ -336,7 +336,7 @@ spicy.document/src/spicy/document/templates
 
 ```
 spicy.feedback/src/spicy/feedback/templates
-└── spicy.feedback                          Шаблоны оформления пункта Обратная связь в меню админ.панели
+└── spicy.feedback                          Шаблоны оформления пункта Обратная связь админ.панели
     ├── admin
     │   ├── edit_calc.html
     │   ├── edit.html
@@ -363,7 +363,7 @@ spicy.feedback/src/spicy/feedback/templates
 
 ```
 spicy.history/src/spicy/history/templates
-└── spicy.history                           Шаблоны оформления пункта История правок в меню админ.панели
+└── spicy.history                           Шаблоны оформления пункта История правок админ.панели
     └── admin
         ├── action.html
         ├── actions.html
@@ -376,7 +376,7 @@ spicy.history/src/spicy/history/templates
 
 ```
 spicy.menu/src/spicy/menu/templates     
-└── spicy.menu                             Шаблоны оформления пункта Меню в меню админ.панели
+└── spicy.menu                             Шаблоны оформления пункта Меню админ.панели
     └── admin
         ├── autocomplete.html
         ├── autocomplete_static.html

@@ -107,9 +107,9 @@ Cunsumer
 Модуль Siteskin является частью модуля spicy.core и предназначен для управления оформлением сайта посредством тем. 
 Основной особенностью тем spicy.core.siteskin является то, что они могут хранить полный набор файлов для оформления, или же минимальный набор файлов шаблонов.
 
-
 Такой механизм обеспечивается модульностью продукта SpicyCMS.Каждый модуль spiсy вмещает в себя набор необходимых файлов.
-В случае, если выбранная тема из каталога THEME_PATH не включает в себя нужных файлов, они берутся из интегрированных в модули spicy.
+В случае, если выбранная тема из каталога тем не включает в себя нужных файлов, они берутся из интегрированных в модули spicy.
+
 
 **Структура каталога темы**
 
@@ -118,8 +118,7 @@ Cunsumer
 ├── static            Используемые темой файлы статики (CSS-стили, JS-скрипты, иконка сайта favicon.ico)
 │   ├── css
 │   ├── favicon.ico
-│   ├── js
-│   └── plugins  
+│   └── js
 ├── templates		  Шаблоны django
 │   └── index.html  
 ├── readme.md
@@ -136,6 +135,8 @@ Cunsumer
 "version" 					: Версии продукта, совместимые с данной темой
 
 
+Кроме файлов формата .html, являющихся шаблонами django, используются также файлы .txt, которые являются частями шаблонов django. 
+Такие файлы используются для конфигурации заголовка письма активации пользователя или заголовка отчета  
 Ниже описана структура каталогов с файлами оформления, включенными в состав модулей.
 
 #### spicy.categories ####
@@ -144,7 +145,7 @@ Cunsumer
 spicy.categories/src/spicy/categories/templates  
 └── spicy.categories
     └── admin
-        └── menu.html
+        └── menu.html                   Шаблон оформления пункта Категории в меню админ.панели
 ```
 
 #### spicy.core.profile ####
@@ -153,8 +154,8 @@ spicy.categories/src/spicy/categories/templates
 spicy.core/src/spicy/core/profile/templates
 └── spicy.core.profile
     ├── activate.html
-    ├── admin
-    │   ├── blacklisted_ips.html
+    ├── admin                           Шаблоны оформления пункта Профили в меню админ.панели     
+    │   ├── blacklisted_ips.html        
     │   ├── create_group.html
     │   ├── create.html
     │   ├── dashboard.html
@@ -245,7 +246,7 @@ spicy.core/src/spicy/core/admin/templates
 
 ```
 spicy.core/src/spicy/core/trash/templates
-└── spicy.core.trash
+└── spicy.core.trash                        Шаблоны оформления пункта Trash(Корзина) в меню админ.панели
     └── admin
         ├── list.html
         └── menu.html
@@ -255,7 +256,7 @@ spicy.core/src/spicy/core/trash/templates
 
 ```
 spicy.core/src/spicy/core/simplepages/templates
-└── spicy.core.simplepages
+└── spicy.core.simplepages                  Шаблоны оформления пункта Страницы в меню админ.панели
     ├── admin
     │   ├── component
     │   │   ├── create_form.html
@@ -277,8 +278,8 @@ spicy.core/src/spicy/core/simplepages/templates
 #### spicy.core.siteskin ####
 
 ```
-spicy.core/src/spicy/core/siteskin/templates
-└── spicy.core.siteskin
+spicy.core/src/spicy/core/siteskin/templates 
+└── spicy.core.siteskin                     Шаблоны оформления пункта Страницы в меню админ.панели
     └── admin
         ├── edit.html
         └── menu.html
@@ -301,15 +302,15 @@ spicy.core/src/spicy/core/service/templates
 
 ```
 spicy.core/src/spicy/siteskin-examples/current/templates 
-└── base.html
+└── base.html                               Пример базового шаблона
 ```
 
 #### spicy.document ####
 
 ```
-spicy.document/src/spicy/document/templates
+spicy.document/src/spicy/document/templates 
 └── spicy.document
-    ├── admin
+    ├── admin                               Шаблоны оформления пункта Документы в меню админ.панели
     │   ├── component
     │   │   └── create_form.html
     │   ├── create.html
@@ -335,7 +336,7 @@ spicy.document/src/spicy/document/templates
 
 ```
 spicy.feedback/src/spicy/feedback/templates
-└── spicy.feedback
+└── spicy.feedback                          Шаблоны оформления пункта Обратная связь в меню админ.панели
     ├── admin
     │   ├── edit_calc.html
     │   ├── edit.html
@@ -362,7 +363,7 @@ spicy.feedback/src/spicy/feedback/templates
 
 ```
 spicy.history/src/spicy/history/templates
-└── spicy.history
+└── spicy.history                           Шаблоны оформления пункта История правок в меню админ.панели
     └── admin
         ├── action.html
         ├── actions.html
@@ -374,8 +375,8 @@ spicy.history/src/spicy/history/templates
 #### spicy.menu ####
 
 ```
-spicy.menu/src/spicy/menu/templates 
-└── spicy.menu
+spicy.menu/src/spicy/menu/templates     
+└── spicy.menu                             Шаблоны оформления пункта Меню в меню админ.панели
     └── admin
         ├── autocomplete.html
         ├── autocomplete_static.html
@@ -391,10 +392,16 @@ spicy.menu/src/spicy/menu/templates
 
 #### Переменные настройки, касающиеся модуля Siteskin ####
 
-
-####
-
-
+|                    |					 |                                                    |
+|  Переменная        |	 Назначение	 	 |                 Значения по умолчанию		   	  |
+|			         |				 	 |						                              |
+|--------------------|-------------------|----------------------------------------------------|
+| THEMES_PATH        |Каталог c темами   |	                    ../siteskins		          |
+|                    |                   |                                                    | 
+| DEFAULT_THEME      |Тема по умолчанию  |                        current                     |	
+|                    |                   |                                                    | 
+| SPICY_THEME_FILE   |Файл описания темы |                      spicy.theme                   | 
+|                    |                   |                                                    | 
 
 
 

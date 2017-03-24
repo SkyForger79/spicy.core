@@ -197,9 +197,65 @@ SpicyCMS позволяет отлавливать попытки подбора
   class CustomGroup(Group):
     # your additional fields
     
+Команды manage.py
+-----------------
 
-    
-{TODO} команды менеджмента, декораторы, контекстные процессоры
+Добавление группы нескольким пользователям ::
+
+  {TODO починить вызов Profile}
+
+Группа должна быть указана по id, логины пользователей - в файле, каждый логин с новой строки. Указание флага ``--test`` позволет активировать пользователей, без указания статус пользователей не изменяется.
+
+Смена пароля для пользователя `django.contrib.auth <https://djbook.ru/rel1.4/topics/auth.html>`_ с указанным email - команда ``changepassword``::
+
+  Usage: manage.py changepassword [options] 
+
+  Options:
+    -v VERBOSITY, --verbosity=VERBOSITY
+                          Verbosity level; 0=minimal output, 1=normal output,
+                          2=verbose output, 3=very verbose output
+    --settings=SETTINGS   The Python path to a settings module, e.g.
+                          "myproject.settings.main". If this isn't provided, the
+                          DJANGO_SETTINGS_MODULE environment variable will be
+                          used.
+    --pythonpath=PYTHONPATH
+                          A directory to add to the Python path, e.g.
+                          "/home/djangoprojects/myproject".
+    --traceback           Print traceback on exception
+    --database=DATABASE   Specifies the database to use. Default is "default".
+    --version             show program's version number and exit
+    -h, --help            show this help message and exit
+
+Удалить из базы данных профили пользователей, с истекшим сроком - команда ``cleanup_expired_profiles`` ::
+
+  {TODO починить вызов Profile}
+
+Создание суперпользователя, учитывается возможность переопределения модели профиля - команда ``createsuperuser`` ::
+
+  Usage: manage.py createsuperuser [options] 
+
+  Options:
+    -v VERBOSITY, --verbosity=VERBOSITY
+                          Verbosity level; 0=minimal output, 1=normal output,
+                          2=verbose output, 3=very verbose output
+    --settings=SETTINGS   The Python path to a settings module, e.g.
+                          "myproject.settings.main". If this isn't provided, the
+                          DJANGO_SETTINGS_MODULE environment variable will be
+                          used.
+    --pythonpath=PYTHONPATH
+                          A directory to add to the Python path, e.g.
+                          "/home/djangoprojects/myproject".
+    --traceback           Print traceback on exception
+    --email=EMAIL         Specifies the email address for the superuser.
+    --noinput             Tells Django to NOT prompt the user for input of any
+                          kind. You must use --email with --noinput, and
+                          superusers created with --noinput will not be able to
+                          log in until they're given a valid password.
+    --version             show program's version number and exit
+    -h, --help            show this help message and exit
+
+  
+{TODO} декораторы, контекстные процессоры
 
 
 Для верстальщика

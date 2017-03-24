@@ -202,7 +202,26 @@ SpicyCMS позволяет отлавливать попытки подбора
 
 Добавление группы нескольким пользователям: ::
 
-  {TODO починить вызов Profile}
+  Usage: manage.py add_mass_group [options] 
+
+  Options:
+    -v VERBOSITY, --verbosity=VERBOSITY
+                          Verbosity level; 0=minimal output, 1=normal output,
+                          2=verbose output, 3=very verbose output
+    --settings=SETTINGS   The Python path to a settings module, e.g.
+                          "myproject.settings.main". If this isn't provided, the
+                          DJANGO_SETTINGS_MODULE environment variable will be
+                          used.
+    --pythonpath=PYTHONPATH
+                          A directory to add to the Python path, e.g.
+                          "/home/djangoprojects/myproject".
+    --traceback           Print traceback on exception
+    --logins=LOGINS       Specifies the logins file
+    --group_id=GROUP_ID   group_id
+    --test=TEST           run test
+    --version             show program's version number and exit
+    -h, --help            show this help message and exit
+
 
 Группа должна быть указана по id, логины пользователей - в файле, каждый логин с новой строки. Указание флага ``--test`` позволет активировать пользователей, без указания статус пользователей не изменяется.
 
@@ -228,7 +247,23 @@ SpicyCMS позволяет отлавливать попытки подбора
 
 Удалить из базы данных профили пользователей, с истекшим сроком - команда ``cleanup_expired_profiles``: ::
 
-  {TODO починить вызов Profile }
+  Usage: manage.py cleanup_expired_profiles [options] 
+
+  Options:
+    -v VERBOSITY, --verbosity=VERBOSITY
+                          Verbosity level; 0=minimal output, 1=normal output,
+                          2=verbose output, 3=very verbose output
+    --settings=SETTINGS   The Python path to a settings module, e.g.
+                          "myproject.settings.main". If this isn't provided, the
+                          DJANGO_SETTINGS_MODULE environment variable will be
+                          used.
+    --pythonpath=PYTHONPATH
+                          A directory to add to the Python path, e.g.
+                          "/home/djangoprojects/myproject".
+    --traceback           Print traceback on exception
+    --version             show program's version number and exit
+    -h, --help            show this help message and exit
+
 
 Создание суперпользователя, учитывается возможность переопределения модели профиля - команда ``createsuperuser``: ::
 
@@ -271,11 +306,117 @@ SpicyCMS позволяет отлавливать попытки подбора
 
 Аргумент ``redirect_field_name`` по умолчанию принимает значение ``'next'`` - это имя GET-параметра, по которому будет перенаправление в случае успешной авторизации.
   
-{TODO} контекстные процессоры
+Подключить контекстный процессор spicy.core.profile  
+---------------------------------------------------
+Предоставляется один контекстный процессор, который добавляет в контекст шаблонов переменные, связанные с настройками учетных записей пользователей. Более подробно см. в разделе "Для верстальщика". Подключить контекстный процессор можно в settings.py: ::
 
+  TEMPLATE_CONTEXT_PROCESSORS = (
+    # ...
+    'spicy.core.profile.context_processors.auth',
+    # ...
+  )
 
 Для верстальщика
-===============
-{TODO} Описать возможности переопределения шаблонов по умолчанию, переменные контекстных процессоров
+================
+Модульность SpicyCMS позволяет переопределять любые шаблоны, которые используются по умолчанию. Вы можете добавить свои стили, js, изменить верстку. Так же spicy.core.profile добавляет некоторые переменные в контекст каждого шаблона.
 
+Делаем свою страницу
+--------------------
+Шаблоны, используемые в spicy.core.profile по умолчанию, имеют следующую структуру: ::
 
+  spicy.core/src/spicy/core/profile/templates
+  └── spicy.core.profile
+      ├── activate.html
+      ├── admin                         
+      │   ├── blacklisted_ips.html        
+      │   ├── create_group.html
+      │   ├── create.html
+      │   ├── dashboard.html
+      │   ├── delete_group.html
+      │   ├── edit.html
+      │   ├── edit_media.html
+      │   ├── groups.html
+      │   ├── list.html
+      │   ├── menu.html
+      │   └── parts
+      │       ├── edit_profile_form.html
+      │       └── edit_profile_tabs.html
+      ├── edit.html
+      ├── login.html
+      ├── mail
+      │   ├── activation_email.html
+      │   ├── activation_email_subject.txt
+      │   ├── activation_email.txt
+      │   ├── banned_email.html
+      │   ├── banned_email.txt
+      │   ├── banned_subject.txt
+      │   ├── forgotten_password_email.html
+      │   ├── forgotten_password_email.txt
+      │   ├── forgotten_password_subject.txt
+      │   ├── hello_email.html
+      │   ├── hello_email.txt
+      │   ├── hello_subject.txt
+      │   ├── notify_managers_email.txt
+      │   ├── notify_managers_subject.txt
+      │   ├── passwd_email.html
+      │   ├── passwd_email.txt
+      │   ├── passwd_subject.txt
+      │   ├── set_email_email.html
+      │   ├── set_email_email.txt
+      │   └── set_email_subject.txt
+      ├── passwd.html
+      ├── profile.html
+      ├── restore_password.html
+      ├── set_email.html
+      ├── signin.html
+      ├── signup.html
+      ├── social
+      │   ├── networks.html
+      │   ├── new_user.html
+      │   └── signin.html
+      ├── success_signup.html
+      ├── user_agreement.html
+      └── widgets
+          ├── signin_form.html
+          └── signup_form.html
+
+Вы можете переопределить любой из них, для этого нужно создать аналогичную структуру папок в проекте и создать новый файл, с имененм шаблона по умолчанию, который вы хотите переопределить.
+
+Например, вы хотите изменить страницу login.html. Тогда в вашем проекте должна появиться такая структура папок: ::
+
+  your/app/template/folder
+    └── spicy.core.profile
+        └── login.html      # your custom login template
+        
+Так вы переопределите только login.html, все остальные шаблоны будут браться из spicy.core.profile.
+
+Переменные контекста spicy.core.profile
+---------------------------------------
+GET-параметр, указывающий следующую страницу в URL. По умолчанию - пустая строка: ::
+
+  {{ next_url }}
+  
+{TODO зачем ACCESS_RELOAD_PERIOD?!}: ::
+
+  {{ ACCESS_RELOAD_PERIOD }}
+  
+Включена ли ручная активация пользователей через админку после их регистрации: ::
+
+  {{ MANUAL_ACTIVATION }}
+  
+Сообщения с сервера посредством `Django messages framework <https://djbook.ru/rel1.4/ref/contrib/messages.html>`_: ::
+
+  {{ messages }}
+
+Права, доступные текущему пользователю: ::
+
+  {{ perms }}
+  
+Форма `Django auth.AuthenticationForm <https://djbook.ru/rel1.4/topics/auth.html#module-django.contrib.auth.forms>`_ для входа пользователя на сайт: ::
+
+  {{ auth_form }}
+  
+Имя GET-параметра, которое будет использовано для указания следующей страницы в URL. По умолчанию - 'next': ::
+
+  {{ REDIRECT_FIELD_NAME }}
+  

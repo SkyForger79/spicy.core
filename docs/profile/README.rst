@@ -200,7 +200,7 @@ SpicyCMS позволяет отлавливать попытки подбора
 Команды manage.py
 -----------------
 
-Добавление группы нескольким пользователям ::
+Добавление группы нескольким пользователям: ::
 
   {TODO починить вызов Profile}
 
@@ -226,11 +226,11 @@ SpicyCMS позволяет отлавливать попытки подбора
     --version             show program's version number and exit
     -h, --help            show this help message and exit
 
-Удалить из базы данных профили пользователей, с истекшим сроком - команда ``cleanup_expired_profiles`` ::
+Удалить из базы данных профили пользователей, с истекшим сроком - команда ``cleanup_expired_profiles``: ::
 
-  {TODO починить вызов Profile}
+  {TODO починить вызов Profile }
 
-Создание суперпользователя, учитывается возможность переопределения модели профиля - команда ``createsuperuser`` ::
+Создание суперпользователя, учитывается возможность переопределения модели профиля - команда ``createsuperuser``: ::
 
   Usage: manage.py createsuperuser [options] 
 
@@ -254,8 +254,24 @@ SpicyCMS позволяет отлавливать попытки подбора
     --version             show program's version number and exit
     -h, --help            show this help message and exit
 
+Декораторы spicy.core.profile
+-----------------------------
+Предоставляются два декоратора - ``is_staff`` и ``login_required``.
+
+Декоратор ``is_staff(function=None, required_perms=(), redirect_field_name=REDIRECT_FIELD_NAME)`` проверяет, является ли пользователь авторизованным в системе, если нет, то перенаправляет на страницу входа. Аргумент ``required_perms`` позволяет указать права, необходимые для доступа к обработчику. Может быть списком, кортежем прав вида ``'module_name.permission_name'``, например: ::
+
+  # yourapp.views.py
+  from spicy.core.profile.decorators import is_staff
   
-{TODO} декораторы, контекстные процессоры
+  @is_staff(required_perms=('document.can_change_document', 'document.can_add_document'))
+  def yourview(request, *args, **kwargs):
+    # view's code here
+
+Декоратор ``login_required(function=None, redirect_field_name=REDIRECT_FIELD_NAME)`` проверяет авторизован ли пользователь, если нет, то перенаправляет на страницу входа.
+
+Аргумент ``redirect_field_name`` по умолчанию принимает значение ``'next'`` - это имя GET-параметра, по которому будет перенаправление в случае успешной авторизации.
+  
+{TODO} контекстные процессоры
 
 
 Для верстальщика

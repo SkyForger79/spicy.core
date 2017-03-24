@@ -2,22 +2,14 @@
 Management utility to create superusers.
 """
 from django.core.management.base import BaseCommand, CommandError
-from django.core import exceptions
-
-from django.utils.translation import ugettext as _
-
-from django.contrib.sites.models import Site
 from django.contrib.auth.models import Group
 
+from spicy.core.profile import defaults as pf_defaults
 from spicy.utils.models import get_custom_model_class
 
 from optparse import make_option
-import getpass
-import os
-import re
-import sys
 
-Profile = get_custom_model_class(defaults.CUSTOM_USER_MODEL)
+Profile = get_custom_model_class(pf_defaults.CUSTOM_USER_MODEL)
 
 
 class Command(BaseCommand):

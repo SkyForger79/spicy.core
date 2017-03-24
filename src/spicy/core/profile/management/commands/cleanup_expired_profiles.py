@@ -1,6 +1,7 @@
 from django.core.management.base import NoArgsCommand
+from spicy.utils.models import get_custom_model_class
 
-from extprofile.models import Profile
+Profile = get_custom_model_class(defaults.CUSTOM_USER_MODEL)
 
 class Command(NoArgsCommand):
     help = "Delete expired user profiles from the database"

@@ -162,13 +162,44 @@ SpicyCMS позволяет отлавливать попытки подбора
   
 Система будет отлавливать попытки авторизации пользователя, и при количестве попыток, большем 5, будет показана капча. При количестве попыток больше 20, запретит вход с этого IP, посчитав его попыткой взлома аккаунта.  
 
-Делаем свое разделение по правам доступа {TODO нормально назвать}
-------------------------------------------------------------------------
-spicy.core построен по сервис-ориентированной архитектуре и предоставляет сервисы-классы с методами обработки типичных запросов. ``spicy.core.profile.services.ProfileProvider`` предоставляет обработчики типичных запросов, касающихся учетных записей пользователей - ``login()``, ``register()`` и т.д
+Делаем свою модель для связи пользователя и группы
+------------------------------------------------------------------------------
+По умолчанию для связи пользователя с группой используется модель ``spicy.core.profile.models.PermissionProviderModel``, которая по FK ссылается на учетную запись и на грруппу. Вы можете переопределить саму модель связи и также переопределить модель группы, используемой по умолчанию - `Django auth.Group <https://djbook.ru/rel1.4/topics/auth.html#django.contrib.auth.models.Group>`_.
 
-Про CUSTOM_PERMISSION_PROVIDER_MODEL ('profile.PermissionProviderModel') и CUSTOM_ROLE_MODEL ('auth.Group').
+Для того, чтобы переопределить модель связи пользователь-группа, укажите в settings.py: ::
+
+  CUSTOM_PERMISSION_PROVIDER_MODEL = 'yourapp.models.CustomRepmissionProviderModel'
   
-{TODO} -Кастомные профили-, настройки settings.py, команды менеджмента, декораторы, контекстные процессоры
+И определите саму модель в проекте, унаследовав ее от ``ProviderModel``: ::
+
+  # yourapp.models.py
+  from spicy.core.profile import defaults as pf_defaults
+  from spicy.core.service.models import ProviderModel
+  
+  class CustomRepmissionProviderModel(ProviderModel):
+    profile = models.ForeignKey(defaults.CUSTOM_USER_MODEL, null=False, blank=False)  # this is required field
+    role = models.ForeignKey(defaults.CUSTOM_ROLE_MODEL, null=False, blank=False)     # this is required field 
+    # your additional fields
+    
+    class Meta:
+      unique_together = 'profile', 'consumer_id', 'consumer_type' # required option
+      # your additional options
+  
+Аналогично вы можете переопределить модель группы. Укажите в settings.py: ::
+
+  CUSTOM_ROLE_MODEL = 'yourapp.models.CustomGroup'
+  
+И определите модель: ::
+
+  # yourapp.models.py
+  from django.contrib.auth.models import Group
+  
+  class CustomGroup(Group):
+    # your additional fields
+    
+
+    
+{TODO} команды менеджмента, декораторы, контекстные процессоры
 
 
 Для верстальщика

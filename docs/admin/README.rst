@@ -67,11 +67,11 @@ Django admin и Grappelli позволяют разработчику быстр
       └── admin
           └── top_navbar.html     # this is your custom template
           
- Таким образом, для top_navbar.html будет использован ваш шаблон, а остальные будут взяты из spicy.core.admin.
- 
- Шаблонные теги и фильтры spicy.core.admin
- -----------------------------------------
- Чтобы подключить шаблонные теги spicy.core.admin, добавьте в шаблон: ::
+Таким образом, для top_navbar.html будет использован ваш шаблон, а остальные будут взяты из spicy.core.admin.
+
+Шаблонные теги и фильтры spicy.core.admin
+-----------------------------------------
+Чтобы подключить шаблонные теги spicy.core.admin, добавьте в шаблон: ::
  
   {% load spicy_admin %}
   

@@ -81,15 +81,26 @@ Django admin и Grappelli позволяют разработчику быстр
 
 Тег ``app_menu`` позволяет получить контент меню для указанного приложения: ::
 
-  {% app_menu request app_name %}
+  {% for app in ADMIN_APPS %}
+    {% app_menu request app %}
+  {% endfor %}
   
 Тег ``app_dashboard`` позволяет получить контент, который будет отображен на главном экране для указанного приложения: ::
 
-  {% app_dashboard request app_name %}
+  {% for app in ADMIN_APPS %}
+    {% app_dashboard request app_name %}
+  {% endfor %}
   
-{TODO tag appblock %}: ::
+Переменная ``ADMIN_APPS`` предоставляется контекстным процессором spicy.core.admin
 
-  example of appblock tag
+Тег ``appblock`` позволяет указать блок, который может быть переопределен в дочернем шаблоне при наследовании: ::
+
+  {% appblock block_name block_app %}
+    <li><a href="{% url profile:admin:index %}">Пользователи</a></li>
+  {% endappblock %}
+  
+Тег ``menu`` 
+
   
 
 

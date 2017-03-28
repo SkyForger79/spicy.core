@@ -174,5 +174,36 @@ Django admin и Grappelli позволяют разработчику быстр
 
   {% load spicy_admin %}
   
- 
-{TODO переменные контекстного процессора, шаблонные фильтры}
+Фильтр ``installed_app`` проверяет, установлено ли приложение в ``settings.INSTALLED_APP``: ::
+
+  {% if 'app_name'|installed_app %}
+    {# your code if True #}
+  {% else %}    
+    {# you code if False #}
+  {% endif %}
+
+Фильтр ``check_perms`` проверяет права пользователя на доступ к приложению SpicyCMS ``conf.AdminAppBase``, ссылке ``conf.AdminLink`` или любому типу объектов через `права Django <https://django.readthedocs.io/en/1.4.X/topics/auth.html#permissions>`_: ::
+
+  {% if user|check_perms:permission %}
+    {# your code if True #}
+  {% else %}
+    {# you code if False #}
+  {% endif %}
+  
+Переменные контекста spicy.core.admin
+-------------------------------------
+Установленные в проекте приложения, имеющие модуль для админки: ::
+
+  {{ ADMIN_APPS }}
+  
+Приложения, которые настроены для отображения в админке на главной странице: ::
+
+  {{ ADMIN_DASHBOARD_APPS }} 
+  
+Полный текущий URL, с протоколом и портом: ::
+
+  {{ FULL_PATH_WITH_PORT }}
+  
+Текущий URL, с протоколом, но без порта: ::
+
+  {{ HOST_WITH_PORT }}

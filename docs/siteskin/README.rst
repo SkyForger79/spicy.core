@@ -260,7 +260,7 @@ spicy.core.siteskin предоставляет возможность управ
           ├── diff.html
           ├── list.html
           └── menu.html
-https://github.com/spicycms/spicy.menu
+
 Модуль `spicy.menu <https://github.com/spicycms/spicy.menu>`_: ::
 
   spicy.menu/src/spicy/menu/templates     

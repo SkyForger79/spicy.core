@@ -8,9 +8,9 @@ spicy.core.profile является модулем spicy.core. Позволяе�
 Аналоги
 =======
 
-* `django-registration-renux <https://github.com/macropin/django-registration>`_ 
-* `django-registration <https://github.com/ubernostrum/django-registration>`_ 
-* `django-allauth <https://github.com/pennersr/django-allauth>`_ 
+* django-registration-renux
+* django-registration
+* django-allauth
 
 Эти приложения требуют Django 1.8+, spicy.core.profile позволяет использовать Django 1.3-1.5 и реализует дополнительные возможности, которых нет в django-registration-renux и django-registration - интеграцию с соцсетями, разделение прав доступа.
 

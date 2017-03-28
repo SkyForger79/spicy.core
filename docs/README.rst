@@ -29,6 +29,6 @@ spicy.core представляет из себя набор базовых мо
 
 Пример сборки приложения
 ========================
-Вы можете посмотреть `пример приложения <https://gitlab.com/spicycms.com/dev-SpicyCMS_Chief_Editor>`_, основанного на модулях SpicyCMS. `CMS Chief Editor <https://gitlab.com/spicycms.com/dev-SpicyCMS_Chief_Editor>`_ может быть использована для запуска новостного сайта, блога. 
+Вы можете посмотреть `пример приложения <https://gitlab.com/spicycms.com/dev-SpicyCMS_Chief_Editor>`_, основанного на модулях SpicyCMS - `CMS Chief Editor <https://gitlab.com/spicycms.com/dev-SpicyCMS_Chief_Editor>`_. Эта CMS может быть использована для запуска новостного сайта, блога, статичного сайта. 
 
 В этой сборке доступны модули `spicy.document <https://github.com/spicycms/spicy.document>`_, `spicy.categories <https://github.com/spicycms/spicy.categories>`_, `spicy.labels <https://github.com/spicycms/spicy.labels>`_, `spicy.feedback <https://github.com/spicycms/spicy.feedback>`_, `spicy.history <https://github.com/spicycms/spicy.history>`_, и `spicy.menu <https://github.com/spicycms/spicy.menu>`_.

@@ -41,17 +41,15 @@ spicy.core.siteskin предоставляет возможность управ
 ====================================
 Вы можете переопределить любой из приведенных ниже шаблонов, для добавления своих стилей, js, изменения верстки.
 
-Например, вы хотите изменить файл страницы входа в систему - в модуле spicy.core.profile, который имеет `такую структуру <./README.rst>`_.
+Например, вы хотите изменить файл страницы входа в систему - в модуле spicy.core.profile, который имеет приведенную ниже структуру. Для этого вам достаточно повторить в проекте структуру каталога до ``login.html``: ::
 
-Модуль spicy.categories: ::
+  your/app/template/folder
+  └── spicy.core.profile
+      └── login.html      # your custom login template
+      
+При этом spicy.core.siteskin использует ваш файл login.html, а другие шаблоны загрузит из spicy.core.profile. Аналогичным образом вы можете заменять любой шаблон, который SpicyCMS использует по умолчанию.
 
-  spicy.categories/src/spicy/categories/templates  
-  └── spicy.categories
-      └── admin
-          └── menu.html                   Шаблон оформления пункта Категории админ.панели
-
-
-Модуль spicy.core.profile: ::
+Модуль `spicy.core.profile <../profile/README.rst>`_: ::
 
   spicy.core/src/spicy/core/profile/templates
   └── spicy.core.profile
@@ -107,9 +105,16 @@ spicy.core.siteskin предоставляет возможность управ
       ├── user_agreement.html
       └── widgets
           ├── signin_form.html
-        └── signup_form.html
+          └── signup_form.html
 
-Модуль spicy.core.admin: ::
+Модуль `spicy.categories <https://github.com/spicycms/spicy.categories>`_: ::
+
+  spicy.categories/src/spicy/categories/templates  
+  └── spicy.categories
+      └── admin
+          └── menu.html                   Шаблон оформления пункта Категории админ.панели
+
+Модуль `spicy.core.admin <../admin/README.rst>`_: ::
 
   spicy.core/src/spicy/core/admin/templates 
   └── spicy.core.admin                        Шаблоны оформления админки
@@ -141,7 +146,7 @@ spicy.core.siteskin предоставляет возможность управ
       │   └── wysiwyg.html
       └── public.admin.html
 
-Модуль spicy.core.trash: ::
+Модуль `spicy.core.trash <../trash/README.rst>`_: ::
 
   spicy.core/src/spicy/core/trash/templates
   └── spicy.core.trash                        Шаблоны оформления пункта Trash(Корзина) админ.панели
@@ -149,7 +154,7 @@ spicy.core.siteskin предоставляет возможность управ
           ├── list.html
           └── menu.html
 
-Модуль spicy.core.simplepages: ::
+Модуль `spicy.core.simplepages <../simplepages/README.rst>`_: ::
 
   spicy.core/src/spicy/core/simplepages/templates
   └── spicy.core.simplepages                  Шаблоны оформления пункта Страницы админ.панели
@@ -170,7 +175,7 @@ spicy.core.siteskin предоставляет возможность управ
           ├── errors.404.html
           └── errors.500.html
 
-Модуль spicy.core.siteskin: ::
+Модуль `spicy.core.siteskin <../siteskin/README.rst>`_: ::
 
   spicy.core/src/spicy/core/siteskin/templates 
   └── spicy.core.siteskin                     Шаблоны оформления пункта Страницы админ.панели
@@ -179,7 +184,7 @@ spicy.core.siteskin предоставляет возможность управ
           └── menu.html
 
 
-Модуль spicy.core.service.templates: ::
+Модуль `spicy.core.service <../service/README.rst>`_: ::
 
   spicy.core/src/spicy/core/service/templates
   ├── service
@@ -190,12 +195,12 @@ spicy.core.siteskin предоставляет возможность управ
           ├── dashboard.html
           └── service_preview.html
 
-Модуль spicy.core: ::
+Модуль `spicy.core <../README.rst>`_: ::
 
   spicy.core/src/spicy/siteskin-examples/current/templates 
   └── base.html                               Пример базового шаблона
 
-Модуль spicy.document: ::
+Модуль `spicy.document <https://github.com/spicycms/spicy.document>`_: ::
 
   spicy.document/src/spicy/document/templates 
   └── spicy.document
@@ -220,7 +225,7 @@ spicy.core.siteskin предоставляет возможность управ
       │   └── service_document.html
       └── document.html
 
-Модуль spicy.feedback: ::
+Модуль `spicy.feedback <https://github.com/spicycms/spicy.feedback>`_: ::
 
   spicy.feedback/src/spicy/feedback/templates
   └── spicy.feedback                          Шаблоны оформления пункта Обратная связь админ.панели
@@ -245,7 +250,7 @@ spicy.core.siteskin предоставляет возможность управ
       └── sms
           └── report.txt
 
-Модуль spicy.history: ::
+Модуль `spicy.history <https://github.com/spicycms/spicy.history>`_: ::
 
   spicy.history/src/spicy/history/templates
   └── spicy.history                           Шаблоны оформления пункта История правок админ.панели
@@ -255,8 +260,8 @@ spicy.core.siteskin предоставляет возможность управ
           ├── diff.html
           ├── list.html
           └── menu.html
-
-Модуль spicy.menu: ::
+https://github.com/spicycms/spicy.menu
+Модуль `spicy.menu <https://github.com/spicycms/spicy.menu>`_: ::
 
   spicy.menu/src/spicy/menu/templates     
   └── spicy.menu                             Шаблоны оформления пункта Меню админ.панели

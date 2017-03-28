@@ -1,9 +1,9 @@
 [![Build Status](https://travis-ci.org/spicycms/spicy.core.svg?branch=tests_fix)](https://travis-ci.org/spicycms/spicy.core) [![Test Coverage](https://codeclimate.com/github/spicycms/spicy.core/badges/coverage.svg)](https://codeclimate.com/github/spicycms/spicy.core/coverage) [![Code Climate](https://codeclimate.com/github/spicycms/spicy.core/badges/gpa.svg)](https://codeclimate.com/github/spicycms/spicy.core) [![Coverage Status](https://coveralls.io/repos/github/spicycms/spicy.core/badge.svg?branch=tests_fix)](https://coveralls.io/github/spicycms/spicy.core?branch=tests_fix) [![Dependency Status](https://gemnasium.com/badges/github.com/spicycms/spicy.core.svg)](https://gemnasium.com/github.com/spicycms/spicy.core)
 
 
-==========
 SpicyCMF core documentation version 1.2.0
-==========
+=========================================
+{TODO исправить ссылки с dev-веток на смерженный код документации}
 
 
 ## Проблемы при разработке приложений на Django
@@ -18,6 +18,9 @@ SpicyCMF core documentation version 1.2.0
 Нет возможности быстро разделить работы на frontend / backend для простых приложений с HTML страницами. Тема помогает отделить работы webmaster от python-developer и делать для сайтов несколько разных версий отображения, меняя их на лету  итестирую их эффективность без риска сломать все приложение и необходимыости приклекать программиста для восстановления старого отображения сайта
 Simplepages - 
 
+В SpicyCMS эти проблемы решены с помощью сервис-ориентированной архитектуры. Главный модуль [spicy.core](https://github.com/spicycms/spicy.core/tree/feature/admin-docs/docs) и [модули SpicyCMS](https://github.com/spicycms) устраняют проблемы, позволяя ускорить процесс разработки и адаптировать приложения под бизнес процессы.
+
+
 ### Концепция приложения-модуля для Django
 
 Команда создает в текущей директории приложение 
@@ -25,8 +28,9 @@ Simplepages -
 spicy app <example-app-name> <path>
 
 
-Структура файлов и папок приложения
+Структура файлов и папок приложения:
 
+```
 defaults.py
 services.py
 urls.py
@@ -34,6 +38,7 @@ admin.py
 views.py
 
 templates
+```
 
 
 ### ВАЖНО setup.py и MANIFEST.in
@@ -47,7 +52,6 @@ recursive-include src/spicy/core/admin/templates *
 чтобы устанавливались статичные файлы модуля python.
 
 Это важно для templates, ``static``, ``locale`` и ``fixtures``
-
 
 
 ### Концепция проекта Django приложения
@@ -71,62 +75,10 @@ spicy create siteskin [<cmf-type>:default cms-chief-editor] <siteskin-name> <pat
 ### Публикация Django приложения на сервер
 
 
-## Fabric
+## Fabric {TODO}
 
 
-## Docker
-
-
-## Приложения включенные в spicy.core
-
-
-### spicy.core.service
-
-Концепция сервисов решает проблему макаранного кода или кросс-импортов между различными приложениями, где нужно
-сделать ForeignKey связь или m2m отношение. Сервис может предоставлять любой Django модуль, декларировать типы связей и методы предоставления сервиса.
-Сам сервис является в таком случаем классом с методами обработки типичных забросов для обратки связей с заказчиками сервиса (Consumer)
-
-Interface
-
-Service
-
-Provider
-
-Cunsumer
-
-
-
-### spicy.core.profile
-
-
-### spicy.core.admin
-
-
-### spicy.core.siteskin
-
-Site skin - it's
-
-
-| Variable | Default | Description |
-| -------- | ------- | ----------- |
-| THEMES_PATH         | ../siteskins     | The path for folder containing site skins directories |
-
-
-### spicy.core.simplepages
-
-
-### spicy.core.trash
-
-
-### spicy.core.rmanager
-
-
-### spicy.utils / rename helpers & snipets
-
-
-### spicy.templates / rename project-templates
-
-
+## Docker {TODO}
 
 
 Tests

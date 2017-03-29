@@ -64,7 +64,61 @@ spicy.core.siteskin
 
 Декораторы spicy.core.siteskin
 ------------------------------
-{TODO}
+spicy.core.siteskin предоставляет декораторы, облегчающие работу со темами - ``render_to``, ``ajax_request``, ``multi_view``. Их удобство в том, что разработчик освобождается от написания типичного кода для создания и возврата объекта ответа, настроек кэширования: ::
+
+  # typical views.py
+  from django.shortcuts import render
+  
+  def your_view(*args, **kwargs):
+    # logic here
+    template = 'path/to/template.html'
+    context = dict(param1=value, param2=value, ...)
+    response = render(request, template, context)
+    return response
+  
+Вместо этого ваши вью будут возвращать словарь, который декоратор ``render_to`` передаст <./#>`_ в указанный шаблон. Также каждый декоратор имеет дополнительные аргументы, позволяющие настраивать кэширование, загрузчики, которые будут использованы для поиска шаблона и т.д. (подробнее в `Общие аргументы декораторов <./README.rst#Общие-аргументы-декораторов>`_). Пример использования: ::
+
+  # yourapp.views.py
+  from spicy.core.siteskin.decorators import render_to
+  
+  @render_to(template_name, # additional args)
+  def your_view(request):
+    # logic here
+    context = dict(param1=value, param2=value, ...)
+    return context
+    
+Обязательным аргументом декоратора является ``template_name`` - имя шаблона, куда будет передан контекст.
+
+Декоратор ``ajax_request`` работает аналогично с ``render_to`` - ваш обработчик должен возвращать словарь-контекст, который будет упакован в json и вернется клиенту. Пример использования: ::
+
+  # yourapp.views.py
+  from spicy.core.siteskin.decorators import ajax_request
+  
+  @ajax_request(# additional args)
+  def your_view(request):
+    # logic here
+    context = dict(param1=value, param2=value, ...)
+    return context
+   
+Декоратор ``multi_view`` {TODO}
+
+   
+Общие аргументы декораторов
+---------------------------
+Декораторы реализованы как наследники базового класса ``spicy.core.siteskin.decorators.ViewInterface``, поэтому они имеют аргументы, которые позволяют настривать дополнительные возможности, такие как кэширование, ограничение видимости на публичной части сайта и т.д.
+
+{TODO} Общие аргументы для всех декораторов:
+url_pattern=None, instance=None, template=None,
+is_public=False, use_cache=False,
+cache_timeout=cache.default_timeout,
+use_siteskin=False, use_admin=False, use_geos=False
+    
+При передаче в декоратор ``use_siteskin=True`` будут использованы загрузчики шаблонов, указанные в ``settings.TEMPLATE_LOADERS``.
+
+Аргумент ``use_admin=True`` позволяет указать, что поиск шаблона должен происходить в admin-директориях, т.е. к пути файла будет добавлен префикс ``/admin/``.
+    
+Аргумент ``use_cache=True`` включает кэширование для обработчика, необязателен, значение по умолчанию - ``False``.
+
 
 Настройки settings.py
 ---------------------

@@ -8,8 +8,6 @@ SITESKIN_SETTINGS_MODEL = getattr(
 ADMIN_THEME = getattr(settings, 'ADMIN_THEME', None)
 THEMES_PATH = getattr(settings, 'THEMES_PATH', os.path.abspath('siteskins'))
 
-# XXX deprecated loaders.py 64L
-#ABSOLUTE_THEME_PATH = getattr(settings, 'THEMES_PATH', '')
 DEFAULT_THEME = getattr(settings, 'DEFAULT_THEME', 'current')
 
 SPICY_THEME_FILE = getattr(settings, 'SPICY_THEME_FILE', 'spicy.theme')

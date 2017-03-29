@@ -10,11 +10,11 @@ spicy.core.siteskin
 Пример использования темы
 =========================
 
-* `Две темы <https://gitlab.com/spicycms.com/cms.chiefeditor/tree/feature/add-skins-folder/siteskins#%D0%98%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%86%D0%B8%D1%8F-%D0%BF%D0%BE-%D1%80%D0%B0%D0%B7%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D0%BA%D0%B5-%D1%81%D0%BA%D0%B8%D0%BD%D0%B0>`_ {TODO заменить dev-ссылку на смерженный код}, включенные по умолчанию в SpicyCMS Chief Editor
+* `Две темы <https://gitlab.com/spicycms.com/cms.chiefeditor/tree/feature/add-skins-folder/siteskins#%D0%98%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%86%D0%B8%D1%8F-%D0%BF%D0%BE-%D1%80%D0%B0%D0%B7%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D0%BA%D0%B5-%D1%81%D0%BA%D0%B8%D0%BD%D0%B0>`_, включенные по умолчанию в SpicyCMS Chief Editor {TODO заменить dev-ссылку на смерженный код}
 
-* {TODO ссылка на настройки для Django программиста}
+* {TODO ссылка на настройки в CMS CE для Django программиста}
 
-* {TODO ссылка на демо админки, раздел Темы}
+* {TODO ссылка на демо админки CMS CE, раздел Темы}
 
 Для верстальщика
 ================
@@ -23,7 +23,7 @@ spicy.core.siteskin
 -------------------------------------
 Вы можете переопределить любой из предоставляемых по умолчанию шаблонов, для добавления своих стилей, js, изменения верстки.
 
-Например, вы хотите изменить файл страницы входа в систему - в модуле spicy.core.profile, который имеет приведенную ниже структуру. Для этого вам достаточно повторить в проекте структуру каталога до ``login. <https://gitlab.com/spicycms.com/cms.chiefeditor/tree/feature/add-skins-folder/siteskins#%D0%98%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%86%D0%B8%D1%8F-%D0%BF%D0%BE-%D1%80%D0%B0%D0%B7%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D0%BA%D0%B5-%D1%81%D0%BA%D0%B8%D0%BD%D0%B0>`_ {TODO заменить dev-ссылку на смерженный код}html``: ::
+Например, вы хотите изменить файл страницы входа в систему - в модуле spicy.core.profile, который имеет приведенную ниже структуру. Для этого вам достаточно повторить в проекте структуру каталога до ``login.html``: ::
 
   your/app/template/folder
   └── spicy.core.profile

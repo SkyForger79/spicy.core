@@ -268,8 +268,43 @@ spicy.core.siteskin предоставляет декораторы, облег�
 Ниже приведены настройки модуля, которые вы можете переопределить в settings.py своего приложения.
 
 Настраиваем тему
-++++++++++++++++
-SITESKIN_SETTINGS_MODEL, ADMIN_THEME THEMES_PATH DEFAULT_THEME SPICY_THEME_FILE SPICY_THEME_PRODUCT_KEYS, SITESKIN_INDEX_VIEW, SITESKIN_CACHE_BACKEND, DEFAULT_TEMPLATE, 
+++++++++++++++++ 
+
+По умолчанию для хранения настроек темы используется модель ``spicy.core.siteskin.models.Siteskin``. Вы можете переопределить ее, для этого определите новую модель и укажите в settings.py: ::
+
+  # settings.py
+  SITESKIN_SETTINGS_MODEL = 'yourapp.models.CustomSiteskinModel'
+  
+  # yourapp.models.py
+  from django.db import models
+
+  class CustomSiteskinModel(models.Model):
+    # your field
+
+Для того, чтобы получить актуальную модель настроек скина в вашем приложении, используйте: ::
+  
+  # yourapp.views.py
+  from spicy.utils.models import get_custom_model_class
+  
+  CustomSiteskinModel = get_custom_model_class(defaults.SITESKIN_SETTINGS_MODEL)
+
+По умолчанию базовый шаблон админки берется из 'templates/folder/spicy.core.admin/admin/base.html', чтобы указать свой путь до base.html, переопределите: ::
+
+  ADMIN_THEME = 'new/path/to/admin/base/page'
+  
+Директория для тем, где spicy.core.siteskin будет их искать. Значение по умолчанию ``os.path.abspath('siteskins')``: ::
+
+  THEMES_PATH = 'your/path/to/theme'
+  
+Имя темы, которое используется в качестве имени по умолчанию для объекта ``Siteskin``, значение по умолчанию ``'current'``: ::
+  
+  DEFAULT_THEME = 'your custom default name for siteskin object'
+
+Имя json-файла, описывающего тему, значение по умолчанию ``'spicy.theme'``: ::
+
+  SPICY_THEME_FILE = 'yout.name.for.file'
+  
+SPICY_THEME_PRODUCT_KEYS, SITESKIN_INDEX_VIEW, SITESKIN_CACHE_BACKEND, DEFAULT_TEMPLATE, 
 
 Настраиваем пажинатор
 +++++++++++++++++++++

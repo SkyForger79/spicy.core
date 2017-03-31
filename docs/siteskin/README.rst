@@ -153,20 +153,62 @@ spicy.core.siteskin предоставляет декораторы, облег�
 Команды manage.py
 -----------------
 
-collectstatic
+::
+  Usage: manage.py collectstatic [options]
 
+
+  Options:
+  -v VERBOSITY, --verbosity=VERBOSITY
+                        Verbosity level; 0=minimal output, 1=normal output,
+                        2=verbose output, 3=very verbose output
+  --settings=SETTINGS   The Python path to a settings module, e.g.
+                        "myproject.settings.main". If this isn't provided, the
+                        DJANGO_SETTINGS_MODULE environment variable will be
+                        used.
+  --pythonpath=PYTHONPATH
+                        A directory to add to the Python path, e.g.
+                        "/home/djangoprojects/myproject".
+  --traceback           Print traceback on exception
+  --noinput             Do NOT prompt the user for input of any kind.
+  --no-post-process     Do NOT post process collected files.
+  -i PATTERN, --ignore=PATTERN
+                        Ignore files or directories matching this glob-style
+                        pattern. Use multiple times to ignore more.
+  -n, --dry-run         Do everything except modify the filesystem.
+  -c, --clear           Clear the existing files using the storage before
+                        trying to copy or link the original file.
+  -l, --link            Create a symbolic link to each file instead of
+                        copying.
+  --no-default-ignore   Don't ignore the common private glob-style patterns
+                        'CVS', '.*' and '*~'.
+  --version             show program's version number and exit
+  -h, --help            show this help message and exit
+
+{todo: чем отличается от штатного???, потестить работу }
 
 
 create_sitemap 
 
-Options:
+::
+  Usage: manage.py create_sitemap [options] 
 
-  --limit         Limit number of objects
-
-  --nomedia       Disable media data generation
-  
-  --prefix        Sitemap name prefix
-
+  Options:
+  -v VERBOSITY, --verbosity=VERBOSITY
+                        Verbosity level; 0=minimal output, 1=normal output,
+                        2=verbose output, 3=very verbose output
+  --settings=SETTINGS   The Python path to a settings module, e.g.
+                        "myproject.settings.main". If this isn't provided, the
+                        DJANGO_SETTINGS_MODULE environment variable will be
+                        used.
+  --pythonpath=PYTHONPATH
+                        A directory to add to the Python path, e.g.
+                        "/home/djangoprojects/myproject".
+  --traceback           Print traceback on exception
+  --limit=LIMIT         Limit number of objects
+  --nomedia             Disable media data generation
+  --prefix=PREFIX       Sitemap name prefix
+  --version             show program's version number and exit
+  -h, --help            show this help message and exit
 
 
 {TODO шаблонные теги (бэкенд часть), контекстный процессор, виджеты}

@@ -267,6 +267,32 @@ spicy.core.siteskin предоставляет декораторы, облег�
 ---------------------
 Ниже приведены настройки модуля, которые вы можете переопределить в settings.py своего приложения.
 
+Настраиваем тему
+++++++++++++++++
+SITESKIN_SETTINGS_MODEL, ADMIN_THEME THEMES_PATH DEFAULT_THEME SPICY_THEME_FILE SPICY_THEME_PRODUCT_KEYS, SITESKIN_INDEX_VIEW, SITESKIN_CACHE_BACKEND, DEFAULT_TEMPLATE, 
+
+Настраиваем пажинатор
++++++++++++++++++++++
+OBJECTS_PER_PAGE, PAGES_FROM_START, PAGES_TO_END, DEBUG_ERROR_PAGES, OBJECTS_LIMIT (<- может перенести в Всякие разные?) 
+
+настраиваем карту сайта
++++++++++++++++++++++++
+SITEMAP_LOOKUP_MODEL
+SITEMAP_URL
+SITEMAP_GZIP_COMPRESSION
+SITEMAP_THUMB_SIZE
+SITEMAP_ROOT
+SITEMAP
+
+Всякие разные {TODO переименовать по смыслу}
+++++++++++++++++++++++++++++++++++++++++++++
+USE_RENDER_FROM_RESPONSE_LIKE_SSI 
+AJAX_API_VERSION
+ENABLE_INDEXATION
+USE_SANITIZER
+ALLOWED_HTML_CLASSES
+DATETIME_FORMAT
+
 Имя каталога с темами, по умолчанию ``../siteskins``: :: 
 
   THEMES_PATH = 'your/name/for/theme/folder'

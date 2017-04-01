@@ -153,9 +153,9 @@ spicy.core.siteskin предоставляет декораторы, облег�
 Команды manage.py
 -----------------
 
-::
-  Usage: manage.py collectstatic [options]
+Команда для сбора статики с учетом настроек модуля spicy.core.siteskin::
 
+  Usage: manage.py collectstatic [options]
 
   Options:
   -v VERBOSITY, --verbosity=VERBOSITY

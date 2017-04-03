@@ -153,8 +153,7 @@ spicy.core.siteskin предоставляет декораторы, облег�
 Команды manage.py
 -----------------
 
-::
-  Usage: manage.py collectstatic [options]
+::Usage: manage.py collectstatic [options]
 
 
   Options:
@@ -189,8 +188,7 @@ spicy.core.siteskin предоставляет декораторы, облег�
 
 create_sitemap 
 
-::
-  Usage: manage.py create_sitemap [options] 
+::Usage: manage.py create_sitemap [options] 
 
   Options:
   -v VERBOSITY, --verbosity=VERBOSITY

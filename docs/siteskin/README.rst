@@ -179,7 +179,7 @@ UTM-метки текущего запроса: ::
   
 Виджеты spicy.core.siteskin
 ---------------------------
-Предоставляются модели виджетов, которые могут быть использованы в frontend части, такие как автокомплитер для тегов, datepicker, datetimepicker и другие. Так как они требуют настройки на серверной стороне, подробнее см. в разделе `Для Django программиста > Виджеты spicy.core.siteskin <./README.rst#Виджеты-spicycoresiteskin-1>`_
+Предоставляются модели виджетов, которые могут быть использованы в frontend части, такие как автокомплитер для тегов, datepicker, datetimepicker и другие. Так как они требуют настройки на серверной стороне, подробнее см. в разделе `Для Django программиста > Виджеты и поля spicy.core.siteskin <./README.rst#Виджеты-и-поля-spicycoresiteskin-1>`_
 
 Для Django программиста
 =======================
@@ -187,7 +187,7 @@ UTM-метки текущего запроса: ::
 Настройка шаблонных тегов spicy.core.siteskin
 ---------------------------------------------
 
-Некоторые теги требуют добавления переменных в контекст шаблона, ниже приведена инструкция по их настройке.
+Некоторые теги требуют добавления переменных в контекст шаблона, ниже приведен пример по их настройке.
 
 Для работы тега ``pagination`` вы должны добавить в контекст шаблона переменную ``paginator`` - объект `django.core.paginator.Paginator <https://djbook.ru/rel1.4/topics/pagination.html#django.core.paginator.Paginator>`_.
 
@@ -389,7 +389,7 @@ URL до файла sitemap. По умолчанию значение ``''``. У
 
   SITEMAP_URL = 'your url to sitemap'
 
-Степень сжатия файла sitemap. Может быть целым числом от 1 (самое быстрое сжатие) до 9. Значение по умолчанию - 6::
+Степень сжатия файла sitemap. Может быть целым числом от 1 (самое быстрое сжатие) до 9. Значение по умолчанию 6::
 
   SITEMAP_GZIP_COMPRESSION = 6
 
@@ -411,6 +411,48 @@ URL до файла sitemap. По умолчанию значение ``''``. У
   ALLOWED_HTML_CLASSES = {}  # your classes as dict
   
 
-Виджеты spicy.core.siteskin
----------------------------
+Виджеты и поля spicy.core.siteskin
+----------------------------------
+Виджеты spicy.core.siteskin реализованы классы, унаследованные от Django ``forms.Field``. Они содержат метод ``render_js``, который автоматически добавляет js-код инициализации виджета на страницу при использовании этих полей в формах. Таким образом, вам достаточно указать поле spicy.core.siteskin в форме.
+
+Поле ``LabledCharField`` использует виджет ``LabledTextInput``, в шаблоне будет сгенерирован html: ::
+
+  <input <!-- attributes here --> type="text"/>
+  
+Поля ``LabledRegexField`` и ``LabledEmailField`` аналогичны, но используют дополнительную валидацию - проверка на совпадение с регулярным выражением и является ли введенное значение email'ом. Для ``LabledRegexField`` есть обязательный аргумент - ``regex``.
+
+Пример использования ``LabledRegexField`` для поля username: 
+
+  # yourapp.forms.py
+  from django import forms
+  from spicy.core.siteskin.widgets import LabledRegexField
+  
+  class LoginForm(forms.Form):
+    # additional fields
+    username = LabledRegexField(
+          label=_('Username or email'), max_length=30, regex=r'^[\w\-_\.@]+$', required=True)
+
+Поле ``LabledTextField`` использует виджет ``LabledTextarea``, в шаблоне будет сгенерирован html: ::
+
+  <textarea <!-- attributes here --> >value</textarea>
+
+Поле ``ModelChoiceAutocompleteField`` 
+
+Поле ``AutocompleteGenericModelField`` {TODO Нужно ли?! Использует spicy.xtag?}
+
+Поле ``DatePicker``
+
+Поле ``DateTimePicker``
+
+Поле ``Spinner``
+
+Поле ``CustomNullBooleanSelect``
+
+
+
+
+{TODO пример поля с автокомплитером}
+
+{TODO пример поля с датой}
+
 {TODO описать использование виджетов, их передачу в шаблоны}

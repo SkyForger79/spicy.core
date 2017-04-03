@@ -421,7 +421,7 @@ URL до файла sitemap. По умолчанию значение ``''``. У
   
 Поля ``LabledRegexField`` и ``LabledEmailField`` аналогичны, но используют дополнительную валидацию - проверка на совпадение с регулярным выражением и является ли введенное значение email'ом. Для ``LabledRegexField`` есть обязательный аргумент - ``regex``.
 
-Пример использования ``LabledRegexField`` для поля username: 
+Пример использования ``LabledRegexField`` для поля username: ::
 
   # yourapp.forms.py
   from django import forms

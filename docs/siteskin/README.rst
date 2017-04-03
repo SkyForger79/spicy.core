@@ -191,6 +191,35 @@ UTM-метки текущего запроса: ::
 
 Для работы тега ``pagination`` вы должны добавить в контекст шаблона переменную ``paginator`` - объект `django.core.paginator.Paginator <https://djbook.ru/rel1.4/topics/pagination.html#django.core.paginator.Paginator>`_.
 
+Пример использования вместе с ``NavigationFilter``. Следующий код позволит вам отфильтровать по возрасту и отсортировать по дате регистрации пользователей ``Profile`` и вывести их по 25 элементов на странице ::
+
+  # yourapp.views.py
+  from django.db.models import Q
+  from spicy.profile import defaults as pf_defaults
+  from spicy.utils import get_custom_model_class, NavigationFilter
+  
+  Profile = get_custom_model_class(pf_defaults.CUSTOM_USER_MODEL)
+  
+  @render_to('spicy.core.profile/profile_list.html')
+  def profile_filter_view(request):
+    nav = NavigationFilter(request, default_order='-date_joined',
+        accepting_filters=[('max_age', ''), ('min_age', '')]
+    )
+    search_args, search_kwargs = [], {}
+    
+    if nav.max_age:
+      search_args.extend(Q(age__lte=nav.max_age)
+    if nav.min_age:
+      search_args.extend(Q(age__gte=nav.min_age)  
+      
+    paginator = nav.get_queryset_with_paginator(
+      Profile, 
+      obj_per_page=25,     # reassing default 50
+      search_query=(search_args, search_kwargs))
+    object_list = paginator.current_page.object_list  # current_page is applied from request.GET['page']
+    
+    return dict(profiles=object_list)
+
 Декораторы spicy.core.siteskin
 ------------------------------
 spicy.core.siteskin предоставляет декораторы, облегчающие работу со темами - ``render_to``, ``ajax_request``, ``multi_view``. Их удобство в том, что разработчик освобождается от написания типичного кода для создания и возврата объекта ответа, настроек кэширования: ::

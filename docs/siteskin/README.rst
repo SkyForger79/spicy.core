@@ -329,9 +329,8 @@ spicy.core.siteskin предоставляет декораторы, облег�
 
 create_sitemap 
 
-Создает карту сайта
-
-::Usage: manage.py create_sitemap [options] 
+Создает карту сайта::
+Usage: manage.py create_sitemap [options] 
 
   Options:
   -v VERBOSITY, --verbosity=VERBOSITY

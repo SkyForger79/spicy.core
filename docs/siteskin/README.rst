@@ -130,7 +130,7 @@ spicy.core.siteskin предоставляет несколько тегов, к
 аналогичен ``pagination``, отличие в том, что для верстки пажинатора используется шаблон ``pagination.html``. Пример использования: :: 
 
   {% paginate 'layout' %}
-  {# or for deafult spicy layout #}
+  {# or for default spicy layout #}
   {% paginate %}
   
 Переменные контекста spicy.core.siteskin

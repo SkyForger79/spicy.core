@@ -330,7 +330,8 @@ spicy.core.siteskin предоставляет декораторы, облег�
 create_sitemap 
 
 Создает карту сайта::
-Usage: manage.py create_sitemap [options] 
+
+  Usage: manage.py create_sitemap [options] 
 
   Options:
   -v VERBOSITY, --verbosity=VERBOSITY
@@ -348,7 +349,7 @@ Usage: manage.py create_sitemap [options]
   --nomedia             Disable media data generation
   --prefix=PREFIX       Sitemap name prefix
   --version             show program's version number and exit
-  -h, --help            show this help message and exit
+      -h, --help            show this help message and exit
 
 
 {TODO шаблонные теги (бэкенд часть), контекстный процессор, виджеты}

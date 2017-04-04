@@ -362,7 +362,7 @@ create_sitemap
 
   DEBUG_ERROR_PAGES = True
 
-Отключить полноценный рендеринг части шаблона для тега ``{% generic_ssi %}``, в этом случае в месте использования тгеа будут вставлен html-комментарий ``<!--#include virtual="path to generic_ssi view" -->``. Значение по умолчанию True, шаблон отрисовывается::
+Отключить полноценный рендеринг части шаблона для тега ``{% generic_ssi %}``, в этом случае в месте использования тега будут вставлен html-комментарий ``<!--#include virtual="path to generic_ssi view" -->``. Значение по умолчанию True, шаблон отрисовывается::
 
   USE_RENDER_FROM_RESPONSE_LIKE_SSI = True
   
@@ -493,28 +493,17 @@ URL до файла sitemap. По умолчанию значение ``''``. У
     # additional fields
     username = LabledRegexField(
           label=_('Username or email'), max_length=30, regex=r'^[\w\-_\.@]+$', required=True)
+  
 
 Поле ``LabledTextField`` использует виджет ``LabledTextarea``, в шаблоне будет сгенерирован html: ::
 
   <textarea <!-- attributes here --> >value</textarea>
 
-Поле ``ModelChoiceAutocompleteField`` 
+Поле ``ModelChoiceAutocompleteField`` имеет 2 обязательных аргумента - ``queryset`` список объектов, из которых будет происходить поиск автокомплитера, и ``callback``. 
 
-Поле ``AutocompleteGenericModelField`` {TODO Нужно ли?! Использует spicy.xtag?}
-
-Поле ``DatePicker``
-
-Поле ``DateTimePicker``
-
-Поле ``Spinner``
-
-Поле ``CustomNullBooleanSelect``
+Поле ``AutocompleteGenericModelField`` 
+{TODO https://gitlab.com/spicycms.com/cms.chiefeditor/issues/26}
 
 
-
-
-{TODO пример поля с автокомплитером}
-
-{TODO пример поля с датой}
-
-{TODO описать использование виджетов, их передачу в шаблоны}
+Поля ``DatePicker`` и ``DateTimePicker``, ``Spinner``
+{TODO https://gitlab.com/spicycms.com/cms.chiefeditor/issues/27}

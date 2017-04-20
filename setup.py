@@ -21,7 +21,7 @@ def long_description():
 
 setup(
     name='spicy',
-    version='1.2.1',
+    version='1.2.2',
 
     author='Burtsev Alexander',
     author_email='ab@bramabrama.com',
@@ -86,7 +86,7 @@ setup(
     },
     classifiers=[
         'Framework :: Django',
-        'Development Status :: 1.2.1',
+        'Development Status :: 1.2.2',
         'Topic :: Internet',
         'License :: OSI Approved :: BSD License',
         'Intended Audience :: Developers',

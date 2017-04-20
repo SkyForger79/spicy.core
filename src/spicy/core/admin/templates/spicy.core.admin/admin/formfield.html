@@ -1,5 +1,5 @@
 {% spaceless %}
-{% load url from future %}
+{% load url from future %}{% load staticfiles %}
 {# new admin #}
 
 {% if type == 'li-file' %}
@@ -286,9 +286,10 @@ $(function(){
 })
 </script>
   {% else %}
+
   <select name="{{ field.html_name }}" id="id_{{ field.html_name }}" class="chzn-select">
     {% for option_id, name in field.field.choices %}
-    <option value="{{ option_id }}" {% if field.value|stringformat:"s" == option_id|stringformat:"s" %}selected="on"{% endif %}>{{ name }}</option>
+    <option value="{{ option_id }}" {% if field.value|stringformat:"s" == option_id|stringformat:"s" %}selected="on"{% endif %}>{% if name.term_display %}{{ name.term_display }}{% else %}{{ name }}{% endif %}</option>
     {% endfor %}
   </select>
   {% endif %}
@@ -311,6 +312,33 @@ $(function(){
   <div class="note pull-right">{{ field.help_text }}</div>
   {% endif %}
 </li>
+
+{% elif type == 'li-tree-select2' %}
+
+    <!-- scripts for select2-tree widget -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.6/select2-bootstrap.min.css" rel="stylesheet" />
+    <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+    <script src="{% static 'spicy.core.admin/js/jquery.select2tree.js' %}"></script>
+
+    <li class="input {{ classes }}" {% if id %}id="{{ id }}"{% endif %}>
+        {{ label }}
+        <select id="id_{{ field.html_name }}" multiple name="{{ field.html_name }}">
+            {% for opt_id, opt in field.field.choices %}
+                <option value="{{ opt_id }}" {% if opt.vocabulary %}parent="{{ opt.vocabulary.pk }}"{% endif %}>{% if opt.term_display %}{{ opt.term_display }}{% else %}{{ opt }}{% endif %}</option>
+            {% endfor %}
+        </select>
+        <script type="text/javascript">
+            $(function() {
+                $("#id_{{ field.html_name }}").select2tree();
+                {% if field.value %}
+                    $("#id_{{ field.html_name }}").val({{ field.value }}).trigger('change');
+                {% endif %}
+            });
+        </script>
+    </li>
 
 {% elif type == 'table-formset'%}
 <div class="row-fluid item" id="fset{{ form.prefix }}">
@@ -351,17 +379,19 @@ $(function(){
 	{% endfor %}
       </ul>
     </div>
-      
-</div>
-<script>
-$(document).ready(function(){
-  $('#fset{{ form.prefix }} tbody tr').formset({
-    addText: '{% if not form.no_add %}<div class="padded"><button class="btn btn-green"><i class="icon-plus-sign"></i> Добавить</button></div>{% endif %}',
 
-    deleteText: '{% if form.can_delete %}<button class="btn btn-red"><i class="icon-trash"></i></button>{% endif %}',
-    prefix: '{{ form.prefix }}'
-  });
-});
+</div>
+<script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+<script>
+    $(document).ready(function(){
+      $('#fset{{ form.prefix }} tbody tr').formset({
+        addText: '{% if not form.no_add %}<div class="padded"><button class="btn btn-green"><i class="icon-plus-sign"></i> Добавить</button></div>{% endif %}',
+
+        deleteText: '{% if form.can_delete %}<button class="btn btn-red"><i class="icon-trash"></i></button>{% endif %}',
+        prefix: '{{ form.prefix }}'
+      });
+    });
 </script>
 {% endif %}
 

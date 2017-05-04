@@ -1,25 +1,27 @@
 (function($) {
     $.fn.select2tree = function(options, field_id) {
-        var defaults = {
-            language: "en",
-            theme: "bootstrap",
-        };
-        var opts = $.extend(defaults, options);
-        opts.templateResult = function(data, container) {
-            if(data.element) {
-                //insert span element and add 'parent' property
-                var $wrapper = $("<span></span><span>" + data.text + "</span>");
-                var $element = $(data.element);
-                $(container).attr("val", $element.val());
-                if($element.attr("parent")) {
-                    $(container).attr("parent", $element.attr("parent"));
+        return this.each(function() {
+            var defaults = {
+                language: "en",
+                theme: "bootstrap",
+            };
+            var opts = $.extend(defaults, options);
+            opts.templateResult = function (data, container) {
+                if (data.element) {
+                    //insert span element and add 'parent' property
+                    var $wrapper = $("<span></span><span>" + data.text + "</span>");
+                    var $element = $(data.element);
+                    $(container).attr("val", $element.val());
+                    if ($element.attr("parent")) {
+                        $(container).attr("parent", $element.attr("parent"));
+                    }
+                    return $wrapper;
+                } else {
+                    return data.text;
                 }
-                return $wrapper;
-            } else {
-                return data.text;
-            }
-        };
-        $(this).select2(opts).on("select2:open", open);
+            };
+            $(this).select2(opts).on("select2:open", open);
+        });
     };
     function recursiveParentSelection(child, parentVals){
         var parentVal = child.attr('parent');
@@ -105,4 +107,5 @@
         }, 0);
     }
 })(jQuery);
+
 

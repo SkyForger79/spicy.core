@@ -332,7 +332,7 @@ $(function(){
         </select>
         <script type="text/javascript">
             $(function() {
-                $("#id_{{ field.html_name }}").select2tree();
+                $("#id_{{ field.html_name }}").select2tree(field_id='#id_{{ field.html_name }}');
                 {% if field.value %}
                     $("#id_{{ field.html_name }}").val({{ field.value }}).trigger('change');
                 {% endif %}

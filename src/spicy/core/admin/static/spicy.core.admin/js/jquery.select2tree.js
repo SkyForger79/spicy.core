@@ -1,8 +1,8 @@
 (function($) {
-    $.fn.select2tree = function(options) {
+    $.fn.select2tree = function(options, field_id) {
         var defaults = {
             language: "en",
-            theme: "bootstrap"
+            theme: "bootstrap",
         };
         var opts = $.extend(defaults, options);
         opts.templateResult = function(data, container) {
@@ -26,11 +26,11 @@
         var parent = $('li[val=' + parentVal + ']');
         parentVals.push(parentVal);
         if (parent.attr('parent') != undefined) { recursiveParentSelection(parent, parentVals); }
-        else { $('#id_{{ field.html_name }}').val(parentVals).trigger('select2:select'); }
+        else { $(field_id).val(parentVals).trigger('select2:select'); }
     }
     function getExistedValues(){
         var vals = [];
-        $('#id_{{ field.html_name }} option').each(function(){
+        $(field_id + ' option').each(function(){
             var optionText = $(this).text();
             var optVal = $(this).val();
             $('.select2-selection__choice').each(function(){
@@ -105,3 +105,4 @@
         }, 0);
     }
 })(jQuery);
+

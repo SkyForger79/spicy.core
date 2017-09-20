@@ -67,7 +67,7 @@ setup(
         'django-debug-toolbar',
         'django-devserver',
         'django-extensions',
-        'django-autocomplete-light==2.0.0a15',
+        'django-autocomplete-light==1.4.14',
 
         'xlrd',
         'xlwt'

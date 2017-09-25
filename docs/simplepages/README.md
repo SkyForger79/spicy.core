@@ -56,6 +56,8 @@
 ## Для Django-разработчика:
 
 ### Добавление модуля в проект
+Установите модуль с помощью pip: ``pip install git+https://github.com/spicycms/spicy.core@1.2.1#egg=spicy``.
+
 Используя сборку SpicyCMS, для подключения spicy.core.simplepages достаточно добавить его в settings.py:
 
     INSTALLED_APPS = [

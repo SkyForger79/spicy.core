@@ -1,11 +1,14 @@
+# coding: utf-8
 from django.conf import settings
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 
 from django.contrib.sites.models import Site
 
-from siteskin.models import Block
-from siteskin.editor import Renderer
+# нет такой модели
+# from siteskin.models import Block
+# нет такого модуля
+# from siteskin.editor import Renderer
 
 TEMPLATE_RESULT = '''
 <div class="place">
@@ -55,9 +58,9 @@ class BlockTestCase(TestCase):
    def tearDown(self):
       settings.SITE_ID = 1
 
-   def test_create_block(self):
-      rdr = Renderer(Block.objects.all())
-
-      print '@@@', rdr.html()
-
-      self.assertEqual(rdr.html(), TEMPLATE_RESULT)
+   # def test_create_block(self):
+   #    rdr = Renderer(Block.objects.all())
+   #
+   #    print '@@@', rdr.html()
+   #
+   #    self.assertEqual(rdr.html(), TEMPLATE_RESULT)

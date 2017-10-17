@@ -22,9 +22,7 @@ class DeveloperForm(forms.ModelForm):
     class Meta:
         model = SettingsModel
         fields = (
-            'sentry_key', 'redmine_key', 'redmine_tracker_url',
-            'redmine_username', 'redmine_password', 'redmine_project',
-            'enable_debug_toolbar', 'debug_mode')
+            'sentry_key', 'enable_debug_toolbar', 'debug_mode')
 
 
 class ApplicationForm(forms.ModelForm):

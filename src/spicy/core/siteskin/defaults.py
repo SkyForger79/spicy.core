@@ -1,15 +1,17 @@
 import os
 from django.conf import settings
-
+#from spicy.core.simplepages.defaults import SIMPLE_PAGE_MODEL
 
 SITESKIN_SETTINGS_MODEL = getattr(
     settings, 'SITESKIN_SETTINGS_MODEL', 'siteskin.Siteskin')
 
-
 ADMIN_THEME = getattr(settings, 'ADMIN_THEME', None)
+THEMES_PATH = getattr(settings, 'THEMES_PATH', os.path.abspath('siteskins'))
+
+# XXX deprecated loaders.py 64L
+#ABSOLUTE_THEME_PATH = getattr(settings, 'THEMES_PATH', '')
 DEFAULT_THEME = getattr(settings, 'DEFAULT_THEME', 'current')
-THEMES_PATH = getattr(settings, 'THEMES_PATH', os.path.abspath('../siteskins'))
-ABSOLUTE_THEME_PATH = getattr(settings, 'THEMES_PATH', '')
+
 SPICY_THEME_FILE = getattr(settings, 'SPICY_THEME_FILE', 'spicy.theme')
 
 SPICY_THEME_PRODUCT_KEYS = getattr(
@@ -34,6 +36,7 @@ USE_RENDER_FROM_RESPONSE_LIKE_SSI = getattr(
     settings, 'USE_RENDER_FROM_RESPONSE_LIKE_SSI', True)
 DEFAULT_TEMPLATE = getattr(settings, 'DEFAULT_TEMPLATE', 'default.html')
 
+SITEMAP_LOOKUP_MODEL = getattr(settings, 'SITEMAP_LOOKUP_MODEL', 'none')
 SITEMAP_URL = getattr(settings, 'SITEMAP_URL', '')
 SITEMAP_GZIP_COMPRESSION = 6  # Must be in 1-9 interval, 1 is fastest.
 #MAX_MESSAGE_STRING_LENGTH = 1000
@@ -67,3 +70,35 @@ ALLOWED_HTML_ATTRIBUTES = [
 # iframe video embeds from youtube
 ALLOWED_HTML_CLASSES = getattr(settings, 'ALLOWED_HTML_CLASSES', {})
 ESCAPE_INVALID_TAGS = True
+
+SITEMAP_THUMB_SIZE = getattr(settings, 'SITEMAP_THUMB_SIZE', (300, 300))
+SITEMAP_ROOT = getattr(settings, 'SITEMAP_ROOT', settings.PROJECT_ROOT)
+SITEMAP = getattr(
+    settings, 'SITEMAP',
+    [
+    # spicy.presscenter example
+    # {
+    #     'model': pr_defaults.CUSTOM_DOCUMENT_MODEL,
+    #     'filter': {'is_public': True, 'pub_date__lte': now},
+    #     'gen': {
+    #         'loc': lambda x: x.get_absolute_url(),
+    #         'changefreq': 'daily',
+    #         'priority':'0.8',
+    #         'has_media': True
+    #     },
+    # },
+    # {
+    #     'model': SIMPLE_PAGE_MODEL,
+    #     'filter': {'sites__id__exact': settings.SITE_ID},
+    #     'exclude': {'url__startswith': '/test/'},
+    #     'gen': {
+    #         'loc': lambda x: x.get_absolute_url(),
+    #         'changefreq': 'daily',
+    #         'priority': '0.7'
+    #     }
+    # }
+    ]
+)
+
+DATETIME_FORMAT = getattr(settings, 'DATETIME_FORMAT', '%Y-%m-%dT%H:%M:%S+03:00')
+OBJECTS_LIMIT = getattr(settings, 'OBJECTS_LIMIT', 20000)

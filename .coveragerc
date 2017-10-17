@@ -1,15 +1,14 @@
 [run]
 source =
     src
-branch = False
+branch = True
 omit =
-    src/spicy/core/siteskin/static/*
     */fixtures/*
+    src/spicy/core/siteskin/static/*
     src/spicy/core/admin/static/*
     src/spicy/templates/*
     */locale/*
     docs/*
-    sql/*
     
 [report]
 exclude_lines =
@@ -17,4 +16,4 @@ exclude_lines =
     def __repr__
     raise AssertionError
     raise NotImplementedError
-if __name__ == .__main__.:
+    if __name__ == .__main__.:

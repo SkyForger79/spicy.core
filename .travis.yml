@@ -1,0 +1,23 @@
+language: python
+
+python:
+  - 2.7
+
+sudo: false
+
+addons:
+  srcclr: true
+  
+env:
+  - DJANGO_SETTINGS_MODULE="spicy.tests.settings"
+
+install: 
+  - pip install -U pip>=8.0
+  - pip install .
+  - pip install -r requirements_dev.txt
+
+script: 
+  - django-admin.py syncdb --noinput
+  - coverage run -m unittest discover
+  
+after_success: coveralls

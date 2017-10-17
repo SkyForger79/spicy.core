@@ -15,9 +15,10 @@ from spicy.core.service.api import GENERIC_CONSUMER
 class ServiceProviderForUser(api.Interface):
     name = 'test_service_for_user'
     label = _('Test Service for User')
-    
+
     provider_schema = dict(
-        user = api.BillingProvider,
+        # user = api.BillingProvider,
+        user = api.Provider,
         )
 
 
@@ -28,16 +29,19 @@ class FakeService:
 class ServiceProviderForAll(api.Interface):
     name = 'test_service_for_all'
     label = _('Test Service for All')
-    
+
     provider_schema = dict(
-        GENERIC_CONSUMER=api.BillingProvider
+        # GENERIC_CONSUMER=api.BillingProvider
+        GENERIC_CONSUMER=api.Provider
         )
 
 
 class ServiceRegisterTestCase(TestCase):
     def setUp(self):
-        api.register.add(ServiceProviderForUser)
-        api.register.add(ServiceProviderForAll)
+        api.register.add(
+            'spicy.core.service.tests.test_api.ServiceProviderForUser')
+        api.register.add(
+            'spicy.core.service.tests.test_api.ServiceProviderForAll')
 
     def tearDown(self):
         api.register.remove('test_service_for_user')
@@ -48,13 +52,16 @@ class ServiceRegisterTestCase(TestCase):
         self.assertTrue('test_service_for_all' in api.register)
 
     def test_register_fake(self):
-        self.assertRaises(api.WrongServiceAPI, api.register.add, FakeService)
-        
+        self.assertRaises(api.WrongServiceAPI,
+                          api.register.add,
+                          'spicy.core.service.tests.test_api.FakeService')
+
     def test_remove(self):
         api.register.remove('test_service_for_user')
         self.assertFalse('test_service_for_user' in api.register)
-        api.register.add(ServiceProviderForUser)
-    
+        api.register.add(
+            'spicy.core.service.tests.test_api.ServiceProviderForUser')
+
     def test_does_not_exist(self):
         self.assertRaises(api.ServiceDoesNotExist,
                           api.register.remove, 'test_service_fake')
@@ -63,9 +70,11 @@ class ServiceRegisterTestCase(TestCase):
 class ProviderTestCase(TestCase):
     def setUp(self):
         self.consumer, created = User.objects.get_or_create(username='test')
-                
-        api.register.add(ServiceProviderForUser)
-        api.register.add(ServiceProviderForAll)
+
+        api.register.add(
+            'spicy.core.service.tests.test_api.ServiceProviderForUser')
+        api.register.add(
+            'spicy.core.service.tests.test_api.ServiceProviderForAll')
 
     def tearDown(self):
         api.register.remove('test_service_for_user')
@@ -75,11 +84,11 @@ class ProviderTestCase(TestCase):
 #         api.register.remove('test_service_for_user')
 
 #         self.assertTrue(isinstance(ServiceProviderForUser.model, str))
-        
+
 #         api.register.add(ServiceProviderForUser)
 #         self.assertTrue(isinstance(
 #                 ServiceProviderForUser.model, models.Model))
-        
+
 
     def test_get_provider(self):
         #provider = api.register.get(
@@ -93,7 +102,7 @@ class ProviderTestCase(TestCase):
         provider = api.register.get(
             'test_service_for_user', self.consumer)
         response = self.client.get(
-            reverse('service:admin:test_service_for_user_user', 
+            reverse('service:admin:test_service_for_user_user',
                     args=[self.consumer.id]))
         self.assertEqual(response.status_code, 200)
 
@@ -101,7 +110,7 @@ class ProviderTestCase(TestCase):
         provider = api.register.get(
             'test_service_for_user', self.consumer)
         response = self.client.get(
-            reverse('service:admin:test_service_for_all', 
+            reverse('service:admin:test_service_for_all',
                     args=['user', self.consumer.id]))
         self.assertEqual(response.status_code, 200)
 
@@ -112,10 +121,12 @@ class ServiceInterfaceTestCase(TestCase):
         self.consumer_2, created = User.objects.get_or_create(username='test2')
 
         self.current_site = Site.objects.get_current()
-                
-        api.register.add(ServiceProviderForUser)
-        api.register.add(ServiceProviderForAll)
-        
+
+        api.register.add(
+            'spicy.core.service.tests.test_api.ServiceProviderForUser')
+        api.register.add(
+            'spicy.core.service.tests.test_api.ServiceProviderForAll')
+
     def tearDown(self):
         api.register.remove('test_service_for_user')
         api.register.remove('test_service_for_all')
@@ -124,9 +135,9 @@ class ServiceInterfaceTestCase(TestCase):
         api.register[
             'test_service_for_user'].enable_site(self.current_site)
         self.assertEqual(
-            list(api.register['test_service_for_user'].get_sites()), 
+            list(api.register['test_service_for_user'].get_sites()),
             [self.current_site])
-        
+
         api.register[
             'test_service_for_user'].disable_site(self.current_site)
         self.assertEqual(
@@ -142,7 +153,7 @@ class ServiceInterfaceTestCase(TestCase):
         self.assertTrue(is_ok)
 
     def test_get_provider_ctype(self):
-        """Get provider instance for the defined content_type, 
+        """Get provider instance for the defined content_type,
         using provider's schema.
         """
         user_provider = api.register.get(
@@ -156,7 +167,7 @@ class ServiceInterfaceTestCase(TestCase):
         all_provider = api.register.get(
             'test_service_for_all', self.consumer_2)
         assert all_provider.instance.consumer_id == self.consumer_2.id
-        
+
         all_provider = api.register.get(
             'test_service_for_all', self.current_site)
         assert all_provider.instance.consumer_id == self.current_site.id

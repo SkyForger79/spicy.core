@@ -1,13 +1,15 @@
 """`spicy.core.profile.models` test cases."""
 import os
-os.environ['DJANGO_SETTINGS_MODULE'] = 'spicy.core.profile.tests.settings'
+
+from django.contrib.sites.models import Site
+
+os.environ['DJANGO_SETTINGS_MODULE'] = 'spicy.tests.settings'
 
 import unittest
 # from django.contrib.auth.models import User
-from spicy.core.profile.utils import get_concrete_profile
+# from spicy.core.profile.utils import get_concrete_profile
 
 
-import spicy
 from spicy.core.profile.models import TestProfile
 
 
@@ -26,7 +28,7 @@ class TestSpicyProfileModels(unittest.TestCase):
 
         # user = User.objects
 
-        Profile = get_concrete_profile()
+        # Profile = get_concrete_profile()
         profile = TestProfile.objects.create_inactive_user(
             'test@email.test',
             username='test',

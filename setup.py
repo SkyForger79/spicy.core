@@ -21,14 +21,14 @@ def long_description():
 
 setup(
     name='spicy',
-    version=version,
+    version='1.2.2',
 
     author='Burtsev Alexander',
-    author_email='eburus@gmail.com',
-    description='spicy',
+    author_email='ab@bramabrama.com',
+    description='SpicyCMS core modules',
     license='BSD',
     keywords='django, cms',
-    url='', # TODO: define an url
+    url='http://spicycms.com', # TODO: define an url
 
     packages=find_packages('src'),
     package_dir={'': 'src',},
@@ -38,13 +38,13 @@ setup(
     long_description=long_description(),
 
     install_requires=[
-        'Django==1.4.11',
+        'Django==1.5.12',
         'Fabric==1.6',
-        'Sphinx==1.2b1',
+        #'Sphinx==1.2b1',
         'numpydoc==0.4',
         'raven==3.2.1',
-        'python-memcached==1.48',
-        'uwsgi',
+        #'python-memcached==1.48',
+        #'uwsgi',
 
         # spicy.scripts.py: deploy
         # 'configparser==3.3.0r2',
@@ -55,14 +55,16 @@ setup(
         'pytils==0.2.3',
         'pytz==2013b',
         'html5lib==0.95',
-        'python-redmine==0.8.1',
+        #'python-redmine==0.8.1',
 
-        #'django-simple-captcha', # spicy.core.profile
+        'django-simple-captcha<0.4.7', # spicy.core.profile
+        'Pillow==3.4.2',
         #'django-social-auth==0.6.1',# spicy.core.profile
 
         # debug deps.
         # 'logutils', #TODO: version?
-        'numpydoc',
+        'pycrypto==2.6.1',  # for Fabric API
+        'numpydoc==0.4',
         'django-nose==1.2',
         'django-debug-toolbar',
         'django-devserver',
@@ -84,7 +86,7 @@ setup(
     },
     classifiers=[
         'Framework :: Django',
-        'Development Status :: 1.1',
+        'Development Status :: 1.2.2',
         'Topic :: Internet',
         'License :: OSI Approved :: BSD License',
         'Intended Audience :: Developers',

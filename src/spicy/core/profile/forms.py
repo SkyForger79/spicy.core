@@ -5,6 +5,7 @@ from copy import copy
 from captcha.conf.settings import get_challenge, CAPTCHA_FLITE_PATH
 from captcha.models import CaptchaStore
 from captcha.fields import CaptchaField, CaptchaTextInput, ImproperlyConfigured
+
 from django.conf import settings
 from django import forms
 from django.contrib.admin import widgets
@@ -16,6 +17,7 @@ from django.core.urlresolvers import reverse
 from django.db import transaction
 from django.forms.extras.widgets import SelectDateWidget
 from django.utils.translation import ugettext_lazy as _
+
 from spicy.core.siteskin.widgets import LabledRegexField, LabledEmailField
 from spicy.utils.models import get_custom_model_class
 from . import defaults
@@ -326,6 +328,7 @@ class SignupForm(forms.Form, ValidateEmailMixin):
             profile.sites.add(*Site.objects.all())
             profile.save()
 
+            # XXX deprecated
             if 'mediacenter' in settings.INSTALLED_APPS:
                 from mediacenter.models import Library
                 # add medialibrary for the profile userpics
@@ -494,6 +497,16 @@ class AcceptUserAgreementForm(forms.ModelForm):
         fields = ['accept_agreement']
 
 
+# XXX rename
+class DynamicProfileColumnForm(forms.Form):
+    class Meta:
+        model = Profile
+        fields = [
+            'username', 'email', 'password', 'first_name',
+            'second_name', 'last_name', 'phone', 'subscribe_me'
+        ]
+
+
 class HiddenCaptchaWidget(forms.MultiWidget):
     def __init__(self, attrs=None):
         widgets = forms.HiddenInput, forms.HiddenInput
@@ -620,11 +633,6 @@ class ProfileUploadForm(forms.Form):
     )
     search_text = forms.CharField(label=_('Search'), required=False)
 
-DynamicProfileColumnForm = type(
-    'DynamicProfileColumnForm', (forms.Form,),
-    dict(
-        (field,
-         forms.BooleanField(
-             initial=True, label=Profile.get_field_label(field), required=False))
-        for field in Profile.get_exported_fields()
-    ))
+
+
+

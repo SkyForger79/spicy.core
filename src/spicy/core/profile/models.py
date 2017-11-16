@@ -257,7 +257,7 @@ class AbstractProfile(User):
         )
 
     def save(self, *args, **kwargs):
-        is_old = bool(self.id or False)
+        is_old = bool(self.pk or False)
         if is_old:
             old = self.__class__.objects.get(pk=self.pk)
 

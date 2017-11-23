@@ -10,7 +10,7 @@ from uuid import uuid4
 
 from django.conf import settings
 from django.contrib.auth.models import User, UserManager, Group, Permission
-from django.contrib.auth.models import AnonymousUser as BasicAnonymousUser
+from django.contrib.auth.models import AnonymousUser as BasicAnonymousUser, AbstractBaseUser
 from django.contrib.sites.managers import CurrentSiteManager
 from django.contrib.sites.models import Site
 from django.core.mail import send_mail
@@ -221,10 +221,8 @@ class ProfileManager(UserManager):
         return count
 
 
-class AbstractProfile(User):
+class AbstractProfile(AbstractBaseUser):
     IS_ACTIVATED = 'Already activated'
-
-    user_ptr = models.OneToOneField(User, parent_link=True)
     activation_key = models.CharField(_('activation key'), max_length=40)
     is_banned = models.BooleanField(
         _('user is banned'), blank=True, default=defaults.MANUAL_ACTIVATION)

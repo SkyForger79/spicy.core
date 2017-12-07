@@ -46,7 +46,7 @@ setup(
         'uwsgi',
 
         # TODO check deps.
-        'django-autocomplete-light==2.0.0a15',
+        'django-autocomplete-light==1.1.14',
         'configparser==3.5.0',
         'Jinja2==2.9.5',
         'xlrd==1.0.0',

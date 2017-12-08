@@ -18,14 +18,14 @@ def base(request):
         for srv in api.register.get_list(stype='content')]
 
     current_admin_base = 'spicy.core.admin/admin/base.html'
-    if defaults.ADMIN_THEME is not None:
-        current_admin_base = defaults.ADMIN_THEME + '/base.html'
+    if defaults.ADMIN_SITESKIN is not None:
+        current_admin_base = defaults.ADMIN_SITESKIN + '/base.html'
 
     return {
         'current_site': current,
 
         'current_admin_base': current_admin_base,
-        'ADMIN_THEME': defaults.ADMIN_THEME,
+        'ADMIN_SITESKIN': defaults.ADMIN_SITESKIN,
 
         # BBB deprecated
         'current_base': 'base.html',

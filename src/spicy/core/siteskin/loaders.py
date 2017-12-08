@@ -30,13 +30,13 @@ class ThemeStaticFinder(finders.FileSystemFinder):
         prefix = None
         
         root = safe_join(
-            defaults.THEMES_PATH, theme or utils.get_siteskin_settings().theme,
+            defaults.SITESKINS_PATH, theme or utils.get_siteskin_settings().theme,
             'static')
 
         if not os.path.isdir(root):
             print_error(
                 'ERROR!\n'
-                'Check THEMES_PATH and DEFAULT_THEME(CURRENT_THEME) settings vars\n'
+                'Check SITESKINS_PATH and DEFAULT_SITESKIN(CURRENT_SITESKIN) settings vars\n'
                 'Cannt lookup `static` and `templates` dirs inside\n'
                 'Create siteskin theme path for static ``mkdir -p %s``\n'%root
             )
@@ -62,14 +62,14 @@ class ThemeTemplateLoader(filesystem.Loader):
             theme = utils.get_siteskin_settings().theme
         except Exception, e:
             print e
-            if defaults.DEFAULT_THEME:
-                theme = defaults.DEFAULT_THEME
+            if defaults.DEFAULT_SITESKIN:
+                theme = defaults.DEFAULT_SITESKIN
             else:
                 raise NotImplementedError(
-                    'Set ABSOLUTE_THEME_PATH in settings.py')
+                    'Set ABSOLUTE_SITESKIN_PATH in settings.py')
 
         template_dir = safe_join(
-            defaults.THEMES_PATH, theme,
+            defaults.SITESKINS_PATH, theme,
             'templates')
 
         #if defaults.DEBUG_ERROR_PAGES

@@ -66,7 +66,7 @@ SERVICES = [
 ]
 
 # use specific example themes path for tests
-THEMES_PATH = os.path.abspath('src/spicy/siteskin-examples')
+SITESKINS_PATH = os.path.abspath('src/spicy/siteskin-examples')
 
 
 TEMPLATE_LOADERS = (
@@ -89,7 +89,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.abspath(os.path.join(THEMES_PATH, STATIC_URL))
+STATIC_ROOT = os.path.abspath(os.path.join(SITESKINS_PATH, STATIC_URL))
 
 STATICFILES_FINDERS = (
     'spicy.core.siteskin.loaders.ThemeStaticFinder',

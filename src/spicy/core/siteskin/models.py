@@ -9,7 +9,7 @@ from spicy.core.simplepages import defaults as sp_defaults
 class Siteskin(models.Model):
     theme = models.CharField(
         _('Theme'), choices=get_siteskin_themes(),
-        default=defaults.DEFAULT_THEME, max_length=255)
+        default=defaults.DEFAULT_SITESKIN, max_length=255)
     admin_obj_per_page = models.PositiveSmallIntegerField(
         _('Admin obj per page'), default=50)
     site_obj_per_page = models.PositiveSmallIntegerField(

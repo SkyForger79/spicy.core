@@ -109,7 +109,7 @@ Site skin - it's
 
 | Variable | Default | Description |
 | -------- | ------- | ----------- |
-| THEMES_PATH         | ../siteskins     | The path for folder containing site skins directories |
+| SITESKINS_PATH         | ../siteskins     | The path for folder containing site skins directories |
 
 
 ### spicy.core.simplepages

@@ -32,9 +32,9 @@ def get_themes_from_path(path, version=None):
     try:
         # for theme in os.path.walk(path, get_theme_dir, None):
         for theme in os.listdir(path):
-            theme_path = os.path.join(defaults.THEMES_PATH, theme)
+            theme_path = os.path.join(defaults.SITESKINS_PATH, theme)
             if os.path.isdir(theme_path):
-                if defaults.SPICY_THEME_FILE in os.listdir(theme_path):
+                if defaults.SPICY_SITESKIN_FILE in os.listdir(theme_path):
                     # TODO
                     # check theme version compatibility
 
@@ -46,7 +46,7 @@ def get_themes_from_path(path, version=None):
 
 
 def get_siteskin_themes():
-    return get_themes_from_path(defaults.THEMES_PATH)
+    return get_themes_from_path(defaults.SITESKINS_PATH)
 
 
 def get_render_from_response(request, url, get_forwarding=False):

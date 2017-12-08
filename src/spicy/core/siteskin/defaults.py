@@ -5,17 +5,17 @@ from django.conf import settings
 SITESKIN_SETTINGS_MODEL = getattr(
     settings, 'SITESKIN_SETTINGS_MODEL', 'siteskin.Siteskin')
 
-ADMIN_THEME = getattr(settings, 'ADMIN_THEME', None)
-THEMES_PATH = getattr(settings, 'THEMES_PATH', os.path.abspath('siteskins'))
+ADMIN_SITESKIN = getattr(settings, 'ADMIN_SITESKIN', None)
+SITESKINS_PATH = getattr(settings, 'SITESKINS_PATH', os.path.abspath('siteskins'))
 
 # XXX deprecated loaders.py 64L
-#ABSOLUTE_THEME_PATH = getattr(settings, 'THEMES_PATH', '')
-DEFAULT_THEME = getattr(settings, 'DEFAULT_THEME', 'current')
+#ABSOLUTE_SITESKIN_PATH = getattr(settings, 'SITESKINS_PATH', '')
+DEFAULT_SITESKIN = getattr(settings, 'DEFAULT_SITESKIN', 'current')
 
-SPICY_THEME_FILE = getattr(settings, 'SPICY_THEME_FILE', 'spicy.theme')
+SPICY_SITESKIN_FILE = getattr(settings, 'SPICY_SITESKIN_FILE', 'spicy.core')
 
-SPICY_THEME_PRODUCT_KEYS = getattr(
-    settings, 'SPICY_THEME_PRODUCT_KEYS',
+SPICY_SITESKIN_PRODUCT_KEYS = getattr(
+    settings, 'SPICY_SITESKIN_PRODUCT_KEYS',
     ['spicy.light', 'spicy.business', 'spicy.media', 'spicy.ecom']
 )
 

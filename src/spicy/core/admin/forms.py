@@ -22,7 +22,7 @@ class DeveloperForm(forms.ModelForm):
     class Meta:
         model = SettingsModel
         fields = (
-            'sentry_key', 'enable_debug_toolbar', 'debug_mode')
+            'sentry_key', 'enable_debug_toolbar', 'debug_mode',)
 
 
 class ApplicationForm(forms.ModelForm):

@@ -116,8 +116,7 @@ class CustomVariable(models.Model):
         max_length=100)
 
     sentry_key = models.CharField(_('Sentry key'), max_length=255)
-    redmine_key = models.CharField(_('Redmine key'), max_length=255)
-    redmine_project = models.CharField(_('Redmine project URL'), max_length=255)
+    
 
     admins_emails = models.TextField(_('Admins emails'), blank=True)
     managers_emails = models.TextField(_('Managers emails'), blank=True)

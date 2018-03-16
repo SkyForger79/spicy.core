@@ -8,8 +8,6 @@
         {% with perms.profile.view_profile as view_profile %}
             {% with perms.profile.delete_profile as delete_profile %}
 
-                {% if objects_list.count > 0 %}
-
                     <div class="container-fluid padded">
                     <div class="row-fluid">
                     <div class="span12">
@@ -108,8 +106,7 @@
                                 {% for profile in objects_list %}
                                     <tr class="{% cycle 'odd' 'even' %}">
                                         <td class="icon">
-                                            <input type="checkbox" name="select" class="groupSelectCheckbox"
-                                                   id="groupSelect_profile_{{ profile.id }}" autocomplete="off"/>
+                                            {{ forloop.counter }}
                                         </td>
                                         <td>
                                             {% if change_profile or view_profile %}
@@ -128,8 +125,8 @@
                                         <td style="text-align: center;">
                                                 <i class='{{ profile.subscribe_me|yesno:"green icon-ok,icon-remove red" }}'></i>
                                         </td>
-                                        <td>{{ profile.date_joined|date:"j M Y" }}</td>
                                         <td>{{ profile.last_login|date:"j M Y" }}</td>
+                                        <td>{{ profile.date_joined|date:"j M Y" }}</td>                                        
                                         <td>{% if profile.groups.all.count %}
                                             {% for group in profile.groups.all %}
                                                 <div class="state blocked">
@@ -169,7 +166,6 @@
                         </div>
                     </div>
 
-                {% endif %}
             </div>
             </div>
                 </div>

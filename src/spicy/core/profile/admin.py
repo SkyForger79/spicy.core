@@ -228,9 +228,10 @@ def profiles_list(request):
         ('group', None), ('search_text', ''), ('is_staff', None),
         ('last_login', None)])
     search_args, search_kwargs = [], {}
-    form = forms.ProfileFiltersForm(request.GET)
     status = 'ok'
     message = ''
+
+    ExportProfileForm = utils.load_module(defaults.ADMIN_EXPORT_PROFILE_FORM)
 
     if nav.search_text:
         search_args.append(
@@ -245,7 +246,7 @@ def profiles_list(request):
         if form.cleaned_data['file_kind'] == u'0':
             queryset = Profile.objects.filter(pk__in=nav.get_queryset_ids(
                 Profile, search_query=(search_args, search_kwargs)))
-            columns_form = forms.DynamicProfileColumnForm(
+            columns_form = ExportProfileForm(
                 request.POST, prefix='columns')
             columns_form.is_valid()
             columns = [
@@ -263,7 +264,7 @@ def profiles_list(request):
         form = forms.ProfileUploadForm(request.POST, request.FILES)
         form.is_valid()
         if form.cleaned_data['file_kind'] == u'0':
-            columns_form = forms.DynamicProfileColumnForm(
+            columns_form = ExportProfileForm(
                 request.POST, prefix='columns')
             columns_form.is_valid()
             columns = [
@@ -284,7 +285,7 @@ def profiles_list(request):
             raise NotImplementedError
     else:
         form = forms.ProfileUploadForm()
-        columns_form = forms.DynamicProfileColumnForm(prefix='columns')    
+        columns_form = ExportProfileForm(prefix='columns')    
 
     is_staff = request.GET.get('is_staff', False)
     if nav.is_staff:

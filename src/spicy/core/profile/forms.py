@@ -634,5 +634,10 @@ class ProfileUploadForm(forms.Form):
     search_text = forms.CharField(label=_('Search'), required=False)
 
 
-
-
+class ExportProfileForm(forms.Form):
+    username = forms.CharField(label=_('Username'), widget=forms.CheckboxInput, initial=1)
+    email = forms.CharField(label=_('Email'), widget=forms.CheckboxInput, initial=1) 
+    first_name = forms.CharField(label=_('First Name'), widget=forms.CheckboxInput, initial=1)
+    last_name = forms.CharField(label=_('Last Name'), widget=forms.CheckboxInput, initial=1)
+    second_name = forms.CharField(label=_('Second Name'), widget=forms.CheckboxInput, initial=1)
+    phone = forms.CharField(label=_('Phone'), widget=forms.CheckboxInput, initial=1)

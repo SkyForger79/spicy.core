@@ -196,3 +196,6 @@ And you must remember
 ---------------------
 
 People, who creates your software, in most cases are same to you are. So, you must know: in theory they could be murderers or maniacs, or, even a women. So, it's much better for **you** to write *good* code. You have been warned.
+
+
+[![Dependency Status](https://beta.gemnasium.com/badges/github.com/SkyForger79/spicy.core.svg)](https://beta.gemnasium.com/projects/github.com/SkyForger79/spicy.core)
